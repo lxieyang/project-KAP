@@ -1,0 +1,9 @@
+.InteractionBoxAnchor {
+  position: absolute;
+  /* max-width: 500px; */
+  z-index: 33333;
+}
+
+.rap-manager {
+  display: inline;
+}

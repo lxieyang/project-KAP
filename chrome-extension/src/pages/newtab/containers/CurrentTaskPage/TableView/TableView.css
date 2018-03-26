@@ -1,0 +1,341 @@
+.TableView {
+  margin: 10px 0px;
+  width: 95%;
+}
+
+.ConfigureRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.OptionList {
+  margin-top: 10px;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.Option span {
+  margin: 0px 10px;
+  color: black;
+  font-weight: 300;
+  font-family: 'Encode Sans Semi Expanded', sans-serif;
+  background-color: #E4E5E7;
+  padding: 3px 8px;
+  border-radius: 5px;
+  box-sizing: border-box;
+  cursor: pointer;
+  transition: all 0.05s ease-in;
+}
+
+.PieceConfigure {
+  display: flex;
+  align-items: center;
+}
+
+.Label {
+  margin-right: 10px;
+}
+
+.Slider {
+
+}
+
+.Active {
+  opacity: 1;
+}
+
+.Inactive {
+  opacity: 0.3;
+}
+
+.Content {
+  margin: 20px 0px;
+  max-height: 90%;
+}
+
+table {
+  border-collapse: collapse;
+}
+/* 
+tr:nth-child(even) {background-color: #f2f2f2;} */
+
+th {
+  font-weight: 500;
+}
+
+th, td {
+  padding: 8px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+  position: relative;
+}
+
+.PieceNameContainer {
+  display: flex;
+  align-items: flex-start;
+  overflow: hidden;
+  font-size: 1.1rem;
+  text-overflow: ellipsis;
+  max-height: 220px;
+  max-width: 250px;
+  overflow: auto;
+  cursor: pointer;
+  transition: all 0.1s ease-in;
+}
+
+.PieceNameContainer:hover {
+  z-index: 99999;
+  transform: scale(1.05);
+}
+
+.InactivePiece {
+  opacity: 0.1;
+}
+
+.InactiveOption {
+  opacity: 0.1;
+}
+
+.ShowHidePieceContainer {
+  color: inherit;
+  z-index: 900;
+}
+
+.ShowHidePiece {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+}
+
+.showHideOption {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+}
+
+.ShowHidePieceIcon {
+  cursor: pointer;
+  opacity: 0.05;
+  font-size: 1.0rem;
+  transition: all 0.1s ease-in;
+}
+
+.ShowHidePieceIcon:hover {
+  opacity: 0.8;
+}
+
+.PieceNameBadgeContainer {
+  margin-right: 8px;
+}
+
+.BadgeIcon {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  width: 18px;
+  height: 18px;
+  font-size: 14px;
+  padding: 3px;
+  margin: 8px 3px;
+  border-radius: 3px;
+  background-color: rgb(252, 246, 227);
+  box-shadow: 0 1px 1px 0 rgba(0,0,0,0.2), 0 1px 3px 0 #00000030;
+}
+
+.PieceNameContent {
+  font-size: 1.1rem;
+  overflow: hidden;
+  word-wrap: break-word;
+  display: block;
+}
+
+.SelectionText {
+  background-color: rgb(178, 215, 255);
+  padding: 1px 3px;
+}
+
+.TableCellContainer {
+  display: flex;
+  align-items: center;
+  min-width: 150px;
+  margin: 0px 20px;
+  position: relative;
+}
+
+.OptionNameContainer {
+  display: block;
+  overflow: hidden;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  max-width: 250px;
+  max-height: 150px;
+  padding-right: 30px;
+  transition: all 0.1s ease-in;
+}
+
+.Attitude {
+  font-size: 1.8rem;
+  margin-right: 5px;
+  width: 40px;
+  height: 40px;
+  transition: all 0.1s ease-in;
+}
+
+.Attitude:hover {
+  z-index: 300;
+  transform: scale(1.05);
+}
+
+
+.AttitudeSwitchContainer {
+  opacity: 1 !important;
+  background-color: white !important;
+  pointer-events: auto !important;
+}
+
+/* .AttitudeSwitchContainer:hover {
+  visibility: visible !important;
+  opacity: 1 !important;
+} */
+
+.AttitudeSwitcher {
+  cursor: pointer;
+  font-size: 1.8rem;
+  width: 40px;
+  height: 40px;
+  margin: 8px 0px;
+  transition: all 0.1s ease-in;
+}
+
+.InactiveAttitude {
+  filter: grayscale(100%);
+  opacity: 0.5;
+}
+
+.ActiveAttitude {
+  filter: grayscale(0%) !important;
+  opacity: 1 !important;
+}
+
+.AttitudeSwitcher:hover {
+  filter: grayscale(0%);
+  opacity: 1;
+}
+
+
+.NotMarkedRelated {
+  background-color: rgb(242,242,242);
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.Note {
+  font-size: 0.80rem;
+  max-width: 130px;
+}
+
+.BackDrop {
+  z-index: 9999;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: black;
+  opacity: 0.8;
+}
+
+.ModalContentBackground {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 10000;
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  color: inherit;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
+
+
+
+
+
+
+
+.PieceGroupNameContainer {
+  text-shadow: 1px 1px 1px rgba(0,0,0,0.15);
+  width: 90%;
+  padding-left: 8px;
+}
+
+.PieceGroupNameContainer textarea {
+  height: 100%;
+  width: 100%;
+  border: none;
+  background-color: inherit;
+  font-size: 12px;
+  resize: none;
+}
+
+.PieceGroupNameContainer textarea:focus {
+  outline: none;
+}
+
+.PieceGroupListContainer {
+  font-size: 0.80rem;
+}
+
+.PieceGroupListContainer ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.PieceGroupListContainer ul li {
+  margin: 5px 0px;
+  display: flex;
+  align-items: center;
+  width: 95%;
+}
+
+.Bullet {
+  margin-right: 4px;
+  opacity:0.5;
+}
+
+.PieceContainerInPieceGroup {
+
+}
+
+.PieceTitle {
+  max-width: 93%;
+  background-color: rgb(252, 240, 212);
+  border-radius: 3px;
+  padding: 0px 5px;
+  border: 1px solid lightgray;
+  word-wrap: break-word;
+}
+
+.Tooltip {
+  max-width: 350px;
+  min-width: 250px;
+  overflow: auto;
+  padding: 5px 5px !important;
+  /* margin: 0 !important; */
+  box-shadow: 0 4px 10px 0 rgba(0,0,0,0.2),0 4px 20px 0 rgba(0,0,0,0.19);
+  opacity: 1 !important;
+  background-color: white !important;
+  pointer-events: auto !important;
+}
+
+.Tooltip:hover {
+  visibility: visible !important;
+  opacity: 1 !important;
+}

@@ -1,0 +1,71 @@
+.Header {
+  font-size: 1.20rem;
+  height: 56px;
+  width: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background-color: rgba(247, 247, 247, 1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20px;
+  box-sizing: border-box;
+  z-index: 90;
+}
+
+.Header nav {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.NavItem {
+  margin: 0px 40px;
+  cursor: pointer;
+  display: flex;
+  opacity: 0.7;
+}
+
+.Label {
+  font-weight: 600;
+  margin-right: 10px;
+}
+
+.Active {
+  color: black;
+  font-weight: 600;
+  opacity: 1;
+}
+
+.Logo {
+  height: 80%
+}
+
+
+
+/*  right part */
+.ToTheRight {
+  display: flex;
+  align-items: center;
+}
+
+.SearchBox {
+  display: flex;
+  align-items: center;
+  margin-right: 10px;
+}
+
+.Profile {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.ProfileImg {
+  width: 30px;
+  height: 30px;
+  margin-right: 10px;
+  border: 1px solid grey;
+  border-radius: 50%;
+}

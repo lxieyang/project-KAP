@@ -1,0 +1,180 @@
+.CollectionView {
+  margin: 10px 0px;
+  width: 95%;
+}
+
+.SideNav {
+  height: 100%;
+  width: 180px;
+  position: fixed;
+  z-index: 1;
+  top: 116px;
+  left: 40px;
+  overflow-x: hidden;
+  padding-top: 20px;
+}
+
+.SideNav ul {
+  margin: 0;
+  padding: 0px;
+  list-style: none;
+  border-right: 1px solid lightgray;
+}
+
+.SideNav ul li {
+  margin: 50px 0px;
+}
+
+.SideNav a {
+  padding: 8px 6px;
+  text-decoration: none;
+  font-size: 1.4rem;
+  color: inherit;
+  display: block;
+}
+
+.Current {
+  color: black;
+  font-weight: 600;
+}
+
+.Main {
+  margin-left: 200px;
+}
+
+.Section {
+  width: 100%;
+  /* background-color: rgba(0,0,0,0.1); */
+  margin: 40px 0px;
+  padding: 0px;
+}
+
+.Section .Header {
+  font-size: 1.5rem;
+  display: flex;
+  align-items: center;
+  padding-left: 20px;
+}
+
+.HeaderNameContainer {
+  display: flex;
+  align-items: center;
+}
+
+.HeaderName {
+  font-weight: 600;
+}
+
+.HeaderCollapseButton {
+  margin-left: 15px;
+  cursor: pointer;
+}
+
+.Section .DisplayNumberContainer {
+  margin-left: 40px;
+  display: flex;
+  align-items: center;
+}
+
+.Section .DisplayNumber {
+  opacity: 0.3;
+  cursor: pointer;
+  margin: 0px 10px;
+  transition: all 0.15s ease-in;
+}
+
+.Section .DisplayNumber.Active,
+.Section .DisplayNumber:hover {
+  opacity: 0.9;
+}
+
+.ConfigureIcon {
+  margin-right: 10px;
+}
+
+.Section .Content {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+}
+
+.ResponsiveColumn {
+  flex: 20%;
+  max-width: 20%;
+}
+
+@media (max-width: 1730px) {
+  .ResponsiveColumn {
+      flex: 25%;
+      max-width: 25%;
+  }
+}
+
+@media (max-width: 1220px) {
+  .ResponsiveColumn {
+      flex: 33%;
+      max-width: 33%;
+  }
+}
+
+@media (max-width: 900px) {
+  .ResponsiveColumn {
+      flex: 50%;
+      max-width: 50%;
+  }
+}
+
+@media (max-width: 630px) {
+  .ResponsiveColumn {
+      flex: 100%;
+      max-width: 100%;
+  }
+}
+
+@media (max-width: 1390px) { 
+  .SideNav {
+    display: none;
+  }
+
+  .Main {
+    margin-left: 0;
+  }
+
+  .Section {
+    width: 100%;
+  }
+}
+
+
+
+
+
+
+
+
+
+/* Modal */
+.BackDrop {
+  z-index: 9999;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: black;
+  opacity: 0.8;
+}
+
+.ModalContentBackground {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 10000;
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  color: inherit;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}

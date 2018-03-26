@@ -1,0 +1,49 @@
+.NavigationItems {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  height: 100%;
+  flex-flow: row;
+}
+
+.NavigationItem {
+  margin: 0px 15px;
+  display: flex;
+  height: 100%;
+  align-items: center;
+}
+
+.NavigationItem a {
+  text-align: center;
+  min-width: 88px;
+  min-height: 36px;
+  font-size: 1.1rem;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  color: inherit;
+  height: 100%;
+  width: auto;
+  opacity: 0.4;
+  transition: all 0.1s ease-in-out;
+
+}
+
+.Label {
+  font-weight: 600;
+  margin-right: 10px;
+}
+
+.NavigationItem a:hover {
+  color: black;
+  opacity: 0.8;
+}
+
+.NavigationItem a:active,
+.NavigationItem a.active {
+  color: black;
+  opacity: 1;
+}

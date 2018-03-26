@@ -1,0 +1,30 @@
+.CurrentTask {
+  display: flex;
+  flex-flow: column;
+  margin-left: 50px;
+  margin-right: 50px;
+  font-size: 1.15rem;
+  width: 100%;
+}
+
+.Label {
+  font-weight: 800;
+  margin: 10px 0px;
+}
+
+.TaskNameContainer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.TaskName {
+  text-transform: capitalize;
+  width: 85%;
+}
+
+.TaskSelect {
+  width: 20px;
+  margin-top: 5px;
+  margin-bottom: 5px;
+}

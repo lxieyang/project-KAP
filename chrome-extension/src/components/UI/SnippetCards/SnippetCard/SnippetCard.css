@@ -1,0 +1,282 @@
+.SnippetCard {
+  font-size: 1.15rem;
+  z-index: 89;
+  width: 250px;
+  height: auto;
+  margin: 15px 15px;
+  border: 1px solid lightgray;
+  border-radius: 3px;
+  box-shadow: 0 1px 1px 0 rgba(0,0,0,0.10), 0 1px 3px 0 rgba(0,0,0,0.06);
+  position: relative;
+  transition: all 0.06s ease-in;
+  z-index: inherit;
+}
+
+.SnippetCard:hover {
+  z-index: 1000;
+  transform: scale(1.05);
+}
+
+.Hide {
+  display: none;
+}
+
+.Header {
+  width: 100%;
+  padding-top: 8px;
+}
+
+.Title {
+  font-size: 1.0rem;
+  font-weight: 600;
+  word-wrap: break-word; 
+  margin-left: 10px;
+}
+
+.ContentInHeader {
+  font-size: 0.90rem;
+  font-weight: 500;
+  padding-left: 0px;
+  word-wrap: break-word; 
+}
+
+.SiteInfo {
+  display: flex;
+  align-items: center;
+  padding-left: 8px;
+}
+
+.SiteInfo .SiteIconContainer {
+  margin-right: 5px;
+}
+
+.SiteInfo .SiteIconContainer .SiteIcon {
+  width: 13px;
+  border-radius: 3px;
+  background: transparent;
+  box-shadow: 0 1px 2px 0 rgba(0,0,0,0.16), 0 1px 5px 0 rgba(0,0,0,0.12);
+}
+
+.SiteInfo .SiteDomainName {
+  font-size: 0.75rem;
+  opacity: 0.5;
+}
+
+.BadgeContainer {
+  margin-left: 15px;
+  display: flex;
+  align-items: center;
+}
+
+.BadgeIcon {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  width: 10px;
+  height: 10px;
+  font-size: 8px;
+  padding: 3px;
+  margin: 8px 5px;
+  border-radius: 3px;
+  background-color: rgb(252, 246, 227);
+  box-shadow: 0 1px 1px 0 rgba(0,0,0,0.2), 0 1px 3px 0 #00000030;
+}
+
+.ViewIcon {
+  margin-left: 25px;
+  opacity: 0.5;
+  cursor: pointer;
+  font-size: 0.9rem;
+  color: inherit;
+  justify-self: flex-end;
+  transition: all 0.1s ease-in;
+}
+
+.ViewIcon:hover {
+  opacity: 0.8;
+}
+
+
+.Header .Right {
+  margin-left: 8px;
+  padding-top: 8px;
+  padding-right: 12px;
+}
+
+.DeleteContainer {
+  position: absolute;
+  z-index: 100;
+  top: 3px;
+  right: 6px;
+  font-size: 1rem;
+  opacity: 0.1;
+  cursor: pointer;
+  transition: all 0.1s ease-in;
+}
+
+.DeleteContainer:hover {
+  opacity: 0.8;
+}
+
+
+
+.Footer {
+  font-size: 0.70rem;
+  opacity: 0.8;
+  padding-bottom: 2px;
+}
+
+.MetaInfo {
+  padding: 0px 10px;
+  margin-bottom: 3px;
+}
+
+.MetaInfo .Icon {
+  margin-right: 8px;
+}
+
+
+
+
+.ContentContainer {
+  max-width: 95%;
+  padding: 0px 8px;
+  max-height: 200px;
+  overflow: auto;
+  opacity: 0.8;
+  font-size: 1.0rem;
+  transition: all 0.1s ease-in;
+}
+
+.ContentContainer:hover {
+  opacity: 1.0;
+}
+
+.HTMLPreview:focus {
+  outline: none;
+}
+
+
+.AttitudeContainer {
+  padding: 0px 12px;
+  margin-bottom: 5px;
+}
+
+.AttitudeContainer ul {
+  margin: 0px;
+  padding: 0px;
+  list-style: none;
+}
+
+.AttitudeContainer ul li {
+  margin: 5px 0px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.Attitude {
+  margin-right: 5px;
+  width: 18px;
+  height: 18px;
+}
+
+.OptionName {
+  margin-left: 5px;
+  font-size: 0.85rem;
+  color: black;
+  font-weight: 300;
+  font-family: 'Encode Sans Semi Expanded', sans-serif;
+  background-color: rgb(238, 239, 240);
+  padding: 2px 5px;
+  border-radius: 5px;
+  box-sizing: border-box;
+  box-shadow: 0 1px 1px 0 rgba(0,0,0,0.16), 0 1px 5px 0 rgba(0,0,0,0.12);
+}
+
+
+
+.PieceGroupNameContainer {
+  text-shadow: 1px 1px 1px rgba(0,0,0,0.15);
+  width: 90%;
+  padding-left: 8px;
+}
+
+.PieceGroupNameContainer textarea {
+  height: 100%;
+  width: 100%;
+  border: none;
+  background-color: inherit;
+  font-size: 12px;
+  resize: none;
+}
+
+.PieceGroupNameContainer textarea:focus {
+  outline: none;
+}
+
+.PieceGroupListContainer {
+  font-size: 0.80rem;
+}
+
+.PieceGroupListContainer ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.PieceGroupListContainer ul li {
+  margin: 5px 0px;
+  display: flex;
+  align-items: center;
+  width: 95%;
+}
+
+.Bullet {
+  margin-right: 4px;
+  opacity:0.5;
+}
+
+.PieceContainerInPieceGroup {
+
+}
+
+.PieceTitle {
+  max-width: 93%;
+  background-color: rgb(252, 240, 212);
+  border-radius: 3px;
+  padding: 0px 5px;
+  border: 1px solid lightgray;
+  word-wrap: break-word;
+}
+
+.Tooltip {
+  max-width: 350px;
+  min-width: 250px;
+  overflow: auto;
+  padding: 5px 5px !important;
+  /* margin: 0 !important; */
+  box-shadow: 0 4px 10px 0 rgba(0,0,0,0.2),0 4px 20px 0 rgba(0,0,0,0.19);
+  opacity: 1 !important;
+  background-color: white !important;
+  pointer-events: auto !important;
+}
+
+.Tooltip:hover {
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+.ViewIconInTooltip {
+  margin-left: 5px;
+  opacity: 0.5;
+  cursor: pointer;
+  font-size: 0.9rem;
+  color: inherit;
+  justify-self: flex-end;
+  transition: all 0.1s ease-in;
+}
+
+.ViewIconInTooltip:hover {
+  opacity: 0.8;
+}

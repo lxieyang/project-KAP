@@ -1,0 +1,43 @@
+.Input {
+  width: 100%;
+}
+
+.InputElement {
+  outline: none;
+  font-size: 1.0rem;
+  margin: 0;
+  max-width: 100%;
+  text-align: left;
+  padding: 5px 10px;
+  border: 1px solid rgba(34,36,38,.15);
+  color: rgba(0,0,0,.87);
+  border-radius: 5px;
+  width: 80%;
+}
+
+.InputElement:focus {
+  outline: purple;
+}
+
+textarea.InputElement {
+  width: 95%;
+  resize: none;
+  min-height: 50px;
+  max-height: 200px;
+}
+
+select.InputElement {
+  font-size: 1.4rem;
+  color: inherit;
+  font-family: 'Nunito', sans-serif;
+  /* height: 40px; */
+  width: 100%;
+  /* text-overflow: ellipsis; */
+  word-wrap: break-word;
+}
+
+
+.InputElement:focus {
+  outline: none;
+  border-color: rgba(126,185,215, 1);
+}

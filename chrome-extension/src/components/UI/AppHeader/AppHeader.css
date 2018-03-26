@@ -1,0 +1,11 @@
+.AppHeader {
+  margin: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.HeaderText {
+  margin-left: 15px;
+  font-size: 1.15rem;
+}

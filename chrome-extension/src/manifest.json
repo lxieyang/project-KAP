@@ -1,0 +1,46 @@
+{
+  "name": "Project KAP",
+  "background": {
+    "page": "background.html",
+    "persistent": true
+  },
+  "browser_action": {
+    "default_popup": "popup.html",
+    "default_icon": "icon-34.png"
+  },
+  "chrome_url_overrides": {
+      "newtab": "newtab.html"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "<all_urls>"
+      ],
+      "js": [
+        "contentAnnotation.bundle.js"
+      ],
+      "css": [
+        "content.styles.css"
+      ]
+    }
+  ],
+  "web_accessible_resources": [
+    "content.styles.css",
+    "thumb-down-100.jpg",
+    "thumb-up-100.jpg",
+    "question-mark-100.jpg"
+  ],
+  "icons": {
+    "128": "icon-128.png"
+  },
+  "permissions": [
+    "downloads",
+    "contextMenus",
+    "tabs",
+    "activeTab",
+    "<all_urls>",
+    "background"
+  ],
+  "manifest_version": 2,
+  "content_security_policy": "script-src 'self' 'unsafe-eval' https://gstatic.com https://*.google.com https://*.firebaseio.com https://cdn.firebase.com https://project-kap-dev.firebaseapp.com; object-src 'self'"
+}

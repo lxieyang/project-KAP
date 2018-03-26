@@ -1,0 +1,135 @@
+.SnippetCard {
+  font-size: 1.15rem;
+  width: 250px;
+  height: auto;
+  margin: 15px 15px;
+  border: 1px solid lightgray;
+  border-radius: 3px;
+  box-shadow: 0 1px 1px 0 rgba(0,0,0,0.10), 0 1px 3px 0 rgba(0,0,0,0.06);
+}
+
+.Header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.Header .Left {
+  width: 80%;
+  padding-top: 8px;
+  padding-left: 12px;
+}
+
+.Title {
+  font-size: 1.0rem;
+  font-weight: 600;
+  padding-left: 0px;
+  word-wrap: break-word; 
+  cursor: pointer;
+}
+
+/* size effect */
+.SizeGiant {
+  font-size: 1.1rem;
+  font-weight: 600;
+  text-shadow: 1px 1px 1px rgba(0,0,0,0.15);
+  opacity: 1;
+}
+
+.SizeLarge {
+  font-size: 1.0rem;
+  font-weight: 600;
+  opacity: 0.95;
+}
+
+.SizeMedium {
+  font-size: 0.9rem;
+  font-weight: 500;
+  opacity: 0.9;
+}
+
+.SizeSmall {
+  font-size: 0.8rem;
+  font-weight: 500;
+  opacity: 0.8;
+}
+
+
+.SiteInfo {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.SiteInfo .SiteIconContainer {
+  margin-right: 5px;
+}
+
+.SiteInfo .SiteIconContainer .SiteIcon {
+  width: 13px;
+  border-radius: 3px;
+  background: transparent;
+  box-shadow: 0 1px 2px 0 rgba(0,0,0,0.16), 0 1px 5px 0 rgba(0,0,0,0.12);
+}
+
+.SiteInfo .SiteDomainName {
+  font-size: 0.75rem;
+  opacity: 0.5;
+  cursor: pointer;
+}
+
+.Header .Left .SiteDomainName a,
+.Header .Left .Title a {
+  text-decoration: none;
+  color: inherit;
+}
+
+.Header .Right {
+  margin-left: 8px;
+  padding-top: 8px;
+  padding-right: 12px;
+}
+
+.Header .Right .DeleteContainer {
+  font-size: 1rem;
+  opacity: 0.1;
+  cursor: pointer;
+  transition: all 0.1s ease-in;
+}
+
+.Header .Right .DeleteContainer:hover {
+  opacity: 0.8;
+}
+
+
+
+.Footer {
+  font-size: 0.70rem;
+  opacity: 0.8;
+  padding-bottom: 2px;
+}
+
+.MetaInfo {
+  padding: 0px 10px;
+  margin-bottom: 3px;
+}
+
+.MetaInfo .Icon {
+  margin-right: 8px;
+}
+
+
+
+
+.Content {
+  padding: 0px 12px;
+}
+
+.Content .CodeSnippetOriginal {
+  width: 100%;
+  font-size: 0.7rem;
+}
+
+.Content .Note {
+  
+}

@@ -1,0 +1,26 @@
+.TaskSwitcher {
+  display: flex;
+  flex-flow: column;
+  margin-right: 20px;
+  margin-bottom: 15px;
+  font-size: 1.15rem;
+}
+
+.Label {
+  margin-top: 10px;
+  margin-left: 15px;
+  font-weight: 800;
+  display: flex;
+  align-content: center;
+}
+
+.ConfigureIcon {
+  font-size: 1.4rem;
+  opacity: 0.5;
+}
+
+.TaskSelect {
+  margin-top: 10px;
+  margin-left: 50px;
+  margin-right: 40px;
+}

@@ -1,0 +1,26 @@
+.TaskGroup {
+  width: 90%;
+  /* background-color: rgba(0,0,0,0.1); */
+  margin: 20px 20px;
+  padding: 0px;
+}
+
+.Header {
+  display: flex;
+  align-items: center;
+}
+
+.HeaderName {
+  font-weight: 600;
+}
+
+.ConfigureIcon {
+  font-size: 1.50rem;
+  margin-right: 15px;
+}
+
+.TaskCards {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+}
