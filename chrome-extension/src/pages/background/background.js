@@ -1,7 +1,7 @@
-/*global chrome*/
-import '../../assets/images/icon-128.png';
-import '../../assets/images/icon-34.png';
-import * as actionTypes from '../../shared/actionTypes';
+/* global chrome */
+import '../../../../shared-components/src/assets/images/icon-128.png';
+import '../../../../shared-components/src/assets/images/icon-34.png';
+import * as actionTypes from '../../../../shared-components/src/shared/actionTypes';
 import { uniq, isEqual } from 'lodash';
 
 import { 
@@ -11,8 +11,8 @@ import {
   tasksRef,
   currentTaskIdRef,
   isDisabledRef
-} from '../../firebase/index';
-import * as FirebaseStore from '../../firebase/store';
+} from '../../../../shared-components/src/firebase/index';
+import * as FirebaseStore from '../../../../shared-components/src/firebase/store';
 
 
 /* initialize work status */
@@ -484,17 +484,6 @@ chrome.contextMenus.create({
   }
 });
 
-// chrome.contextMenus.create({
-//   title: 'Collect a snippet',
-//   onclick: (_, tab) => {
-//     console.log(tab);
-//     // send to content scripts
-//     chrome.tabs.sendMessage(tab.id, {
-//       msg: actionTypes.ADD_PIECE_CONTEXT_MENU_CLICKED
-//     }, () => {});
-//   }
-// });
-
 chrome.contextMenus.create({
   title: 'Collect it as a Piece',
   "contexts": ["selection"],
@@ -507,25 +496,3 @@ chrome.contextMenus.create({
   }
 });
 
-
-
-
-
-
-
-
-/* Piece (id)
-  - attitudeOptionPairs
-    - {optionId: '', attitude: true/false/null}
-  - notes
-  - type: 'SELECTION' | 'LASSO' | 'POST_SNAPSHOT'
-  - texts: ''
-  - codeSnippetHTMLs: ['', '', '']
-  - codeSnippetTexts: ['', '', '']
-  - postTages: ['', '', '']     ==> also add to Task
-  - originalDimensions: {width: 222, height: 333}
-  - htmls: ['', '', '']
-  - url
-  - timestamp
-
-*/

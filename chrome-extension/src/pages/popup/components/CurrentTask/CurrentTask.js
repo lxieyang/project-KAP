@@ -1,6 +1,6 @@
 import React from 'react';
 
-import Input from '../../../../components/UI/Input/Input';
+import Input from '../../../../../../shared-components/src/components/UI/Input/Input';
 import styles from './CurrentTask.css';
 
 /*

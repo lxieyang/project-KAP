@@ -3,23 +3,20 @@ import $ from 'jquery';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import KAPCaptureHelper from './captures/capture.helper';
-import InteractionBox from '../../components/InteractionBox/InteractionBox';
-import HoverInteraction from '../../components/InteractionBox/HoverInteraction/HoverInteraction';
+import InteractionBox from '../../../../shared-components/src/components/InteractionBox/InteractionBox';
+import HoverInteraction from '../../../../shared-components/src/components/InteractionBox/HoverInteraction/HoverInteraction';
 
-import * as actionTypes from '../../shared/actionTypes';
+import * as actionTypes from '../../../../shared-components/src/shared/actionTypes';
 import classes from './content.annotation.css';
-import { dragElement } from '../../shared/utilities';
+import { dragElement } from '../../../../shared-components/src/shared/utilities';
 
 import { 
   PageCountHelper,
   WebSurferHelper
 } from './content.utility';
-import { 
-  tasksRef,
-  currentTaskIdRef
-} from '../../firebase/index';
-import { SNIPPET_TYPE } from '../../shared/constants';
-import * as FirebaseStore from '../../firebase/store';
+
+import { SNIPPET_TYPE } from '../../../../shared-components/src/shared/constants';
+import * as FirebaseStore from '../../../../shared-components/src/firebase/store';
 
 
 /* inject stylesheet */
@@ -32,13 +29,11 @@ document.head.appendChild(link);
 
 
 
-
 /* Handle page count */
 PageCountHelper.handlePageCount();
 
 /* handle searches to create tasks */
 WebSurferHelper.handleFromSearchToTask();
-
 
 
 const captureWindow = document.createElement('div');

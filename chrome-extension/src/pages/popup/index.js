@@ -9,12 +9,3 @@ const app = (
 );
 
 ReactDOM.render(app, window.document.querySelector("#app-container"));
-
-
-// import InteractionBox from '../../components/InteractionBox/InteractionBox';
-
-// const app = (
-//   <InteractionBox />
-// );
-
-// ReactDOM.render(app, window.document.querySelector("#app-container"));

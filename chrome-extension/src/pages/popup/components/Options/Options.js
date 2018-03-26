@@ -1,7 +1,7 @@
 import React from 'react';
 
 import FontAwesome from 'react-fontawesome';
-import Input from '../../../../components/UI/Input/Input';
+import Input from '../../../../../../shared-components/src/components/UI/Input/Input';
 import styles from './Options.css';
 
 const inputConfig = {

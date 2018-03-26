@@ -1,7 +1,7 @@
 import React from 'react';
 
 import FontAwesome from 'react-fontawesome';
-import ToggleSwitch from '../../../../components/UI/ToggleSwitch/ToggleSwitch';
+import ToggleSwitch from '../../../../../../shared-components/src/components/UI/ToggleSwitch/ToggleSwitch';
 import styles from './Settings.css';
 
 // https://www.w3schools.com/howto/howto_css_switch.asp

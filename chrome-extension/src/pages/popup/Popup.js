@@ -1,19 +1,17 @@
 import React, { Component } from "react";
 
-// import * as actionTypes from '../../shared/actionTypes';
-import Aux from '../../hoc/Aux/Aux';
-import AppHeader from '../../components/UI/AppHeader/AppHeader';
-import HorizontalDivider from '../../components/UI/Divider/HorizontalDivider/HorizontalDivider';
+import Aux from '../../../../shared-components/src/hoc/Aux/Aux';
+import AppHeader from '../../../../shared-components/src/components/UI/AppHeader/AppHeader';
+import HorizontalDivider from '../../../../shared-components/src/components/UI/Divider/HorizontalDivider/HorizontalDivider';
 import CurrentTask from './components/CurrentTask/CurrentTask';
 import Options from './components/Options/Options';
-// import TaskSwitcher from './components/TaskSwitcher/TaskSwitcher';
 import Settings from './components/Settings/Settings';
 import { 
   tasksRef,
   currentTaskIdRef,
   isDisabledRef
-} from '../../firebase/index';
-import * as FirebaseStore from '../../firebase/store';
+} from '../../../../shared-components/src/firebase/index';
+import * as FirebaseStore from '../../../../shared-components/src/firebase/store';
 
 const dividerOptions = {
   margin: {
@@ -72,12 +70,6 @@ class Popup extends Component {
   }
 
   switchCurrentTaskHandler = (event) => {    
-    // chrome.runtime.sendMessage({
-    //   msg: actionTypes.SWITCH_CURRENT_TASK,
-    //   payload: {
-    //     id: event.target.value
-    //   }
-    // });
     FirebaseStore.switchCurrentTask(event.target.value);
   }
 
@@ -90,12 +82,6 @@ class Popup extends Component {
     const { newOptionInput } = this.state;
 
     if (newOptionInput !== '') {
-      // chrome.runtime.sendMessage({
-      //   msg: actionTypes.ADD_AN_OPTION_TO_CURRENT_TASK,
-      //   payload: {
-      //     optionName: this.state.newOptionInput
-      //   }
-      // });
       FirebaseStore.addAnOptionForCurrentTask(this.state.newOptionInput);
     }
 
@@ -103,19 +89,10 @@ class Popup extends Component {
   }
 
   deleteOptionHandler = (id) => {
-    // chrome.runtime.sendMessage({
-    //   msg: actionTypes.DELETE_OPTION_WITH_ID,
-    //   payload: {
-    //     id
-    //   }
-    // });
     FirebaseStore.deleteOptionWithId(id);
   }
 
   disablePluginHandler = () => {
-    // chrome.runtime.sendMessage({
-    //   msg: actionTypes.SWITCH_PLUGIN_WORKING_STATUS
-    // });
     FirebaseStore.switchWorkingStatus();
   }
 
@@ -173,15 +150,6 @@ class Popup extends Component {
             deleteOptionWithId={this.deleteOptionHandler}/>
 
           <HorizontalDivider margin={dividerOptions.margin.long}/>
-
-          {/*
-          <TaskSwitcher 
-            tasks={tasks} 
-            currentTaskName={currentTaskName}
-            currentTaskId={currentTaskId} 
-            onSwitch={this.switchCurrentTaskHandler}/>
-          <HorizontalDivider margin={dividerOptions.margin.long}/>
-          */}
 
           <Settings disabled={disabled} disableHandler={this.disablePluginHandler}/>
         </Aux>

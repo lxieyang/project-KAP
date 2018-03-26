@@ -2,13 +2,12 @@ import React from "react";
 import ReactDOM from 'react-dom';
 import { MemoryRouter } from 'react-router';
 
-import Newtab from './Newtab';
+import MainPage from '../../../../shared-components/src/containers/Mainpage/Mainpage';
 import './index.css';
-
 
 const app = (
   <MemoryRouter>
-    <Newtab />
+    <MainPage />
   </MemoryRouter>
 );
 

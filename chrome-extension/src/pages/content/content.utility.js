@@ -1,9 +1,7 @@
 /* global chrome */
 import $ from 'jquery';
-// import * as actionTypes from '../../shared/actionTypes';
-import { getSearchTerm, getOrigin } from '../../shared/utilities';
-// import { tasksRef, currentTaskIdRef} from '../../firebase/index';
-import * as FirebaseStore from '../../firebase/store';
+import { getSearchTerm, getOrigin } from '../../../../shared-components/src/shared/utilities';
+import * as FirebaseStore from '../../../../shared-components/src/firebase/store';
 
 
 
