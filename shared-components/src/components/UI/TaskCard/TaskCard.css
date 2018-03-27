@@ -1,5 +1,5 @@
 .TaskCard {
-  z-index: 9999;
+  z-index: 999;
   font-size: 1.15rem;
   width: 220px;
   height: auto;
@@ -51,6 +51,16 @@
   cursor: pointer;
 }
 
+.DeleteTaskIcon {
+  margin-left: 8px;
+  opacity: 0.5;
+  transition: all 0.1s ease-in;
+  cursor: pointer;
+}
+
+.DeleteTaskIcon:hover {
+  opacity: 1;
+}
 
 
 .TaskName {

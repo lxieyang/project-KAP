@@ -5,7 +5,8 @@ import * as appRoutes from '../../../shared/routes';
 import FontAwesome from 'react-fontawesome';
 import HorizontalDivider from '../../UI/Divider/HorizontalDivider/HorizontalDivider';
 import styles from './TaskCard.css';
-import Popover from "react-awesome-popover";
+// import Popover from "react-awesome-popover";
+import ReactTooltip from 'react-tooltip';
 import moment from 'moment';
 // import * as actionTypes from '../../../shared/actionTypes';
 import { DragSource, DropTarget } from 'react-dnd';
@@ -153,21 +154,10 @@ class TaskCard extends Component {
             <span className={styles.Time}>
               {moment(new Date(this.props.time)).fromNow()}
             </span>
-            <Popover
-              arrow={false}
-              placement={'bottom'}
-              action={null}
-              open={this.state.popoverIsOpen}>
-              <FontAwesome
-                name='ellipsis-v'
-                className={styles.MoreIcon}
-                onClick={(event) => this.moreButtonClicked(event)}/>
-              <div
-                className={styles.PoppedOver}
-                onClick={(event) => this.deleteTaskWithId(event, this.props.id)}>
-                Delete
-              </div>
-            </Popover>
+            <FontAwesome
+              name='trash'
+              className={styles.DeleteTaskIcon}
+              onClick={(event) => this.deleteTaskWithId(event, this.props.id)}/>
 
           </div>
         </div>

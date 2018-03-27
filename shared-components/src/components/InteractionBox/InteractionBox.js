@@ -1,10 +1,8 @@
-/* global chrome */
 import React, { Component }from 'react';
 
 import FontAwesome from 'react-fontawesome';
 import ThumbV1 from '../../components/UI/Thumbs/ThumbV1/ThumbV1';
 import QuestionMark from '../../components/UI/Thumbs/QuestionMark/QuestionMark';
-import * as actionTypes from '../../shared/actionTypes';
 import Input from '../../components/UI/Input/Input';
 import styles from './InteractionBox.css';
 import { 
@@ -13,6 +11,7 @@ import {
 } from '../../firebase/index';
 import { SNIPPET_TYPE } from '../../shared/constants';
 import { sortBy, reverse } from 'lodash';
+import * as FirebaseStore from '../../firebase/store';
 
 const dummyText = 'Please select some text';
 const dummyHtml = [`<p>Please lasso select some text</p>`];
@@ -191,18 +190,20 @@ class interactionBox extends Component {
     piece.attitudeOptionPairs = attitudeOptionPairs;
     // console.log(piece);
     if (this.state.mode !== 'UPDATE') {
-      chrome.runtime.sendMessage({
-        msg: actionTypes.ADD_A_PIECE_TO_CURRENT_TASK,
-        payload: {piece}
-      });
+      // chrome.runtime.sendMessage({
+      //   msg: actionTypes.ADD_A_PIECE_TO_CURRENT_TASK,
+      //   payload: {piece}
+      // });
+      FirebaseStore.addAPieceToCurrentTask(piece);
     } else {
-      chrome.runtime.sendMessage({
-        msg: actionTypes.UPDATE_A_PIECE_WITH_ID,
-        payload: {
-          id: this.props.id,
-          piece
-        }
-      });
+      // chrome.runtime.sendMessage({
+      //   msg: actionTypes.UPDATE_A_PIECE_WITH_ID,
+      //   payload: {
+      //     id: this.props.id,
+      //     piece
+      //   }
+      // });
+      FirebaseStore.updateAPieceWithId(this.props.id, piece);
     }
 
     this.setState({canSubmit: true});
@@ -228,23 +229,25 @@ class interactionBox extends Component {
 
   addOption (event) {
     if (event.key === 'Enter') {
-      chrome.runtime.sendMessage({
-        msg: actionTypes.ADD_AN_OPTION_TO_CURRENT_TASK,
-        payload: {
-          optionName: document.querySelector('#add-option-in-piece-input').value
-        }
-      });
+      // chrome.runtime.sendMessage({
+      //   msg: actionTypes.ADD_AN_OPTION_TO_CURRENT_TASK,
+      //   payload: {
+      //     optionName: document.querySelector('#add-option-in-piece-input').value
+      //   }
+      // });
+      FirebaseStore.addAnOptionForCurrentTask(document.querySelector('#add-option-in-piece-input').value.trim());
       document.querySelector('#add-option-in-piece-input').value = "";
     }
   }
 
   deleteOption = (event, optionId) => {
-    chrome.runtime.sendMessage({
-      msg: actionTypes.DELETE_OPTION_WITH_ID,
-      payload: {
-        id: optionId
-      }
-    });
+    // chrome.runtime.sendMessage({
+    //   msg: actionTypes.DELETE_OPTION_WITH_ID,
+    //   payload: {
+    //     id: optionId
+    //   }
+    // });
+    FirebaseStore.deleteOptionWithId(optionId);
   }
 
   render () {

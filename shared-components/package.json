@@ -35,7 +35,6 @@
     "react-router": "^4.2.0",
     "react-router-dom": "^4.2.2",
     "react-scrollspy": "^3.3.5",
-    "react-simple-popover": "^0.2.4",
     "react-toggle": "^4.0.2",
     "react-tooltip": "^3.4.0",
     "redux": "^3.7.2",

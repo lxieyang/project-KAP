@@ -11,6 +11,7 @@
   width: 100%;
   word-break: break-all;
   padding: 15px 20px;
+  box-sizing: border-box;
   position: relative;
   opacity: 1;
   position: relative;

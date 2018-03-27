@@ -1,14 +1,13 @@
-/* global chrome */
 import React, { Component } from 'react';
 
 import FontAwesome from 'react-fontawesome';
-import * as actionTypes from '../../../shared/actionTypes';
 import Input from '../../UI/Input/Input';
 import styles from './HoverInteraction.css';
 import { 
   tasksRef,
   currentTaskIdRef
 } from '../../../firebase/index';
+import * as FirebaseStore from '../../../firebase/store';
 
 
 class HoverInteraction extends Component {
@@ -54,12 +53,13 @@ class HoverInteraction extends Component {
     const { newOptionInput } = this.state;
     
     if (newOptionInput !== '') {
-      chrome.runtime.sendMessage({
-        msg: actionTypes.ADD_AN_OPTION_TO_CURRENT_TASK,
-        payload: {
-          optionName: this.state.newOptionInput
-        }
-      });
+      // chrome.runtime.sendMessage({
+      //   msg: actionTypes.ADD_AN_OPTION_TO_CURRENT_TASK,
+      //   payload: {
+      //     optionName: this.state.newOptionInput
+      //   }
+      // });
+      FirebaseStore.addAnOptionForCurrentTask(this.state.newOptionInput);
     }
 
     this.setState({newOptionInput: ''});

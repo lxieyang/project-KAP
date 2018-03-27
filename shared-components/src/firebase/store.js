@@ -1,68 +1,20 @@
 import { uniq, isEqual } from 'lodash';
 import { 
   // database,
-  sampleActionRef,
-  sampleListRef,
   tasksRef,
   currentTaskIdRef,
   isDisabledRef
 } from './index';
 
-/* some automatic bookkeeping */
-tasksRef.on('child_added', (snapshot) => {
-  currentTaskIdRef.set(snapshot.key);
-});
-
-tasksRef.on('child_removed', () => {
-  tasksRef.once('value', (snapshot) => {
-    snapshot.forEach((littleSnapshot) => {
-      currentTaskIdRef.set(littleSnapshot.key);
-    });
-  });
-});
-
-
 
 /* local data */
-export let isDiabled = false;
-export let taskList = [
-
-];
-
+export let isDisabled = false;
+export let taskList = [];
 export let currentTaskId = "";
-export let currentTaskName = "";
-export let currentTask = {};
-
 export let currentTaskOptions = [];
 
-/* sync local data with firebase */
-tasksRef.on('value', (snapshot) => {
-  taskList = [];
-  snapshot.forEach((childSnapshot) => {
-    taskList.push({...childSnapshot.val(), id: childSnapshot.key});
-  });
-  // console.log(taskList);
-});
-
-currentTaskIdRef.on('value', (snapshot) => {
-  currentTaskId = snapshot.val();
-  tasksRef.child(currentTaskId).once('value', (snapshot) => {
-    currentTask = snapshot.val();
-    currentTaskName = snapshot.val().name;
-  });
-  tasksRef.child(currentTaskId + '/options').on('value', (snapshot) => {
-    currentTaskOptions = [];
-    snapshot.forEach((childSnapshot) => {
-      currentTaskOptions.push({
-        ...childSnapshot.val(),
-        id: childSnapshot.key
-      })
-    });
-  });
-});
-
 isDisabledRef.on('value', (snapshot) => {
-  isDiabled  = snapshot.val();
+  isDisabled  = snapshot.val();
 });
 
 
@@ -76,31 +28,39 @@ export const switchWorkingStatus = () => {
 
 export const addTaskFromSearchTerm = (searchTerm, tabId) => {
   // prevent refresh or back button
-  if (taskList) {
-    for (let task of taskList) {
-      if (task.name === searchTerm) {
-        console.log("same");
-        // set current task
-        switchCurrentTask(task.id);
-        return;
+  tasksRef.once('value', (snapshot) => {
+    taskList = [];
+    snapshot.forEach((childSnapshot) => {
+      taskList.push({...childSnapshot.val(), id: childSnapshot.key});
+    });
+    // console.log(taskList);
+    if (taskList) {
+      for (let task of taskList) {
+        if (task.name === searchTerm) {
+          console.log("same");
+          // set current task
+          switchCurrentTask(task.id);
+          return;
+        }
       }
     }
-  }
-
-  let task = {
-    id: (new Date()).getTime(),
-    timestamp: (new Date()).getTime(),
-    name: searchTerm.toLowerCase(),
-    isStarred: false,
-    searchQueries: [searchTerm.toLowerCase()],
-    options: [],
-    currentOptionId: 'invalid',
-    pieces: []
-  }
-
-  // push to firebase
-  let newTaskRef = tasksRef.push();
-  newTaskRef.set(task);
+  
+    let task = {
+      id: (new Date()).getTime(),
+      timestamp: (new Date()).getTime(),
+      name: searchTerm.toLowerCase(),
+      isStarred: false,
+      searchQueries: [searchTerm.toLowerCase()],
+      options: [],
+      currentOptionId: 'invalid',
+      pieces: []
+    }
+  
+    // push to firebase
+    let newTaskRef = tasksRef.push();
+    newTaskRef.set(task);
+    switchCurrentTask(newTaskRef.key);
+  });  
 }
 
 export const switchCurrentTask = (id) => {
@@ -108,27 +68,13 @@ export const switchCurrentTask = (id) => {
 }
 
 export const deleteTaskWithId = (id) => {
-  tasksRef.child(id).set(null);
-}
-
-export const switchStatusForStayInTheSameTask = (shouldBeInTheSameTask, lastTaskId, thisSearchTerm, tabId) => {
-  if (currentTaskId !== lastTaskId && shouldBeInTheSameTask) {
-    // get the search query of the new task inserted
-    tasksRef.child(lastTaskId).child('searchQueries').once('value', (snapshot) => {
-      let sqs = snapshot.val().concat(currentTask.searchQueries);
-      tasksRef.child(lastTaskId).child('searchQueries').set(sqs);
-      // delete the current task
-      deleteTaskWithId(currentTaskId);
-      switchCurrentTask(lastTaskId);
+  tasksRef.child(id).set(null).then(() => {
+    tasksRef.once('value', (snapshot) => {
+      snapshot.forEach((littleSnapshot) => {
+        currentTaskIdRef.set(littleSnapshot.key);
+      });
     });
-  } else {
-    addTaskFromSearchTerm(thisSearchTerm, tabId);
-    tasksRef.child(lastTaskId).child('searchQueries').once('value', (snapshot) => {
-      let sqs = snapshot.val();
-      sqs.splice(sqs.indexOf(thisSearchTerm), 1);
-      tasksRef.child(lastTaskId).child('searchQueries').set(sqs);
-    });
-  }
+  });
 }
 
 export const switchStarStatusOfSelectedTask = (id) => {
@@ -187,104 +133,153 @@ export const combineTasks = (sourceTaskId, targetTaskId, newTaskName) => {
 
 export const addAPageToCountList = (url, domainName, siteTitle) => {
   // check dups
-  tasksRef.child(currentTaskId).child('pageCountList').once('value', (snapshot) => {
-    let dupKey = null;
-    snapshot.forEach((childSnapshot) => {
-      if (childSnapshot.val().url === url) {
-        dupKey = childSnapshot.key;
+  currentTaskIdRef.once('value', (snap) => {
+    currentTaskId = snap.val();
+    console.log(currentTaskId);
+    tasksRef.child(snap.val()).child('pageCountList').once('value', (snapshot) => {
+      let dupKey = null;
+      snapshot.forEach((childSnapshot) => {
+        if (childSnapshot.val().url === url) {
+          dupKey = childSnapshot.key;
+        }
+      });
+      if (dupKey === null) {
+        let newPageToCount = tasksRef.child(currentTaskId).child('pageCountList').push();
+        newPageToCount.set({
+          url: url,
+          domainName: domainName,
+          siteTitle: siteTitle,
+          numPieces: 0,
+          visitedCount: 1
+        });
+      } else {
+        tasksRef.child(currentTaskId).child('pageCountList').child(dupKey).child('visitedCount').once('value', (databack) => {
+          tasksRef.child(currentTaskId).child('pageCountList').child(dupKey).child('visitedCount').set(databack.val() + 1);
+        });
       }
     });
-    if (dupKey === null) {
-      let newPageToCount = tasksRef.child(currentTaskId).child('pageCountList').push();
-      newPageToCount.set({
-        url: url,
-        domainName: domainName,
-        siteTitle: siteTitle,
-        numPieces: 0,
-        visitedCount: 1
-      });
-    } else {
-      tasksRef.child(currentTaskId).child('pageCountList').child(dupKey).child('visitedCount').once('value', (databack) => {
-        tasksRef.child(currentTaskId).child('pageCountList').child(dupKey).child('visitedCount').set(databack.val() + 1);
-      });
-    }
   });
+
+  
 }
 
 export const deleteAPageFromCountList = (id) => {
-  tasksRef.child(currentTaskId).child('pageCountList').child(id).set(null);
+  currentTaskIdRef.once('value', (snap) => {
+    tasksRef.child(snap.val()).child('pageCountList').child(id).set(null);
+  });
 }
 
 export const addAnOptionForCurrentTask = (optionName) => {
-  // check duplicate
-  if (currentTaskOptions) {
-    for (let option of currentTaskOptions) {
-      if (option.name === optionName) {
-        console.log('same option');
-        return;
-      }
-    }
-  }
+  currentTaskIdRef.once('value', (snap) => {
+    currentTaskId = snap.val();
+    tasksRef.child(currentTaskId + '/options').once('value', (snapshot) => {
+      currentTaskOptions = [];
+      snapshot.forEach((childSnapshot) => {
+        currentTaskOptions.push({
+          ...childSnapshot.val(),
+          id: childSnapshot.key
+        })
+      });
 
-  let newOptionRef = tasksRef.child(currentTaskId + '/options').push();
-  newOptionRef.set({
-    name: optionName
-  });
-  tasksRef.child(currentTaskId + '/options').on('child_added', (snapshot) => {
-    tasksRef.child(currentTaskId + '/currentOptionId').set(snapshot.key);
+      // check duplicate
+      if (currentTaskOptions) {
+        for (let option of currentTaskOptions) {
+          if (option.name === optionName) {
+            console.log('same option');
+            return;
+          }
+        }
+      }
+
+      let newOptionRef = tasksRef.child(currentTaskId + '/options').push();
+      newOptionRef.set({
+        name: optionName
+      });
+      tasksRef.child(currentTaskId + '/options').on('child_added', (snapshot) => {
+        tasksRef.child(currentTaskId + '/currentOptionId').set(snapshot.key);
+      });
+    });
+    
   });
 }
 
 export const deleteOptionWithId = (id) => {
-  tasksRef.child(currentTaskId).child('options').child(id).set(null);
-  // also delete options in pieces.attitudeOptionPairs
-  tasksRef.child(currentTaskId).child('pieces').once('value', (snapshot) => {
-    snapshot.forEach((childSnapshot) => {
-      let pairs = childSnapshot.val().attitudeOptionPairs
-      if (pairs !== undefined) {
-        pairs = pairs.filter(p => p.optionId !== id);
-        tasksRef.child(currentTaskId).child('pieces').child(childSnapshot.key).child('attitudeOptionPairs').set(pairs);
-      }
+  currentTaskIdRef.once('value', (snap) => {
+    currentTaskId = snap.val();
+    tasksRef.child(currentTaskId).child('options').child(id).set(null);
+    // also delete options in pieces.attitudeOptionPairs
+    tasksRef.child(currentTaskId).child('pieces').once('value', (snapshot) => {
+      snapshot.forEach((childSnapshot) => {
+        let pairs = childSnapshot.val().attitudeOptionPairs
+        if (pairs !== undefined) {
+          pairs = pairs.filter(p => p.optionId !== id);
+          tasksRef.child(currentTaskId).child('pieces').child(childSnapshot.key).child('attitudeOptionPairs').set(pairs);
+        }
+      });
     });
   });
 }
 
 export const addAPieceToCurrentTask = (piece) => {
-  let newPieceRef = tasksRef.child(currentTaskId + '/pieces').push();
-  newPieceRef.set(piece);
-  return newPieceRef.key;
+  currentTaskIdRef.once('value', (snap) => {
+    currentTaskId = snap.val();
+    let newPieceRef = tasksRef.child(currentTaskId + '/pieces').push();
+    newPieceRef.set(piece);
+    return newPieceRef.key;
+  });
 }
 
 export const deleteAPieceWithId = (id) => {
-  tasksRef.child(currentTaskId).child('pieces').child(id).set(null);
+  currentTaskIdRef.once('value', (snap) => {
+    currentTaskId = snap.val();
+    tasksRef.child(currentTaskId).child('pieces').child(id).set(null);
+  });
 }
 
 export const updateAPieceWithId = (pieceId, piece) => {
-  tasksRef.child(currentTaskId).child('pieces').child(pieceId).set(piece);
+  currentTaskIdRef.once('value', (snap) => {
+    currentTaskId = snap.val();
+    tasksRef.child(currentTaskId).child('pieces').child(pieceId).set(piece);
+  });
 }
 
 export const createAPieceGroup = (pieceGroup) => {
-  let newPieceGroupRef = tasksRef.child(currentTaskId).child('pieceGroups').push();
-  newPieceGroupRef.set(pieceGroup);
+  currentTaskIdRef.once('value', (snap) => {
+    currentTaskId = snap.val();
+    let newPieceGroupRef = tasksRef.child(currentTaskId).child('pieceGroups').push();
+    newPieceGroupRef.set(pieceGroup);
+  });
 }
 
 export const changeNameOfAPieceGroup = (groupId, name) => {
-  tasksRef.child(currentTaskId).child('pieceGroups').child(groupId).child('name').set(name);
+  currentTaskIdRef.once('value', (snap) => {
+    currentTaskId = snap.val();
+    tasksRef.child(currentTaskId).child('pieceGroups').child(groupId).child('name').set(name);
+  });
 }
 
 export const addAPieceToGroup = (groupId, pieceId) => {
-  let targetGroupRef = tasksRef.child(currentTaskId).child('pieceGroups').child(groupId);
-  targetGroupRef.child('pieceIds').once('value', (snapshot) => {
-    if (snapshot.val().indexOf(pieceId) === -1) {
-      targetGroupRef.child('pieceIds').set(snapshot.val().concat([pieceId]));
-    }
+  currentTaskIdRef.once('value', (snap) => {
+    currentTaskId = snap.val();
+    let targetGroupRef = tasksRef.child(currentTaskId).child('pieceGroups').child(groupId);
+    targetGroupRef.child('pieceIds').once('value', (snapshot) => {
+      if (snapshot.val().indexOf(pieceId) === -1) {
+        targetGroupRef.child('pieceIds').set(snapshot.val().concat([pieceId]));
+      }
+    });
   });
 }
 
 export const updateAPieceGroupAttitudeOptionPairsWithId = (groupId, attitudeOptionPairs) => {
-  tasksRef.child(currentTaskId).child('pieceGroups').child(groupId).child('attitudeOptionPairs').set(attitudeOptionPairs);
+  currentTaskIdRef.once('value', (snap) => {
+    currentTaskId = snap.val();
+    tasksRef.child(currentTaskId).child('pieceGroups').child(groupId).child('attitudeOptionPairs').set(attitudeOptionPairs);
+  });
 }
 
 export const deleteAPieceGroup = (groupId) => {
-  tasksRef.child(currentTaskId).child('pieceGroups').child(groupId).set(null);
+  currentTaskIdRef.once('value', (snap) => {
+    currentTaskId = snap.val();
+    tasksRef.child(currentTaskId).child('pieceGroups').child(groupId).set(null);
+  });
 }

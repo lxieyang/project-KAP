@@ -11,7 +11,11 @@ const header = (props) => {
   return (
     <Aux>
       <header className={styles.Header}>
-        <Logo hover={true} size='38px'/>
+        <div className={styles.LogoBox}>
+          <Logo 
+            hover={true} size='38px'/>
+        </div>
+        
         <nav>
           <NavigationItems currentTask={props.taskName}/>
         </nav>
