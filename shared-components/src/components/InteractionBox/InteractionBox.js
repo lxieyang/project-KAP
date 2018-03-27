@@ -262,7 +262,7 @@ class interactionBox extends Component {
 
     let experimentalOptionList = (
       <div className={styles.OptionList}>
-        <table>
+        <table class={styles.Table}>
         <tbody>
           {existingOptions.map((op, idx) => {
             return (

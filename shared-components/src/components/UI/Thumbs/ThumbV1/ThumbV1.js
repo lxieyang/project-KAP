@@ -7,14 +7,21 @@ import styles from './ThumbV1.css';
 
 const thumbV1 = (props) => {
   const { type } = props;
+
+  let srcUp = ThumbUp;
+  let srcDown = ThumbDown;
+  if (window.chrome !== undefined && chrome.extension !== undefined) {
+    srcUp = chrome.extension.getURL(ThumbUp);
+    srcDown = chrome.extension.getURL(ThumbDown);
+  }
   return (
     
       <img 
         className={styles.Image}
         src={
           type === 'up'
-          ? chrome.extension.getURL(ThumbUp)
-          : chrome.extension.getURL(ThumbDown)
+          ? srcUp
+          : srcDown
         }
         alt="thumb"/>
  

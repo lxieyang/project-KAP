@@ -220,12 +220,13 @@ button:hover {
   cursor: pointer;
 }
 
-table {
+.Table {
   border-collapse: collapse;
   border: none;
 }
 
-td, th {
+.Table td, 
+.Table th {
   border-bottom: 1px solid #ddd;
   padding: 8px;
   text-align: right;
