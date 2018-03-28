@@ -42,6 +42,7 @@ class Mainpage extends Component {
     let userIdCached = localStorage.getItem('userId');
     if (userIdCached !== null) {
       setUserIdAndName(userIdCached, 'Master ' + userIdCached);
+      this.syncWithEditor(userId);
     }
 
     this.loadTasks();
@@ -50,10 +51,22 @@ class Mainpage extends Component {
 
   resetParameters = (userId) => {
     setUserIdAndName(userId, 'Master ' + userId);
+    this.syncWithEditor(userId);
     localStorage.setItem('userId', userId);
     this.loadTasks();
     this.updateInbackground();
-    
+  }
+
+  syncWithEditor = (userId) => {
+    let msg = {
+      secret: 'secret-transmission-from-iframe',
+      type: 'SET_USER',
+      payload: {
+        userId: userId
+      }
+    };
+    window.parent.postMessage(JSON.stringify(msg), '*');
+    console.log(msg);
   }
 
   updateInbackground () {

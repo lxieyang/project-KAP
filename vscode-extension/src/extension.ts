@@ -199,6 +199,10 @@ export function activate(context: vscode.ExtensionContext) {
         open(link);
     });
 
+    vscode.commands.registerCommand('extension.setUser', (userId) => {
+        console.log(userId);
+    });
+
     vscode.commands.registerCommand('extension.copyDetected', (name, url, content) => {
         copiedPayload = {
             name, url, content

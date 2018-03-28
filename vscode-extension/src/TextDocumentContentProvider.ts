@@ -13,6 +13,7 @@ class TextDocumentContentProvider implements vscode.TextDocumentContentProvider 
   }
 
   public update(uri: vscode.Uri) {
+    console.log(uri);
     this._onDidChange.fire(uri);
   }
 
@@ -51,7 +52,7 @@ class TextDocumentContentProvider implements vscode.TextDocumentContentProvider 
             if (data.type === 'CLICKED') {
               var url = data.payload.url;
               var openLinkAnchor = document.getElementById('open-link');
-              openLinkAnchor.href="${encodeURI('command:extension.openLink?')}" + encodeURIComponent(JSON.stringify([url]));
+              openLinkAnchor.href = "${encodeURI('command:extension.openLink?')}" + encodeURIComponent(JSON.stringify([url]));
               openLinkAnchor.click();
 
             } else if (data.type === 'COPY_DETECTED') {
@@ -61,8 +62,14 @@ class TextDocumentContentProvider implements vscode.TextDocumentContentProvider 
               var openLinkAnchor = document.getElementById('copy-detected');
               openLinkAnchor.href = "${encodeURI('command:extension.copyDetected?')}" + encodeURIComponent(JSON.stringify([name, url, content]));
               document.getElementById('debug').innerHTML = openLinkAnchor.getAttribute("href");
-
               openLinkAnchor.click();
+
+            } else if (data.type === 'SET_USER') {
+              var userId = data.payload.userId;
+              var setUserAnchor = document.getElementById('set-user');
+              setUserAnchor.href = "${encodeURI('command:extension.setUser?')}" + encodeURIComponent(JSON.stringify([userId]));
+              setUserAnchor.click();
+              
             }
           }
         }, false);
@@ -78,6 +85,7 @@ class TextDocumentContentProvider implements vscode.TextDocumentContentProvider 
     Click and hopefully opens ${encodeURI('command:extension.openLink?["https://www.google.com#hoho"]')}
     </a>
     <a id="copy-detected" style="display:none;" href="${encodeURI('command:extension.copyDetected?["https://www.google.com"]')}">Click and hopefully opens</a>
+    <a id="set-user" style="display:none;" href="${encodeURI('command:extension.setUser?["https://www.google.com"]')}">Click and set user</a>
       <div style="background-color: white;height:100%;width:100%;">
         <iframe id="myframe" frameborder="0" style="border: 0px solid transparent; height:100%;width:100%;" src="" seamless></iframe>
       </div>
