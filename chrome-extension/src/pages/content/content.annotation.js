@@ -17,6 +17,34 @@ import {
 
 import { SNIPPET_TYPE } from '../../../../shared-components/src/shared/constants';
 import * as FirebaseStore from '../../../../shared-components/src/firebase/store';
+import { setUserIdAndName } from '../../../../shared-components/src/firebase/index';
+
+let port = chrome.runtime.connect({name: 'FROM_CONTENT'});
+port.postMessage({msg: 'GET_USER_INFO'});
+port.onMessage.addListener((response) => {
+  if (response.msg === 'USER_INFO') {
+    const { payload } = response;
+    setUserIdAndName(payload.userId);
+    // console.log(payload.userId);
+    /* Handle page count */
+    PageCountHelper.handlePageCount();
+
+    /* handle searches to create tasks */
+    WebSurferHelper.handleFromSearchToTask();
+  }
+});
+
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+  if (request.msg === 'USER_INFO') {
+    setUserIdAndName(request.payload.userId);
+    // console.log(request.payload.userId);
+    /* Handle page count */
+    PageCountHelper.handlePageCount();
+
+    /* handle searches to create tasks */
+    WebSurferHelper.handleFromSearchToTask();
+  }
+});
 
 
 /* inject stylesheet */
@@ -29,11 +57,7 @@ document.head.appendChild(link);
 
 
 
-/* Handle page count */
-PageCountHelper.handlePageCount();
 
-/* handle searches to create tasks */
-WebSurferHelper.handleFromSearchToTask();
 
 
 const captureWindow = document.createElement('div');
@@ -119,8 +143,8 @@ $(document).mousemove(function(e) {
 // https://stackoverflow.com/questions/1589721/how-can-i-position-an-element-next-to-user-text-selection/1589912#1589912
 const getDocumentSelection = () => {
   let selection = document.getSelection();
-  console.log(selection);
-  console.log(selection.getRangeAt(0).getBoundingClientRect());
+  // console.log(selection);
+  // console.log(selection.getRangeAt(0).getBoundingClientRect());
   if (selection !== null && selection.type.toLowerCase() === 'range') {
     console.log('HAVE SELECTED');
     return {

@@ -22,6 +22,10 @@ export const getFirstNWords = (n, str) => {
   return split.length < n ? split.join(' ') : split.slice(0, n).join(" ") + ' ...';
 }
 
+export const capitalizeFirstLetter = (string) => {
+  return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
 
 // Make the DIV element draggagle:
 // https://www.w3schools.com/howto/howto_js_draggable.asp

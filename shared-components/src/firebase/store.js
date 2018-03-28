@@ -132,10 +132,11 @@ export const combineTasks = (sourceTaskId, targetTaskId, newTaskName) => {
 }
 
 export const addAPageToCountList = (url, domainName, siteTitle) => {
+  // console.log(currentTaskIdRef);
   // check dups
   currentTaskIdRef.once('value', (snap) => {
     currentTaskId = snap.val();
-    console.log(currentTaskId);
+    // console.log(currentTaskId);
     tasksRef.child(snap.val()).child('pageCountList').once('value', (snapshot) => {
       let dupKey = null;
       snapshot.forEach((childSnapshot) => {

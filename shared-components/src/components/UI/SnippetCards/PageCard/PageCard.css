@@ -6,6 +6,7 @@
   border: 1px solid lightgray;
   border-radius: 3px;
   box-shadow: 0 1px 1px 0 rgba(0,0,0,0.10), 0 1px 3px 0 rgba(0,0,0,0.06);
+  position: relative;
 }
 
 .Header {
@@ -132,4 +133,22 @@
 
 .Content .Note {
   
+}
+
+.DeleteContainer {
+  position: absolute;
+  z-index: 100;
+  top: 0px;
+  right: 6px;
+  opacity: 0.1;
+  cursor: pointer;
+  transition: all 0.1s ease-in;
+}
+
+.DeleteContainer .Icon {
+  font-size: 0.8rem;
+}
+
+.DeleteContainer:hover {
+  opacity: 0.8;
 }

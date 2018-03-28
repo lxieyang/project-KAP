@@ -16,7 +16,8 @@ export class PageCountHelper {
     'twitter.com',
     'messenger.com',
     'slack.com',
-    'localhost'
+    'localhost',
+    'login'
     // should be more
   ];
 

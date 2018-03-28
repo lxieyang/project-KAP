@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 
 import {Collapse} from 'react-collapse';
-import Scrollspy from 'react-scrollspy';
+// import Scrollspy from 'react-scrollspy';
 import FontAwesome from 'react-fontawesome';
 import InteractionBox from '../../../../../components/InteractionBox/InteractionBox';
 // import * as actionTypes from '../../../../../shared/actionTypes';
@@ -15,19 +15,26 @@ import { sortBy, reverse, slice } from 'lodash';
 
 
 const getNumColInResponsiveGridLayout = (windowSize) => {
-  let maxNumCol = 5;
+  let maxNumCol = 6;
 
-  if (windowSize > 1730) {
-    maxNumCol = 5;
-  } else if (windowSize <= 1730 && windowSize > 1220) {
-    maxNumCol = 4;
-  } else if (windowSize <= 1220 && windowSize > 900) {
-    maxNumCol = 3;
-  } else if (windowSize <= 900 && windowSize > 630) {
-    maxNumCol = 2;
-  } else {
-    maxNumCol = 1;
-  }
+  // if (windowSize > 1730) {
+  //   maxNumCol = 5;
+  // } 
+  // else if (windowSize <= 1730 && windowSize > 1220) {
+  //   maxNumCol = 5;
+  // } 
+  // else if (windowSize <= 1220 && windowSize > 900) {
+  //   maxNumCol = 4;
+  // } 
+  // else if (windowSize <= 900 && windowSize > 630) {
+  //   maxNumCol = 3;
+  // } 
+  // else if (windowSize <= 900 && windowSize > 630) {
+  //   maxNumCol = 2;
+  // } 
+  // else {
+  //   maxNumCol = 1;
+  // }
 
   return maxNumCol;
 }
@@ -241,7 +248,7 @@ class CollectionView extends Component {
     windowSize: window.innerWidth,
     showModal: false,
     modalPieceId: '',
-    topPageIsOpen: true,
+    topPageIsOpen: false,
     allSnippetSIsOpen: true,
     withCodeSnippetIsOpen: false,
     withNodeSnippetsIsOpen: false
@@ -506,18 +513,7 @@ class CollectionView extends Component {
     return (
       <Aux>
         <div className={styles.CollectionView}>
-            <div className={styles.SideNav}>
-              <Scrollspy
-                items={ ['section-1', 'section-2', 'section-3', 'section-4'] }
-                currentClassName={styles.Current}
-                offset={-200}>
-                <li><a href="#section-1">Top Pages</a></li>
-                <li><a href="#section-2">All Pieces
-                </a></li>
-                <li><a href="#section-3">With Code Snippets</a></li>
-                <li><a href="#section-4">With Notes</a></li>
-                </Scrollspy>
-            </div>
+            
 
             <div className={styles.Main} id="scrollable-content-container">
 
@@ -540,9 +536,6 @@ class CollectionView extends Component {
                 className={styles.Section}>
                 {noteSnippets}
               </div>
-
-
-              
 
             </div>
         </div>

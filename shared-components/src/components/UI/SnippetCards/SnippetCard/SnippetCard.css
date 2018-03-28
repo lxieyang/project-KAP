@@ -3,7 +3,7 @@
   z-index: 89;
   width: 250px;
   height: auto;
-  margin: 15px 15px;
+  margin: 15px 10px;
   border: 1px solid lightgray;
   border-radius: 3px;
   box-shadow: 0 1px 1px 0 rgba(0,0,0,0.10), 0 1px 3px 0 rgba(0,0,0,0.06);
@@ -106,12 +106,15 @@
 .DeleteContainer {
   position: absolute;
   z-index: 100;
-  top: 3px;
+  top: 0px;
   right: 6px;
-  font-size: 1rem;
   opacity: 0.1;
   cursor: pointer;
   transition: all 0.1s ease-in;
+}
+
+.DeleteContainer .Icon {
+  font-size: 0.8rem;
 }
 
 .DeleteContainer:hover {
@@ -207,7 +210,8 @@
   width: 100%;
   border: none;
   background-color: inherit;
-  font-size: 12px;
+  font-size: 14px;
+  font-weight: 600;
   resize: none;
 }
 

@@ -1,3 +1,4 @@
+/* global chrome */
 import React, { Component } from "react";
 
 import Aux from '../../../../shared-components/src/hoc/Aux/Aux';
@@ -9,9 +10,22 @@ import Settings from './components/Settings/Settings';
 import { 
   tasksRef,
   currentTaskIdRef,
-  isDisabledRef
+  isDisabledRef,
+  setUserIdAndName
 } from '../../../../shared-components/src/firebase/index';
 import * as FirebaseStore from '../../../../shared-components/src/firebase/store';
+
+// // import { 
+// //   tasksRef,
+// //   currentTaskIdRef,
+// //   FirebaseStore,
+// //   isDisabledRef
+// // } from '../background/background';
+
+// let tasksRef;
+// let currentTaskIdRef;
+// let FirebaseStore;
+// let isDisabledRef;
 
 const dividerOptions = {
   margin: {
@@ -31,6 +45,26 @@ class Popup extends Component {
   }
 
   componentDidMount() {
+    let port = chrome.runtime.connect({name: 'FROM_POPUP'});
+    port.postMessage({msg: 'GET_USER_INFO'});
+    port.onMessage.addListener((response) => {
+      if(response.msg === 'USER_INFO') {
+        const { payload } = response;
+        setUserIdAndName(payload.userId);
+        this.updateTask();
+      }
+    });
+
+    // event listener
+    document.body.addEventListener('keyup', (event) => {
+      if (event.keyCode === 13) {
+        // Enter key pressed
+        this.submitHandler(event);
+      }
+    });
+  }
+
+  updateTask() {
     currentTaskIdRef.on('value', (snapshot) => {
       this.setState({currentTaskId: snapshot.val()});
       if (this.state.currentTaskIdIsLoading) {
@@ -56,17 +90,7 @@ class Popup extends Component {
 
     isDisabledRef.on('value', (snapshot) => {
       this.setState({disabled: snapshot.val() !== null ? snapshot.val() : false})
-    })
-
-    // event listener
-    document.body.addEventListener('keyup', (event) => {
-      if (event.keyCode === 13) {
-        // Enter key pressed
-        this.submitHandler(event);
-      }
     });
-
-    
   }
 
   switchCurrentTaskHandler = (event) => {    

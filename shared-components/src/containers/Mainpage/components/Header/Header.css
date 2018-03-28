@@ -38,6 +38,10 @@
   opacity: 1;
 }
 
+.LogoBox {
+  z-index: 9999;
+}
+
 .Logo {
   height: 80%
 }
@@ -86,4 +90,10 @@
   .LogoBox {
     display: none;
   }
+}
+
+.Tooltip {
+  z-index: 9999 !important;
+  pointer-events: auto !important;
+  margin-left: 50px !important;
 }

@@ -1,17 +1,21 @@
+/* global chrome */
 import React, { Component } from "react";
 import { Route, Switch, withRouter, Redirect } from 'react-router-dom';
-
+// import qs from 'query-string';
 import Layout from './containers/Layout/Layout';
 import AllTasksPage from './containers/AllTasksPage/AllTasksPage';
 import CurrentTaskPage from './containers/CurrentTaskPage/CurrentTaskPage';
 import * as appRoutes from '../../shared/routes';
+import HTML5Backend from 'react-dnd-html5-backend';
+import { DragDropContext } from 'react-dnd';
+import { capitalizeFirstLetter } from '../../shared/utilities';
 import { 
   tasksRef,
   currentTaskIdRef,
-  userName
+  userId,
+  setUserIdAndName
+
 } from '../../firebase/index';
-import HTML5Backend from 'react-dnd-html5-backend';
-import { DragDropContext } from 'react-dnd';
 
 @DragDropContext(HTML5Backend)
 class Mainpage extends Component {
@@ -22,6 +26,49 @@ class Mainpage extends Component {
   }
 
   componentDidMount () {
+
+    // setTimeout(() => {
+    //   let qsObj = qs.parse(this.props.location.search);
+    //   console.log(qsObj);
+    //   if (qsObj.userId !== undefined && qsObj.userName !== undefined) {
+    //     setUserIdAndName(qsObj.userId, qsObj.userName);
+    //     // console.log(tasksRef);
+    //   }
+
+    //   console.log(tasksRef.path.pieces_);
+    //   this.loadTasks();
+    // }, 6000);
+    
+    let userIdCached = localStorage.getItem('userId');
+    if (userIdCached !== null) {
+      setUserIdAndName(userIdCached, 'Master ' + userIdCached);
+    }
+
+    this.loadTasks();
+    this.updateInbackground();
+  }
+
+  resetParameters = (userId) => {
+    setUserIdAndName(userId, 'Master ' + userId);
+    localStorage.setItem('userId', userId);
+    this.loadTasks();
+    this.updateInbackground();
+    
+  }
+
+  updateInbackground () {
+    if (window.chrome !== undefined && window.chrome.extension !== undefined) {
+      console.log('update in background');
+      chrome.runtime.sendMessage({
+        msg: 'RESET_USER_ID',
+        payload: {userId}
+      })
+    }
+  }
+
+  loadTasks () {
+    console.log('loading tasks');
+
     currentTaskIdRef.on('value', (snapshot) => {
       this.setState({currentTaskId: snapshot.val()});
     });
@@ -91,7 +138,11 @@ class Mainpage extends Component {
 
     return (
       <div>
-        <Layout currentTaskName={currentTaskName} userName={userName}>
+        <Layout 
+          currentTaskName={currentTaskName} 
+          userName={'Master ' + capitalizeFirstLetter(userId)}
+          userId={userId}
+          resetParameters={this.resetParameters}>
           {routes}
         </Layout>
       </div>
