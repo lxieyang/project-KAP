@@ -14,9 +14,15 @@ interface Decoration {
 }
 
 interface Mapping {
-    url: string;
-    name: string;
+    pieceId: string;
+    userId: string;
+    taskId: string;
     content: string;
+    note: string;
+    existingOptions: Object;
+    url: string;
+    title: string;
+    type: string;
 }
 
 
@@ -41,16 +47,18 @@ export function activate(context: vscode.ExtensionContext) {
                     item: item,
                     decoration: item.decorations.find(dec => range.start.line === dec.range.start.line)
                 }
-            }).find(pair => pair.decoration != null);
+            }).find(pair => pair.decoration !== null);
+
+            console.log(matchingDecorationAndItem);
 
             let result: Thenable<vscode.Hover> = undefined;
 
             if (matchingDecorationAndItem) {
                 let hoverMessage = "";
-                hoverMessage += `### [${matchingDecorationAndItem.item.payload.name}](${matchingDecorationAndItem.item.payload.url})    \n`;
-                hoverMessage += `#### Snippet:   \n`;
+                hoverMessage += `### [${matchingDecorationAndItem.item.payload.title}](${matchingDecorationAndItem.item.payload.url})    \n`;
+                hoverMessage += `#### Note:   \n`;
                 hoverMessage += `\`\`\`  \n`;
-                hoverMessage += `${matchingDecorationAndItem.item.payload.content}   `;
+                hoverMessage += `${matchingDecorationAndItem.item.payload.notes}   `;
                 hoverMessage += `\`\`\``;
 
                 return Promise.resolve(new vscode.Hover(hoverMessage, document.getWordRangeAtPosition(position)));
@@ -67,13 +75,15 @@ export function activate(context: vscode.ExtensionContext) {
     let lastScanResult: Decoration[] = [];
     let throttleId = undefined;
     let throttledScan = (timeout: number = 500) => {
-        if (throttleId)
-        clearTimeout(throttleId);
+        if (throttleId) {
+            clearTimeout(throttleId);
+        }
         throttleId = setTimeout(() => scan(), timeout);
     };
     const scan = () => {
         console.log("scanning");
         const editor = vscode.window.activeTextEditor;
+        // console.log(editor.document);
         if (editor) {
             lastScanResult = [];
             collectEntries(editor, '@@@source', '@@@', lastScanResult);
@@ -81,6 +91,8 @@ export function activate(context: vscode.ExtensionContext) {
     };
 
     const collectEntries = (editor: vscode.TextEditor, identifier: string, endingIdentifier: string,lastScanResult: Decoration[]) => {
+        mappings = context.workspaceState.get('mappings', []);
+        console.log(mappings);
         let max = editor.document.lineCount;
         for (let lineIdx = 0; lineIdx < max; lineIdx++) {
             let lineObject = editor.document.lineAt(lineIdx);
@@ -96,19 +108,21 @@ export function activate(context: vscode.ExtensionContext) {
                 let start = line.indexOf(identifier);
                 let end = line.lastIndexOf(endingIdentifier);
                 if (start !== -1 && end !== -1) {
-                    let lineUrl = line.substring(start, end).split(' ')[1];
-                    mappings = context.workspaceState.get('mappings', []);
-                     // find mapping
+                    let lineIdentity = line.substring(start, end).trim();
+                    // find mapping
                     for (let entry of mappings) {
-                        if (entry.url === lineUrl) {
+                        const { userId, pieceId } = entry;
+                        // console.log("@@@source: (" + userId + ") (" + pieceId + ")");
+                        // console.log(lineIdentity);
+                        if ("@@@source: (" + userId + ") (" + pieceId + ")" === lineIdentity) {
+                            console.log("pushed");
                             let payload = {
                                 ...entry
-                            }
+                            };
                             lastScanResult.push({
                                 decorations,
                                 payload
                             });
-                            // console.log('found one');
                         }           
                     }
                 }
@@ -147,6 +161,7 @@ export function activate(context: vscode.ExtensionContext) {
     });
 
     vscode.window.onDidChangeActiveTextEditor((e: vscode.TextEditor) => {
+        // console.log(e);
         throttledScan();
         if (copiedPayload) {
             prepareCopiedCode(context, copiedPayload);
@@ -203,12 +218,19 @@ export function activate(context: vscode.ExtensionContext) {
         console.log(userId);
     });
 
-    vscode.commands.registerCommand('extension.copyDetected', (name, url, content) => {
-        copiedPayload = {
-            name, url, content
-        };
+    // vscode.commands.registerCommand('extension.copyDetected', (name, url, content) => {
+    //     copiedPayload = {
+    //         name, url, content
+    //     };
 
-        prepareCopiedCode(context, copiedPayload);
+    //     prepareCopiedCode(context, copiedPayload);
+   
+    // });
+
+    vscode.commands.registerCommand('extension.copyDetected', (payload) => {
+        console.log(payload);
+        copiedPayload = payload;
+        prepareCopiedCode(context, payload);
    
     });
 

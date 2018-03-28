@@ -1,7 +1,6 @@
 /* global chrome */
 import React, { Component } from "react";
 import { Route, Switch, withRouter, Redirect } from 'react-router-dom';
-// import qs from 'query-string';
 import Layout from './containers/Layout/Layout';
 import AllTasksPage from './containers/AllTasksPage/AllTasksPage';
 import CurrentTaskPage from './containers/CurrentTaskPage/CurrentTaskPage';
@@ -25,25 +24,14 @@ class Mainpage extends Component {
     tasks: []
   }
 
-  componentDidMount () {
-
-    // setTimeout(() => {
-    //   let qsObj = qs.parse(this.props.location.search);
-    //   console.log(qsObj);
-    //   if (qsObj.userId !== undefined && qsObj.userName !== undefined) {
-    //     setUserIdAndName(qsObj.userId, qsObj.userName);
-    //     // console.log(tasksRef);
-    //   }
-
-    //   console.log(tasksRef.path.pieces_);
-    //   this.loadTasks();
-    // }, 6000);
-    
+  componentDidMount () {    
     let userIdCached = localStorage.getItem('userId');
     if (userIdCached !== null) {
       setUserIdAndName(userIdCached, 'Master ' + userIdCached);
-      this.syncWithEditor(userId);
+      
     }
+
+    this.syncWithEditorAndWindow(userId);
 
     this.loadTasks();
     this.updateInbackground();
@@ -51,13 +39,13 @@ class Mainpage extends Component {
 
   resetParameters = (userId) => {
     setUserIdAndName(userId, 'Master ' + userId);
-    this.syncWithEditor(userId);
+    this.syncWithEditorAndWindow(userId);
     localStorage.setItem('userId', userId);
     this.loadTasks();
     this.updateInbackground();
   }
 
-  syncWithEditor = (userId) => {
+  syncWithEditorAndWindow = (userId) => {
     let msg = {
       secret: 'secret-transmission-from-iframe',
       type: 'SET_USER',
@@ -66,7 +54,13 @@ class Mainpage extends Component {
       }
     };
     window.parent.postMessage(JSON.stringify(msg), '*');
-    console.log(msg);
+    
+    window.userId = userId;
+    currentTaskIdRef.on('value', (snap) => {
+      window.currentTaskId = snap.val();
+    });
+    // window.currentTaskIdRef = currentTaskIdRef;
+    window.tasksRef = tasksRef;
   }
 
   updateInbackground () {
@@ -80,8 +74,7 @@ class Mainpage extends Component {
   }
 
   loadTasks () {
-    console.log('loading tasks');
-
+    
     currentTaskIdRef.on('value', (snapshot) => {
       this.setState({currentTaskId: snapshot.val()});
     });

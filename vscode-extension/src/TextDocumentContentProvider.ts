@@ -56,11 +56,14 @@ class TextDocumentContentProvider implements vscode.TextDocumentContentProvider 
               openLinkAnchor.click();
 
             } else if (data.type === 'COPY_DETECTED') {
-              var name = data.payload.name;
-              var content = data.payload.content;
-              var url = data.payload.url;
+              // var name = data.payload.name;
+              // var content = data.payload.content;
+              // var url = data.payload.url;
+              var payload = data.payload;
+
               var openLinkAnchor = document.getElementById('copy-detected');
-              openLinkAnchor.href = "${encodeURI('command:extension.copyDetected?')}" + encodeURIComponent(JSON.stringify([name, url, content]));
+              // openLinkAnchor.href = "${encodeURI('command:extension.copyDetected?')}" + encodeURIComponent(JSON.stringify([name, url, content]));
+              openLinkAnchor.href = "${encodeURI('command:extension.copyDetected?')}" + encodeURIComponent(JSON.stringify([payload]));
               document.getElementById('debug').innerHTML = openLinkAnchor.getAttribute("href");
               openLinkAnchor.click();
 
@@ -69,7 +72,7 @@ class TextDocumentContentProvider implements vscode.TextDocumentContentProvider 
               var setUserAnchor = document.getElementById('set-user');
               setUserAnchor.href = "${encodeURI('command:extension.setUser?')}" + encodeURIComponent(JSON.stringify([userId]));
               setUserAnchor.click();
-              
+
             }
           }
         }, false);

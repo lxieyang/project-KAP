@@ -501,6 +501,7 @@ class CollectionView extends Component {
                 codeSnippetHTMLs={piece.codeSnippetHTMLs}
                 codeSnippetTexts={piece.codeSnippetTexts}
                 notes={piece.notes}
+                used={piece.used}
               />
             </div>
           </Aux>

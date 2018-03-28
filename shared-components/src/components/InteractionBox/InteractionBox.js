@@ -22,6 +22,7 @@ class interactionBox extends Component {
   // - candidateOptions
   state = {
     mode: this.props.mode !== undefined ? this.props.mode : 'NEW',
+    id: this.props.id !== undefined ? this.props.id : '',
     type: this.props.type !== undefined ? this.props.type : SNIPPET_TYPE.LASSO,
     url: this.props.url !== undefined ? this.props.url : '',
     postTags: this.props.postTags !== undefined ? this.props.postTags : [],
@@ -33,6 +34,7 @@ class interactionBox extends Component {
     existingOptions: [],
     notes: this.props.notes !== undefined ? this.props.notes : '',
     title: this.props.title !== undefined ? this.props.title : '',
+    used: this.props.used !== undefined ? this.props.used : [],
     canSubmit: false
   }
 
@@ -40,6 +42,8 @@ class interactionBox extends Component {
     super(props);
     this.onMouseUp = this.selectTextListener.bind(this);
     this.onKeyup = this.addOption.bind(this);
+    this.onKeyDown = this.keyDownListener.bind(this);
+    this.onCopy = this.copyCodeListener.bind(this);
   }
 
   componentDidMount() {
@@ -92,6 +96,8 @@ class interactionBox extends Component {
 
     window.addEventListener('mouseup', this.onMouseUp, false);
     window.addEventListener('keyup', this.onKeyup, false);
+    window.addEventListener('keydown', this.onKeyDown, false);
+    window.addEventListener('copy', this.onCopy, false);
 
   }
 
@@ -99,14 +105,44 @@ class interactionBox extends Component {
     // console.log('unmount interaction box');
     window.removeEventListener('mouseup', this.onMouseUp, false);
     window.removeEventListener('keyup', this.onKeyup, false);
+    window.removeEventListener('keydown', this.onKeyDown, false);
+    window.removeEventListener('copy', this.onCopy, false);
   }
 
-  selectTextListener () {
-    let selection = window.getSelection();
-    // console.log(selection.containsNode(document.querySelector('#interaction-box-editable-selected-text'), true));
-    // console.log(window.getSelection().toString());
-    if (selection.containsNode(document.querySelector('#interaction-box-editable-selected-text'), true)) {
-      this.setState({title: selection.toString()});
+  copyCodeListener () {
+    console.log('copied!');
+    let msg = {
+      secret: 'secret-transmission-from-iframe',
+      type: 'COPY_DETECTED',
+      payload: {
+        title: this.state.title,
+        content: window.getSelection().toString(),
+        notes: this.state.notes,
+        url: this.state.url,
+        existingOptions: this.state.existingOptions,
+        userId: window.userId,
+        taskId: window.currentTaskId,
+        pieceId: this.state.id
+      }
+    };
+    window.parent.postMessage(JSON.stringify(msg), '*');
+    console.log(msg);
+  }
+
+  keyDownListener (event) {
+    if (event.keyCode === 83) {
+      this.hotKeyIsDown = true;
+    }
+  }
+
+  selectTextListener (event) {
+    if (this.hotKeyIsDown) {
+      let selection = window.getSelection();
+      // console.log(selection.containsNode(document.querySelector('#interaction-box-editable-selected-text'), true));
+      // console.log(window.getSelection().toString());
+      if (selection.containsNode(document.querySelector('#interaction-box-editable-selected-text'), true)) {
+        this.setState({title: selection.toString()});
+      }
     }
   }
 
@@ -237,6 +273,9 @@ class interactionBox extends Component {
       // });
       FirebaseStore.addAnOptionForCurrentTask(document.querySelector('#add-option-in-piece-input').value.trim());
       document.querySelector('#add-option-in-piece-input').value = "";
+    }
+    if (event.keyCode === 83) {
+      this.hotKeyIsDown = false;
     }
   }
 

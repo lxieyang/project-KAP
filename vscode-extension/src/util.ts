@@ -143,7 +143,7 @@ export const commentStringStartEnd = (document: vscode.TextDocument): any => {
     return "";
 }
 
-export const prepareCopiedCode = (context: vscode.ExtensionContext,payload: any): void => {  
+export const prepareCopiedCodeLegacy = (context: vscode.ExtensionContext, payload: any): void => {  
     const { name, url, content } = payload;
     // console.log(name + " | " + url);
     let cmtString = commentString("@@@source: " + url + " @@@", vscode.window.visibleTextEditors[0].document);
@@ -171,4 +171,84 @@ export const prepareCopiedCode = (context: vscode.ExtensionContext,payload: any)
         }
         
     });
+};
+
+export const prepareCopiedCode = (context: vscode.ExtensionContext, payload: any): void => {  
+    /*
+    let msg = {
+        secret: 'secret-transmission-from-iframe',
+        type: 'COPY_DETECTED',
+        payload: {
+            title: this.state.title,
+            content: window.getSelection().toString(),
+            note: this.state.note,
+            url: this.state.url,
+            existingOptions: this.state.existingOptions,
+            userId: window.userId,
+            taskId: window.currentTaskId,
+            pieceId: this.state.id
+        }
+    };
+    */
+
+    const { title, content, notes, url, existingOptions, userId, taskId, pieceId } = payload;
+
+    let cmtString = commentString("@@@source: (" + userId + ") (" + pieceId + ") @@@", vscode.window.visibleTextEditors[0].document);
+    // console.log(cmtString + "\n" + content);
+    ncp.copy(cmtString + "\n" + content, () => {
+        let mappings = context.workspaceState.get('mappings', []);
+        let shouldAddToMapping = true;
+
+        for (let map of mappings) {
+            if (map.title === title 
+                && map.content === content 
+                && map.userId === userId
+                && map.taskId === taskId
+                && map.pieceId === pieceId) {
+                shouldAddToMapping = false;
+            }
+        }
+
+        if (shouldAddToMapping) {
+            mappings.push({
+                pieceId: pieceId,
+                userId: userId,
+                taskId: taskId,
+                content: content,
+                notes: notes,
+                existingOptions: existingOptions,
+                url: url,
+                title: title,
+                type: 'COPIED'
+            });
+            context.workspaceState.update('mappings', mappings).then(response => {
+                console.log(response);
+            });
+        }
+
+    });
+    
+    // ncp.copy(cmtString + "\n" + content, () => {
+    //     // console.log(ncp.paste());
+    //     // let mappings = context.workspaceState.get('mappings', []);
+    //     // let shouldAddToMapping = true;
+
+    //     // for (let map of mappings) {
+    //     //     if (map.name === name && map.content === content && map.url === url) {
+    //     //         shouldAddToMapping = false;
+    //     //     }
+    //     // }
+
+    //     // if (shouldAddToMapping) {
+    //     //     mappings.push({
+    //     //         url: url,
+    //     //         name: name,
+    //     //         content: content
+    //     //     });
+    //     //     context.workspaceState.update('mappings', mappings).then(response => {
+    //     //         // console.log(response);
+    //     //     });
+    //     // }
+        
+    // });
 }
