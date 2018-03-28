@@ -40,16 +40,20 @@ export function activate(context: vscode.ExtensionContext) {
     
     let hoverProvider = {
         provideHover(document: vscode.TextDocument, position: vscode.Position, token: vscode.CancellationToken): Thenable<vscode.Hover> {
+            console.log(lastScanResult);
+            
             // console.log(position.line + " | " + position.character);
             let range = document.getWordRangeAtPosition(position);
+            console.log("HOVER " + JSON.stringify(range));
             const matchingDecorationAndItem = lastScanResult.map(item => {
                 return {
                     item: item,
-                    decoration: item.decorations.find(dec => range.start.line === dec.range.start.line)
+                    range: item.decorations[0].range
                 }
-            }).find(pair => pair.decoration !== null);
+            }).find(pair => pair.range !== null && pair.range.start.line === range.start.line);
 
-            console.log(matchingDecorationAndItem);
+            console.log("MATCH: " + JSON.stringify(matchingDecorationAndItem));
+            
 
             let result: Thenable<vscode.Hover> = undefined;
 
