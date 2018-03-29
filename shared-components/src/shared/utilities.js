@@ -16,6 +16,20 @@ export const getOrigin = () => {
   return window.location.origin;
 }
 
+export const openLinkInTextEditorExtension = (event, url) => {
+  if (window.top !== window.self) {
+    event.preventDefault();
+    let msg = {
+      secret: 'secret-transmission-from-iframe',
+      type: 'CLICKED',
+      payload: {
+        url
+      }
+    };
+    window.parent.postMessage(JSON.stringify(msg), '*');
+  }
+}
+
 
 export const getFirstNWords = (n, str) => {
   let split = str.split(/\s+/);

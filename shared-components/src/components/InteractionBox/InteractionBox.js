@@ -12,9 +12,11 @@ import {
 import { SNIPPET_TYPE } from '../../shared/constants';
 import { sortBy, reverse } from 'lodash';
 import * as FirebaseStore from '../../firebase/store';
+import { openLinkInTextEditorExtension } from '../../shared/utilities';
 
 const dummyText = 'Please select some text';
 const dummyHtml = [`<p>Please lasso select some text</p>`];
+
 
 class interactionBox extends Component {
   // update state with :
@@ -420,7 +422,7 @@ class interactionBox extends Component {
             
           </div>
           <div style={{marginRight: '20px', fontSize: '16px', opacity: '0.6'}}>
-            <a target="_blank" href={this.state.url} style={{color: 'black'}}><FontAwesome name={'link'}/></a>
+            <a target="_blank" href={this.state.url} style={{color: 'black'}} onClick={(event) => openLinkInTextEditorExtension(event, this.state.url)}><FontAwesome name={'link'}/></a>
           </div>
         </div>
         

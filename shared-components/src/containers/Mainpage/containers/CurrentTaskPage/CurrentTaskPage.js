@@ -22,10 +22,6 @@ class CurrentTaskPage extends Component {
     });
   }
 
-  componentWillUpdate() {
-    
-  }
-
   componentWillReceiveProps (newProps) {
     this.setState({specific: newProps.specific});
     this.setState({isTable: false});
@@ -38,7 +34,7 @@ class CurrentTaskPage extends Component {
 
   componentDidMount() {
     if (this.props.specific === true) {
-      console.log(this.props.match.params);
+      // console.log(this.props.match.params);
       let userId = this.props.match.params.userId;
       let taskId = this.props.match.params.taskId;
       this.updateTask({database: this.props.database, userId, taskId});
@@ -48,7 +44,7 @@ class CurrentTaskPage extends Component {
   updateTask (payload) {
     const { database, userId, taskId } = payload;
     database.ref(`users/${userId}`).child('tasks').child(taskId).once('value', (childSnapshot) => {
-      console.log(childSnapshot.val());
+      // console.log(childSnapshot.val());
       if (childSnapshot.val() !== null) {
         let thisTask = {
           id: childSnapshot.key,
@@ -78,7 +74,7 @@ class CurrentTaskPage extends Component {
             : childSnapshot.val().pageCountList
           )
         };
-        console.log(thisTask);
+        // console.log(thisTask);
         this.setState({specificTask: thisTask});
       } else {
         this.setState({errorMsg: 'Sorry, there was an error retrieving the previous task!'});

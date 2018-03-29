@@ -250,7 +250,7 @@ export function activate(context: vscode.ExtensionContext) {
     });
 
     vscode.commands.registerCommand('extension.openLink', (link) => {
-        // console.log(link);
+        console.log(link);
         open(link);
     });
 
