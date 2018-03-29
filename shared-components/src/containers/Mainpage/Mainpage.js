@@ -12,8 +12,8 @@ import {
   tasksRef,
   currentTaskIdRef,
   userId,
+  database,
   setUserIdAndName
-
 } from '../../firebase/index';
 
 @DragDropContext(HTML5Backend)
@@ -35,6 +35,16 @@ class Mainpage extends Component {
 
     this.loadTasks();
     this.updateInbackground();
+
+
+    // ckeck if should load other tasks
+    database.ref('users').child(userId).child('editor').child('taskToNavigateTo').on('value', (snapshot) => {
+      if (snapshot.val() !== null) {
+        this.props.history.push(`/tasks/${snapshot.val().userId}/${snapshot.val().taskId}`);
+        database.ref('users').child(userId).child('editor').child('taskToNavigateTo').set(null);
+      }
+    });
+
   }
 
   resetParameters = (userId) => {
@@ -61,6 +71,7 @@ class Mainpage extends Component {
     });
     // window.currentTaskIdRef = currentTaskIdRef;
     window.tasksRef = tasksRef;
+    window.database = database;
   }
 
   updateInbackground () {
@@ -109,7 +120,7 @@ class Mainpage extends Component {
             ? {}
             : childSnapshot.val().pageCountList
           )
-        })
+        });
       });
       this.setState({tasks: transformedTasks});
     });
@@ -133,11 +144,14 @@ class Mainpage extends Component {
     let routes = (
       <Switch>
         <Route path={appRoutes.CURRENT_TASK} render={
-          (routeProps) => (<CurrentTaskPage {...routeProps} task={currentTaskObject}/>)
+          (routeProps) => (<CurrentTaskPage {...routeProps} task={currentTaskObject} specific={false}/>)
         } />
         <Route path={appRoutes.ALL_TASKS} render={
           (routeProps) => (<AllTasksPage {...routeProps} tasks={tasks} />)
         }/>
+        <Route path={appRoutes.TASK_WITH_ID} render={
+          (routeProps) => (<CurrentTaskPage {...routeProps} specific={true} database={database}/>)
+        } />
         <Redirect to={this.state.homepage} />
       </Switch>
     )

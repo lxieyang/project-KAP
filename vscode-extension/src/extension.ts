@@ -5,6 +5,7 @@ import TextDocumentContentProvider from './TextDocumentContentProvider';
 import { open, getLanguageType, prepareCopiedCode } from './util';
 import firebase from './firebase';
 
+
 // Get a reference to the database service
 let database = firebase.database();
 
@@ -20,6 +21,7 @@ interface Mapping {
     content: string;
     note: string;
     existingOptions: Object;
+    originalCodeSnippet: string[];
     url: string;
     title: string;
     type: string;
@@ -33,37 +35,61 @@ export function activate(context: vscode.ExtensionContext) {
     // Use the console to output diagnostic information (console.log) and errors (console.error)
     // This line of code will only be executed once when your extension is activated
     console.log('Congratulations, your extension "open-webview" is now active!');
-
+    
+    let userId: string = "";
     let mappings : Mapping[] = [];
     context.workspaceState.update('mappings', mappings).then(response => {});
+    let activeLanguage: string = "";
     let copiedPayload = {};
+
+    let taskToNavigateTo = {
+        userId: "",
+        taskId: "",
+        pieceId: ""
+    }
     
     let hoverProvider = {
         provideHover(document: vscode.TextDocument, position: vscode.Position, token: vscode.CancellationToken): Thenable<vscode.Hover> {
-            console.log(lastScanResult);
+            // console.log(lastScanResult);
             
             // console.log(position.line + " | " + position.character);
             let range = document.getWordRangeAtPosition(position);
-            console.log("HOVER " + JSON.stringify(range));
+            // console.log("HOVER " + JSON.stringify(range));
             const matchingDecorationAndItem = lastScanResult.map(item => {
                 return {
                     item: item,
                     range: item.decorations[0].range
                 }
-            }).find(pair => pair.range !== null && pair.range.start.line === range.start.line);
-
-            console.log("MATCH: " + JSON.stringify(matchingDecorationAndItem));
-            
+            }).find(pair => pair.range !== null && pair.range.start.line === range.start.line);            
 
             let result: Thenable<vscode.Hover> = undefined;
 
             if (matchingDecorationAndItem) {
-                let hoverMessage = "";
-                hoverMessage += `### [${matchingDecorationAndItem.item.payload.title}](${matchingDecorationAndItem.item.payload.url})    \n`;
-                hoverMessage += `#### Note:   \n`;
-                hoverMessage += `\`\`\`  \n`;
-                hoverMessage += `${matchingDecorationAndItem.item.payload.notes}   `;
-                hoverMessage += `\`\`\``;
+                // let hoverMessage = "";
+                // hoverMessage += `### [${matchingDecorationAndItem.item.payload.title}](${matchingDecorationAndItem.item.payload.url})    \n`;
+                // hoverMessage += `### [${matchingDecorationAndItem.item.payload.title}](http://localhost:3001/tasks/yiyiwang/-L8TbdGiRIRpkzh_FwzJ)    \n`;
+
+                // hoverMessage += `#### Original Code Snippets:   \n`;
+                // hoverMessage += `\`\`\`${activeLanguage}  \n`;
+                // hoverMessage += `${matchingDecorationAndItem.item.payload.content}   `;
+                // hoverMessage += `\`\`\`   \n`;
+
+                // hoverMessage += `#### Options involved:   \n`;
+                // for (let op of matchingDecorationAndItem.item.payload.existingOptions.filter(op => op.active === true)) {
+                //     hoverMessage += `> - ${op.name}: ${op.attitude === true ? '👍' : op.attitude === false ? '👎' : '❓'}  \n`;
+                // }
+                let payload = matchingDecorationAndItem.item.payload;
+                taskToNavigateTo = {
+                    userId: payload.userId,
+                    taskId: payload.taskId,
+                    pieceId: payload.pieceId
+                };
+
+                let hoverMessage = new vscode.MarkdownString();
+                hoverMessage.isTrusted = true;
+                hoverMessage.appendMarkdown(`### [${matchingDecorationAndItem.item.payload.title}](${matchingDecorationAndItem.item.payload.url})    \n`);
+                hoverMessage.appendMarkdown(`### [${matchingDecorationAndItem.item.payload.title}](command:extension.openTask)    \n`)
+
 
                 return Promise.resolve(new vscode.Hover(hoverMessage, document.getWordRangeAtPosition(position)));
             }
@@ -135,16 +161,15 @@ export function activate(context: vscode.ExtensionContext) {
     }
 
     const updateLanType = () => {
-        let lan = getLanguageType();
-        console.log(lan);
-        database.ref('editor/languagetype').set(lan);
+        activeLanguage = getLanguageType();
+        console.log(activeLanguage);
+        database.ref('editor/languagetype').set(activeLanguage);
     }
     
 
-    let previewUri = vscode.Uri.parse('open-webview://open-webview');
+    let previewUri = vscode.Uri.parse('open-webview://open-webview/http://localhost:3001/');
     let provider = new TextDocumentContentProvider();
     let registration = vscode.workspace.registerTextDocumentContentProvider('open-webview', provider);
-
 
 
 
@@ -206,6 +231,7 @@ export function activate(context: vscode.ExtensionContext) {
 
     // register commands
     let disposable = vscode.commands.registerCommand('extension.openWebview', () => {
+        console.log(previewUri);
         return vscode.commands.executeCommand('vscode.previewHtml', previewUri, vscode.ViewColumn.Two, 'KAP').then((success) => {
 
         }, (reason) => {
@@ -213,14 +239,36 @@ export function activate(context: vscode.ExtensionContext) {
         });
     });
 
+    vscode.commands.registerCommand('extension.openTask', (payload) => {
+        // console.log('open task');
+        // console.log(previewUri);
+        // provider.update(vscode.Uri.parse('open-webview://open-webview/https://project-kap-dev.firebaseapp.com/'));
+
+        console.log(taskToNavigateTo);
+        database.ref('users').child(userId).child('editor').child('taskToNavigateTo').set(taskToNavigateTo);
+    
+    });
+
     vscode.commands.registerCommand('extension.openLink', (link) => {
-        console.log(link);
+        // console.log(link);
         open(link);
     });
 
-    vscode.commands.registerCommand('extension.setUser', (userId) => {
+    vscode.commands.registerCommand('extension.setUser', (_userId) => {
         console.log(userId);
+        userId = _userId;
     });
+
+    vscode.commands.registerCommand('extension.copyDetected', (payload) => {
+        // console.log(payload);
+        copiedPayload = payload;
+        prepareCopiedCode(context, payload);
+   
+    });
+
+
+
+
 
     // vscode.commands.registerCommand('extension.copyDetected', (name, url, content) => {
     //     copiedPayload = {
@@ -231,12 +279,7 @@ export function activate(context: vscode.ExtensionContext) {
    
     // });
 
-    vscode.commands.registerCommand('extension.copyDetected', (payload) => {
-        console.log(payload);
-        copiedPayload = payload;
-        prepareCopiedCode(context, payload);
-   
-    });
+    
 
 
 

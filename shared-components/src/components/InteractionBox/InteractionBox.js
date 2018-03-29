@@ -117,6 +117,7 @@ class interactionBox extends Component {
       payload: {
         title: this.state.title,
         content: window.getSelection().toString(),
+        originalCodeSnippet: this.state.codeSnippetTexts,
         notes: this.state.notes,
         url: this.state.url,
         existingOptions: this.state.existingOptions,

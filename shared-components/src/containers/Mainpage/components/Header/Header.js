@@ -66,7 +66,7 @@ class Header extends Component {
             <div className={styles.SearchBox}>
               <SearchBar />
             </div>
-            <div className={styles.Profile} onClick={(event) => {alert('hoho')}}>
+            <div className={styles.Profile}>
               <img src={Yoda} alt=""className={styles.ProfileImg}/> 
               <span>{'Master ' + capitalizeFirstLetter(this.props.userId)}</span>
             </div>

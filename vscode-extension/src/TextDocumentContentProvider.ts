@@ -5,7 +5,8 @@ class TextDocumentContentProvider implements vscode.TextDocumentContentProvider 
   private _onDidChange = new vscode.EventEmitter<vscode.Uri>();
 
   public provideTextDocumentContent(uri: vscode.Uri): string {
-    return this.displayPreview();
+    console.log(uri);
+    return this.displayPreview(uri.path.substr(1));
   }
 
   get onDidChange(): vscode.Event<vscode.Uri> {
@@ -17,8 +18,8 @@ class TextDocumentContentProvider implements vscode.TextDocumentContentProvider 
     this._onDidChange.fire(uri);
   }
 
-  private displayPreview(): string {
-    let address = 'http://localhost:3001/'; // 'https://project-kap-dev.firebaseapp.com/'; //'http://localhost:3001/';
+  private displayPreview(path): string {
+    let address = path; // 'http://localhost:3001/'; // 'https://project-kap-dev.firebaseapp.com/'; //'http://localhost:3001/';
     return `
     <!DOCTYPE html>
     <head><style type="text/css"> html, body{ height:100%; width:100%; overflow:hidden; padding:0;margin:0; } </style>

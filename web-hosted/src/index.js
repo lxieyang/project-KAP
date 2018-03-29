@@ -2,12 +2,11 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
-// import Mainpage from '../../shared-components/src/containers/Mainpage/Mainpage';
 import { BrowserRouter } from 'react-router-dom';
 import registerServiceWorker from './registerServiceWorker';
 
 if (window.top !== window.self) { 
-  document.body.style.zoom = '0.7';
+  document.body.style.zoom = '0.75';
 }
 
 const app = (
