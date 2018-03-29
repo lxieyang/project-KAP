@@ -24,8 +24,8 @@ class CurrentTaskPage extends Component {
 
   componentWillReceiveProps (newProps) {
     this.setState({specific: newProps.specific});
-    this.setState({isTable: false});
     if (newProps.specific === true) {
+      this.setState({isTable: false});
       let userId = newProps.match.params.userId;
       let taskId = newProps.match.params.taskId;
       this.updateTask({database: newProps.database, userId, taskId});

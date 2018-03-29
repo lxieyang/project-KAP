@@ -1,6 +1,16 @@
 import * as vscode from 'vscode';
 var exec = require('child_process').exec;
 var ncp = require("copy-paste");
+import firebase from './firebase';
+
+// Get a reference to the database service
+export let database = firebase.database();
+export let codebasesRef = database.ref('codebases');
+export let codebaseId: string = "";
+export let setCodebaseId = (id) => {
+    codebaseId = id;
+}
+
 
 export const open = (url) => {
     let platform = process.platform;
@@ -192,8 +202,7 @@ export const prepareCopiedCode = (context: vscode.ExtensionContext, payload: any
     */
 
     const { title, content, notes, url, existingOptions, userId, taskId, pieceId } = payload;
-
-    let cmtString = commentString("@@@source: (" + userId + ") (" + pieceId + ") @@@", vscode.window.visibleTextEditors[0].document);
+    let cmtString = commentString(`@@@source: (${userId}) (${taskId}) (${pieceId}) (${title}) @@@`, vscode.window.visibleTextEditors[0].document);
     // console.log(cmtString + "\n" + content);
     ncp.copy(cmtString + "\n" + content, () => {
         let mappings = context.workspaceState.get('mappings', []);
@@ -210,7 +219,7 @@ export const prepareCopiedCode = (context: vscode.ExtensionContext, payload: any
         }
 
         if (shouldAddToMapping) {
-            mappings.push({
+            let entry = {
                 pieceId: pieceId,
                 userId: userId,
                 taskId: taskId,
@@ -220,10 +229,11 @@ export const prepareCopiedCode = (context: vscode.ExtensionContext, payload: any
                 url: url,
                 title: title,
                 type: 'COPIED'
-            });
-            context.workspaceState.update('mappings', mappings).then(response => {
-                console.log(response);
-            });
+            };
+            mappings.push(entry);
+
+            let newEntry = codebasesRef.child(codebaseId).child('entries').push();
+            newEntry.set(entry);
         }
 
     });
