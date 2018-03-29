@@ -21,6 +21,7 @@ import * as FirebaseStore from '../../../../../firebase/store';
 class TableView extends Component {
   state = {
     pieces: this.props.task.pieces,
+    specificPieceId: this.props.specificPieceId !== undefined ? this.props.specificPieceId : null,
     options: this.props.task.options,
     pieceGroups: this.props.task.pieceGroups,
     optionsList: [],
@@ -28,6 +29,16 @@ class TableView extends Component {
     isDetailed: true,
     showModal: false,
     modalPieceId: ''
+  }
+
+  componentWillReceiveProps (nextProps) {
+    if (nextProps.specificPieceId !== undefined) {
+      this.setState({specificPieceId: nextProps.specificPieceId})
+    } else {
+      this.setState({specificPieceId: null});
+    }
+    const { task } = nextProps;
+    this.transformData(task);
   }
 
   componentDidMount () {
@@ -39,11 +50,6 @@ class TableView extends Component {
         this.dismissModal();
       }
     });
-  }
-
-  componentWillReceiveProps(nextProps) {
-    const { task } = nextProps;
-    this.transformData(task);
   }
 
   transformData = (task) => {
@@ -514,6 +520,8 @@ class TableView extends Component {
                 mode={'UPDATE'}
                 clip={this.dismissModal}
                 id={this.state.modalPieceId}
+                specificPieceId={this.state.specificPieceId}
+                options={this.props.task.options}
                 attitudeOptionPairs={piece.attitudeOptionPairs}
                 type={piece.type}
                 url={piece.url}

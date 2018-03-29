@@ -295,6 +295,7 @@ export function activate(context: vscode.ExtensionContext) {
         }, (reason) => {
             vscode.window.showErrorMessage(reason);
         });    
+        database.ref('users').child(userId).child('editor').child('taskToNavigateTo').set(taskToNavigateTo);
     });
 
     vscode.commands.registerCommand('extension.openLink', (link) => {

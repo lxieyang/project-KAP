@@ -248,10 +248,19 @@ class CollectionView extends Component {
     windowSize: window.innerWidth,
     showModal: false,
     modalPieceId: '',
+    specificPieceId: this.props.specificPieceId !== undefined ? this.props.specificPieceId : null,
     topPageIsOpen: false,
     allSnippetSIsOpen: true,
     withCodeSnippetIsOpen: false,
     withNodeSnippetsIsOpen: false
+  }
+
+  componentWillReceiveProps (nextProps) {
+    if (nextProps.specificPieceId !== undefined) {
+      this.setState({specificPieceId: nextProps.specificPieceId})
+    } else {
+      this.setState({specificPieceId: null});
+    }
   }
 
   componentDidMount() {
@@ -490,6 +499,8 @@ class CollectionView extends Component {
                 mode={'UPDATE'}
                 clip={this.dismissModal}
                 id={this.state.modalPieceId}
+                specificPieceId={this.state.specificPieceId}
+                options={this.props.task.options}
                 attitudeOptionPairs={piece.attitudeOptionPairs}
                 type={piece.type}
                 url={piece.url}

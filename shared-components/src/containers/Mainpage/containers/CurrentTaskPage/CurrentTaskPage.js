@@ -13,6 +13,7 @@ class CurrentTaskPage extends Component {
     isTable: false,
     specific: this.props.specific,
     specificTask: null,
+    specificPieceId: null,
     errorMsg: null
   }
 
@@ -28,6 +29,8 @@ class CurrentTaskPage extends Component {
       this.setState({isTable: false});
       let userId = newProps.match.params.userId;
       let taskId = newProps.match.params.taskId;
+      let pieceId = this.props.match.params.pieceId;
+      this.setState({specificPieceId: pieceId});
       this.updateTask({database: newProps.database, userId, taskId});
     }
   }
@@ -37,6 +40,8 @@ class CurrentTaskPage extends Component {
       // console.log(this.props.match.params);
       let userId = this.props.match.params.userId;
       let taskId = this.props.match.params.taskId;
+      let pieceId = this.props.match.params.pieceId;
+      this.setState({specificPieceId: pieceId});
       this.updateTask({database: this.props.database, userId, taskId});
     }
   }
@@ -89,8 +94,8 @@ class CurrentTaskPage extends Component {
     if (this.state.specific === true) {
       if (this.state.specificTask !== null) {
         content = !isTable 
-          ? <CollectionView task={this.state.specificTask}/> 
-          : <TableView task={this.state.specificTask}/>
+          ? <CollectionView task={this.state.specificTask} specificPieceId={this.state.specificPieceId}/> 
+          : <TableView task={this.state.specificTask} specificPieceId={this.state.specificPieceId}/>
       } else {
         content = this.state.errorMsg !== null ? <div style={{marginTop: '40px'}}>{this.state.errorMsg}</div> : null;
       }

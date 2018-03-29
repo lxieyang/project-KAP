@@ -40,7 +40,7 @@ class Mainpage extends Component {
     // ckeck if should load other tasks
     database.ref('users').child(userId).child('editor').child('taskToNavigateTo').on('value', (snapshot) => {
       if (snapshot.val() !== null) {
-        this.props.history.push(`/tasks/${snapshot.val().userId}/${snapshot.val().taskId}`);
+        this.props.history.push(`/tasks/${snapshot.val().userId}/${snapshot.val().taskId}/${snapshot.val().pieceId}`);
         database.ref('users').child(userId).child('editor').child('taskToNavigateTo').set(null);
       }
     });

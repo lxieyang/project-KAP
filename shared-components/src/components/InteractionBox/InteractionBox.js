@@ -49,52 +49,80 @@ class interactionBox extends Component {
   }
 
   componentDidMount() {
-    currentTaskIdRef.on('value', (snapshot) => {
-      tasksRef.child(snapshot.val() + '/options').on('value', (data) => {
-        if (this.state.mode !== 'UPDATE') {
-          tasksRef.child(snapshot.val() + '/currentOptionId').once('value', (databack) => {
-            let currentOptionId = databack.val();
+    if (this.props.specificPieceId !== null) {
+      let transformedOptions = [];
+      for (let opKey in this.props.options) {
+        let attitudeOptionPairs = this.props.attitudeOptionPairs;
+        if(attitudeOptionPairs !== undefined) {
+          let matchingPair = attitudeOptionPairs.filter(pair => pair.optionId === opKey);
+          let active = matchingPair.length !== 0;
+          let attitude = active && matchingPair[0].attitude !== undefined ? matchingPair[0].attitude : null
+          transformedOptions.push({
+            id: opKey,
+            name: this.props.options[opKey].name,
+            active: active,
+            attitude: attitude
+          });
+        } else {
+          transformedOptions.push({
+            id: opKey,
+            name: this.props.options[opKey].name,
+            active: false,
+            attitude: null
+          });
+        }
+      }
+      transformedOptions = reverse(sortBy(transformedOptions, ['active']));
+      this.setState({existingOptions: transformedOptions});
+    } else {
+      currentTaskIdRef.on('value', (snapshot) => {
+        tasksRef.child(snapshot.val() + '/options').on('value', (data) => {
+          if (this.state.mode !== 'UPDATE') {
+            tasksRef.child(snapshot.val() + '/currentOptionId').once('value', (databack) => {
+              let currentOptionId = databack.val();
+              let transformedOptions = [];
+              data.forEach((opSnapshot) => {
+                transformedOptions.push({
+                  id: opSnapshot.key,
+                  name: opSnapshot.val().name,
+                  active: opSnapshot.key === currentOptionId,
+                  attitude: null
+                });
+              });
+              transformedOptions = reverse(sortBy(transformedOptions, ['active']));
+              this.setState({existingOptions: transformedOptions});
+            });  
+          } else {  // with existing one
             let transformedOptions = [];
             data.forEach((opSnapshot) => {
-              transformedOptions.push({
-                id: opSnapshot.key,
-                name: opSnapshot.val().name,
-                active: opSnapshot.key === currentOptionId,
-                attitude: null
-              });
+              let opKey = opSnapshot.key;
+              let attitudeOptionPairs = this.props.attitudeOptionPairs;
+              if(attitudeOptionPairs !== undefined) {
+                let matchingPair = attitudeOptionPairs.filter(pair => pair.optionId === opKey);
+                let active = matchingPair.length !== 0;
+                let attitude = active && matchingPair[0].attitude !== undefined ? matchingPair[0].attitude : null
+                transformedOptions.push({
+                  id: opKey,
+                  name: opSnapshot.val().name,
+                  active: active,
+                  attitude: attitude
+                });
+              } else {
+                transformedOptions.push({
+                  id: opKey,
+                  name: opSnapshot.val().name,
+                  active: false,
+                  attitude: null
+                });
+              }
             });
             transformedOptions = reverse(sortBy(transformedOptions, ['active']));
             this.setState({existingOptions: transformedOptions});
-          });  
-        } else {  // with existing one
-          let transformedOptions = [];
-          data.forEach((opSnapshot) => {
-            let opKey = opSnapshot.key;
-            let attitudeOptionPairs = this.props.attitudeOptionPairs;
-            if(attitudeOptionPairs !== undefined) {
-              let matchingPair = attitudeOptionPairs.filter(pair => pair.optionId === opKey);
-              let active = matchingPair.length !== 0;
-              let attitude = active && matchingPair[0].attitude !== undefined ? matchingPair[0].attitude : null
-              transformedOptions.push({
-                id: opKey,
-                name: opSnapshot.val().name,
-                active: active,
-                attitude: attitude
-              });
-            } else {
-              transformedOptions.push({
-                id: opKey,
-                name: opSnapshot.val().name,
-                active: false,
-                attitude: null
-              });
-            }
-          });
-          transformedOptions = reverse(sortBy(transformedOptions, ['active']));
-          this.setState({existingOptions: transformedOptions});
-        }
+          }
+        });
       });
-    });
+    }
+    
 
     window.addEventListener('mouseup', this.onMouseUp, false);
     window.addEventListener('keyup', this.onKeyup, false);
@@ -371,6 +399,8 @@ class interactionBox extends Component {
       snippet = (
         <div 
           id="interaction-box-editable-selected-text"
+          contentEditable={true}
+          suppressContentEditableWarning={true}
           className={styles.selectedText} 
           style={{width: 
             this.state.snippetDimension !== null 
@@ -383,6 +413,8 @@ class interactionBox extends Component {
       snippet = (
         <div 
           id="interaction-box-editable-selected-text"
+          contentEditable={true}
+          suppressContentEditableWarning={true}
           className={styles.snappedText} 
           style={{width: 
             this.state.snippetDimension !== null 
@@ -430,7 +462,7 @@ class interactionBox extends Component {
           {snippet}
         </div>
 
-        {addOption}
+        {this.props.specificPieceId === null ? addOption : null}
         {experimentalOptionList}
 
         { /* optionList */ }
