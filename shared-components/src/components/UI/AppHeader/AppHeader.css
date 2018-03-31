@@ -1,11 +1,35 @@
 .AppHeader {
   margin: 10px;
+  margin-left: 50px;
   display: flex;
   align-items: center;
-  justify-content: center;
 }
 
 .HeaderText {
   margin-left: 15px;
   font-size: 1.15rem;
+}
+
+.LetterC {
+  color: #4285f4;
+}
+
+.LetterH {
+  color: #ea4335;
+}
+
+.LetterR {
+  color: #fbbc05;
+}
+
+.LetterO {
+  color: #4285f4;
+}
+
+.LetterM {
+  color: #34a853;
+}
+
+.LetterE {
+  color: #ea4335;
 }
