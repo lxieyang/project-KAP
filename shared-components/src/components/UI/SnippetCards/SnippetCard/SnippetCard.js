@@ -251,6 +251,7 @@ class SnippetCard extends Component {
                           : null
                         }
                         <div 
+                          title="View this piece"
                           className={styles.ViewIconInTooltip}
                           onClick={(event) => props.makeInteractionBox(event, pid)}>
                           <FontAwesomeIcon icon={fasEye} />
@@ -314,6 +315,7 @@ class SnippetCard extends Component {
             </div>
         }
         <div
+          title={props.type === SNIPPET_TYPE.PIECE_GROUP ? 'Discard this group\n(pieces will be preserved)' : 'Delete this piece'}
           className={styles.DeleteContainer}
           onClick={(event) => props.deleteThisSnippet(event, props.id, props.type)}>
           <FontAwesomeIcon 

@@ -57,6 +57,7 @@ class PageCard extends Component {
         </div>
         <div className={styles.Right}>
           <div 
+            title='Delete this page'
             className={styles.DeleteContainer}
             onClick={(event) => props.deleteThisPage(event, props.id)}>
             <FontAwesomeIcon 

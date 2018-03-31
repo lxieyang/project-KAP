@@ -344,7 +344,8 @@ class interactionBox extends Component {
               <tr key={op.id} className={styles.OptionTableRow}>
                 <td>
                   <div 
-                  className={styles.DeleteOptionIconContainer}
+                    title="Delete this option"
+                    className={styles.DeleteOptionIconContainer}
                     onClick={(event) => this.deleteOption(event, op.id)}>
                     <FontAwesomeIcon icon={fasTrash} />
                   </div>
@@ -459,7 +460,7 @@ class interactionBox extends Component {
             
           </div>
           <div style={{marginRight: '20px', fontSize: '16px', opacity: '0.6'}}>
-            <a target="_blank" href={this.state.url} style={{color: 'black'}} onClick={(event) => openLinkInTextEditorExtension(event, this.state.url)}><FontAwesomeIcon icon={fasLink}/></a>
+            <a target="_blank" href={this.state.url} style={{color: 'black'}} onClick={(event) => openLinkInTextEditorExtension(event, this.state.url)} title="Open the original page in a new tab"><FontAwesomeIcon icon={fasLink}/></a>
           </div>
         </div>
         
@@ -482,6 +483,7 @@ class interactionBox extends Component {
           </div>
           <div className={styles.ClipButtonContainer}>
             <button
+              title="Save this piece"
               className={styles.ClipButton}
               onClick={(event) => this.submitPieceHandler(event)}
               >

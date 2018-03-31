@@ -114,6 +114,7 @@ class HoverInteraction extends Component {
           <div style={{display: 'flex', justifyContent: 'center', margin: '10px'}}>
             <div className={styles.ClipButtonContainer}>
               <button
+                title="Save this option"
                 className={styles.ClipButton}
                 onClick={(event) => this.submitHandler(event)}
                 >

@@ -156,10 +156,12 @@ class TaskCard extends Component {
             <span className={styles.Time}>
               {moment(new Date(this.props.time)).fromNow()}
             </span>
-            <FontAwesomeIcon 
-              icon={fasTrash}
-              className={styles.DeleteTaskIcon}
-              onClick={(event) => this.deleteTaskWithId(event, this.props.id)}/>
+            <div title='Delete this task'>
+              <FontAwesomeIcon 
+                icon={fasTrash}
+                className={styles.DeleteTaskIcon}
+                onClick={(event) => this.deleteTaskWithId(event, this.props.id)}/>            
+            </div>
           </div>
         </div>
 
