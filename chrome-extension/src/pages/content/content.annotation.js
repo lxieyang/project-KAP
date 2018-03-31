@@ -5,51 +5,90 @@ import ReactDOM from 'react-dom';
 import KAPCaptureHelper from './captures/capture.helper';
 import InteractionBox from '../../../../shared-components/src/components/InteractionBox/InteractionBox';
 import HoverInteraction from '../../../../shared-components/src/components/InteractionBox/HoverInteraction/HoverInteraction';
-
+import { getSearchTerm, getOrigin } from '../../../../shared-components/src/shared/utilities';
 import * as actionTypes from '../../../../shared-components/src/shared/actionTypes';
 import classes from './content.annotation.css';
-import { dragElement } from '../../../../shared-components/src/shared/utilities';
-
-import { 
-  PageCountHelper,
-  WebSurferHelper
-} from './content.utility';
-
+import { PageCountHelper, dragElement } from './content.utility';
 import { SNIPPET_TYPE } from '../../../../shared-components/src/shared/constants';
 import * as FirebaseStore from '../../../../shared-components/src/firebase/store';
 import { setUserIdAndName } from '../../../../shared-components/src/firebase/index';
 
+
+
+
+
+/* UTILITY FUNCTIONS */
+const handleFromSearchToTask = () => {
+  // check if new search is initiated,
+  // if so, attempt to add a new task
+  if (getOrigin().indexOf('www.google.com') !== -1) {
+    // attempt to generate new task
+    let searchTerm = getSearchTerm(window.location);
+    if (searchTerm !== '') {
+      FirebaseStore.addTaskFromSearchTerm(searchTerm);
+    }
+  } 
+}
+
+const shouldCount = (url) => {
+  let should_count = true;
+  for (let prefix of PageCountHelper.excluded_prefixes) {
+    if (url.indexOf(prefix) !== -1) {
+      should_count = false;
+      break;
+    }
+  }
+  console.log("[PAGE COUNT HELPER (shouldCount)]: " + should_count);
+  return should_count;
+}
+
+const handlePageCount = () => {
+  let domainName = window.location.hostname;
+  let url = document.location.href;
+  let siteTitle = document.title;
+  if (shouldCount(url)) {
+    FirebaseStore.addAPageToCountList(url, domainName, siteTitle);
+  }
+}
+
+
+
+
+
+
+
+/** Set up connection between background and content scripts */
 let port = chrome.runtime.connect({name: 'FROM_CONTENT'});
 port.postMessage({msg: 'GET_USER_INFO'});
 port.onMessage.addListener((response) => {
   if (response.msg === 'USER_INFO') {
     const { payload } = response;
     setUserIdAndName(payload.userId);
-    // console.log(payload.userId);
-    /* Handle page count */
-    PageCountHelper.handlePageCount();
-
-    /* handle searches to create tasks */
-    WebSurferHelper.handleFromSearchToTask();
+    console.log(payload.userId);
+    handlePageCount();
+    handleFromSearchToTask();
   }
 });
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.msg === 'USER_INFO') {
     setUserIdAndName(request.payload.userId);
-    // console.log(request.payload.userId);
-    /* Handle page count */
-    PageCountHelper.handlePageCount();
-
-    /* handle searches to create tasks */
-    WebSurferHelper.handleFromSearchToTask();
+    console.log(request.payload.userId);
+    handlePageCount();
+    handleFromSearchToTask();
   }
 });
 
 
-/* inject stylesheet */
+
+
+
+
+
+/** Inject Fontawesome stylesheet
+ * Previous using: https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css
+ */
 let link = document.createElement("link");
-// link.href = "https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css";
 link.href = "https://use.fontawesome.com/releases/v5.0.8/css/all.css";
 link.type = "text/css";
 link.rel = "stylesheet";
@@ -59,7 +98,7 @@ document.head.appendChild(link);
 
 
 
-
+/** Set up Capture Window & mount/unmount utilities */
 const captureWindow = document.createElement('div');
 captureWindow.className = 'kap-selection-window';
 captureWindow.setAttribute('id', 'kap-selection-window');
