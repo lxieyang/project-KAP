@@ -1,6 +1,9 @@
 import React, { Component } from 'react';
 
-import FontAwesome from 'react-fontawesome';
+import FontAwesomeIcon from '@fortawesome/react-fontawesome';
+import fasLink from '@fortawesome/fontawesome-free-solid/faLink';
+import fasSave from '@fortawesome/fontawesome-free-solid/faSave';
+import fasArrowsAlt from '@fortawesome/fontawesome-free-solid/faArrowsAlt';
 import Input from '../../UI/Input/Input';
 import styles from './HoverInteraction.css';
 import { 
@@ -87,7 +90,7 @@ class HoverInteraction extends Component {
         <div 
           id="hover-box-header" 
           className={styles.InteractionBoxDragHandle}> 
-          <FontAwesome name={'arrows-alt'}/>
+          <FontAwesomeIcon icon={fasArrowsAlt}/>
         </div>
         <div 
           className={styles.CloseBoxContainer}
@@ -128,7 +131,7 @@ class HoverInteraction extends Component {
                       ? styles.ButtonTextDisappear
                       : null
                     )].join(' ')}>
-                    <FontAwesome name={'save'} className={styles.ClipButtonIcon}/>
+                    <FontAwesomeIcon icon={fasSave} className={styles.ClipButtonIcon}/>
                   </span>
                 </div>
               </button>

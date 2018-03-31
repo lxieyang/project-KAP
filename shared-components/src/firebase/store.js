@@ -18,6 +18,10 @@ isDisabledRef.on('value', (snapshot) => {
 });
 
 
+
+
+
+/* WORKING STATUS */
 export const switchWorkingStatus = () => {
   isDisabledRef.once('value', (snapshot) => {
     if (snapshot.val() !== null) {
@@ -26,62 +30,63 @@ export const switchWorkingStatus = () => {
   })
 }
 
-export const addTaskFromSearchTerm = (searchTerm, tabId) => {
+
+
+
+
+
+/** TASKS */
+export const addTaskFromSearchTerm = async (searchTerm, tabId) => {
   // prevent refresh or back button
-  tasksRef.once('value', (snapshot) => {
-    taskList = [];
-    snapshot.forEach((childSnapshot) => {
-      taskList.push({...childSnapshot.val(), id: childSnapshot.key});
-    });
-    // console.log(taskList);
-    if (taskList) {
-      for (let task of taskList) {
-        if (task.name === searchTerm) {
-          console.log("same");
-          // set current task
-          switchCurrentTask(task.id);
-          return;
-        }
+  let tasks = await tasksRef.once('value');
+  taskList = [];
+  tasks.forEach((childSnapshot) => {
+    taskList.push({...childSnapshot.val(), id: childSnapshot.key});
+  });
+  if (taskList) {
+    for (let task of taskList) {
+      if (task.name === searchTerm) {
+        console.log("same");
+        // set current task
+        switchCurrentTask(task.id);
+        return;
       }
     }
-  
-    let task = {
-      id: (new Date()).getTime(),
-      timestamp: (new Date()).getTime(),
-      name: searchTerm.toLowerCase(),
-      isStarred: false,
-      searchQueries: [searchTerm.toLowerCase()],
-      options: [],
-      currentOptionId: 'invalid',
-      pieces: []
-    }
-  
-    // push to firebase
-    let newTaskRef = tasksRef.push();
-    newTaskRef.set(task);
-    switchCurrentTask(newTaskRef.key);
-  });  
+  }
+
+  /* create a new task */
+  let task = {
+    id: (new Date()).getTime(),
+    timestamp: (new Date()).getTime(),
+    name: searchTerm.toLowerCase(),
+    isStarred: false,
+    searchQueries: [searchTerm.toLowerCase()],
+    options: [],
+    currentOptionId: 'invalid',
+    pieces: []
+  }
+
+  // push to firebase
+  let newTaskRef = tasksRef.push();
+  newTaskRef.set(task);
+  switchCurrentTask(newTaskRef.key);
 }
 
 export const switchCurrentTask = (id) => {
   currentTaskIdRef.set(id);
 }
 
-export const deleteTaskWithId = (id) => {
-  tasksRef.child(id).set(null).then(() => {
-    tasksRef.once('value', (snapshot) => {
-      snapshot.forEach((littleSnapshot) => {
-        currentTaskIdRef.set(littleSnapshot.key);
-      });
-    });
+export const deleteTaskWithId = async (id) => {
+  await tasksRef.child(id).set(null);
+  let tasks = await tasksRef.once('value');
+  tasks.forEach((snap) => {
+    currentTaskIdRef.set(snap.key);
   });
 }
 
-export const switchStarStatusOfSelectedTask = (id) => {
-  tasksRef.child(id).child('isStarred').once('value', (snapshot) => {
-    let prevValue = snapshot.val();
-    tasksRef.child(id).child('isStarred').set(!prevValue);
-  });
+export const switchStarStatusOfSelectedTask = async (id) => {
+  let isStarred = (await tasksRef.child(id).child('isStarred').once('value')).val();
+  tasksRef.child(id).child('isStarred').set(!isStarred);
 }
 
 export const combineTasks = (sourceTaskId, targetTaskId, newTaskName) => {
@@ -131,6 +136,12 @@ export const combineTasks = (sourceTaskId, targetTaskId, newTaskName) => {
   });
 }
 
+
+
+
+
+
+/* PAGE COUNT */
 export const addAPageToCountList = (url, domainName, siteTitle) => {
   // console.log(currentTaskIdRef);
   // check dups
@@ -159,9 +170,7 @@ export const addAPageToCountList = (url, domainName, siteTitle) => {
         });
       }
     });
-  });
-
-  
+  });  
 }
 
 export const deleteAPageFromCountList = (id) => {
@@ -170,6 +179,14 @@ export const deleteAPageFromCountList = (id) => {
   });
 }
 
+
+
+
+
+
+
+
+/* OPTIONS */
 export const addAnOptionForCurrentTask = (optionName) => {
   currentTaskIdRef.once('value', (snap) => {
     currentTaskId = snap.val();
@@ -221,6 +238,24 @@ export const deleteOptionWithId = (id) => {
   });
 }
 
+
+
+
+
+
+
+/* REQUIREMENTS / CRITERIA */
+export const addARequirement = async (requirementName) => {
+  let currentTaskId = (await currentTaskIdRef.once('value')).val();
+  console.log(currentTaskId);
+}
+
+
+
+
+
+
+/* PIECES */
 export const addAPieceToCurrentTask = (piece) => {
   currentTaskIdRef.once('value', (snap) => {
     currentTaskId = snap.val();
@@ -259,6 +294,12 @@ export const changeNameOfAPieceGroup = (groupId, name) => {
   });
 }
 
+
+
+
+
+
+/* PIECE GROUPS */
 export const addAPieceToGroup = (groupId, pieceId) => {
   currentTaskIdRef.once('value', (snap) => {
     currentTaskId = snap.val();

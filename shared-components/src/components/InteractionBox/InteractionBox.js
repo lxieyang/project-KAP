@@ -1,6 +1,10 @@
 import React, { Component }from 'react';
 
-import FontAwesome from 'react-fontawesome';
+import FontAwesomeIcon from '@fortawesome/react-fontawesome';
+import fasLink from '@fortawesome/fontawesome-free-solid/faLink';
+import fasSave from '@fortawesome/fontawesome-free-solid/faSave';
+import fasArrowsAlt from '@fortawesome/fontawesome-free-solid/faArrowsAlt';
+import fasTrash from '@fortawesome/fontawesome-free-solid/faTrash';
 import ThumbV1 from '../../components/UI/Thumbs/ThumbV1/ThumbV1';
 import QuestionMark from '../../components/UI/Thumbs/QuestionMark/QuestionMark';
 import Input from '../../components/UI/Input/Input';
@@ -17,6 +21,7 @@ import { openLinkInTextEditorExtension } from '../../shared/utilities';
 const dummyText = 'Please select some text';
 const dummyHtml = [`<p>Please lasso select some text</p>`];
 
+const selectKeyCode = 18;
 
 class interactionBox extends Component {
   // update state with :
@@ -43,13 +48,13 @@ class interactionBox extends Component {
   constructor (props) {
     super(props);
     this.onMouseUp = this.selectTextListener.bind(this);
-    this.onKeyup = this.addOption.bind(this);
+    this.onKeyup = this.keyUpListener.bind(this);
     this.onKeyDown = this.keyDownListener.bind(this);
     this.onCopy = this.copyCodeListener.bind(this);
   }
 
   componentDidMount() {
-    if (this.props.specificPieceId !== null) {
+    if (this.props.specificPieceId !== undefined && this.props.specificPieceId !== null) {
       let transformedOptions = [];
       for (let opKey in this.props.options) {
         let attitudeOptionPairs = this.props.attitudeOptionPairs;
@@ -161,7 +166,7 @@ class interactionBox extends Component {
   }
 
   keyDownListener (event) {
-    if (event.keyCode === 83) {
+    if (event.keyCode === selectKeyCode) {
       this.hotKeyIsDown = true;
     }
   }
@@ -294,7 +299,7 @@ class interactionBox extends Component {
     this.setState({title: event.target.value});
   }
 
-  addOption (event) {
+  keyUpListener (event) {
     if (event.key === 'Enter') {
       // chrome.runtime.sendMessage({
       //   msg: actionTypes.ADD_AN_OPTION_TO_CURRENT_TASK,
@@ -305,7 +310,7 @@ class interactionBox extends Component {
       FirebaseStore.addAnOptionForCurrentTask(document.querySelector('#add-option-in-piece-input').value.trim());
       document.querySelector('#add-option-in-piece-input').value = "";
     }
-    if (event.keyCode === 83) {
+    if (event.keyCode === selectKeyCode) {
       this.hotKeyIsDown = false;
     }
   }
@@ -341,7 +346,7 @@ class interactionBox extends Component {
                   <div 
                   className={styles.DeleteOptionIconContainer}
                     onClick={(event) => this.deleteOption(event, op.id)}>
-                    <FontAwesome name={'trash'} />
+                    <FontAwesomeIcon icon={fasTrash} />
                   </div>
                 </td>
                 <td>
@@ -433,7 +438,7 @@ class interactionBox extends Component {
          ? <div 
               id="interaction-box-header" 
               className={styles.InteractionBoxDragHandle}> 
-              <FontAwesome name={'arrows-alt'}/>
+              <FontAwesomeIcon icon={fasArrowsAlt}/>
             </div>
          : null
         }
@@ -454,7 +459,7 @@ class interactionBox extends Component {
             
           </div>
           <div style={{marginRight: '20px', fontSize: '16px', opacity: '0.6'}}>
-            <a target="_blank" href={this.state.url} style={{color: 'black'}} onClick={(event) => openLinkInTextEditorExtension(event, this.state.url)}><FontAwesome name={'link'}/></a>
+            <a target="_blank" href={this.state.url} style={{color: 'black'}} onClick={(event) => openLinkInTextEditorExtension(event, this.state.url)}><FontAwesomeIcon icon={fasLink}/></a>
           </div>
         </div>
         
@@ -462,7 +467,7 @@ class interactionBox extends Component {
           {snippet}
         </div>
 
-        {this.props.specificPieceId === null ? addOption : null}
+        {this.props.specificPieceId === undefined || this.props.specificPieceId === null ? addOption : null}
         {experimentalOptionList}
 
         { /* optionList */ }
@@ -494,7 +499,7 @@ class interactionBox extends Component {
                     ? styles.ButtonTextDisappear
                     : null
                   )].join(' ')}>
-                  <FontAwesome name={'save'} className={styles.ClipButtonIcon}/>
+                  <FontAwesomeIcon icon={fasSave} className={styles.ClipButtonIcon}/>
                 </span>
               </div>
               

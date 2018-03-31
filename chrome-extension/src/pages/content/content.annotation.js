@@ -67,6 +67,10 @@ port.onMessage.addListener((response) => {
     console.log(payload.userId);
     handlePageCount();
     handleFromSearchToTask();
+
+
+    FirebaseStore.addARequirement('hehe');
+
   }
 });
 

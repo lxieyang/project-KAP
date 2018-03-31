@@ -1,11 +1,18 @@
 import React, { Component } from 'react';
 
 import Aux from '../../../../../hoc/Aux/Aux';
-import FontAwesome from 'react-fontawesome';
+
+import FontAwesomeIcon from '@fortawesome/react-fontawesome';
+import farSquare from '@fortawesome/fontawesome-free-regular/faSquare';
+import farWindowMaximize from '@fortawesome/fontawesome-free-regular/faWindowMaximize';
+import fasICursor from '@fortawesome/fontawesome-free-solid/faICursor';
+import fasCode from '@fortawesome/fontawesome-free-solid/faCode';
+import fasMinusCircle from '@fortawesome/fontawesome-free-solid/faMinusCircle';
+import fasCheckCircle from '@fortawesome/fontawesome-free-solid/faCheckCircle';
+import fasArrowsAlt from '@fortawesome/fontawesome-free-solid/faArrowsAlt';
+
 import ToggleSwitch from '../../../../../components/UI/ToggleSwitch/ToggleSwitch';
 import InteractionBox from '../../../../../components/InteractionBox/InteractionBox';
-import { GET_FAVICON_URL_PREFIX } from '../../../../../shared/constants';
-import HorizontalDivider from '../../../../../components/UI/Divider/HorizontalDivider/HorizontalDivider';
 import ThumbV1 from '../../../../../components/UI/Thumbs/ThumbV1/ThumbV1';
 import QuestionMark from '../../../../../components/UI/Thumbs/QuestionMark/QuestionMark';
 // import * as actionTypes from '../../../../../shared/actionTypes';
@@ -13,7 +20,6 @@ import styles from './TableView.css';
 import { SNIPPET_TYPE } from '../../../../../shared/constants';
 import { getFirstNWords } from '../../../../../shared/utilities';
 import { sortBy, reverse } from 'lodash';
-import moment from 'moment';
 import ReactTooltip from 'react-tooltip';
 import * as FirebaseStore from '../../../../../firebase/store';
 
@@ -164,15 +170,15 @@ class TableView extends Component {
     switch(type) {
       case SNIPPET_TYPE.SELECTION:
         return (
-          <FontAwesome name={'i-cursor'} className={styles.BadgeIcon}/>
+          <FontAwesomeIcon icon={fasICursor} className={styles.BadgeIcon}/>
         );
       case SNIPPET_TYPE.LASSO:
         return (
-          <FontAwesome name={'square-o'} className={styles.BadgeIcon}/>
+          <FontAwesomeIcon icon={farSquare} className={styles.BadgeIcon}/>
         );
       case SNIPPET_TYPE.POST_SNAPSHOT:
         return (
-          <FontAwesome name={'window-maximize'} className={styles.BadgeIcon}/>
+          <FontAwesomeIcon icon={farWindowMaximize} className={styles.BadgeIcon}/>
         );
       default:
         return null;
@@ -183,7 +189,7 @@ class TableView extends Component {
     for (let html of htmls) {
       if (html.indexOf('pre') !== -1 && html.indexOf('prettyprint') !== -1) {
         return (
-          <FontAwesome name={'code'} className={styles.BadgeIcon}/>          
+          <FontAwesomeIcon icon={fasCode} className={styles.BadgeIcon}/>          
         );
       }
     }
@@ -348,8 +354,8 @@ class TableView extends Component {
               onClick={(event) => this.switchPieceStatus(event, p.id)}>
             {
               p.active
-              ? <FontAwesome name="minus-circle" className={styles.ShowHidePieceIcon}/>
-              : <FontAwesome name="check-circle" className={styles.ShowHidePieceIcon}/>
+              ? <FontAwesomeIcon icon={fasMinusCircle} className={styles.ShowHidePieceIcon}/>
+              : <FontAwesomeIcon icon={fasCheckCircle} className={styles.ShowHidePieceIcon}/>
             }
             </div>
             <div 
@@ -433,8 +439,8 @@ class TableView extends Component {
             onClick={(event) => this.switchOptionStatus(event, op.id)}>
             {
               op.active 
-              ? <FontAwesome name="minus-circle" className={styles.ShowHidePieceIcon}/>
-              : <FontAwesome name="check-circle" className={styles.ShowHidePieceIcon}/>
+              ? <FontAwesomeIcon icon={fasMinusCircle} className={styles.ShowHidePieceIcon}/>
+              : <FontAwesomeIcon icon={fasCheckCircle} className={styles.ShowHidePieceIcon}/>
             }
             </div>
             <div className={[styles.OptionNameContainer, !op.active ? styles.InactiveOption : null].join(' ')}>{op.name}</div>

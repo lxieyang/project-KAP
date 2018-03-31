@@ -2,7 +2,11 @@
   "presets": [
     "react-app"
   ],
-  "plugins": ["transform-decorators-legacy"],
+  "plugins": [
+    "transform-decorators-legacy",
+    "transform-async-to-generator",
+    "syntax-async-functions"
+  ],
   "env": {
     "development": {
       "presets":["react-hmre"]

@@ -2,7 +2,12 @@ import React, { Component } from 'react';
 
 import { withRouter } from 'react-router-dom';
 import * as appRoutes from '../../../shared/routes';
-import FontAwesome from 'react-fontawesome';
+import FontAwesomeIcon from '@fortawesome/react-fontawesome';
+import fasStar from '@fortawesome/fontawesome-free-solid/faStar';
+import farStar from '@fortawesome/fontawesome-free-regular/faStar';
+import fasTrash from '@fortawesome/fontawesome-free-solid/faTrash';
+import fasListUl from '@fortawesome/fontawesome-free-solid/faListUl';
+import fasPuzzlePiece from '@fortawesome/fontawesome-free-solid/faPuzzlePiece';
 import HorizontalDivider from '../../UI/Divider/HorizontalDivider/HorizontalDivider';
 import styles from './TaskCard.css';
 import moment from 'moment';
@@ -138,24 +143,23 @@ class TaskCard extends Component {
         }}>
         <div className={styles.Header}>
           <div className={styles.Left}>
-            <FontAwesome
+            <FontAwesomeIcon 
+              icon={this.props.isStarred ? fasStar : farStar} 
               onClick={(event) => {this.starClicked(event, this.props.id)}}
-              name={this.props.isStarred ? 'star' : 'star-o'}
               className={[styles.StarIcon, (
                 this.props.isStarred
                 ? styles.Starred
-                : styles.NotStarred
+                : null
               )].join(' ')}/>
           </div>
           <div className={styles.Right}>
             <span className={styles.Time}>
               {moment(new Date(this.props.time)).fromNow()}
             </span>
-            <FontAwesome
-              name='trash'
+            <FontAwesomeIcon 
+              icon={fasTrash}
               className={styles.DeleteTaskIcon}
               onClick={(event) => this.deleteTaskWithId(event, this.props.id)}/>
-
           </div>
         </div>
 
@@ -169,11 +173,11 @@ class TaskCard extends Component {
 
         <div className={styles.Footer}>
           <div className={styles.MetaInfo}>
-            <FontAwesome name='list-ul' className={styles.Icon}/>
+            <FontAwesomeIcon icon={fasListUl} className={styles.Icon}/>
             {this.props.numOptions} options
           </div>
           <div className={styles.MetaInfo}>
-            <FontAwesome name='puzzle-piece' className={styles.Icon}/>
+            <FontAwesomeIcon icon={fasPuzzlePiece} className={styles.Icon}/>
             {this.props.numPieces} pieces
           </div>
         </div>

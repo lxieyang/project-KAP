@@ -1,6 +1,7 @@
 import React from 'react';
 
-import FontAwesome from 'react-fontawesome';
+import FontAwesomeIcon from '@fortawesome/react-fontawesome';
+import fasSearch from '@fortawesome/fontawesome-free-solid/faSearch';
 import styles from './SearchBar.css';
 
 const searchBar = (props) => {
@@ -8,8 +9,8 @@ const searchBar = (props) => {
     <div className={styles.SearchBar}>
       <input type="text" placeholder="Search.." name="search" />
       <button>
-        <FontAwesome
-          name="search"
+        <FontAwesomeIcon
+          icon={fasSearch}
           className={styles.ConfigureIcon}
         />
       </button>

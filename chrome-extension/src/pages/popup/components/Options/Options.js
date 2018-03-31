@@ -1,6 +1,7 @@
 import React from 'react';
 
-import FontAwesome from 'react-fontawesome';
+import FontAwesomeIcon from '@fortawesome/react-fontawesome';
+import fasTrash from '@fortawesome/fontawesome-free-solid/faTrash';
 import Input from '../../../../../../shared-components/src/components/UI/Input/Input';
 import styles from './Options.css';
 
@@ -26,8 +27,8 @@ const options = (props) => {
                 : null}
                 <span  
                   onClick={(event) => props.deleteOptionWithId(op.id)}>
-                  <FontAwesome 
-                    name={'trash'} 
+                  <FontAwesomeIcon 
+                    icon={fasTrash}
                     className={styles.TrashIcon}/>
                 </span>
               </li>

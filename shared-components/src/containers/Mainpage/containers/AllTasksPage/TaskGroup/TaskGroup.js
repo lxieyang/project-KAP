@@ -2,6 +2,9 @@ import React, { Component } from 'react';
 
 import TaskCard from '../../../../../components/UI/TaskCard/TaskCard';
 import FontAwesome from 'react-fontawesome';
+import FontAwesomeIcon from '@fortawesome/react-fontawesome';
+import fasStar from '@fortawesome/fontawesome-free-solid/faStar';
+import fasTasks from '@fortawesome/fontawesome-free-solid/faTasks';
 import styles from './TaskGroup.css';
 
 class TaskGroup extends Component {
@@ -16,8 +19,8 @@ class TaskGroup extends Component {
     
     let title = (
       <div className={styles.Header}>
-        <FontAwesome
-          name={category === 'starred' ? 'star' : 'tasks'}
+        <FontAwesomeIcon
+          icon={category === 'starred' ? fasStar : fasTasks}
           className={styles.ConfigureIcon}
         />
         <span className={styles.HeaderName}>

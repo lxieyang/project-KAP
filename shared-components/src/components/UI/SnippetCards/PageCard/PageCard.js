@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 
-import FontAwesome from 'react-fontawesome';
+import FontAwesomeIcon from '@fortawesome/react-fontawesome';
+import fasAngleRight from '@fortawesome/fontawesome-free-solid/faAngleRight';
+import fasTrash from '@fortawesome/fontawesome-free-solid/faTrash';
 import { GET_FAVICON_URL_PREFIX } from '../../../../shared/constants';
 import HorizontalDivider from '../../../UI/Divider/HorizontalDivider/HorizontalDivider';
 import styles from './PageCard.css';
@@ -57,7 +59,10 @@ class PageCard extends Component {
           <div 
             className={styles.DeleteContainer}
             onClick={(event) => props.deleteThisPage(event, props.id)}>
-            <FontAwesome name='trash' className={styles.Icon}/>
+            <FontAwesomeIcon 
+              icon={fasTrash}
+              className={styles.Icon}
+              />
           </div>
         </div>
       </div>
@@ -66,7 +71,10 @@ class PageCard extends Component {
     const footer = (
       <div className={styles.Footer}>
         <div className={styles.MetaInfo}>
-          <FontAwesome name='clock-o' className={styles.Icon}/>
+          <FontAwesomeIcon 
+            icon={fasAngleRight}
+            className={styles.Icon}
+            />
           You visited this page {props.times} times
         </div>
       </div>

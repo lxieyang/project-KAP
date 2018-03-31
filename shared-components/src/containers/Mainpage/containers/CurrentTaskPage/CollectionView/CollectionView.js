@@ -2,7 +2,12 @@ import React, { Component } from 'react';
 
 import {Collapse} from 'react-collapse';
 // import Scrollspy from 'react-scrollspy';
-import FontAwesome from 'react-fontawesome';
+import FontAwesomeIcon from '@fortawesome/react-fontawesome';
+import fasChevronDown from '@fortawesome/fontawesome-free-solid/faChevronDown';
+import fasChevronUp from '@fortawesome/fontawesome-free-solid/faChevronUp';
+import fasCode from '@fortawesome/fontawesome-free-solid/faCode';
+import fasStickyNote from '@fortawesome/fontawesome-free-solid/faStickyNote';
+import fasPuzzlePiece from '@fortawesome/fontawesome-free-solid/faPuzzlePiece';
 import InteractionBox from '../../../../../components/InteractionBox/InteractionBox';
 // import * as actionTypes from '../../../../../shared/actionTypes';
 import PageCard from '../../../../../components/UI/SnippetCards/PageCard/PageCard';
@@ -118,8 +123,8 @@ const TopPages = (props) => {
                 onClick={(event) => props.switchDisplayStatus(event)}>
                 {
                   props.isOpen 
-                  ? <FontAwesome name={'chevron-up'} />
-                  : <FontAwesome name={'chevron-down'} />
+                  ? <FontAwesomeIcon icon={fasChevronUp} />
+                  : <FontAwesomeIcon icon={fasChevronDown} />
                 }
               </div>
             : null
@@ -227,8 +232,8 @@ const SnippetsGroup = (props) => {
                 onClick={(event) => props.switchDisplayStatus(event)}>
                 {
                   props.isOpen 
-                  ? <FontAwesome name={'chevron-up'} />
-                  : <FontAwesome name={'chevron-down'} />
+                  ? <FontAwesomeIcon icon={fasChevronUp} />
+                  : <FontAwesomeIcon icon={fasChevronDown} />
                 }
               </div>
             : null
@@ -298,7 +303,7 @@ class CollectionView extends Component {
   }
 
   changeTopPageDisplayNumberTo = (num) => {
-    this.setState({numTopPageToDisplay: num});
+    this.setState({numTopPageToDisplay: num, topPageIsOpen: true});
   }
 
   windowSizeChangeHandler = (event) => {
@@ -419,7 +424,7 @@ class CollectionView extends Component {
 
     let codeSnippets = (
       <SnippetsGroup
-        title={<span>With Code Snippets <FontAwesome name="code" /></span>}
+        title={<span>With Code Snippets <FontAwesomeIcon icon={fasCode} /></span>}
         switchDisplayStatus={this.switchWithCodeSnippetsOpenStatus}
         isOpen={this.state.withCodeSnippetIsOpen}
         windowSize={this.state.windowSize}
@@ -439,7 +444,7 @@ class CollectionView extends Component {
 
     let noteSnippets = (
       <SnippetsGroup
-        title={<span>With Notes <FontAwesome name="sticky-note" /></span>}
+        title={<span>With Notes <FontAwesomeIcon icon={fasStickyNote} /></span>}
         switchDisplayStatus={this.switchWithNoteSnippetsOpenStatus}
         isOpen={this.state.withNodeSnippetsIsOpen}
         windowSize={this.state.windowSize}
@@ -470,7 +475,7 @@ class CollectionView extends Component {
 
     let allSnippets = (
       <SnippetsGroup
-        title={<span>All Pieces Collected <FontAwesome name="puzzle-piece" /></span>}
+        title={<span>All Pieces Collected <FontAwesomeIcon icon={fasPuzzlePiece} /></span>}
         switchDisplayStatus={this.switchAllSnippetsOpenStatus}
         isOpen={this.state.allSnippetSIsOpen}
         windowSize={this.state.windowSize}

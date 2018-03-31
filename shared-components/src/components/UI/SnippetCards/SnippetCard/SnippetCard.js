@@ -3,7 +3,10 @@ import React, { Component } from 'react';
 import Aux from '../../../../hoc/Aux/Aux';
 import ThumbV1 from '../../../UI/Thumbs/ThumbV1/ThumbV1';
 import QuestionMark from '../../../UI/Thumbs/QuestionMark/QuestionMark';
-import FontAwesome from 'react-fontawesome';
+import FontAwesomeIcon from '@fortawesome/react-fontawesome';
+import farClock from '@fortawesome/fontawesome-free-regular/faClock';
+import fasTrash from '@fortawesome/fontawesome-free-solid/faTrash';
+import fasEye from '@fortawesome/fontawesome-free-solid/faEye';
 import { GET_FAVICON_URL_PREFIX } from '../../../../shared/constants';
 import HorizontalDivider from '../../../UI/Divider/HorizontalDivider/HorizontalDivider';
 import styles from './SnippetCard.css';
@@ -14,14 +17,12 @@ import { DragSource, DropTarget } from 'react-dnd';
 import PropTypes from 'prop-types';
 import ReactTooltip from 'react-tooltip';
 import { debounce, sortBy } from 'lodash';
-// import * as actionTypes from '../../../../shared/actionTypes';
 import * as FirebaseStore from '../../../../firebase/store';
 
 
 /* drag and drop */
 const cardSource = {
   beginDrag(props) {
-    // console.log("BEGINNING Dragging card [ID: " + props.id + "]");
     return {
       id: props.id,
       type: props.type
@@ -111,19 +112,8 @@ class SnippetCard extends Component {
   };
 
   componentDidMount() {
-    // if (this.nameInput !== undefined) {
-    //   this.nameInput.focus();
-    // }
-
     this.inputCallback = debounce((event) => {
-      // console.log('VALUE: ' + event.target.value);
-      // chrome.runtime.sendMessage({
-      //   msg: actionTypes.CHANGE_NAME_OF_GROUP_WITH_ID,
-      //   payload: {
-      //     groupId: this.props.id,
-      //     name: event.target.value.trim()
-      //   }
-      // });
+
       FirebaseStore.changeNameOfAPieceGroup(this.props.id, event.target.value.trim());
       event.target.value = event.target.value.trim();
     }, 1000);
@@ -263,13 +253,13 @@ class SnippetCard extends Component {
                         <div 
                           className={styles.ViewIconInTooltip}
                           onClick={(event) => props.makeInteractionBox(event, pid)}>
-                          <FontAwesome name={'eye'} />
+                          <FontAwesomeIcon icon={fasEye} />
                         </div>
                       </div>
                       <HorizontalDivider margin="5px" />
                       <div className={styles.Footer}>
                         <div className={styles.MetaInfo}>
-                          <FontAwesome name='clock-o' className={styles.Icon}/>
+                          <FontAwesomeIcon icon={farClock} className={styles.Icon}/>
                           {moment(new Date(piece.timestamp)).fromNow()}
                         </div>
                       </div>
@@ -319,14 +309,17 @@ class SnippetCard extends Component {
               <div 
                 className={styles.ViewIcon}
                 onClick={(event) => props.makeInteractionBox(event, props.id)}>
-                <FontAwesome name={'eye'} />
+                <FontAwesomeIcon icon={fasEye} />
               </div>
             </div>
         }
         <div
           className={styles.DeleteContainer}
           onClick={(event) => props.deleteThisSnippet(event, props.id, props.type)}>
-          <FontAwesome name='trash' className={styles.Icon}/>
+          <FontAwesomeIcon 
+            icon={fasTrash}
+            className={styles.Icon}
+            />
         </div>
       </div>
     );
@@ -361,7 +354,10 @@ class SnippetCard extends Component {
     const footer = (
       <div className={styles.Footer}>
         <div className={styles.MetaInfo}>
-          <FontAwesome name='clock-o' className={styles.Icon}/>
+          <FontAwesomeIcon 
+            icon={farClock}
+            className={styles.Icon}
+            />
           {moment(new Date(props.timestamp)).fromNow()}
         </div>
       </div>
