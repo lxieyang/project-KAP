@@ -10,7 +10,7 @@ const appHeader = (props) => {
       <div className={styles.AppHeader}>
         <Logo size={props.logoSize} hover={props.hover} />
         <div className={styles.HeaderText}>
-          Knowledge Accelerator from Programming
+          <strong>UNAKITE</strong>: &nbsp; Knowledge Accelerator from Programming
         </div>
       </div>
     </Aux>
