@@ -8,6 +8,7 @@ import fasChevronUp from '@fortawesome/fontawesome-free-solid/faChevronUp';
 import fasCode from '@fortawesome/fontawesome-free-solid/faCode';
 import fasStickyNote from '@fortawesome/fontawesome-free-solid/faStickyNote';
 import fasPuzzlePiece from '@fortawesome/fontawesome-free-solid/faPuzzlePiece';
+import fasFilter from '@fortawesome/fontawesome-free-solid/faFilter';
 import InteractionBox from '../../../../../components/InteractionBox/InteractionBox';
 // import * as actionTypes from '../../../../../shared/actionTypes';
 import PageCard from '../../../../../components/UI/SnippetCards/PageCard/PageCard';
@@ -220,26 +221,6 @@ const SnippetsGroup = (props) => {
 
   return (
     <Aux>
-      <div className={styles.Header}>
-        <div className={styles.HeaderNameContainer}>
-          <div className={styles.HeaderName}>
-            {props.title}
-          </div>
-          {
-            piecesList.length > 0
-            ? <div 
-                className={styles.HeaderCollapseButton}
-                onClick={(event) => props.switchDisplayStatus(event)}>
-                {
-                  props.isOpen 
-                  ? <FontAwesomeIcon icon={fasChevronUp} />
-                  : <FontAwesomeIcon icon={fasChevronDown} />
-                }
-              </div>
-            : null
-          }
-        </div>
-      </div>
       <Collapse isOpened={props.isOpen} springConfig={{stiffness: 700, damping: 50}}>
         {content}
       </Collapse>
@@ -250,6 +231,7 @@ const SnippetsGroup = (props) => {
 class CollectionView extends Component {
   state = {
     numTopPageToDisplay: 5,
+    pieceGroupDisplayType: 'all',
     windowSize: window.innerWidth,
     showModal: false,
     modalPieceId: '',
@@ -257,7 +239,9 @@ class CollectionView extends Component {
     topPageIsOpen: false,
     allSnippetSIsOpen: true,
     withCodeSnippetIsOpen: false,
-    withNodeSnippetsIsOpen: false
+    withNodeSnippetsIsOpen: false,
+    codeFilterOn: false,
+    notesFilterOn: false
   }
 
   componentWillReceiveProps (nextProps) {
@@ -282,6 +266,18 @@ class CollectionView extends Component {
     this.setState(prevState => {
       return {topPageIsOpen: !prevState.topPageIsOpen};
     });
+  }
+
+  switchFilterStatus = (type) => {
+    if (type === 'code') {
+      this.setState(prevState => {
+        return {codeFilterOn: !prevState.codeFilterOn};
+      });
+    } else if (type === 'notes') {
+      this.setState(prevState => {
+        return {notesFilterOn: !prevState.notesFilterOn};
+      });
+    }
   }
 
   switchAllSnippetsOpenStatus = (event) => {
@@ -362,7 +358,6 @@ class CollectionView extends Component {
       FirebaseStore.deleteAPieceWithId(id);
     }
     
-    
   }
 
   dismissModal = () => {
@@ -375,6 +370,9 @@ class CollectionView extends Component {
 
   render () {
     const { task } = this.props;
+
+
+    /* Top pages */
     const { pageCountList } = task;
     let pageList = [];
     for (let pageKey in pageCountList) {
@@ -401,6 +399,11 @@ class CollectionView extends Component {
         switchDisplayNum={this.changeTopPageDisplayNumberTo}/>
     );
 
+
+
+
+
+    /* Pieces */
     let piecesList = [];
     for (let pKey in task.pieces) {
       piecesList.push({
@@ -409,48 +412,46 @@ class CollectionView extends Component {
         id: pKey
       });
     }
-    let filteredPiecesWithCode = piecesList.filter(p => {
-      if (p.codeSnippetHTMLs !== undefined) 
-        return true;
-      let htmls = p.htmls;
-      for (let html of htmls) {
-        if (html.indexOf('prettyprint') !== -1 
-        || (html.indexOf('<code') !== -1 && html.indexOf('</code>') !== -1)) {
-          return true;
+
+    let filteredPiecesAccordingToFilterStatus = piecesList.filter(p => {
+      const { codeFilterOn, notesFilterOn } = this.state;
+      let codeQualified = true;
+      let notesQualified = true;
+
+      if (codeFilterOn) {   // filtering code
+        
+        if (p.codeSnippetHTMLs !== undefined) {
+          codeQualified = true;
+        } else {
+          codeQualified = false;
+          let htmls = p.htmls;
+          for (let html of htmls) {
+            if (html.indexOf('prettyprint') !== -1 
+            || (html.indexOf('<code') !== -1 && html.indexOf('</code>') !== -1)) {
+              codeQualified = true;
+              break;
+            } 
+          }   
         }
       }
-      return false;
-    });
 
-    let codeSnippets = (
-      <SnippetsGroup
-        title={<span>With Code Snippets <FontAwesomeIcon icon={fasCode} /></span>}
-        switchDisplayStatus={this.switchWithCodeSnippetsOpenStatus}
-        isOpen={this.state.withCodeSnippetIsOpen}
-        windowSize={this.state.windowSize}
-        options={task.options}
-        pieces={task.pieces}
-        piecesList={filteredPiecesWithCode}
-        makeInteractionBox={this.makeInteractionbox}
-        deleteSnippet={this.deletePieceHandler}/>
-    );
-
-    let filteredPiecesWithNotes = piecesList.filter(p => {
-      if (p.notes !== undefined && p.notes !== '') {
-        return true;
+      if (notesFilterOn) {  // filtering notes
+        if (p.notes !== undefined && p.notes !== '') {
+          notesQualified = true;
+        } else {
+          notesQualified = false;
+        }
       }
-      return false;
+
+      return codeQualified && notesQualified;
     });
 
-    let noteSnippets = (
+    let filteredPieces = (
       <SnippetsGroup
-        title={<span>With Notes <FontAwesomeIcon icon={fasStickyNote} /></span>}
-        switchDisplayStatus={this.switchWithNoteSnippetsOpenStatus}
-        isOpen={this.state.withNodeSnippetsIsOpen}
-        windowSize={this.state.windowSize}
+        isOpen={this.state.allSnippetSIsOpen}
         options={task.options}
         pieces={task.pieces}
-        piecesList={filteredPiecesWithNotes}
+        piecesList={filteredPiecesAccordingToFilterStatus}
         makeInteractionBox={this.makeInteractionbox}
         deleteSnippet={this.deletePieceHandler} />
     );
@@ -473,12 +474,9 @@ class CollectionView extends Component {
     // console.log(newPiecesList);
 
 
-    let allSnippets = (
+    let allPieces = (
       <SnippetsGroup
-        title={<span>All Pieces Collected <FontAwesomeIcon icon={fasPuzzlePiece} /></span>}
-        switchDisplayStatus={this.switchAllSnippetsOpenStatus}
         isOpen={this.state.allSnippetSIsOpen}
-        windowSize={this.state.windowSize}
         options={task.options}
         pieces={task.pieces}
         piecesList={newPiecesList}
@@ -489,6 +487,8 @@ class CollectionView extends Component {
     );
 
 
+
+    /* Interaction box */
     let modal = null;
     if (this.state.showModal) {
       let piece = this.props.task.pieces[this.state.modalPieceId];
@@ -523,35 +523,78 @@ class CollectionView extends Component {
           </Aux>
         );
       }
-
     }
 
 
     return (
       <Aux>
         <div className={styles.CollectionView}>
-            
-
             <div className={styles.Main} id="scrollable-content-container">
-
-              <div id="section-1" className={styles.Section}>
+              
+            
+            
+              <div className={styles.Section}>
                 {topPages}
               </div>
 
-              <div id="section-2" className={styles.Section}>
-                {allSnippets}
-              </div>
 
-              <div 
-                id="section-3" 
-                className={styles.Section}>
-                {codeSnippets}
-              </div>
 
-              <div 
-                id="section-4" 
-                className={styles.Section}>
-                {noteSnippets}
+              <div className={styles.Section}>
+                <Aux>
+                  <div className={styles.Header}>
+                    <div className={styles.HeaderNameContainer}>
+                      <div className={styles.HeaderName}>
+                        <span>All Pieces Collected</span>
+                      </div>
+                      {
+                        piecesList.length > 0
+                        ? <div 
+                            className={styles.HeaderCollapseButton}
+                            onClick={(event) => this.switchAllSnippetsOpenStatus(event)}>
+                            {
+                              this.state.allSnippetSIsOpen
+                              ? <FontAwesomeIcon icon={fasChevronUp} />
+                              : <FontAwesomeIcon icon={fasChevronDown} />
+                            }
+                          </div>
+                        : null
+                      }
+                    </div>
+                    <div className={styles.FilterNameContainer}>
+                      <div>
+                        <FontAwesomeIcon icon={fasFilter} className={styles.FilterIcon}/>
+                      </div>
+                      <div
+                        className={[styles.FilterName,
+                          (
+                            this.state.codeFilterOn === true
+                            ? styles.Active
+                            : null
+                          )
+                        ].join(' ')}
+                        onClick={() => this.switchFilterStatus('code')}>
+                        With Code <FontAwesomeIcon icon={fasCode} />
+                      </div>
+                      <div
+                        className={[styles.FilterName,
+                          (
+                            this.state.notesFilterOn === true
+                            ? styles.Active
+                            : null
+                          )
+                        ].join(' ')}
+                        onClick={() => this.switchFilterStatus('notes')}>
+                        With Notes <FontAwesomeIcon icon={fasStickyNote} />
+                      </div>
+                      
+                    </div>
+                  </div>
+                </Aux>
+                {
+                  this.state.codeFilterOn || this.state.notesFilterOn
+                  ? filteredPieces
+                  : allPieces
+                }
               </div>
 
             </div>

@@ -108,6 +108,11 @@ class Mainpage extends Component {
             ? {}
             : childSnapshot.val().pieces
           ),
+          requirements: (
+            childSnapshot.val().requirements === undefined
+            ? {}
+            : childSnapshot.val().requirements
+          ),
           pieceGroups: (
             childSnapshot.val().pieceGroups === undefined
             ? {}

@@ -14,25 +14,6 @@
   padding-top: 20px;
 }
 
-/* .SideNav ul {
-  margin: 0;
-  padding: 0px;
-  list-style: none;
-  border-right: 1px solid lightgray;
-}
-
-.SideNav ul li {
-  margin: 50px 0px;
-}
-
-.SideNav a {
-  padding: 8px 6px;
-  text-decoration: none;
-  font-size: 1.4rem;
-  color: inherit;
-  display: block;
-} */
-
 .Current {
   color: black;
   font-weight: 600;
@@ -70,22 +51,47 @@
   cursor: pointer;
 }
 
+.Section .FilterNameContainer ,
 .Section .DisplayNumberContainer {
   margin-left: 40px;
   display: flex;
   align-items: center;
 }
 
+.Section .FilterName,
 .Section .DisplayNumber {
-  opacity: 0.3;
+  opacity: 0.2;
   cursor: pointer;
   margin: 0px 10px;
-  transition: all 0.15s ease-in;
+  transition: all 0.10s ease-in;
 }
 
+.Section .FilterName.Active,
 .Section .DisplayNumber.Active,
 .Section .DisplayNumber:hover {
   opacity: 0.9;
+}
+
+.FilterIcon {
+  margin-left: 40px;
+  margin-right: 15px;
+  opacity: 0.5;
+}
+
+.Section .FilterName {
+  font-size: 1.2rem;
+  opacity: 0.2;
+  cursor: pointer;
+  margin: 0px 10px;
+  padding: 2px 7px;
+  transition: all 0.10s ease-in;
+}
+
+.Section .FilterName.Active {
+  opacity: 0.9;
+  color: white;
+  background: #5cb85c;
+  border-radius: 5px;
 }
 
 .ConfigureIcon {
