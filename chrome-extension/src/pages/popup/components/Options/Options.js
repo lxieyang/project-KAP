@@ -1,6 +1,7 @@
 import React from 'react';
 
 import FontAwesomeIcon from '@fortawesome/react-fontawesome';
+import fasListAlt from '@fortawesome/fontawesome-free-solid/faListAlt';
 import fasTrash from '@fortawesome/fontawesome-free-solid/faTrash';
 import Input from '../../../../../../shared-components/src/components/UI/Input/Input';
 import styles from './Options.css';
@@ -15,6 +16,7 @@ const options = (props) => {
     <div style={{display: 'flex'}}>
       <div className={styles.Options}>
         <div className={styles.Label}>
+          <FontAwesomeIcon icon={fasListAlt} /> &nbsp;
           Options:
         </div>
         <div className={styles.OptionList}>

@@ -6,6 +6,7 @@ import AppHeader from '../../../../shared-components/src/components/UI/AppHeader
 import HorizontalDivider from '../../../../shared-components/src/components/UI/Divider/HorizontalDivider/HorizontalDivider';
 import CurrentTask from './components/CurrentTask/CurrentTask';
 import Options from './components/Options/Options';
+import Requirements from './components/Requirements/Requirements';
 import Settings from './components/Settings/Settings';
 import { 
   tasksRef,
@@ -14,6 +15,7 @@ import {
   setUserIdAndName
 } from '../../../../shared-components/src/firebase/index';
 import * as FirebaseStore from '../../../../shared-components/src/firebase/store';
+import styles from './Popup.css';
 
 // // import { 
 // //   tasksRef,
@@ -39,6 +41,8 @@ class Popup extends Component {
     currentTaskId: null,
     tasks: [],
     newOptionInput: '',
+    newRequirementInput: '',
+    isEditingOption: true,
     currentTaskIdIsLoading: true,
     tasksIsLoading: true,
     disabled: false
@@ -59,7 +63,11 @@ class Popup extends Component {
     document.body.addEventListener('keyup', (event) => {
       if (event.keyCode === 13) {
         // Enter key pressed
-        this.submitHandler(event);
+        if (this.state.isEditingOption) {
+          this.submitHandlerForOption(event);
+        } else {
+          this.submitHandlerForRequirement(event);
+        }
       }
     });
   }
@@ -79,6 +87,7 @@ class Popup extends Component {
           id: childSnapshot.key,
           displayName: childSnapshot.val().name,
           options: childSnapshot.val().options,
+          requirements: childSnapshot.val().requirements,
           currentOptionId: childSnapshot.val().currentOptionId
         })
       });
@@ -97,24 +106,52 @@ class Popup extends Component {
     FirebaseStore.switchCurrentTask(event.target.value);
   }
 
-  inputChangedHandler = (event) => {
-    this.setState({newOptionInput: event.target.value});
+  /* Deal with options */
+  inputChangedHandlerForOption = (event) => {
+    this.setState({
+      isEditingOption: true,
+      newOptionInput: event.target.value
+    });
   }
 
-  submitHandler = (event) => {
+  submitHandlerForOption = (event) => {
     event.preventDefault();
     const { newOptionInput } = this.state;
-
     if (newOptionInput !== '') {
       FirebaseStore.addAnOptionForCurrentTask(this.state.newOptionInput);
     }
-
     this.setState({newOptionInput: ''});
   }
 
   deleteOptionHandler = (id) => {
     FirebaseStore.deleteOptionWithId(id);
   }
+  
+
+  /* Deal with Requirements */
+  inputChangedHandlerForRequirement = (event) => {
+    this.setState({
+      isEditingOption: false,
+      newRequirementInput: event.target.value
+    });
+  }
+
+  submitHandlerForRequirement = (event) => {
+    event.preventDefault();
+    const { newRequirementInput } = this.state;
+    if (newRequirementInput !== '') {
+      FirebaseStore.addARequirementForCurrentTask(this.state.newRequirementInput);
+    }
+    this.setState({newRequirementInput: ''});
+  }
+
+  deleteRequirementHandler = (id) => {
+    FirebaseStore.deleteRequirementWithId(id);
+  }
+
+
+
+
 
   disablePluginHandler = () => {
     FirebaseStore.switchWorkingStatus();
@@ -129,21 +166,31 @@ class Popup extends Component {
       <Aux>{appTitle}</Aux>
     );
     if ((!currentTaskIdIsLoading) && (!tasksIsLoading)) {
-      const { currentTaskId, tasks, newOptionInput } = this.state;
+      const { currentTaskId, tasks, newOptionInput, newRequirementInput } = this.state;
 
       let currentTaskName = null;
       let currentTaskOptionNames = [];
+      let currentTaskRequirementNames = [];
       let currentTaskCurrentOptionId = null;
       if (currentTaskId && tasks.length > 0) {
         let filteredTasks = tasks.filter(t => t.id === currentTaskId);
         if (filteredTasks.length > 0) {
           currentTaskName = filteredTasks[0].displayName;
           currentTaskCurrentOptionId = filteredTasks[0].currentOptionId;
+          // options
           currentTaskOptionNames = [];
           for (let opKey in filteredTasks[0].options) {
             currentTaskOptionNames.push({
               id: opKey,
               name: filteredTasks[0].options[opKey].name
+            });
+          }
+          // requirements
+          currentTaskRequirementNames = [];
+          for (let rqKey in filteredTasks[0].requirements) {
+            currentTaskRequirementNames.push({
+              id: rqKey,
+              name: filteredTasks[0].requirements[rqKey].name
             });
           }
         } else {
@@ -165,13 +212,22 @@ class Popup extends Component {
 
           <HorizontalDivider margin={dividerOptions.margin.short}/>
 
-          <Options 
-            options={currentTaskOptionNames} 
-            activeId={currentTaskCurrentOptionId}
-            newOptionValue={newOptionInput}
-            changed={this.inputChangedHandler}
-            addOption={this.submitHandler}
-            deleteOptionWithId={this.deleteOptionHandler}/>
+          <div className={styles.OptionsRequiementsContainer}>
+            <Options 
+              options={currentTaskOptionNames} 
+              activeId={currentTaskCurrentOptionId}
+              newOptionValue={newOptionInput}
+              changed={this.inputChangedHandlerForOption}
+              addOption={this.submitHandlerForOption}
+              deleteOptionWithId={this.deleteOptionHandler}/>
+            <Requirements 
+              requirements={currentTaskRequirementNames} 
+              newRequirementValue={newRequirementInput}
+              changed={this.inputChangedHandlerForRequirement}
+              addRequirement={this.submitHandlerForRequirement}
+              deleteRequirementWithId={this.deleteRequirementHandler}/>
+          </div>
+          
 
           <HorizontalDivider margin={dividerOptions.margin.long}/>
 

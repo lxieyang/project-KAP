@@ -1,5 +1,6 @@
 import React from 'react';
-
+import FontAwesomeIcon from '@fortawesome/react-fontawesome';
+import farClock from '@fortawesome/fontawesome-free-regular/faClock';
 import Input from '../../../../../../shared-components/src/components/UI/Input/Input';
 import styles from './CurrentTask.css';
 
@@ -19,6 +20,7 @@ const currentTask = (props) => {
     <div style={{display: 'flex'}}>
       <div className={styles.CurrentTask}>
         <div className={styles.Label}>
+          <FontAwesomeIcon icon={farClock} /> &nbsp;
           Current Task:
         </div>
         <div className={styles.TaskNameContainer}>

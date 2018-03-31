@@ -1,10 +1,12 @@
-.Options {
+.Requirements {
   flex: 1;
   min-width: 250px;
   display: flex;
   flex-flow: column;
-  margin-left: 50px;
-  margin-right: 20px;
+  border-left: 1px solid rgb(0,0,0, 0.0551);
+  margin-left: 20px;
+  padding-left: 40px;
+  margin-right: 50px;
   margin-bottom: 15px;
   font-size: 1.15rem;
 }
@@ -14,40 +16,31 @@
   margin: 10px 0px;
 }
 
-.OptionList {
+.RequirementList {
   font-size: 1rem;
 }
 
-.OptionList ul {
+.RequirementList ul {
   list-style: none;
   margin: 0;
   padding: 0;
 }
 
-.OptionList ul li {
+.RequirementList ul li {
   margin: 10px 0px;
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
-.Option {
+.Requirement {
   color: white;
   font-weight: 300;
   font-family: 'Encode Sans Semi Expanded', sans-serif;
-  background-color: #4e89bc;
+  background-color: #81cae0;;
   padding: 3px 10px;
   border-radius: 5px;
   box-sizing: border-box;
-}
-
-.ActiveBadge {
-  margin-left: 30px;
-  align-self: center;
-  padding: 1px 5px;
-  border-radius: 6px;
-  color: white;
-  background-color: rgba(111, 192, 70, 1);
 }
 
 .TrashIcon {

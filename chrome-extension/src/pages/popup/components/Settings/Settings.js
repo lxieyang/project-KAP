@@ -12,11 +12,11 @@ const settings = (props) => {
     <div className={styles.Settings}>
       <div className={styles.TempDisable}>
         <div className={styles.Label}>
-            <FontAwesomeIcon
-              icon={fasPowerOff}
-              className={styles.ConfigureIcon}
-            /> &nbsp;&nbsp;
-            <span>Temporarily disable KAP</span>
+          <FontAwesomeIcon
+            icon={fasPowerOff}
+            className={styles.ConfigureIcon}
+          /> &nbsp;
+          <span>Temporarily disable KAP</span>
         </div>
         <div className={styles.Slider}>
           <ToggleSwitch 

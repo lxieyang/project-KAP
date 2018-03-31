@@ -3,11 +3,11 @@
   flex-flow: column;
   font-size: 1.15rem;
   margin-bottom: 10px;
+  margin-left: 50px;
 }
 
 .TempDisable {
   margin-top: 10px;
-  margin-left: 15px;
   margin-right: 30px;
   display: flex;
   flex-flow: row;
@@ -24,8 +24,7 @@
 }
 
 .ConfigureIcon {
-  font-size: 1.4rem;
-  opacity: 0.5;
+  opacity: 0.9;
   margin-right: 5px;
 }
 

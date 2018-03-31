@@ -68,9 +68,6 @@ port.onMessage.addListener((response) => {
     handlePageCount();
     handleFromSearchToTask();
 
-
-    FirebaseStore.addARequirement('hehe');
-
   }
 });
 

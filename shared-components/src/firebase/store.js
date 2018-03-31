@@ -12,6 +12,7 @@ export let isDisabled = false;
 export let taskList = [];
 export let currentTaskId = "";
 export let currentTaskOptions = [];
+export let currentTaskRequirements = [];
 
 isDisabledRef.on('value', (snapshot) => {
   isDisabled  = snapshot.val();
@@ -45,7 +46,7 @@ export const addTaskFromSearchTerm = async (searchTerm, tabId) => {
   });
   if (taskList) {
     for (let task of taskList) {
-      if (task.name === searchTerm) {
+      if (task.name.toLowerCase() === searchTerm.toLowerCase()) {
         console.log("same");
         // set current task
         switchCurrentTask(task.id);
@@ -196,7 +197,7 @@ export const addAnOptionForCurrentTask = async (optionName) => {
   // check duplicate
   if (currentTaskOptions) {
     for (let option of currentTaskOptions) {
-      if (option.name === optionName) {
+      if (option.name.toLowerCase() === optionName.toLowerCase()) {
         console.log('same option');
         return;
       }
@@ -233,14 +234,36 @@ export const deleteOptionWithId = async (id) => {
 
 
 /* REQUIREMENTS / CRITERIA */
-export const addARequirement = async (requirementName) => {
+export const addARequirementForCurrentTask = async (requirementName) => {
   currentTaskId = (await currentTaskIdRef.once('value')).val();
-  console.log(currentTaskId);
+  let requirements = await tasksRef.child(currentTaskId + '/requirements').once('value');
+  currentTaskRequirements = [];
+  requirements.forEach((childSnapshot) => {
+    currentTaskRequirements.push({
+      ...childSnapshot.val(),
+      id: childSnapshot.key
+    })
+  });
+
+  // check duplicate
+  if (currentTaskRequirements) {
+    for (let requirement of currentTaskRequirements) {
+      if (requirement.name.toLowerCase() === requirementName.toLowerCase()) {
+        console.log('same requirement');
+        return;
+      }
+    }
+  }
+
+  let newRequirementRef = tasksRef.child(currentTaskId + '/requirements').push();
+  newRequirementRef.set({
+    name: requirementName
+  });
 }
 
-export const deleteARequirementWithId = async (requirementId) => {
+export const deleteRequirementWithId = async (id) => {
   currentTaskId = (await currentTaskIdRef.once('value')).val();
-  console.log(currentTaskId);
+  tasksRef.child(currentTaskId).child('requirements').child(id).set(null);
 }
 
 
