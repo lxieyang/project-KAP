@@ -125,7 +125,7 @@ class interactionBox extends Component {
                     attitudeRequirementPairs: {}
                   });
                 });
-                transformedOptions = sortBy(transformedOptions, ['id', 'timestamp', 'active']);
+                transformedOptions = reverse(sortBy(transformedOptions, ['id']));
                 this.setState({
                   existingOptions: transformedOptions,
                   existingRequirements: transformedRequiremennts
@@ -157,7 +157,7 @@ class interactionBox extends Component {
                   });
                 }
               });
-              transformedOptions = reverse(sortBy(transformedOptions, ['active']));
+              transformedOptions = reverse(sortBy(transformedOptions, ['id']));
               this.setState({
                 existingOptions: transformedOptions,
                 existingRequirements: transformedRequiremennts
@@ -511,7 +511,7 @@ class interactionBox extends Component {
                           title={rq.name}
                           className={[styles.Requirement, (
                             attitude === undefined
-                            ? styles.Inactive
+                            ? styles.InactiveRequirement
                             : null
                           )].join(' ')}>
                           <div className={styles.RequirementAttitude}>
