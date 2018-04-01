@@ -54,17 +54,18 @@
   max-height: 90%;
 }
 
-table {
+table.ComparisonTable {
   border-collapse: collapse;
 }
 /* 
 tr:nth-child(even) {background-color: #f2f2f2;} */
 
-th {
+.ComparisonTable th {
   font-weight: 500;
 }
 
-th, td {
+.ComparisonTable th, 
+.ComparisonTable td {
   padding: 8px;
   text-align: left;
   border-bottom: 1px solid #ddd;

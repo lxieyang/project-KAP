@@ -4,7 +4,7 @@ import FontAwesomeIcon from '@fortawesome/react-fontawesome';
 import fasLink from '@fortawesome/fontawesome-free-solid/faLink';
 import fasSave from '@fortawesome/fontawesome-free-solid/faSave';
 import fasArrowsAlt from '@fortawesome/fontawesome-free-solid/faArrowsAlt';
-import fasTrash from '@fortawesome/fontawesome-free-solid/faTrash';
+import fasCopy from '@fortawesome/fontawesome-free-solid/faCopy';
 import ThumbV1 from '../../components/UI/Thumbs/ThumbV1/ThumbV1';
 import QuestionMark from '../../components/UI/Thumbs/QuestionMark/QuestionMark';
 import Input from '../../components/UI/Input/Input';
@@ -16,10 +16,32 @@ import {
 import { SNIPPET_TYPE } from '../../shared/constants';
 import { sortBy, reverse } from 'lodash';
 import * as FirebaseStore from '../../firebase/store';
-import { openLinkInTextEditorExtension } from '../../shared/utilities';
+import { openLinkInTextEditorExtension, getFirstNWords } from '../../shared/utilities';
 
 const dummyText = 'Please select some text';
 const dummyHtml = [`<p>Please lasso select some text</p>`];
+const dummyRqList = [
+  {
+    id: '1',
+    name: 'accessible from content script'
+  },
+  {
+    id: '2',
+    name: 'sync across different devices'
+  },
+  {
+    id: '3',
+    name: 'high speed, low laggings'
+  },
+  {
+    id: '4',
+    name: 'accessible from content script accessible from content script accessible from content script'
+  },
+  {
+    id: '5',
+    name: 'free of charge'
+  }
+]
 
 const selectKeyCode = 18;
 
@@ -322,7 +344,11 @@ class interactionBox extends Component {
     //     id: optionId
     //   }
     // });
-    FirebaseStore.deleteOptionWithId(optionId);
+    // FirebaseStore.deleteOptionWithId(optionId);
+  }
+
+  dupOption = (event, optionId) => {
+
   }
 
   render () {
@@ -346,8 +372,8 @@ class interactionBox extends Component {
                   <div 
                     title="Delete this option"
                     className={styles.DeleteOptionIconContainer}
-                    onClick={(event) => this.deleteOption(event, op.id)}>
-                    <FontAwesomeIcon icon={fasTrash} />
+                    onClick={(event) => this.dupOption(event, op.id)}>
+                    <FontAwesomeIcon icon={fasCopy} />
                   </div>
                 </td>
                 <td>
@@ -390,6 +416,25 @@ class interactionBox extends Component {
                     )].join(' ')}
                     onClick={(event) => this.attitudeSwitchHandler(event, idx, null)}>
                     <QuestionMark />
+                  </div>
+                </td>
+                <td>
+                  <div className={styles.InTermsOf}>
+                    in
+                  </div>
+                </td>
+                <td>
+                  <div className={styles.RequirementsContainer}>
+                    {dummyRqList.map((rq, idx) => {
+                      return (
+                        <div 
+                          key={idx}
+                          title={rq.name}
+                          className={styles.Requirement}>
+                          {getFirstNWords(4, rq.name)}
+                        </div>
+                      );
+                    })}
                   </div>
                 </td>
               </tr>

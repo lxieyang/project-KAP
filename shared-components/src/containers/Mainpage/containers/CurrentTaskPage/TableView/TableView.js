@@ -561,7 +561,7 @@ class TableView extends Component {
           
 
           <div className={styles.Content}>
-            <table>
+            <table className={styles.ComparisonTable}>
               <thead>
                 {experimentalTableHeader}
               </thead>

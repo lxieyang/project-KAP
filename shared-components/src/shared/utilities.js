@@ -34,7 +34,7 @@ export const openLinkInTextEditorExtension = (event, url) => {
 
 export const getFirstNWords = (n, str) => {
   let split = str.split(/\s+/);
-  return split.length < n ? split.join(' ') : split.slice(0, n).join(" ") + ' ...';
+  return split.length <= n ? split.join(' ') : split.slice(0, n).join(" ") + ' ...';
 };
 
 
