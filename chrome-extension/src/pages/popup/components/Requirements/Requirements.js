@@ -1,50 +1,101 @@
-import React from 'react';
+import React, { Component } from 'react';
 
 import FontAwesomeIcon from '@fortawesome/react-fontawesome';
 import fasFlagCheckered from '@fortawesome/fontawesome-free-solid/faFlagCheckered';
-import fasTrash from '@fortawesome/fontawesome-free-solid/faTrash';
 import Input from '../../../../../../shared-components/src/components/UI/Input/Input';
 import styles from './Requirements.css';
 import { sortBy } from 'lodash';
+import update from 'immutability-helper';
+import RequirementPiece from './RequirementPiece/RequirementPiece';
+
+
 const inputConfig = {
   placeholder: 'Add a requirement'
 }
 
-const requirements = (props) => {
-  const { requirements } = props;
-  let rqList = sortBy(requirements, ['order']);
+class Requirements extends Component {
 
-  return (
-    <div style={{display: 'flex'}}>
-      <div className={styles.Requirements}>
-        <div className={styles.Label}>
-          <FontAwesomeIcon icon={fasFlagCheckered} /> &nbsp;
-          Requirements:
-        </div>
-        <div className={styles.RequirementList}>
-          <ul>
-            {rqList.map((rq, idx) => (
-              <li key={rq.id}>
-                <span className={styles.Requirement}>{rq.name}</span>
-                <span  
-                  onClick={(event) => props.deleteRequirementWithId(rq.id)}>
-                  <FontAwesomeIcon 
-                    icon={fasTrash}
-                    className={styles.TrashIcon}/>
-                </span>
-              </li>
-            ))}
-            <Input 
-              elementType={'input'} 
-              elementConfig={inputConfig}
-              submitted={props.addRequirement}
-              value={props.newRequirementValue}
-              changed={props.changed} />
-          </ul>
+  state = {
+    requirements: null
+  }
+
+  componentDidMount () {
+    this.transformRequirements(this.props.requirements);
+  }
+
+  componentWillReceiveProps (nextProps) {
+    this.transformRequirements(nextProps.requirements);
+  }
+
+  transformRequirements = (requirements) => {
+    requirements = sortBy(requirements, ['order']);
+    this.setState({requirements});
+  }
+
+  movePiece = (dragIndex, hoverIndex) => {
+    const { requirements } = this.state;
+    const dragPiece = requirements[dragIndex];
+
+    // this.setState(update(this.state, {
+    //   requirements: {
+    //     $splice: [
+    //       [dragIndex, 1],
+    //       [hoverIndex, 0, dragPiece],
+    //     ],
+    //   },
+    // }));
+
+    let newRequirements = update(requirements, {
+      $splice: [
+        [dragIndex, 1],
+        [hoverIndex, 0, dragPiece]
+      ]
+    });
+    
+
+    this.setState({requirements: newRequirements});
+
+    // update order
+    let ordering = {};
+    for (let idx = 0; idx < newRequirements.length; idx++) {
+      ordering[newRequirements[idx].id] = idx;
+    }
+    this.props.updateRequirementsOrdering(ordering);
+  }
+
+  render() {
+    const { requirements } = this.state;
+  
+    return (
+      <div style={{display: 'flex'}}>
+        <div className={styles.Requirements}>
+          <div className={styles.Label}>
+            <FontAwesomeIcon icon={fasFlagCheckered} /> &nbsp;
+            Requirements:
+          </div>
+          <div className={styles.RequirementList}>
+            <ul>
+              {requirements !== null ? requirements.map((rq, idx) => (
+                <RequirementPiece 
+                  key={rq.id}
+                  index={idx}
+                  rq={rq}
+                  movePiece={this.movePiece}
+                  deleteRequirementWithId={this.props.deleteRequirementWithId}/>
+              )) : null}
+              <Input 
+                elementType={'input'} 
+                elementConfig={inputConfig}
+                submitted={this.props.addRequirement}
+                value={this.props.newRequirementValue}
+                changed={this.props.changed} />
+            </ul>
+          </div>
         </div>
       </div>
-    </div>
-  );
+    );
+  }
+  
 }
 
-export default requirements;
+export default Requirements;

@@ -8,6 +8,8 @@ import CurrentTask from './components/CurrentTask/CurrentTask';
 import Options from './components/Options/Options';
 import Requirements from './components/Requirements/Requirements';
 import Settings from './components/Settings/Settings';
+import { DragDropContext } from 'react-dnd';
+import HTML5Backend from 'react-dnd-html5-backend';
 import { 
   tasksRef,
   currentTaskIdRef,
@@ -17,18 +19,6 @@ import {
 import * as FirebaseStore from '../../../../shared-components/src/firebase/store';
 import styles from './Popup.css';
 
-// // import { 
-// //   tasksRef,
-// //   currentTaskIdRef,
-// //   FirebaseStore,
-// //   isDisabledRef
-// // } from '../background/background';
-
-// let tasksRef;
-// let currentTaskIdRef;
-// let FirebaseStore;
-// let isDisabledRef;
-
 const dividerOptions = {
   margin: {
     long: '10px',
@@ -36,6 +26,7 @@ const dividerOptions = {
   }
 }
 
+@DragDropContext(HTML5Backend)
 class Popup extends Component {
   state = {
     currentTaskId: null,
@@ -145,13 +136,13 @@ class Popup extends Component {
     this.setState({newRequirementInput: ''});
   }
 
+  updateRequirementsOrdering = (ordering) => {
+    FirebaseStore.updateRequirementOrdering(ordering);
+  }
+
   deleteRequirementHandler = (id) => {
     FirebaseStore.deleteRequirementWithId(id);
   }
-
-
-
-
 
   disablePluginHandler = () => {
     FirebaseStore.switchWorkingStatus();
@@ -161,7 +152,7 @@ class Popup extends Component {
     let appTitle = (<AppHeader logoSize='38px' hover={false}/>);
 
     const { currentTaskIdIsLoading, tasksIsLoading, disabled } = this.state;
-    console.log(disabled);
+
     let toRender = (
       <Aux>{appTitle}</Aux>
     );
@@ -225,7 +216,8 @@ class Popup extends Component {
               newRequirementValue={newRequirementInput}
               changed={this.inputChangedHandlerForRequirement}
               addRequirement={this.submitHandlerForRequirement}
-              deleteRequirementWithId={this.deleteRequirementHandler}/>
+              deleteRequirementWithId={this.deleteRequirementHandler}
+              updateRequirementsOrdering={this.updateRequirementsOrdering}/>
           </div>
           
 

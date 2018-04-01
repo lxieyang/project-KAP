@@ -87,7 +87,6 @@ class TableView extends Component {
       })
     }
     requirementList = sortBy(requirementList, ['order']);
-    console.log(requirementList);
 
     // extract pieces ==> disabling piece grouping
     let piecesList = [];
@@ -374,11 +373,7 @@ class TableView extends Component {
 
   render () {
 
-    const props = this.props;
-    const { pieces, options, requirements } = this.state;
-
-    let experimentalOrderedPiecesList = this.getOrderedPiecesListFromState();
-
+    
     let pieceViewOption = (
       <Aux>
         <div className={styles.Label}>
@@ -397,9 +392,6 @@ class TableView extends Component {
 
 
 
-
-
-
     let newRequirementList = this.state.requirementList; // this.getOrderedRequirementListFromState();
     let newOptionsList = this.state.optionsList; // this.getOrderedOptionListFromState();
 
@@ -409,22 +401,11 @@ class TableView extends Component {
         {
           newRequirementList.map((rq, idx) => {
             return (
-              <th key={idx}>
-                <div
-                  className={[styles.ShowHideRequirementContainer, styles.ShowHideRequirement].join(' ')}
-                  onClick={(event) => this.switchRequirementStatus(event, rq.id)}>
-                  {
-                    rq.active
-                    ? <FontAwesomeIcon icon={fasMinusCircle} className={styles.ShowHideRequirementIcon}/>
-                    : <FontAwesomeIcon icon={fasCheckCircle} className={styles.ShowHideRequirementIcon}/>
-                  }
-                </div>
-                <TableHeader 
-                  key={rq.id}
-                  rq={rq} 
-                  index={idx} 
-                  moveHeader={this.moveHeader}/>
-              </th>
+              <TableHeader 
+                key={rq.id}
+                rq={rq} 
+                index={idx} 
+                moveHeader={this.moveHeader}/>
             );
           })
         }
@@ -499,183 +480,6 @@ class TableView extends Component {
       );
     });
 
-
-
-
-
-
-
-
-
-
-    let experimentalTableHeader = (
-      <tr>
-        <th></th>
-        {experimentalOrderedPiecesList.map((p, idx) => (
-          <th 
-            key={idx}>
-            <div 
-              className={[styles.ShowHidePieceContainer, styles.ShowHidePiece].join(' ')}
-              onClick={(event) => this.switchPieceStatus(event, p.id)}>
-            {
-              p.active
-              ? <FontAwesomeIcon icon={fasMinusCircle} className={styles.ShowHidePieceIcon}/>
-              : <FontAwesomeIcon icon={fasCheckCircle} className={styles.ShowHidePieceIcon}/>
-            }
-            </div>
-            <div 
-              className={[styles.PieceNameContainer,
-                p.active ? null : styles.InactivePiece].join(' ')}>
-              {
-                p.type !== SNIPPET_TYPE.PIECE_GROUP
-                ? <div className={styles.PieceNameBadgeContainer}>
-                    { /* this.getTypeBadge(p.type) */ }
-                    {this.getCodeBadge(p.htmls)}
-                  </div>
-                : null
-              }
-              
-              <div className={styles.PieceNameContent}>
-                {
-                  this.state.isDetailed
-                  ? p.type === SNIPPET_TYPE.PIECE_GROUP
-                    ? <div className={styles.PieceGroupListContainer}>
-                        <div>
-                          {getFirstNWords(10, p.name)}
-                        </div>
-                        <ul>
-                          {p.pieceIds.map((pid, idx) =>  {
-                            let piece = pieces[pid];
-                            return (
-                              <li key={idx}>
-                                <div className={styles.Bullet}>• </div>
-                                <div className={styles.PieceContainerInPieceGroup}>
-                                  <div 
-                                    className={styles.PieceTitle}
-                                    onClick={(event) => {this.makeInteractionbox(event, pid)}}>
-                                    { 
-                                      piece.title === undefined 
-                                      ? getFirstNWords(5, piece.texts)
-                                      : getFirstNWords(5, piece.title)
-                                    }
-                                  </div>
-                                </div>
-                              </li>
-                            );
-                          })}
-                        </ul>
-                      </div>
-                    : p.type !== SNIPPET_TYPE.SELECTION
-                      ? <div
-                          dangerouslySetInnerHTML={this.getHTML(p.htmls)}
-                          onClick={(event) => {this.makeInteractionbox(event, p.id)}}>
-                        </div>
-                      : <span 
-                          className={styles.SelectionText}
-                          onClick={(event) => {this.makeInteractionbox(event, p.id)}}>
-                          {getFirstNWords(10, p.texts)}
-                        </span>
-                    
-                  : p.type === SNIPPET_TYPE.PIECE_GROUP
-                    ? getFirstNWords(10, p.name)
-                    : <div 
-                        onClick={(event) => {this.makeInteractionbox(event, p.id)}}>
-                        {
-                          p.title === undefined
-                          ? getFirstNWords(10, p.texts)
-                          : getFirstNWords(10, p.title)
-                        }
-                      </div> 
-                    
-                }
-              </div>
-            </div>
-          </th>
-        ))}
-      </tr>
-    );
-
-    let experimentalTableBody = reverse(sortBy(this.state.optionsList, ['active'])).map((op, idx) => {
-      return (
-        <tr key={op.id} >
-          <td>
-            <div 
-              className={[styles.ShowHidePieceContainer, styles.ShowHideOption].join(' ')}
-              onClick={(event) => this.switchOptionStatus(event, op.id)}>
-            {
-              op.active 
-              ? <FontAwesomeIcon icon={fasMinusCircle} className={styles.ShowHidePieceIcon}/>
-              : <FontAwesomeIcon icon={fasCheckCircle} className={styles.ShowHidePieceIcon}/>
-            }
-            </div>
-            <div className={[styles.OptionNameContainer, !op.active ? styles.InactiveOption : null].join(' ')}>{op.name}</div>
-          </td>
-          { 
-            experimentalOrderedPiecesList.map((p, index) => {
-              let attitude = undefined;
-              if (p.attitudeOptionPairs !== undefined) {
-                let pair = p.attitudeOptionPairs.filter(pair => pair.optionId === op.id)[0];
-                attitude = pair !== undefined 
-                           ? pair.attitude !== undefined
-                             ? pair.attitude
-                             : null
-                           : undefined;
-              }
-              return (
-                <td key={p.id}>
-                  <div className={[
-                      styles.TableCellContainer,
-                      !p.active ? styles.InactivePiece : null, 
-                      !op.active ? styles.InactiveOption : null
-                    ].join(' ')}
-                    style={{pointerEvents: !p.active || !op.active ? 'none' : 'auto'}}>
-                    <div 
-                      className={styles.Attitude}
-                      data-tip
-                      data-for={p.id + op.id}
-                      data-event="click focus">
-                      {
-                        attitude === true
-                        ? <ThumbV1 type='up' />
-                        : attitude === false
-                          ? <ThumbV1 type='down' />
-                          : attitude === null
-                            ? <QuestionMark />
-                            : <div className={styles.NotMarkedRelated}></div>
-                      }
-                    </div>
-                    <ReactTooltip 
-                      id={p.id + op.id}
-                      globalEventOff="click"
-                      place='right' 
-                      type='light' 
-                      effect='solid'
-                      className={styles.AttitudeSwitchContainer}>
-                      <div 
-                        className={[styles.AttitudeSwitcher, attitude === true ? styles.ActiveAttitude : styles.InactiveAttitude].join(' ')}
-                        onClick={() => this.changeAttitude(op.id, p.id, attitude, true, p.type)}>
-                        <ThumbV1 type='up' /> 
-                      </div>
-                      <div 
-                        className={[styles.AttitudeSwitcher, attitude === false ? styles.ActiveAttitude : styles.InactiveAttitude].join(' ')}
-                        onClick={() => this.changeAttitude(op.id, p.id, attitude, false, p.type)}>
-                        <ThumbV1 type='down' />
-                      </div>
-                      <div 
-                        className={[styles.AttitudeSwitcher, attitude === null ? styles.ActiveAttitude : styles.InactiveAttitude].join(' ')}
-                        onClick={() => this.changeAttitude(op.id, p.id, attitude, null, p.type)}>
-                      <QuestionMark />
-                      </div>
-                    </ReactTooltip>
-                  </div>
-                </td>
-              );
-            })
-          }
-        </tr>
-      );
-    });    
-
     let modal = null;
     if (this.state.showModal) {
       let piece = this.props.task.pieces[this.state.modalPieceId];
@@ -732,11 +536,9 @@ class TableView extends Component {
           <div className={styles.Content}>
             <table className={styles.ComparisonTable}>
               <thead>
-                {/* experimentalTableHeader */}
                 {newTableHeader}
               </thead>
               <tbody>
-                {/* experimentalTableBody */}
                 {newTableBody}
               </tbody>
             </table>

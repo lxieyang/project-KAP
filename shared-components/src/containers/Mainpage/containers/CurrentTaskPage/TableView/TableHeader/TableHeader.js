@@ -1,4 +1,8 @@
 import React, { Component } from 'react';
+
+import FontAwesomeIcon from '@fortawesome/react-fontawesome';
+import fasMinusCircle from '@fortawesome/fontawesome-free-solid/faMinusCircle';
+import fasCheckCircle from '@fortawesome/fontawesome-free-solid/faCheckCircle';
 import PropTypes from 'prop-types';
 import { findDOMNode } from 'react-dom';
 import { DragSource, DropTarget } from 'react-dnd';
@@ -60,7 +64,6 @@ const headerTarget = {
 
 @DropTarget('TABLE_HEADER', headerTarget, (connect, monitor) => ({
   connectDropTarget: connect.dropTarget(),
-  isOver: monitor.isOver(),
 }))
 @DragSource('TABLE_HEADER', headerSource, (connect, monitor) => ({
   connectDragSource: connect.dragSource(),
@@ -77,15 +80,27 @@ class TableHeader extends Component {
 
   render () {
     const { rq } = this.props;
-    const { isDragging, isOver, connectDragSource, connectDropTarget } = this.props;
-    console.log(isOver);
+    const { isDragging, connectDragSource, connectDropTarget } = this.props;
+    const opacity = isDragging ? 0 : 1;
     return connectDragSource(connectDropTarget(
-      <div
-        style={{opacity: isDragging ? '0.0' : '1'}}
-        className={[styles.RequirementNameContainer,
-        rq.active ? null : styles.InactiveRequirement].join(' ')}>
-          {rq.name}
-      </div>
+      <th>
+        <div
+          className={[styles.ShowHideRequirementContainer, styles.ShowHideRequirement].join(' ')}
+          onClick={(event) => this.switchRequirementStatus(event, rq.id)}>
+          {
+            rq.active
+            ? <FontAwesomeIcon icon={fasMinusCircle} className={styles.ShowHideRequirementIcon}/>
+            : <FontAwesomeIcon icon={fasCheckCircle} className={styles.ShowHideRequirementIcon}/>
+          }
+        </div>
+        <div
+          style={{ opacity }}
+          className={[styles.RequirementNameContainer,
+          rq.active ? null : styles.InactiveRequirement].join(' ')}>
+            {rq.name}
+        </div>
+      </th>
+      
     ));
   }
 }
