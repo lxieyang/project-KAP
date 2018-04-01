@@ -216,14 +216,14 @@ export const addAnOptionForCurrentTask = async (optionName) => {
 export const deleteOptionWithId = async (id) => {
   currentTaskId = (await currentTaskIdRef.once('value')).val();
   tasksRef.child(currentTaskId).child('options').child(id).set(null);
-  // also delete options in pieces.attitudeOptionPairs
+  // also delete options in pieces.attitudeList
   let pieces = await tasksRef.child(currentTaskId).child('pieces').once('value');
-  pieces.forEach((childSnapshot) => {
-    let pairs = childSnapshot.val().attitudeOptionPairs
-    if (pairs !== undefined) {
-      pairs = pairs.filter(p => p.optionId !== id);
-      tasksRef.child(currentTaskId).child('pieces').child(childSnapshot.key).child('attitudeOptionPairs').set(pairs);
+  pieces.forEach((snap) => {
+    let attitudeList = snap.val().attitudeList;
+    if (attitudeList !== undefined) {
+      delete attitudeList[id];
     }
+    tasksRef.child(currentTaskId).child('pieces').child(snap.key).child('attitudeList').set(attitudeList);
   });
 }
 
@@ -264,6 +264,20 @@ export const addARequirementForCurrentTask = async (requirementName) => {
 export const deleteRequirementWithId = async (id) => {
   currentTaskId = (await currentTaskIdRef.once('value')).val();
   tasksRef.child(currentTaskId).child('requirements').child(id).set(null);
+  // delete those in the attitude list
+  let pieces = await tasksRef.child(currentTaskId).child('pieces').once('value');
+  pieces.forEach((snap) => {
+    let attitudeList = snap.val().attitudeList;
+    if (attitudeList !== undefined) {
+      for (let opKey in attitudeList) {
+        let attitudeReruirementPairs = attitudeList[opKey];
+        if (attitudeReruirementPairs !== undefined) {
+          delete attitudeReruirementPairs[id];
+        }
+      }
+    }
+    tasksRef.child(currentTaskId).child('pieces').child(snap.key).child('attitudeList').set(attitudeList);
+  });
 }
 
 

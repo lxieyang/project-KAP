@@ -506,7 +506,9 @@ class CollectionView extends Component {
                 id={this.state.modalPieceId}
                 specificPieceId={this.state.specificPieceId}
                 options={this.props.task.options}
-                attitudeOptionPairs={piece.attitudeOptionPairs}
+                requirements={this.props.task.requirements}
+                
+                attitudeList={piece.attitudeList}
                 type={piece.type}
                 url={piece.url}
                 postTags={piece.postTags}

@@ -78,31 +78,45 @@ class interactionBox extends Component {
 
   componentDidMount() {
     if (this.props.specificPieceId !== undefined && this.props.specificPieceId !== null) {
+      // reviewing
+
       let transformedOptions = [];
+      let transformedRequiremennts = [];
+      for (let rqKey in this.props.requirements) {
+        transformedRequiremennts.push({
+          id: rqKey,
+          name: this.props.requirements[rqKey].name
+        });
+      }
+
       for (let opKey in this.props.options) {
-        let attitudeOptionPairs = this.props.attitudeOptionPairs;
-        if(attitudeOptionPairs !== undefined) {
-          let matchingPair = attitudeOptionPairs.filter(pair => pair.optionId === opKey);
-          let active = matchingPair.length !== 0;
-          let attitude = active && matchingPair[0].attitude !== undefined ? matchingPair[0].attitude : null
+        let attitudeList = this.props.attitudeList;
+        if(attitudeList !== undefined) {
+          let attitudeRequirementPairs = attitudeList[opKey] !== undefined ? attitudeList[opKey] : {};
           transformedOptions.push({
             id: opKey,
             name: this.props.options[opKey].name,
-            active: active,
-            attitude: attitude
+            active: false,
+            attitudeRequirementPairs: attitudeRequirementPairs
           });
         } else {
           transformedOptions.push({
             id: opKey,
             name: this.props.options[opKey].name,
             active: false,
-            attitude: null
+            attitudeRequirementPairs: {}
           });
         }
       }
       transformedOptions = reverse(sortBy(transformedOptions, ['active']));
-      this.setState({existingOptions: transformedOptions});
+      this.setState({
+        existingOptions: transformedOptions,
+        existingRequirements: transformedRequiremennts
+      });
+
     } else {
+      // working
+
       currentTaskIdRef.on('value', (snapshot) => {
         tasksRef.child(snapshot.val() + '/options').on('value', (dataOptions) => {
           tasksRef.child(snapshot.val() + '/requirements').on('value', (dataRequirements) => {
@@ -121,11 +135,11 @@ class interactionBox extends Component {
                   transformedOptions.push({
                     id: opSnapshot.key,
                     name: opSnapshot.val().name,
-                    active: false, // opSnapshot.key === currentOptionId,
+                    active: opSnapshot.key === currentOptionId,
                     attitudeRequirementPairs: {}
                   });
                 });
-                transformedOptions = reverse(sortBy(transformedOptions, ['id']));
+                transformedOptions = reverse(sortBy(transformedOptions, ['active', 'id']));
                 this.setState({
                   existingOptions: transformedOptions,
                   existingRequirements: transformedRequiremennts
@@ -135,24 +149,20 @@ class interactionBox extends Component {
               let transformedOptions = [];
               dataOptions.forEach((opSnapshot) => {
                 let opKey = opSnapshot.key;
-                let attitudeOptionPairs = this.props.attitudeOptionPairs;
-                if(attitudeOptionPairs !== undefined) {
-                  let matchingPair = attitudeOptionPairs.filter(pair => pair.optionId === opKey);
-                  let active = matchingPair.length !== 0;
-                  let attitude = active && matchingPair[0].attitude !== undefined ? matchingPair[0].attitude : null
+                let attitudeList = this.props.attitudeList;
+                if(attitudeList !== undefined) {
+                  let attitudeRequirementPairs = attitudeList[opKey] !== undefined ? attitudeList[opKey] : {};
                   transformedOptions.push({
                     id: opKey,
                     name: opSnapshot.val().name,
-                    active: active,
-                    attitude: attitude, /**TODO */
-                    attitudeRequirementPairs: {}
+                    active: false,
+                    attitudeRequirementPairs: attitudeRequirementPairs
                   });
                 } else {
                   transformedOptions.push({
                     id: opKey,
                     name: opSnapshot.val().name,
                     active: false,
-                    attitude: null,
                     attitudeRequirementPairs: {}
                   });
                 }
@@ -338,31 +348,17 @@ class interactionBox extends Component {
       title: this.state.title,
       texts: this.state.selectedText
     }
-    let attitudeOptionPairs = [];
+
+    let attitudeList = {};
     for (let op of this.state.existingOptions) {
-      if (op.active) {
-        attitudeOptionPairs.push({
-          optionId: op.id,
-          attitude: op.attitude
-        });
-      }
+      attitudeList[op.id] = op.attitudeRequirementPairs;
     }
-    piece.attitudeOptionPairs = attitudeOptionPairs;
-    // console.log(piece);
+    piece.attitudeList = attitudeList;
+
+    console.log(piece);
     if (this.state.mode !== 'UPDATE') {
-      // chrome.runtime.sendMessage({
-      //   msg: actionTypes.ADD_A_PIECE_TO_CURRENT_TASK,
-      //   payload: {piece}
-      // });
       FirebaseStore.addAPieceToCurrentTask(piece);
     } else {
-      // chrome.runtime.sendMessage({
-      //   msg: actionTypes.UPDATE_A_PIECE_WITH_ID,
-      //   payload: {
-      //     id: this.props.id,
-      //     piece
-      //   }
-      // });
       FirebaseStore.updateAPieceWithId(this.props.id, piece);
     }
 
