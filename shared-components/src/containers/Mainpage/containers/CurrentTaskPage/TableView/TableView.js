@@ -9,7 +9,6 @@ import fasICursor from '@fortawesome/fontawesome-free-solid/faICursor';
 import fasCode from '@fortawesome/fontawesome-free-solid/faCode';
 import fasMinusCircle from '@fortawesome/fontawesome-free-solid/faMinusCircle';
 import fasCheckCircle from '@fortawesome/fontawesome-free-solid/faCheckCircle';
-import fasArrowsAlt from '@fortawesome/fontawesome-free-solid/faArrowsAlt';
 
 import ToggleSwitch from '../../../../../components/UI/ToggleSwitch/ToggleSwitch';
 import InteractionBox from '../../../../../components/InteractionBox/InteractionBox';
@@ -29,8 +28,10 @@ class TableView extends Component {
     pieces: this.props.task.pieces,
     specificPieceId: this.props.specificPieceId !== undefined ? this.props.specificPieceId : null,
     options: this.props.task.options,
+    requirements: this.props.task.requirements,
     pieceGroups: this.props.task.pieceGroups,
     optionsList: [],
+    requirementList: [],
     piecesList: [],
     isDetailed: true,
     showModal: false,
@@ -71,31 +72,43 @@ class TableView extends Component {
     }
     // console.log(optionsList);
 
-    // extract pieces
-
-    let piecesList = [];
-    let toInactivePiecesList = [];
-    for (let pgKey in task.pieceGroups) {
-      if (task.pieceGroups[pgKey].pieceIds) {
-        toInactivePiecesList = toInactivePiecesList.concat(task.pieceGroups[pgKey].pieceIds);
-      }
-      piecesList.push({
-        ...task.pieceGroups[pgKey],
-        id: pgKey,
-        active: true
-      });
+    // extract requirements
+    let requirementList = [];
+    let idx = 0;
+    for (let rqKey in task.requirements) {
+      requirementList.push({
+        id: rqKey,
+        name: task.requirements[rqKey].name,
+        active: true,
+        order: idx++
+      })
     }
+    console.log(requirementList);
+
+    // extract pieces ==> disabling piece grouping
+    let piecesList = [];
+    // let toInactivePiecesList = [];
+    // for (let pgKey in task.pieceGroups) {
+    //   if (task.pieceGroups[pgKey].pieceIds) {
+    //     toInactivePiecesList = toInactivePiecesList.concat(task.pieceGroups[pgKey].pieceIds);
+    //   }
+    //   piecesList.push({
+    //     ...task.pieceGroups[pgKey],
+    //     id: pgKey,
+    //     active: true
+    //   });
+    // }
     
     for (let pKey in task.pieces) {
       piecesList.push({
         ...task.pieces[pKey],
         id: pKey,
-        active: toInactivePiecesList.indexOf(pKey) === -1
+        active: true // toInactivePiecesList.indexOf(pKey) === -1
       });
     }
     
 
-    this.setState({optionsList, piecesList});
+    this.setState({optionsList, requirementList, piecesList});
   }
 
   getOrderedPiecesListFromState () {
@@ -124,6 +137,18 @@ class TableView extends Component {
 
     piecesList = reverse(sortBy(piecesList, ['active', 'count']));
     return piecesList;
+  }
+
+  getOrderedRequirementListFromState () {
+    let { requirementList } = this.state;
+    requirementList = reverse(sortBy(requirementList, ['active', 'order']));
+    return requirementList;
+  }
+
+  getOrderedOptionListFromState () {
+    let { optionsList } = this.state;
+    optionsList = reverse(sortBy(optionsList, ['active']));
+    return optionsList;
   }
 
   switchPieceStatus = (event, pieceId) => {
@@ -156,6 +181,21 @@ class TableView extends Component {
     let updatedOptionsList = [...this.state.optionsList];
     updatedOptionsList[idx] = updatedOption;
     this.setState({optionsList: updatedOptionsList});    
+  }
+
+  switchRequirementStatus = (event, requirementId) => {
+    let idx = 0;
+    let updatedRequirement = {};
+    for(; idx < this.state.requirementList.length; idx++) {
+      if (this.state.requirementList[idx].id === requirementId) {
+        updatedRequirement = {...this.state.requirementList[idx]};
+        break;
+      }
+    }
+    updatedRequirement.active = !updatedRequirement.active;
+    let updatedRequirementList = [...this.state.requirementList];
+    updatedRequirementList[idx] = updatedRequirement;
+    this.setState({requirementList: updatedRequirementList});
   }
 
   dismissModal = () => {
@@ -251,13 +291,6 @@ class TableView extends Component {
         }
       }
       // console.log(pieceClone);
-      // chrome.runtime.sendMessage({
-      //   msg: actionTypes.UPDATE_A_PIECE_WITH_ID,
-      //   payload: {
-      //     id: pieceId,
-      //     piece: pieceClone
-      //   }
-      // });
       // save piece
       FirebaseStore.updateAPieceWithId(pieceId, pieceClone);
 
@@ -303,13 +336,6 @@ class TableView extends Component {
       }
       // console.log(pieceId);
       // console.log(pieceClone);
-      // chrome.runtime.sendMessage({
-      //   msg: actionTypes.UPDATE_A_PIECE_GROUP_ATTITUDE_OPTION_PAIRS_WITH_ID,
-      //   payload: {
-      //     groupId: pieceId,
-      //     attitudeOptionPairs: pieceClone.attitudeOptionPairs
-      //   }
-      // });
 
       FirebaseStore.updateAPieceGroupAttitudeOptionPairsWithId(pieceId, pieceClone.attitudeOptionPairs);
     }
@@ -326,7 +352,7 @@ class TableView extends Component {
   render () {
 
     const props = this.props;
-    const { pieces, options } = this.state;
+    const { pieces, options, requirements } = this.state;
 
     let experimentalOrderedPiecesList = this.getOrderedPiecesListFromState();
 
@@ -342,6 +368,71 @@ class TableView extends Component {
         </div>
       </Aux>
     );
+
+    let newRequirementList = this.getOrderedRequirementListFromState();
+    let newOptionsList = this.getOrderedOptionListFromState();
+
+    let newTableHeader = (
+      <tr>
+        <th></th>
+        {
+          newRequirementList.map((rq, idx) => {
+            return (
+              <th key={idx}>
+                <div
+                  className={[styles.ShowHideRequirementContainer, styles.ShowHideRequirement].join(' ')}
+                  onClick={(event) => this.switchRequirementStatus(event, rq.id)}>
+                  {
+                    rq.active
+                    ? <FontAwesomeIcon icon={fasMinusCircle} className={styles.ShowHideRequirementIcon}/>
+                    : <FontAwesomeIcon icon={fasCheckCircle} className={styles.ShowHideRequirementIcon}/>
+                  }
+                </div>
+                <div
+                  className={[styles.RequirementNameContainer,
+                  rq.active ? null : styles.InactiveRequirement].join(' ')}>
+                    {rq.name}
+                </div>
+              </th>
+            );
+          })
+        }
+      </tr>
+    );
+
+    let newTableBody = newOptionsList.map((op, idx) => {
+      return (
+        <tr key={idx}>
+          <td>
+            <div 
+              className={[styles.ShowHidePieceContainer, styles.ShowHideOption].join(' ')}
+              onClick={(event) => this.switchOptionStatus(event, op.id)}>
+              {
+                op.active 
+                ? <FontAwesomeIcon icon={fasMinusCircle} className={styles.ShowHidePieceIcon}/>
+                : <FontAwesomeIcon icon={fasCheckCircle} className={styles.ShowHidePieceIcon}/>
+              }
+            </div>
+            <div className={[styles.OptionNameContainer, !op.active ? styles.InactiveOption : null].join(' ')}>
+              {op.name}
+            </div>
+          </td>
+          {
+            newRequirementList.map((rq, index) => {
+              return (
+                <td key={rq.id}>
+                  TODO
+                </td>
+              );
+            })
+          }
+        </tr>
+      );
+    });
+
+
+
+
 
     let experimentalTableHeader = (
       <tr>
@@ -435,8 +526,8 @@ class TableView extends Component {
         <tr key={op.id} >
           <td>
             <div 
-            className={[styles.ShowHidePieceContainer, styles.ShowHideOption].join(' ')}
-            onClick={(event) => this.switchOptionStatus(event, op.id)}>
+              className={[styles.ShowHidePieceContainer, styles.ShowHideOption].join(' ')}
+              onClick={(event) => this.switchOptionStatus(event, op.id)}>
             {
               op.active 
               ? <FontAwesomeIcon icon={fasMinusCircle} className={styles.ShowHidePieceIcon}/>
@@ -529,7 +620,7 @@ class TableView extends Component {
                 specificPieceId={this.state.specificPieceId}
                 options={this.props.task.options}
                 requirements={this.props.task.requirements}
-                
+
                 attitudeList={piece.attitudeList}
                 type={piece.type}
                 url={piece.url}
@@ -556,19 +647,23 @@ class TableView extends Component {
         <div className={styles.TableView}>
           <div className={styles.ConfigureRow}>
 
+            {/*
             <div className={styles.PieceConfigure}>
               {pieceViewOption}
             </div>
+            */}
           </div>
           
 
           <div className={styles.Content}>
             <table className={styles.ComparisonTable}>
               <thead>
-                {experimentalTableHeader}
+                {/* experimentalTableHeader */}
+                {newTableHeader}
               </thead>
               <tbody>
-                {experimentalTableBody}
+                {/* experimentalTableBody */}
+                {newTableBody}
               </tbody>
             </table>
           </div>

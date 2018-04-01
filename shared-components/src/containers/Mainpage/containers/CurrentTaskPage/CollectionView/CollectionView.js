@@ -456,21 +456,21 @@ class CollectionView extends Component {
         deleteSnippet={this.deletePieceHandler} />
     );
 
-    const { pieceGroups } = task;
-    let pieceGroupsList = [];
-    let piecesListClone = piecesList.map(p => JSON.parse(JSON.stringify(p)));
-    for (let pgKey in pieceGroups) {
-      let group = pieceGroups[pgKey];
-      pieceGroupsList.push({
-        ...group,
-        id: pgKey,
-        status: true  // should display
-      });
-      for (let pId of group.pieceIds) {
-        piecesListClone.filter(p => p.id === pId)[0].status = false;
-      }
-    }
-    let newPiecesList = pieceGroupsList.concat(reverse(sortBy(piecesListClone, ['status'])));
+    // const { pieceGroups } = task;
+    // let pieceGroupsList = [];
+    let piecesListClone = piecesList.map(p => JSON.parse(JSON.stringify(p)));   // ==> temporarily disable poece grouping
+    // for (let pgKey in pieceGroups) {
+    //   let group = pieceGroups[pgKey];
+    //   pieceGroupsList.push({
+    //     ...group,
+    //     id: pgKey,
+    //     status: true  // should display
+    //   });
+    //   for (let pId of group.pieceIds) {
+    //     piecesListClone.filter(p => p.id === pId)[0].status = false;
+    //   }
+    // }
+    // let newPiecesList = pieceGroupsList.concat(reverse(sortBy(piecesListClone, ['status'])));
     // console.log(newPiecesList);
 
 
@@ -479,7 +479,8 @@ class CollectionView extends Component {
         isOpen={this.state.allSnippetSIsOpen}
         options={task.options}
         pieces={task.pieces}
-        piecesList={newPiecesList}
+        // piecesList={newPiecesList}
+        piecesList={piecesListClone}
         makeInteractionBox={this.makeInteractionbox}
         deleteSnippet={this.deletePieceHandler} 
         createAPieceGroup={this.createAPieceGroup}

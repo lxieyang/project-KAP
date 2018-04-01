@@ -45,12 +45,14 @@ const cardSource = {
 
 const cardTarget = {
   canDrop(props, monitor, component) {
-    if (monitor.getItem().id === props.id) {
-      return false;
-    } else if (monitor.getItem().type === SNIPPET_TYPE.PIECE_GROUP) {
-      return false;
-    }
-    return true;
+    // if (monitor.getItem().id === props.id) {
+    //   return false;
+    // } else if (monitor.getItem().type === SNIPPET_TYPE.PIECE_GROUP) {
+    //   return false;
+    // }
+    // return true;
+
+    return false;   // ==> temporarily disable piece grouping
   },
 
   drop(props, monitor, component) {

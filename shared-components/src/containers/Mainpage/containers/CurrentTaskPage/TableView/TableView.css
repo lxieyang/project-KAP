@@ -109,12 +109,6 @@ tr:nth-child(even) {background-color: #f2f2f2;} */
   right: 4px;
 }
 
-.showHideOption {
-  position: absolute;
-  top: 4px;
-  left: 4px;
-}
-
 .ShowHidePieceIcon {
   cursor: pointer;
   opacity: 0.05;
@@ -125,6 +119,76 @@ tr:nth-child(even) {background-color: #f2f2f2;} */
 .ShowHidePieceIcon:hover {
   opacity: 0.8;
 }
+
+
+
+
+
+
+
+
+
+.ShowHideRequirementContainer {
+  color: inherit;
+  z-index: 900;
+}
+
+.ShowHideRequirement {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+}
+
+.ShowHideRequirementIcon {
+  cursor: pointer;
+  opacity: 0.05;
+  font-size: 1.0rem;
+  transition: all 0.1s ease-in;
+}
+
+.ShowHideRequirementIcon:hover {
+  opacity: 0.8;
+}
+
+.RequirementNameContainer {
+  display: flex;
+  align-items: flex-start;
+  overflow: hidden;
+  font-size: 1.1rem;
+  text-overflow: ellipsis;
+  max-height: 220px;
+  max-width: 250px;
+  overflow: auto;
+  cursor: pointer;
+  transition: all 0.1s ease-in;
+}
+
+.RequirementNameContainer:hover {
+  z-index: 99999;
+  transform: scale(1.05);
+}
+
+.InactiveRequirement {
+  opacity: 0.1;
+}
+
+
+
+
+
+
+
+
+
+
+
+.showHideOption {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+}
+
+
 
 .PieceNameBadgeContainer {
   margin-right: 8px;
