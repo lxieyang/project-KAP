@@ -68,10 +68,9 @@ class TableView extends Component {
     let optionsList = [];
     for (let opKey in task.options) {
       optionsList.push({
+        ...task.options[opKey],
         id: opKey,
-        name: task.options[opKey].name,
         active: true,
-        pieces: []
       });
     }
     // console.log(optionsList);
@@ -80,9 +79,8 @@ class TableView extends Component {
     let requirementList = [];
     for (let rqKey in task.requirements) {
       requirementList.push({
+        ...task.requirements[rqKey],
         id: rqKey,
-        name: task.requirements[rqKey].name,
-        order: task.requirements[rqKey].order,
         active: true
       })
     }
@@ -371,6 +369,10 @@ class TableView extends Component {
     FirebaseStore.updateRequirementOrdering(ordering);
   }
 
+  switchStarStatusOfRequirement = (id) => {
+    FirebaseStore.switchStarStatusOfARequirementWithId(id);
+  }
+
   render () {
 
     
@@ -405,7 +407,8 @@ class TableView extends Component {
                 key={rq.id}
                 rq={rq} 
                 index={idx} 
-                moveHeader={this.moveHeader}/>
+                moveHeader={this.moveHeader}
+                switchStarStatusOfRequirement={this.switchStarStatusOfRequirement}/>
             );
           })
         }

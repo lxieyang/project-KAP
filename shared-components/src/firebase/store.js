@@ -257,7 +257,17 @@ export const addARequirementForCurrentTask = async (requirementName) => {
 
   let newRequirementRef = tasksRef.child(currentTaskId + '/requirements').push();
   newRequirementRef.set({
-    name: requirementName
+    name: requirementName,
+    starred: false
+  });
+}
+
+export const switchStarStatusOfARequirementWithId = async (id) => {
+  currentTaskId = (await currentTaskIdRef.once('value')).val();
+  let rq = await tasksRef.child(currentTaskId).child('requirements').child(id).once('value');
+  tasksRef.child(currentTaskId).child('requirements').child(id).set({
+    ...rq.val(),
+    starred: !rq.val().starred
   });
 }
 

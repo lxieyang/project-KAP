@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import FontAwesomeIcon from '@fortawesome/react-fontawesome';
 import fasMinusCircle from '@fortawesome/fontawesome-free-solid/faMinusCircle';
 import fasCheckCircle from '@fortawesome/fontawesome-free-solid/faCheckCircle';
+import fasStar from '@fortawesome/fontawesome-free-solid/faStar';
 import PropTypes from 'prop-types';
 import { findDOMNode } from 'react-dom';
 import { DragSource, DropTarget } from 'react-dnd';
@@ -97,6 +98,13 @@ class TableHeader extends Component {
             }
           </div>
           <div style={{height: '100%'}}>
+          <div 
+            className={[styles.RequirementStar, (
+              rq.starred === true ? styles.ActiveStar : null
+            )].join(' ')}
+            onClick={(event) => this.props.switchStarStatusOfRequirement(rq.id)}>
+            <FontAwesomeIcon icon={fasStar} />
+          </div>
             <span className={styles.Ordinal}>{ordinal(index + 1)}</span>
           </div>
           <div

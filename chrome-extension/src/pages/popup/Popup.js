@@ -140,6 +140,10 @@ class Popup extends Component {
     FirebaseStore.updateRequirementOrdering(ordering);
   }
 
+  switchStarStatusOfRequirement = (id) => {
+    FirebaseStore.switchStarStatusOfARequirementWithId(id);
+  }
+
   deleteRequirementHandler = (id) => {
     FirebaseStore.deleteRequirementWithId(id);
   }
@@ -217,7 +221,8 @@ class Popup extends Component {
               changed={this.inputChangedHandlerForRequirement}
               addRequirement={this.submitHandlerForRequirement}
               deleteRequirementWithId={this.deleteRequirementHandler}
-              updateRequirementsOrdering={this.updateRequirementsOrdering}/>
+              updateRequirementsOrdering={this.updateRequirementsOrdering}
+              switchStarStatusOfRequirement={this.switchStarStatusOfRequirement}/>
           </div>
           
 

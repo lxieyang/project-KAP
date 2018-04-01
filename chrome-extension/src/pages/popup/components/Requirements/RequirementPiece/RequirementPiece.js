@@ -4,6 +4,7 @@ import { findDOMNode } from 'react-dom';
 import { DragSource, DropTarget } from 'react-dnd';
 import FontAwesomeIcon from '@fortawesome/react-fontawesome';
 import fasTrash from '@fortawesome/fontawesome-free-solid/faTrash';
+import fasStar from '@fortawesome/fontawesome-free-solid/faStar';
 import ordinal from 'ordinal';
 import styles from './RequirementPiece.css';
 
@@ -84,7 +85,16 @@ class RequirementPiece extends Component {
     return connectDragSource(connectDropTarget(
       <li style={{ opacity }}>
         <span className={styles.Ordinal}>{ordinal(index + 1)}</span>
-        <span className={styles.Requirement}>{rq.name}</span>
+        <div className={styles.Requirement}>
+          <div 
+            className={[styles.RequirementStar, (
+              rq.starred === true ? styles.ActiveStar : null
+            )].join(' ')}
+            onClick={(event) => this.props.switchStarStatusOfRequirement(rq.id)}>
+            <FontAwesomeIcon icon={fasStar} />
+          </div>
+          {rq.name}
+        </div>
         <span  
           onClick={(event) => this.props.deleteRequirementWithId(rq.id)}>
           <FontAwesomeIcon 
