@@ -266,7 +266,6 @@ class interactionBox extends Component {
   }
 
   attitudeChangeHandler = (event, optionId, requirementId, intendedFor) => {
-    console.log(`option ID: ${optionId} | requirement ID: ${requirementId} | intended for: ${intendedFor}`);
     // find idx of target option
     const { existingOptions }  = this.state
     let idx = 0;
@@ -282,21 +281,21 @@ class interactionBox extends Component {
     switch (intendedFor) {
       case 'good':
         if (attitudeRequirementPairs[requirementId] === 'good') {
-          attitudeRequirementPairs[requirementId] = undefined;
+          delete attitudeRequirementPairs[requirementId];
         } else {
           attitudeRequirementPairs[requirementId] = 'good';
         }
         break;
       case 'bad':
         if (attitudeRequirementPairs[requirementId] === 'bad') {
-          attitudeRequirementPairs[requirementId] = undefined;
+          delete attitudeRequirementPairs[requirementId];
         } else {
           attitudeRequirementPairs[requirementId] = 'bad';
         }
         break;
       case 'idk':
         if (attitudeRequirementPairs[requirementId] === 'idk') {
-          attitudeRequirementPairs[requirementId] = undefined;
+          delete attitudeRequirementPairs[requirementId];
         } else {
           attitudeRequirementPairs[requirementId] = 'idk';
         }
@@ -306,7 +305,7 @@ class interactionBox extends Component {
     }
 
     // update state
-    console.log(targetOption);
+    // console.log(targetOption);
     let updatedExistingOptions = [...existingOptions];
     updatedExistingOptions[idx] = targetOption;
     this.setState({existingOptions: updatedExistingOptions});
@@ -355,7 +354,7 @@ class interactionBox extends Component {
     }
     piece.attitudeList = attitudeList;
 
-    console.log(piece);
+    // console.log(piece);
     if (this.state.mode !== 'UPDATE') {
       FirebaseStore.addAPieceToCurrentTask(piece);
     } else {
