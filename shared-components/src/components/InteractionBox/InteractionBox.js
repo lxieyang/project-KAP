@@ -4,7 +4,7 @@ import FontAwesomeIcon from '@fortawesome/react-fontawesome';
 import fasLink from '@fortawesome/fontawesome-free-solid/faLink';
 import fasSave from '@fortawesome/fontawesome-free-solid/faSave';
 import fasArrowsAlt from '@fortawesome/fontawesome-free-solid/faArrowsAlt';
-import fasCopy from '@fortawesome/fontawesome-free-solid/faCopy';
+import fasTrash from '@fortawesome/fontawesome-free-solid/faTrash';
 import ThumbV1 from '../../components/UI/Thumbs/ThumbV1/ThumbV1';
 import QuestionMark from '../../components/UI/Thumbs/QuestionMark/QuestionMark';
 import Input from '../../components/UI/Input/Input';
@@ -61,6 +61,7 @@ class interactionBox extends Component {
     codeSnippetTexts: this.props.codeSnippetTexts !== undefined ? this.props.codeSnippetTexts : [],
     codeSnippetHTMLs: this.props.codeSnippetHTMLs !== undefined ? this.props.codeSnippetHTMLs : [],
     existingOptions: [],
+    existingRequirements: [],
     notes: this.props.notes !== undefined ? this.props.notes : '',
     title: this.props.title !== undefined ? this.props.title : '',
     used: this.props.used !== undefined ? this.props.used : [],
@@ -103,49 +104,66 @@ class interactionBox extends Component {
       this.setState({existingOptions: transformedOptions});
     } else {
       currentTaskIdRef.on('value', (snapshot) => {
-        tasksRef.child(snapshot.val() + '/options').on('value', (data) => {
-          if (this.state.mode !== 'UPDATE') {
-            tasksRef.child(snapshot.val() + '/currentOptionId').once('value', (databack) => {
-              let currentOptionId = databack.val();
-              let transformedOptions = [];
-              data.forEach((opSnapshot) => {
-                transformedOptions.push({
-                  id: opSnapshot.key,
-                  name: opSnapshot.val().name,
-                  active: opSnapshot.key === currentOptionId,
-                  attitude: null
+        tasksRef.child(snapshot.val() + '/options').on('value', (dataOptions) => {
+          tasksRef.child(snapshot.val() + '/requirements').on('value', (dataRequirements) => {
+            let transformedRequiremennts = [];
+            dataRequirements.forEach(rqSnapshpt => {
+              transformedRequiremennts.push({
+                ...rqSnapshpt.val(),
+                id: rqSnapshpt.key
+              });
+            });
+            if (this.state.mode !== 'UPDATE') {   // new ones
+              tasksRef.child(snapshot.val() + '/currentOptionId').once('value', (databack) => {
+                let currentOptionId = databack.val();
+                let transformedOptions = [];
+                dataOptions.forEach((opSnapshot) => {
+                  transformedOptions.push({
+                    id: opSnapshot.key,
+                    name: opSnapshot.val().name,
+                    active: false, // opSnapshot.key === currentOptionId,
+                    attitudeRequirementPairs: {}
+                  });
                 });
+                transformedOptions = sortBy(transformedOptions, ['id', 'timestamp', 'active']);
+                this.setState({
+                  existingOptions: transformedOptions,
+                  existingRequirements: transformedRequiremennts
+                });
+              });  
+            } else {  // with existing one
+              let transformedOptions = [];
+              dataOptions.forEach((opSnapshot) => {
+                let opKey = opSnapshot.key;
+                let attitudeOptionPairs = this.props.attitudeOptionPairs;
+                if(attitudeOptionPairs !== undefined) {
+                  let matchingPair = attitudeOptionPairs.filter(pair => pair.optionId === opKey);
+                  let active = matchingPair.length !== 0;
+                  let attitude = active && matchingPair[0].attitude !== undefined ? matchingPair[0].attitude : null
+                  transformedOptions.push({
+                    id: opKey,
+                    name: opSnapshot.val().name,
+                    active: active,
+                    attitude: attitude, /**TODO */
+                    attitudeRequirementPairs: {}
+                  });
+                } else {
+                  transformedOptions.push({
+                    id: opKey,
+                    name: opSnapshot.val().name,
+                    active: false,
+                    attitude: null,
+                    attitudeRequirementPairs: {}
+                  });
+                }
               });
               transformedOptions = reverse(sortBy(transformedOptions, ['active']));
-              this.setState({existingOptions: transformedOptions});
-            });  
-          } else {  // with existing one
-            let transformedOptions = [];
-            data.forEach((opSnapshot) => {
-              let opKey = opSnapshot.key;
-              let attitudeOptionPairs = this.props.attitudeOptionPairs;
-              if(attitudeOptionPairs !== undefined) {
-                let matchingPair = attitudeOptionPairs.filter(pair => pair.optionId === opKey);
-                let active = matchingPair.length !== 0;
-                let attitude = active && matchingPair[0].attitude !== undefined ? matchingPair[0].attitude : null
-                transformedOptions.push({
-                  id: opKey,
-                  name: opSnapshot.val().name,
-                  active: active,
-                  attitude: attitude
-                });
-              } else {
-                transformedOptions.push({
-                  id: opKey,
-                  name: opSnapshot.val().name,
-                  active: false,
-                  attitude: null
-                });
-              }
-            });
-            transformedOptions = reverse(sortBy(transformedOptions, ['active']));
-            this.setState({existingOptions: transformedOptions});
-          }
+              this.setState({
+                existingOptions: transformedOptions,
+                existingRequirements: transformedRequiremennts
+              });
+            }
+          });
         });
       });
     }
@@ -235,6 +253,54 @@ class interactionBox extends Component {
     let updatedOptions = [...this.state.existingOptions];
     updatedOptions[idx] = targetOption;
     this.setState({existingOptions: updatedOptions});
+  }
+
+  attitudeChangeHandler = (event, optionId, requirementId, intendedFor) => {
+    console.log(`option ID: ${optionId} | requirement ID: ${requirementId} | intended for: ${intendedFor}`);
+    // find idx of target option
+    const { existingOptions }  = this.state
+    let idx = 0;
+    let targetOption = {};
+    for (; idx < existingOptions.length; idx++) {
+      if (existingOptions[idx].id === optionId) {
+        targetOption = {...existingOptions[idx]}; // clone
+        break;
+      }
+    }
+    // add attitude / requirement pair to it
+    let attitudeRequirementPairs = targetOption.attitudeRequirementPairs;
+    switch (intendedFor) {
+      case 'good':
+        if (attitudeRequirementPairs[requirementId] === 'good') {
+          attitudeRequirementPairs[requirementId] = undefined;
+        } else {
+          attitudeRequirementPairs[requirementId] = 'good';
+        }
+        break;
+      case 'bad':
+        if (attitudeRequirementPairs[requirementId] === 'bad') {
+          attitudeRequirementPairs[requirementId] = undefined;
+        } else {
+          attitudeRequirementPairs[requirementId] = 'bad';
+        }
+        break;
+      case 'idk':
+        if (attitudeRequirementPairs[requirementId] === 'idk') {
+          attitudeRequirementPairs[requirementId] = undefined;
+        } else {
+          attitudeRequirementPairs[requirementId] = 'idk';
+        }
+        break;
+      default:
+        break;
+    }
+
+    // update state
+    console.log(targetOption);
+    let updatedExistingOptions = [...existingOptions];
+    updatedExistingOptions[idx] = targetOption;
+    this.setState({existingOptions: updatedExistingOptions});
+    
   }
 
   optionSwitchHandler = (event, idx) => {
@@ -344,16 +410,12 @@ class interactionBox extends Component {
     //     id: optionId
     //   }
     // });
-    // FirebaseStore.deleteOptionWithId(optionId);
-  }
-
-  dupOption = (event, optionId) => {
-
+    FirebaseStore.deleteOptionWithId(optionId);
   }
 
   render () {
 
-    const { existingOptions } = this.state;
+    const { existingOptions, existingRequirements } = this.state;
 
     let addOption = (
       <div className={styles.AddOptionRowContainer}>
@@ -372,8 +434,8 @@ class interactionBox extends Component {
                   <div 
                     title="Delete this option"
                     className={styles.DeleteOptionIconContainer}
-                    onClick={(event) => this.dupOption(event, op.id)}>
-                    <FontAwesomeIcon icon={fasCopy} />
+                    onClick={(event) => this.deleteOption(event, op.id)}>
+                    <FontAwesomeIcon icon={fasTrash} />
                   </div>
                 </td>
                 <td>
@@ -385,6 +447,7 @@ class interactionBox extends Component {
                     </span>
                   </div>
                 </td>
+                {/*
                 <td>
                   <div 
                     className={[styles.AttitudeThumbContainer, (
@@ -418,20 +481,67 @@ class interactionBox extends Component {
                     <QuestionMark />
                   </div>
                 </td>
+                */}
                 <td>
                   <div className={styles.InTermsOf}>
-                    in
+                    is
                   </div>
                 </td>
                 <td>
                   <div className={styles.RequirementsContainer}>
-                    {dummyRqList.map((rq, idx) => {
+                    {existingRequirements.map((rq, idx) => {
+                      let attitude = op.attitudeRequirementPairs[rq.id];
+                      let attitudeDisplay = null;
+                      switch (attitude) {
+                        case 'good':
+                          attitudeDisplay = (<ThumbV1 type={'up'} />);
+                          break;
+                        case 'bad':
+                          attitudeDisplay = (<ThumbV1 type={'down'} />);
+                          break;
+                        case 'idk':
+                          attitudeDisplay = (<QuestionMark />);
+                          break;
+                        default:
+                          break;
+                      }
                       return (
                         <div 
                           key={idx}
                           title={rq.name}
-                          className={styles.Requirement}>
-                          {getFirstNWords(4, rq.name)}
+                          className={[styles.Requirement, (
+                            attitude === undefined
+                            ? styles.Inactive
+                            : null
+                          )].join(' ')}>
+                          <div className={styles.RequirementAttitude}>
+                            {attitudeDisplay}
+                          </div>
+                          <div 
+                            title={rq.name}
+                            className={styles.RequirementName}>
+                            {getFirstNWords(4, rq.name)}
+                          </div>
+
+                          <div className={styles.RequirementAttitudeContainer}>
+                            <div 
+                              className={[styles.RequirementAttitudeThumbContainer].join(' ')}
+                              onClick={(event) => this.attitudeChangeHandler(event, op.id, rq.id, 'good')}>
+                              <ThumbV1 type={'up'}/>
+                            </div>
+
+                            <div 
+                              className={[styles.RequirementAttitudeThumbContainer].join(' ')}
+                              onClick={(event) => this.attitudeChangeHandler(event, op.id, rq.id, 'bad')}>
+                              <ThumbV1 type={'down'}/>
+                            </div>
+
+                            <div 
+                              className={[styles.RequirementAttitudeThumbContainer].join(' ')}
+                              onClick={(event) => this.attitudeChangeHandler(event, op.id, rq.id, 'idk')}>
+                              <QuestionMark />
+                            </div>
+                          </div>
                         </div>
                       );
                     })}

@@ -349,8 +349,8 @@ window.addEventListener('mouseup', (event) => {
       interactionBoxAnchor.style.left = `${mouseX-50}px`;
       interactionBoxAnchor.style.top = `${mouseY+15}px`;
       if (selection.rect !== null) {
-        interactionBoxAnchor.style.left = `${Math.floor(snapshotDimension.left) + 25}px`;
-        interactionBoxAnchor.style.top = `${Math.floor(snapshotDimension.top) + 25}px`;
+        interactionBoxAnchor.style.left = `${Math.floor(snapshotDimension.left) + 0}px`;
+        interactionBoxAnchor.style.top = `${Math.floor(snapshotDimension.top) + 0}px`;
       }      
       // prepare for data transfer
       let postTags = [];
