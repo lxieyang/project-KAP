@@ -29,6 +29,7 @@
     "lodash": "^4.17.5",
     "moment": "^2.21.0",
     "node-sass": "^4.8.3",
+    "ordinal": "^1.0.2",
     "popper.js": "^1.14.1",
     "postcss-flexbugs-fixes": "^3.3.0",
     "postcss-loader": "^2.1.3",

@@ -6,6 +6,7 @@ import fasCheckCircle from '@fortawesome/fontawesome-free-solid/faCheckCircle';
 import PropTypes from 'prop-types';
 import { findDOMNode } from 'react-dom';
 import { DragSource, DropTarget } from 'react-dnd';
+import ordinal from 'ordinal';
 import styles from './TableHeader.css';
 
 
@@ -79,26 +80,32 @@ class TableHeader extends Component {
   }
 
   render () {
-    const { rq } = this.props;
-    const { isDragging, connectDragSource, connectDropTarget } = this.props;
+    const { rq, index, isDragging, connectDragSource, connectDropTarget } = this.props;
     const opacity = isDragging ? 0 : 1;
     return connectDragSource(connectDropTarget(
       <th>
-        <div
-          className={[styles.ShowHideRequirementContainer, styles.ShowHideRequirement].join(' ')}
-          onClick={(event) => this.switchRequirementStatus(event, rq.id)}>
-          {
-            rq.active
-            ? <FontAwesomeIcon icon={fasMinusCircle} className={styles.ShowHideRequirementIcon}/>
-            : <FontAwesomeIcon icon={fasCheckCircle} className={styles.ShowHideRequirementIcon}/>
-          }
-        </div>
-        <div
+        <div 
           style={{ opacity }}
-          className={[styles.RequirementNameContainer,
-          rq.active ? null : styles.InactiveRequirement].join(' ')}>
-            {rq.name}
+          className={styles.RequirementInTableHeaderContainer}>
+          <div
+            className={[styles.ShowHideRequirementContainer, styles.ShowHideRequirement].join(' ')}
+            onClick={(event) => this.switchRequirementStatus(event, rq.id)}>
+            {
+              rq.active
+              ? <FontAwesomeIcon icon={fasMinusCircle} className={styles.ShowHideRequirementIcon}/>
+              : <FontAwesomeIcon icon={fasCheckCircle} className={styles.ShowHideRequirementIcon}/>
+            }
+          </div>
+          <div style={{height: '100%'}}>
+            <span className={styles.Ordinal}>{ordinal(index + 1)}</span>
+          </div>
+          <div
+            className={[styles.RequirementNameContainer,
+            rq.active ? null : styles.InactiveRequirement].join(' ')}>
+              {rq.name}
+          </div>
         </div>
+        
       </th>
       
     ));

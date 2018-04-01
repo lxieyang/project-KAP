@@ -4,6 +4,7 @@ import { findDOMNode } from 'react-dom';
 import { DragSource, DropTarget } from 'react-dnd';
 import FontAwesomeIcon from '@fortawesome/react-fontawesome';
 import fasTrash from '@fortawesome/fontawesome-free-solid/faTrash';
+import ordinal from 'ordinal';
 import styles from './RequirementPiece.css';
 
 
@@ -77,12 +78,12 @@ class RequirementPiece extends Component {
   };
 
   render () {
-    const { rq } = this.props;
-    const { isDragging, connectDragSource, connectDropTarget } = this.props;
+    const { rq, index, isDragging, connectDragSource, connectDropTarget } = this.props;
     const opacity = isDragging ? 0 : 1;
 
     return connectDragSource(connectDropTarget(
       <li style={{ opacity }}>
+        <span className={styles.Ordinal}>{ordinal(index + 1)}</span>
         <span className={styles.Requirement}>{rq.name}</span>
         <span  
           onClick={(event) => this.props.deleteRequirementWithId(rq.id)}>
