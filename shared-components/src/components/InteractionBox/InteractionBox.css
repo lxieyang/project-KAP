@@ -16,7 +16,6 @@
   position: relative;
   opacity: 1;
   position: relative;
-  overflow: auto;
 }
 
 .InteractionBoxDragHandle {
@@ -155,7 +154,7 @@ button:hover {
   margin: 10px 0px;
   padding-top: 10px;
   width: 100%;
-  /* max-height: 250px; */
+  max-height: 250px;
   overflow: auto;
 }
 
@@ -166,13 +165,14 @@ button:hover {
 
 .Table td, 
 .Table th {
+  
   padding: 0px 4px;
   vertical-align: middle;
 }
 
 .OptionTableRow {
   /* height: 100%; */
-  /* border-bottom: 1px solid #ddd; */
+  border-bottom: 1px solid #ddd;
 }
 
 .DeleteOptionIconContainer {
@@ -231,7 +231,7 @@ button:hover {
 
 .RequirementsContainer {
   display: flex;
-  /* flex-wrap: wrap; */
+  flex-wrap: wrap;
 }
 
 .Requirement {
