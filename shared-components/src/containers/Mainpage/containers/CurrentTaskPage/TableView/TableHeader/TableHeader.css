@@ -1,0 +1,21 @@
+.RequirementNameContainer {
+  display: flex;
+  align-items: flex-start;
+  overflow: hidden;
+  font-size: 1.1rem;
+  text-overflow: ellipsis;
+  max-height: 220px;
+  max-width: 250px;
+  overflow: auto;
+  cursor: move;
+  transition: all 0.1s ease-in;
+}
+
+/* .RequirementNameContainer:hover {
+  z-index: 99999;
+  transform: scale(1.05);
+} */
+
+.InactiveRequirement {
+  opacity: 0.1;
+}

@@ -22,6 +22,10 @@ import { sortBy, reverse } from 'lodash';
 import ReactTooltip from 'react-tooltip';
 import * as FirebaseStore from '../../../../../firebase/store';
 
+/* For DnD */
+import TableHeader from './TableHeader/TableHeader';
+import update from 'immutability-helper';
+
 
 class TableView extends Component {
   state = {
@@ -74,15 +78,15 @@ class TableView extends Component {
 
     // extract requirements
     let requirementList = [];
-    let idx = 0;
     for (let rqKey in task.requirements) {
       requirementList.push({
         id: rqKey,
         name: task.requirements[rqKey].name,
-        active: true,
-        order: idx++
+        order: task.requirements[rqKey].order,
+        active: true
       })
     }
+    requirementList = sortBy(requirementList, ['order']);
     console.log(requirementList);
 
     // extract pieces ==> disabling piece grouping
@@ -236,14 +240,6 @@ class TableView extends Component {
     return null;
   }
 
-  getHTML (htmls) {
-    let htmlString = ``;
-    for (let html of htmls) {
-      htmlString += html;
-    }
-    return {__html: htmlString};
-  }
-
   detailedViewChangeHandler = (event) => {
     this.setState(prevState => {
       return {isDetailed: !prevState.isDetailed};
@@ -349,6 +345,33 @@ class TableView extends Component {
     return {__html: htmlString};
   }
 
+
+
+
+
+
+  /* For Dnd */
+  moveHeader = (dragIndex, hoverIndex) => {
+    const { requirementList } = this.state;
+    const dragHeader = requirementList[dragIndex];
+
+    let newRequirementList = update(requirementList, {
+      $splice: [
+        [dragIndex, 1],
+        [hoverIndex, 0, dragHeader]
+      ]
+    })
+
+    this.setState({requirementList: newRequirementList});
+
+    // update order
+    let ordering = {};
+    for (let idx = 0; idx < newRequirementList.length; idx++) {
+      ordering[newRequirementList[idx].id] = idx;
+    }
+    FirebaseStore.updateRequirementOrdering(ordering);
+  }
+
   render () {
 
     const props = this.props;
@@ -369,8 +392,16 @@ class TableView extends Component {
       </Aux>
     );
 
-    let newRequirementList = this.getOrderedRequirementListFromState();
-    let newOptionsList = this.getOrderedOptionListFromState();
+
+
+
+
+
+
+
+
+    let newRequirementList = this.state.requirementList; // this.getOrderedRequirementListFromState();
+    let newOptionsList = this.state.optionsList; // this.getOrderedOptionListFromState();
 
     let newTableHeader = (
       <tr>
@@ -388,11 +419,11 @@ class TableView extends Component {
                     : <FontAwesomeIcon icon={fasCheckCircle} className={styles.ShowHideRequirementIcon}/>
                   }
                 </div>
-                <div
-                  className={[styles.RequirementNameContainer,
-                  rq.active ? null : styles.InactiveRequirement].join(' ')}>
-                    {rq.name}
-                </div>
+                <TableHeader 
+                  key={rq.id}
+                  rq={rq} 
+                  index={idx} 
+                  moveHeader={this.moveHeader}/>
               </th>
             );
           })
@@ -419,9 +450,47 @@ class TableView extends Component {
           </td>
           {
             newRequirementList.map((rq, index) => {
+              // find all pieces in the piecesList that has option id = op.id and requirement id = rq.id
+              let piecesInThisCell = [];
+              for (let pKey in this.state.pieces) {
+                let piece = this.state.pieces[pKey];
+                let attitudeList = piece.attitudeList;
+                if (attitudeList !== undefined) {
+                  let attitudeRequirementPairs = attitudeList[op.id];
+                  if (attitudeRequirementPairs !== undefined) {
+                    let attitude = attitudeRequirementPairs[rq.id];
+                    if (attitude !== undefined) {
+                      piecesInThisCell.push({
+                        ...piece,
+                        id: pKey,
+                        attitude: attitude
+                      })
+                    }
+                  }
+                }
+              }
+
               return (
                 <td key={rq.id}>
-                  TODO
+                  <div className={styles.AttitudeThumbInTableCellContainer}>
+                    {piecesInThisCell.map((p, idx) => {
+                      let thumb = null;
+                      switch (p.attitude) {
+                        case 'good':  thumb = (<ThumbV1 type='up' />); break;
+                        case 'bad':   thumb = (<ThumbV1 type='down' />); break;
+                        case 'idk':   thumb = (<QuestionMark />); break;
+                        default: break;
+                      }
+                      return (
+                        <div 
+                          key={idx}
+                          title={p.id}
+                          className={styles.AttitudeInTableCell}>
+                          {thumb}
+                        </div>
+                      );
+                    })}
+                  </div>
                 </td>
               );
             })
@@ -429,6 +498,11 @@ class TableView extends Component {
         </tr>
       );
     });
+
+
+
+
+
 
 
 

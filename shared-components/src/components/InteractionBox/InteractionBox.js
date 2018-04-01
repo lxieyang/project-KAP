@@ -85,9 +85,10 @@ class interactionBox extends Component {
       for (let rqKey in this.props.requirements) {
         transformedRequiremennts.push({
           id: rqKey,
-          name: this.props.requirements[rqKey].name
+          ...this.props.requirements[rqKey]
         });
       }
+      transformedRequiremennts = sortBy(transformedRequiremennts, ['order']);
 
       for (let opKey in this.props.options) {
         let attitudeList = this.props.attitudeList;
@@ -127,6 +128,7 @@ class interactionBox extends Component {
                 id: rqSnapshpt.key
               });
             });
+            transformedRequiremennts = sortBy(transformedRequiremennts, ['order']);
             if (this.state.mode !== 'UPDATE') {   // new ones
               tasksRef.child(snapshot.val() + '/currentOptionId').once('value', (databack) => {
                 let currentOptionId = databack.val();

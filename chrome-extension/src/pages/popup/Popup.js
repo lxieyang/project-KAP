@@ -182,7 +182,7 @@ class Popup extends Component {
           for (let opKey in filteredTasks[0].options) {
             currentTaskOptionNames.push({
               id: opKey,
-              name: filteredTasks[0].options[opKey].name
+              ...filteredTasks[0].options[opKey]
             });
           }
           // requirements
@@ -190,7 +190,7 @@ class Popup extends Component {
           for (let rqKey in filteredTasks[0].requirements) {
             currentTaskRequirementNames.push({
               id: rqKey,
-              name: filteredTasks[0].requirements[rqKey].name
+              ...filteredTasks[0].requirements[rqKey]
             });
           }
         } else {

@@ -280,6 +280,17 @@ export const deleteRequirementWithId = async (id) => {
   });
 }
 
+export const updateRequirementOrdering = async (ordering) => {
+  currentTaskId = (await currentTaskIdRef.once('value')).val();
+  let requirementRef = tasksRef.child(currentTaskId).child('requirements');
+  let requirements = await requirementRef.once('value');
+  requirements.forEach((snap) => {
+    requirementRef.child(snap.key).set({
+      ...snap.val(),
+      order: ordering[snap.key]
+    });
+  });
+}
 
 
 

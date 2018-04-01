@@ -5,13 +5,15 @@ import fasFlagCheckered from '@fortawesome/fontawesome-free-solid/faFlagCheckere
 import fasTrash from '@fortawesome/fontawesome-free-solid/faTrash';
 import Input from '../../../../../../shared-components/src/components/UI/Input/Input';
 import styles from './Requirements.css';
-
+import { sortBy } from 'lodash';
 const inputConfig = {
   placeholder: 'Add a requirement'
 }
 
 const requirements = (props) => {
   const { requirements } = props;
+  let rqList = sortBy(requirements, ['order']);
+
   return (
     <div style={{display: 'flex'}}>
       <div className={styles.Requirements}>
@@ -21,7 +23,7 @@ const requirements = (props) => {
         </div>
         <div className={styles.RequirementList}>
           <ul>
-            {requirements.map((rq, idx) => (
+            {rqList.map((rq, idx) => (
               <li key={rq.id}>
                 <span className={styles.Requirement}>{rq.name}</span>
                 <span  
