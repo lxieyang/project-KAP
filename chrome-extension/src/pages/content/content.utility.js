@@ -11,7 +11,8 @@ export class PageCountHelper {
     'slack.com',
     'localhost',
     'login',
-    'logout'
+    'logout',
+    'autolab'
     // should be more
   ];
 }
