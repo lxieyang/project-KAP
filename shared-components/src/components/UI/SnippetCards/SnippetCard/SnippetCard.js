@@ -7,16 +7,18 @@ import FontAwesomeIcon from '@fortawesome/react-fontawesome';
 import farClock from '@fortawesome/fontawesome-free-regular/faClock';
 import fasTrash from '@fortawesome/fontawesome-free-solid/faTrash';
 import fasEye from '@fortawesome/fontawesome-free-solid/faEye';
+import fasStar from '@fortawesome/fontawesome-free-solid/faStar';
 import { GET_FAVICON_URL_PREFIX } from '../../../../shared/constants';
 import HorizontalDivider from '../../../UI/Divider/HorizontalDivider/HorizontalDivider';
 import styles from './SnippetCard.css';
+import uniqid from 'uniqid';
 import moment from 'moment';
 import { SNIPPET_TYPE } from '../../../../shared/constants';
 import { getFirstNWords } from '../../../../shared/utilities';
 import { DragSource, DropTarget } from 'react-dnd';
 import PropTypes from 'prop-types';
 import ReactTooltip from 'react-tooltip';
-import { debounce, sortBy } from 'lodash';
+import { debounce, reverse, sortBy } from 'lodash';
 import * as FirebaseStore from '../../../../firebase/store';
 
 
@@ -132,7 +134,7 @@ class SnippetCard extends Component {
     const { connectDragSource, isDragging, connectDropTarget, canDrop, isOver } = props;
     const isActive = canDrop && isOver;
 
-    const { allPieces } = props
+    const { allPieces, options, requirements } = props;
 
     let content = null;
     if (props.type === SNIPPET_TYPE.SELECTION) {
@@ -366,6 +368,80 @@ class SnippetCard extends Component {
     //   </div>
     // );
 
+    let transformedAttitudeList = [];
+    for (let opkey in props.attitudeList) {
+      let transformedAttitudeOfOptionList = [];
+      let attitudeRequirementPairs = props.attitudeList[opkey];
+      if (attitudeRequirementPairs !== undefined) {
+        for (let rqKey in attitudeRequirementPairs) {
+          transformedAttitudeOfOptionList.push({
+            ...requirements[rqKey],
+            requirementId: rqKey,
+            attitude: attitudeRequirementPairs[rqKey]
+          });
+        }
+      }
+      transformedAttitudeOfOptionList = reverse(sortBy(transformedAttitudeOfOptionList, ['attitude']));
+      transformedAttitudeList.push({
+        optionId: opkey,
+        optionName: options[opkey].name,
+        listOfAttitudes: transformedAttitudeOfOptionList
+      });
+    }
+    console.log(transformedAttitudeList);
+
+    const attitudes = (
+      <div className={styles.AttitudeContainer}>
+        <ul>
+          {transformedAttitudeList.map((op, idx) => {
+            
+            return (
+              <li key={idx}>
+                <div className={styles.OptionName}>
+                  {op.optionName}
+                </div>
+                <div className={styles.AttitudeListContainer}>
+                  {op.listOfAttitudes.map((pair, index) => {
+                    let thumb = null;
+                    switch (pair.attitude) {
+                      case 'good':  thumb = (<ThumbV1 type='up' />); break;
+                      case 'bad':   thumb = (<ThumbV1 type='down' />); break;
+                      case 'idk':   thumb = (<QuestionMark />); break;
+                      default: break;
+                    }
+                    let identifier = uniqid();
+                    return (
+                      <Aux key={pair.requirementId}>
+                        <div 
+                          data-tip
+                          data-for={identifier}
+                          className={styles.Attitude}>
+                          {thumb}
+                        </div>
+                        <ReactTooltip
+                          className={styles.AttitudeOfRequirementTooltip}
+                          id={identifier}
+                          place="right" type="dark" effect="float">
+                          <div>
+                            {pair.starred === true 
+                             ? <FontAwesomeIcon icon={fasStar} />
+                             : null}
+                          </div>
+                          <div>
+                            {pair.name}
+                          </div>
+                        </ReactTooltip>
+                      </Aux>
+                    );
+                  })}
+                </div>
+              </li>
+            );
+          })}
+        </ul>
+      </div>
+    )
+
     const footer = (
       <div className={styles.Footer}>
         <div className={styles.MetaInfo}>
@@ -388,7 +464,7 @@ class SnippetCard extends Component {
           width: props.isInTableView === true ? '100%' : '250px'
         }}>
         {header}
-        {/*attitudes*/}
+        {attitudes}
         <HorizontalDivider margin="5px" />
         {footer}
       </div>

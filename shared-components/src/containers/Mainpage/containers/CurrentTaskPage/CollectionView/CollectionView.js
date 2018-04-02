@@ -196,6 +196,7 @@ const SnippetsGroup = (props) => {
                 type={p.type}
                 allPieces={props.pieces}
                 options={props.options}
+                requirements={props.requirements}
                 status={p.status}
                 pieceIds={p.type === SNIPPET_TYPE.PIECE_GROUP ? p.pieceIds : []}
                 title={p.type === SNIPPET_TYPE.PIECE_GROUP ? p.name : p.title}
@@ -452,6 +453,7 @@ class CollectionView extends Component {
         isOpen={this.state.allSnippetSIsOpen}
         options={task.options}
         pieces={task.pieces}
+        requirements={task.requirements}
         piecesList={filteredPiecesAccordingToFilterStatus}
         makeInteractionBox={this.makeInteractionbox}
         deleteSnippet={this.deletePieceHandler} />
@@ -480,6 +482,7 @@ class CollectionView extends Component {
         isOpen={this.state.allSnippetSIsOpen}
         options={task.options}
         pieces={task.pieces}
+        requirements={task.requirements}
         // piecesList={newPiecesList}
         piecesList={piecesListClone}
         makeInteractionBox={this.makeInteractionbox}

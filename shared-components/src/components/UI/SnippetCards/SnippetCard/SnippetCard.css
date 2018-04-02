@@ -178,15 +178,12 @@
   justify-content: space-between;
 }
 
-.Attitude {
-  margin-right: 5px;
-  width: 18px;
-  height: 18px;
-}
-
 .OptionName {
-  margin-left: 5px;
-  font-size: 0.85rem;
+  margin-left: 0px;
+  font-size: 0.75rem;
+  max-width: 60%;
+  white-space: pre-wrap;
+  word-break: keep-all;
   color: black;
   font-weight: 300;
   font-family: 'Encode Sans Semi Expanded', sans-serif;
@@ -195,6 +192,27 @@
   border-radius: 5px;
   box-sizing: border-box;
   box-shadow: 0 1px 1px 0 rgba(0,0,0,0.16), 0 1px 5px 0 rgba(0,0,0,0.12);
+}
+
+.AttitudeListContainer {
+  max-width: 40%;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.Attitude {
+  margin-right: 5px;
+  width: 18px;
+  height: 18px;
+}
+
+.AttitudeOfRequirementTooltip {
+  max-width: 200px !important;
+  min-width: 100px !important;
+  padding: 6px 6px !important;
+  display: flex;
+  flex-flow: row;
+  align-items: center;
 }
 
 
@@ -284,3 +302,4 @@
 .ViewIconInTooltip:hover {
   opacity: 0.8;
 }
+

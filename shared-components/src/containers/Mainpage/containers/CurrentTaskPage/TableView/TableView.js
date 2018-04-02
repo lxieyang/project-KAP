@@ -489,6 +489,7 @@ class TableView extends Component {
                                   isInTableView={true}
                                   allPieces={this.state.pieces}
                                   options={this.state.options}
+                                  requirements={this.state.requirements}
                                   status={true}
                                   pieceIds={p.type === SNIPPET_TYPE.PIECE_GROUP ? p.pieceIds : []}
                                   title={p.type === SNIPPET_TYPE.PIECE_GROUP ? p.name : p.title}
