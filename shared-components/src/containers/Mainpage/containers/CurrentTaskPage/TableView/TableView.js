@@ -398,7 +398,7 @@ class TableView extends Component {
 
 
     let newRequirementList = this.state.requirementList; // this.getOrderedRequirementListFromState();
-    let newOptionsList = this.state.optionsList; // this.getOrderedOptionListFromState();
+    let newOptionsList = this.getOrderedOptionListFromState();
 
     let newTableHeader = (
       <tr>

@@ -309,10 +309,10 @@ button:hover {
   cursor: pointer;
 }
 
-.RequirementStar:hover {
+/* .RequirementStar:hover {
   opacity: 0.8;
   transform: scale(1.1);
-}
+} */
 
 .ActiveStar {
   opacity: 1;

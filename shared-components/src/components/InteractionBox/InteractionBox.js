@@ -519,8 +519,8 @@ class interactionBox extends Component {
                           <div 
                             className={[styles.RequirementStar, (
                               rq.starred === true ? styles.ActiveStar : null
-                            )].join(' ')}
-                            onClick={(event) => this.switchStarStatusOfRequirement(rq.id)}>
+                            )].join(' ')}>
+                            {/* onClick={(event) => this.switchStarStatusOfRequirement(rq.id)} */}
                             <FontAwesomeIcon icon={fasStar}/>
                           </div>
                           <div className={styles.RequirementAttitude}>

@@ -210,15 +210,15 @@ chrome.runtime.onMessage.addListener(
     if (request.msg === actionTypes.ADD_OPTION_CONTEXT_MENU_CLICKED) {
       // console.log('should put up hover interaction');
       let selection = getDocumentSelection();
-      let rect = {};
-      hoverAnchor.style.left = `${mouseX-50}px`;
-      hoverAnchor.style.top = `${mouseY+15}px`;
-      if (selection.rect !== null) {
-        rect = {...selection.rect.toJSON()};
-        rect.top += document.documentElement.scrollTop;
-        hoverAnchor.style.left = `${Math.floor(rect.left) + 25}px`;
-        hoverAnchor.style.top = `${Math.floor(rect.top) + 25}px`;
-      }      
+      // let rect = {};
+      hoverAnchor.style.left = `${Math.floor(window.innerWidth / 2) - 250 }px`;
+      hoverAnchor.style.top = `${Math.floor(window.innerHeight / 2) - 150 + window.scrollY}px`;
+      // if (selection.rect !== null) {
+      //   rect = {...selection.rect.toJSON()};
+      //   rect.top += document.documentElement.scrollTop;
+      //   hoverAnchor.style.left = `${Math.floor(rect.left) + 25}px`;
+      //   hoverAnchor.style.top = `${Math.floor(rect.top) + 25}px`;
+      // }      
       ReactDOM.render(
         <HoverInteraction content={selection.text} clip={clipClicked}/>, 
         hoverAnchor
@@ -230,14 +230,14 @@ chrome.runtime.onMessage.addListener(
       let selection = getDocumentSelection();
       let rect = null;
       console.log(selection.rect);
-      interactionBoxAnchor.style.left = `${mouseX-50}px`;
-      interactionBoxAnchor.style.top = `${mouseY+15}px`;
-      if (selection.rect !== null) {
-        rect = {...selection.rect.toJSON()};
-        rect.top += document.documentElement.scrollTop;
-        interactionBoxAnchor.style.left = `${Math.floor(rect.left) + 25}px`;
-        interactionBoxAnchor.style.top = `${Math.floor(rect.top) + 25}px`;
-      }      
+      interactionBoxAnchor.style.left = `100px`;
+      interactionBoxAnchor.style.top = `${Math.floor(window.innerHeight / 5) + window.scrollY}px`;
+      // if (selection.rect !== null) {
+      //   rect = {...selection.rect.toJSON()};
+      //   rect.top += document.documentElement.scrollTop;
+      //   interactionBoxAnchor.style.left = `${Math.floor(rect.left) - 25}px`;
+        // interactionBoxAnchor.style.top = `${Math.floor(rect.top) - 25}px`;
+      // }      
       let postTags = [];
       if(window.location.hostname === "stackoverflow.com") {
         $(document.body).find('.post-taglist .post-tag').each((idx, tagNode) => {
@@ -346,12 +346,12 @@ window.addEventListener('mouseup', (event) => {
       let rect = captureWindow.getBoundingClientRect();
       let lassoSnapshot = takeSnapshot(rect);
       let snapshotDimension = lassoSnapshot.initialDimensions;
-      interactionBoxAnchor.style.left = `${mouseX-50}px`;
-      interactionBoxAnchor.style.top = `${mouseY+15}px`;
-      if (selection.rect !== null) {
-        interactionBoxAnchor.style.left = `${Math.floor(snapshotDimension.left) + 0}px`;
-        interactionBoxAnchor.style.top = `${Math.floor(snapshotDimension.top) + 0}px`;
-      }      
+      interactionBoxAnchor.style.left = `100px`;
+      interactionBoxAnchor.style.top = `${Math.floor(window.innerHeight / 5) + window.scrollY}px`;
+      // if (selection.rect !== null) {
+      //   interactionBoxAnchor.style.left = `${Math.floor(snapshotDimension.left) + 0}px`;
+      //   interactionBoxAnchor.style.top = `${Math.floor(snapshotDimension.top) + 0}px`;
+      // }      
       // prepare for data transfer
       let postTags = [];
       if(window.location.hostname === "stackoverflow.com") {
