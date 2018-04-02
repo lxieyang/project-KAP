@@ -565,6 +565,7 @@ class TableView extends Component {
                 postTags={piece.postTags}
                 htmls={piece.htmls}
                 title={piece.title}
+                autoSuggestedTitle={piece.autoSuggestedTitle}
                 originalDimensions={piece.originalDimensions}
                 selectedText={piece.texts}
                 notes={piece.notes}

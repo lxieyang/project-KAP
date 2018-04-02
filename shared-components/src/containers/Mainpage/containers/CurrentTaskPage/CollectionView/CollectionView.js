@@ -498,6 +498,7 @@ class CollectionView extends Component {
                 postTags={piece.postTags}
                 htmls={piece.htmls}
                 title={piece.title}
+                autoSuggestedTitle={piece.autoSuggestedTitle}
                 originalDimensions={piece.originalDimensions}
                 selectedText={piece.texts}
                 codeSnippetHTMLs={piece.codeSnippetHTMLs}

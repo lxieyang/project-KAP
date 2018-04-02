@@ -20,7 +20,7 @@ import {
 import { SNIPPET_TYPE } from '../../shared/constants';
 import { sortBy, reverse } from 'lodash';
 import * as FirebaseStore from '../../firebase/store';
-import { openLinkInTextEditorExtension, getFirstNWords } from '../../shared/utilities';
+import { openLinkInTextEditorExtension, getFirstNWords, getFirstSentence } from '../../shared/utilities';
 
 const dummyText = 'Please select some text';
 const dummyHtml = [`<p>Please lasso select some text</p>`];
@@ -67,7 +67,8 @@ class interactionBox extends Component {
     existingOptions: [],
     existingRequirements: [],
     notes: this.props.notes !== undefined ? this.props.notes : '',
-    title: this.props.title !== undefined ? this.props.title : '',
+    title: this.props.title !== undefined ? this.props.title : getFirstSentence(this.props.selectedText),
+    autoSuggestedTitle: this.props.autoSuggestedTitle !== undefined ? this.props.autoSuggestedTitle : true, 
     used: this.props.used !== undefined ? this.props.used : [],
 
     inputSource: 'OP',
@@ -235,7 +236,10 @@ class interactionBox extends Component {
       // console.log(selection.containsNode(document.querySelector('#interaction-box-editable-selected-text'), true));
       // console.log(window.getSelection().toString());
       if (selection.containsNode(document.querySelector('#interaction-box-editable-selected-text'), true)) {
-        this.setState({title: selection.toString()});
+        this.setState({
+          title: selection.toString(),
+          autoSuggestedTitle: false
+        });
       }
     }
   }
@@ -357,6 +361,7 @@ class interactionBox extends Component {
       codeSnippetHTMLs: this.state.codeSnippetHTMLs,
       codeSnippetTexts: this.state.codeSnippetTexts,
       title: this.state.title,
+      autoSuggestedTitle: this.state.autoSuggestedTitle,
       texts: this.state.selectedText
     }
 
@@ -391,7 +396,10 @@ class interactionBox extends Component {
   }
 
   titleInputChangeHandler = (event) => {
-    this.setState({title: event.target.value});
+    this.setState({
+      title: event.target.value,
+      autoSuggestedTitle: false
+    });
   }
 
   submitNewlyAddedItem(type) {
@@ -655,7 +663,13 @@ class interactionBox extends Component {
               value={this.state.title} 
               placeholder={'Please select to add a title'}
               className={styles.TitleInput}
-              onChange={(event) => this.titleInputChangeHandler(event)}/>
+              onChange={(event) => this.titleInputChangeHandler(event)}/> &nbsp;
+              {
+                // this.state.mode === 'NEW' && 
+                this.state.autoSuggestedTitle === true
+                ? <span className={styles.AutoSuggestedBadge}>Auto Suggested</span>
+                : null
+              }
             
           </div>
           <div style={{marginRight: '20px', fontSize: '16px', opacity: '0.6'}}>

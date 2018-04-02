@@ -34,11 +34,12 @@
 }
 
 .TitleInput {
-  border: none !important;
-  width: 80%;
+  border: 0px solid transparent !important;
+  width: 70%;
+  text-overflow: ellipsis;
   font-size: 14px;background-color: rgba(226, 236, 244, 1);
-  
-  box-shadow: none;
+  background-color: transparent !important;
+  box-shadow: none !important;
   text-align: left;
   padding: 5px 10px;
   color: rgba(0,0,0,.87);
@@ -47,6 +48,19 @@
 
 .TitleInput:focus {
   outline: none;
+}
+
+.AutoSuggestedBadge {
+  background-color: #f0ad4e;
+  display: inline;
+  padding: 1px 6px;
+  font-size: 11px;
+  border-radius: 4px;
+  font-weight: 500;
+  color: #fff;
+  text-align: center;
+  white-space: nowrap;
+  box-shadow: 0 1px 2px 0 rgba(0,0,0,0.16),0 1px 5px 0 rgba(0,0,0,0.12);
 }
 
 .selectedText {

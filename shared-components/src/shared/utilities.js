@@ -38,6 +38,21 @@ export const getFirstNWords = (n, str) => {
 };
 
 
+export const getFirstSentence = (str) => {
+  // https://stackoverflow.com/questions/23200446/finding-the-first-sentence-with-jquery
+  let split = str.split(/[\n\r\!\,\.\?]/);
+  let first = "";
+  for (let sp of split) {
+    if (sp.trim() !== '') {
+      first = sp.trim();
+      break;
+    }
+  }
+  console.log(split);
+  return first;
+}
+
+
 export const capitalizeFirstLetter = (string) => {
   return string.charAt(0).toUpperCase() + string.slice(1);
 };
