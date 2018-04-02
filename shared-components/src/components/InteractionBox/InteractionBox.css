@@ -107,7 +107,15 @@ button:hover {
 .AddOptionRowContainer {
   margin-top: 8px;
   padding: 0px 4px;
-  width: 50%;
+  padding-right: 20px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.AddSomthingInputContainer {
+  width: 45%;
 }
 
 .AddOptionRowContainer input {
@@ -115,7 +123,7 @@ button:hover {
   border-radius: 5px;
   border: 1px solid lightgray;
   padding: 3px 6px;
-  width: 100%;
+  width: 60%;
 
 }
 
@@ -123,6 +131,23 @@ button:hover {
   outline: purple;
 }
 
+.AddSomethingButton {
+  display: inline-block;
+  box-sizing: border-box;
+  border-radius: 5px;
+  border: 1px solid #28a745;
+  background-color: #28a745;
+  color: white;
+  padding: 2px 8px;
+  opacity: 0.8;
+  transition: all 0.1s ease-in;
+  cursor: pointer;
+}
+
+
+.AddSomethingButton:hover {
+  opacity: 1;
+}
 
 
 .Interactions {

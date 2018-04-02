@@ -6,6 +6,9 @@ import fasSave from '@fortawesome/fontawesome-free-solid/faSave';
 import fasArrowsAlt from '@fortawesome/fontawesome-free-solid/faArrowsAlt';
 import fasTrash from '@fortawesome/fontawesome-free-solid/faTrash';
 import fasStar from '@fortawesome/fontawesome-free-solid/faStar';
+import fasListAlt from '@fortawesome/fontawesome-free-solid/faListAlt';
+import fasPaperPlane from '@fortawesome/fontawesome-free-solid/faPaperPlane';
+import fasFlagCheckered from '@fortawesome/fontawesome-free-solid/faFlagCheckered';
 import ThumbV1 from '../../components/UI/Thumbs/ThumbV1/ThumbV1';
 import QuestionMark from '../../components/UI/Thumbs/QuestionMark/QuestionMark';
 import Input from '../../components/UI/Input/Input';
@@ -66,6 +69,8 @@ class interactionBox extends Component {
     notes: this.props.notes !== undefined ? this.props.notes : '',
     title: this.props.title !== undefined ? this.props.title : '',
     used: this.props.used !== undefined ? this.props.used : [],
+
+    inputSource: 'OP',
     canSubmit: false
   }
 
@@ -389,29 +394,34 @@ class interactionBox extends Component {
     this.setState({title: event.target.value});
   }
 
-  keyUpListener (event) {
-    if (event.key === 'Enter') {
-      // chrome.runtime.sendMessage({
-      //   msg: actionTypes.ADD_AN_OPTION_TO_CURRENT_TASK,
-      //   payload: {
-      //     optionName: document.querySelector('#add-option-in-piece-input').value
-      //   }
-      // });
+  submitNewlyAddedItem(type) {
+    if (type === 'OP') {
       FirebaseStore.addAnOptionForCurrentTask(document.querySelector('#add-option-in-piece-input').value.trim());
       document.querySelector('#add-option-in-piece-input').value = "";
+    } else {
+      FirebaseStore.addARequirementForCurrentTask(document.querySelector('#add-requirement-in-piece-input').value.trim());
+      document.querySelector('#add-requirement-in-piece-input').value = "";
+    }
+  }
+
+  keyUpListener (event) {
+    if (event.key === 'Enter') {
+      this.submitNewlyAddedItem(this.state.inputSource);      
     }
     if (event.keyCode === selectKeyCode) {
       this.hotKeyIsDown = false;
     }
   }
 
+  addButtonClicked = (event, type) => {
+    this.submitNewlyAddedItem(type);
+  } 
+
+  switchInputSourceHandler = (event, type) => {
+    this.setState({inputSource: type});
+  }
+
   deleteOption = (event, optionId) => {
-    // chrome.runtime.sendMessage({
-    //   msg: actionTypes.DELETE_OPTION_WITH_ID,
-    //   payload: {
-    //     id: optionId
-    //   }
-    // });
     FirebaseStore.deleteOptionWithId(optionId);
   }
 
@@ -419,9 +429,34 @@ class interactionBox extends Component {
 
     const { existingOptions, existingRequirements } = this.state;
 
-    let addOption = (
+    let addOptionRequirement = (
       <div className={styles.AddOptionRowContainer}>
-        <input id="add-option-in-piece-input" placeholder={'Add an option'} />
+        <div className={styles.AddSomthingInputContainer}>
+          <FontAwesomeIcon icon={fasListAlt}/> &nbsp;
+          <input 
+            id="add-option-in-piece-input" 
+            placeholder={'Add an option'} 
+            onInput={(event) => this.switchInputSourceHandler(event, 'OP')}/> &nbsp;
+          <div 
+            className={styles.AddSomethingButton}
+            onClick={(event) => this.addButtonClicked(event, 'OP')}>
+            <FontAwesomeIcon icon={fasPaperPlane}/> &nbsp; Add
+          </div>
+        </div>
+        <div 
+          className={styles.AddSomthingInputContainer}
+          onClick={(event) => this.addButtonClicked(event, 'RQ')}>
+          <FontAwesomeIcon icon={fasFlagCheckered}/> &nbsp;
+          <input 
+            id="add-requirement-in-piece-input" 
+            placeholder={'Add a requirement'} 
+            onInput={(event) => this.switchInputSourceHandler(event, 'RQ')}
+            /> &nbsp;
+          <div className={styles.AddSomethingButton}>
+            <FontAwesomeIcon icon={fasPaperPlane}/> &nbsp; Add
+          </div>
+        </div>
+        
       </div>
     );
 
@@ -600,12 +635,12 @@ class interactionBox extends Component {
         id="interaction-box-content" 
         className={styles.InteractionBox}>
         {this.state.mode === 'NEW'
-         ? <div 
-              id="interaction-box-header" 
-              className={styles.InteractionBoxDragHandle}> 
-              <FontAwesomeIcon icon={fasArrowsAlt}/>
-            </div>
-         : null
+          ? <div 
+                id="interaction-box-header" 
+                className={styles.InteractionBoxDragHandle}> 
+                <FontAwesomeIcon icon={fasArrowsAlt}/>
+              </div>
+          : null
         }
         <div 
           className={styles.CloseBoxContainer}
@@ -632,10 +667,8 @@ class interactionBox extends Component {
           {snippet}
         </div>
 
-        {this.props.specificPieceId === undefined || this.props.specificPieceId === null ? addOption : null}
+        {this.props.specificPieceId === undefined || this.props.specificPieceId === null ? addOptionRequirement : null}
         {experimentalOptionList}
-
-        { /* optionList */ }
         
         <div className={styles.FooterContainer}>
           <div className={styles.NoteContainer}>

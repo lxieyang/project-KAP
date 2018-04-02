@@ -204,6 +204,10 @@ export const addAnOptionForCurrentTask = async (optionName) => {
     }
   }
 
+  if (optionName === '') {
+    return;
+  }
+
   let newOptionRef = tasksRef.child(currentTaskId + '/options').push();
   newOptionRef.set({
     name: optionName
@@ -264,6 +268,10 @@ export const addARequirementForCurrentTask = async (requirementName) => {
         return;
       }
     }
+  }
+
+  if (requirementName === '') {
+    return;
   }
 
   let newRequirementRef = tasksRef.child(currentTaskId + '/requirements').push();

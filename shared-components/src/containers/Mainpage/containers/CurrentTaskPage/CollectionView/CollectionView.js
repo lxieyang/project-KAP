@@ -266,7 +266,6 @@ class CollectionView extends Component {
   }
 
   switchTopPageOpenStatus = (event) => {
-    console.log(this.state.topPageIsOpen);
     this.setState(prevState => {
       return {topPageIsOpen: !prevState.topPageIsOpen};
     });
@@ -312,11 +311,6 @@ class CollectionView extends Component {
   }
 
   deletePageHandler = (event, id) => {
-    console.log("To delete id: " + id);
-    // chrome.runtime.sendMessage({
-    //   msg: actionTypes.DELETE_A_PAGE_FROM_COUNT_LIST,
-    //   payload: {id}
-    // });
     FirebaseStore.deleteAPageFromCountList(id);
   }
 
@@ -327,38 +321,18 @@ class CollectionView extends Component {
       timestamp: (new Date()).getTime(),
       type: SNIPPET_TYPE.PIECE_GROUP
     };
-    // chrome.runtime.sendMessage({
-    //   msg: actionTypes.CREATE_A_PIECE_GROUP_WITH_TWO_PIECES,
-    //   payload: {
-    //     pieceGroup
-    //   }
-    // });
     FirebaseStore.createAPieceGroup(pieceGroup);
   }
 
   addAPieceToGroup = (groupId, pieceId) => {
-    // chrome.runtime.sendMessage({
-    //   msg: actionTypes.ADD_A_PIECE_TO_A_GROUP,
-    //   payload: {
-    //     groupId, pieceId
-    //   }
-    // });
     FirebaseStore.addAPieceToGroup(groupId, pieceId);
   }
 
   deletePieceHandler = (event, id, type) => {
     console.log("To delete piece with id: " + id);
     if (type === SNIPPET_TYPE.PIECE_GROUP) {
-      // chrome.runtime.sendMessage({
-      //   msg: actionTypes.DELETE_A_PIECE_GROUP,
-      //   payload: {groupId: id}
-      // });
       FirebaseStore.deleteAPieceGroup(id);
     } else {
-      // chrome.runtime.sendMessage({
-      //   msg: actionTypes.DELETE_A_PIECE_WITH_ID,
-      //   payload: {id}
-      // });
       FirebaseStore.deleteAPieceWithId(id);
     }
     
@@ -402,7 +376,6 @@ class CollectionView extends Component {
         displayNumber={this.state.numTopPageToDisplay}
         switchDisplayNum={this.changeTopPageDisplayNumberTo}/>
     );
-
 
 
 
