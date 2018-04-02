@@ -16,6 +16,7 @@
 
 .OptionList {
   font-size: 1rem;
+  max-width: 280px;
 }
 
 .OptionList ul {
@@ -39,6 +40,10 @@
   padding: 3px 10px;
   border-radius: 5px;
   box-sizing: border-box;
+}
+
+.Option:focus {
+  outline: none;
 }
 
 .ActiveBadge {

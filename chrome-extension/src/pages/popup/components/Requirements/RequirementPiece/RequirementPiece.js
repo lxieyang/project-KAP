@@ -6,6 +6,7 @@ import FontAwesomeIcon from '@fortawesome/react-fontawesome';
 import fasTrash from '@fortawesome/fontawesome-free-solid/faTrash';
 import fasStar from '@fortawesome/fontawesome-free-solid/faStar';
 import ordinal from 'ordinal';
+import { debounce } from 'lodash';
 import styles from './RequirementPiece.css';
 
 
@@ -78,6 +79,19 @@ class RequirementPiece extends Component {
     movePiece: PropTypes.func.isRequired,
   };
 
+  componentDidMount() {
+    this.inputCallback = debounce((event, id) => {
+      this.props.updateRequirementName(id, event.target.innerText.trim());
+      event.target.innerText = event.target.innerText.trim();
+      event.target.blur();
+    }, 1000);
+  }
+
+  inputChangedHandler = (event, id) => {
+    event.persist();
+    this.inputCallback(event, id);
+  }
+
   render () {
     const { rq, index, isDragging, connectDragSource, connectDropTarget } = this.props;
     const opacity = isDragging ? 0 : 1;
@@ -94,7 +108,13 @@ class RequirementPiece extends Component {
               onClick={(event) => this.props.switchStarStatusOfRequirement(rq.id)}>
               <FontAwesomeIcon icon={fasStar} />
             </div>
-            {rq.name}
+            <span
+              className={styles.RequirementText}
+              contentEditable={true}
+              suppressContentEditableWarning={true}
+              onInput={(event) => this.inputChangedHandler(event, rq.id)}>
+              {rq.name}
+            </span>
           </div>
         </div>
         

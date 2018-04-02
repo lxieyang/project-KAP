@@ -38,6 +38,10 @@
   transition: all 0.1s ease-in;
 }
 
+.RequirementText:focus {
+  outline: none;
+}
+
 /* .RequirementNameContainer:hover {
   z-index: 99999;
   transform: scale(1.05);

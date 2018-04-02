@@ -20,7 +20,7 @@ import SnippetCard from '../../../../../components/UI/SnippetCards/SnippetCard/S
 import styles from './TableView.css';
 import { SNIPPET_TYPE } from '../../../../../shared/constants';
 import { getFirstNWords } from '../../../../../shared/utilities';
-import { sortBy, reverse } from 'lodash';
+import { debounce, sortBy, reverse } from 'lodash';
 import ReactTooltip from 'react-tooltip';
 import * as FirebaseStore from '../../../../../firebase/store';
 
@@ -64,6 +64,17 @@ class TableView extends Component {
         this.dismissModal();
       }
     });
+
+    this.optionCallback = debounce((event, id) => {
+      FirebaseStore.updateOptionName(id, event.target.innerText.trim());
+      event.target.innerText = event.target.innerText.trim();
+      event.target.blur();
+    }, 500);
+  }
+
+  optionNameChangedHandler = (event, id) => {
+    event.persist();
+    this.optionCallback(event, id);
   }
 
   transformData = (task) => {
@@ -411,7 +422,8 @@ class TableView extends Component {
                 rq={rq} 
                 index={idx} 
                 moveHeader={this.moveHeader}
-                switchStarStatusOfRequirement={this.switchStarStatusOfRequirement}/>
+                switchStarStatusOfRequirement={this.switchStarStatusOfRequirement}
+                updateRequirementName={FirebaseStore.updateRequirementName}/>
             );
           })
         }
@@ -432,7 +444,13 @@ class TableView extends Component {
               }
             </div>
             <div className={[styles.OptionNameContainer, !op.active ? styles.InactiveOption : null].join(' ')}>
-              {op.name}
+              <span 
+                contentEditable={true}
+                suppressContentEditableWarning={true}
+                onInput={(event) => this.optionNameChangedHandler(event, op.id)}
+                className={styles.OptionText}>
+                {op.name}
+              </span>
             </div>
           </td>
           {

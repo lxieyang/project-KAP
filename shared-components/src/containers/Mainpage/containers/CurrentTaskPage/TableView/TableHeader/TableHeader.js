@@ -8,6 +8,7 @@ import PropTypes from 'prop-types';
 import { findDOMNode } from 'react-dom';
 import { DragSource, DropTarget } from 'react-dnd';
 import ordinal from 'ordinal';
+import { debounce } from 'lodash';
 import styles from './TableHeader.css';
 
 
@@ -80,6 +81,19 @@ class TableHeader extends Component {
     moveHeader: PropTypes.func.isRequired,
   }
 
+  componentDidMount () {
+    this.requirementCallback = debounce((event, id) => {
+      this.props.updateRequirementName(id, event.target.innerText.trim());
+      event.target.innerText = event.target.innerText.trim();
+      event.target.blur();
+    }, 500);
+  }
+
+  requirementNameChangedHandler = (event, id) => {
+    event.persist();
+    this.requirementCallback(event, id);
+  }
+
   render () {
     const { rq, index, isDragging, connectDragSource, connectDropTarget } = this.props;
     const opacity = isDragging ? 0 : 1;
@@ -112,7 +126,13 @@ class TableHeader extends Component {
           <div
             className={[styles.RequirementNameContainer,
             rq.active ? null : styles.InactiveRequirement].join(' ')}>
-              {rq.name}
+              <span
+                className={styles.RequirementText}
+                contentEditable={true}
+                suppressContentEditableWarning={true}
+                onInput={(event) => this.requirementNameChangedHandler(event, rq.id)}>
+                {rq.name}
+              </span>
           </div>
         </div>
         

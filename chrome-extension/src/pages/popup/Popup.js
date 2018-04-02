@@ -117,6 +117,10 @@ class Popup extends Component {
   deleteOptionHandler = (id) => {
     FirebaseStore.deleteOptionWithId(id);
   }
+
+  updateOptionName = (id, name) => {
+    FirebaseStore.updateOptionName(id, name);
+  }
   
 
   /* Deal with Requirements */
@@ -146,6 +150,10 @@ class Popup extends Component {
 
   deleteRequirementHandler = (id) => {
     FirebaseStore.deleteRequirementWithId(id);
+  }
+
+  updateRequirementName = (id, name) => {
+    FirebaseStore.updateRequirementName(id, name);
   }
 
   disablePluginHandler = () => {
@@ -214,7 +222,8 @@ class Popup extends Component {
               newOptionValue={newOptionInput}
               changed={this.inputChangedHandlerForOption}
               addOption={this.submitHandlerForOption}
-              deleteOptionWithId={this.deleteOptionHandler}/>
+              deleteOptionWithId={this.deleteOptionHandler}
+              updateOptionName={this.updateOptionName}/>
             <Requirements 
               requirements={currentTaskRequirementNames} 
               newRequirementValue={newRequirementInput}
@@ -222,7 +231,8 @@ class Popup extends Component {
               addRequirement={this.submitHandlerForRequirement}
               deleteRequirementWithId={this.deleteRequirementHandler}
               updateRequirementsOrdering={this.updateRequirementsOrdering}
-              switchStarStatusOfRequirement={this.switchStarStatusOfRequirement}/>
+              switchStarStatusOfRequirement={this.switchStarStatusOfRequirement}
+              updateRequirementName={this.updateRequirementName}/>
           </div>
           
 

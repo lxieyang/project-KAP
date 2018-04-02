@@ -82,7 +82,8 @@ class Requirements extends Component {
                   rq={rq}
                   movePiece={this.movePiece}
                   deleteRequirementWithId={this.props.deleteRequirementWithId}
-                  switchStarStatusOfRequirement={this.props.switchStarStatusOfRequirement}/>
+                  switchStarStatusOfRequirement={this.props.switchStarStatusOfRequirement}
+                  updateRequirementName={this.props.updateRequirementName}/>
               )) : null}
               <Input 
                 elementType={'input'} 

@@ -213,6 +213,17 @@ export const addAnOptionForCurrentTask = async (optionName) => {
   });
 }
 
+export const updateOptionName = async (optionId, optionName) => {
+  currentTaskId = (await currentTaskIdRef.once('value')).val();
+  let optionRef = tasksRef.child(currentTaskId + '/options').child(optionId);
+  optionRef.once('value', (snap) => {
+    optionRef.set({
+      ...snap.val(),
+      name: optionName
+    })
+  });
+}
+
 export const deleteOptionWithId = async (id) => {
   currentTaskId = (await currentTaskIdRef.once('value')).val();
   tasksRef.child(currentTaskId).child('options').child(id).set(null);
@@ -259,6 +270,17 @@ export const addARequirementForCurrentTask = async (requirementName) => {
   newRequirementRef.set({
     name: requirementName,
     starred: false
+  });
+}
+
+export const updateRequirementName = async (requirementId, requirementName) => {
+  currentTaskId = (await currentTaskIdRef.once('value')).val();
+  let requirementRef = tasksRef.child(currentTaskId + '/requirements').child(requirementId);
+  requirementRef.once('value', (snap) => {
+    requirementRef.set({
+      ...snap.val(),
+      name: requirementName
+    })
   });
 }
 
