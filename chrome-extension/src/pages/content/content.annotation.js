@@ -225,6 +225,24 @@ chrome.runtime.onMessage.addListener(
       );
       dragElement(document.getElementById("hover-box"));
 
+    } else if (request.msg === actionTypes.ADD_REQUIREMENT_CONTEXT_MENU_CLICKED) {
+      // console.log('should put up hover interaction');
+      let selection = getDocumentSelection();
+      // let rect = {};
+      hoverAnchor.style.left = `${Math.floor(window.innerWidth / 2) - 250 }px`;
+      hoverAnchor.style.top = `${Math.floor(window.innerHeight / 2) - 150 + window.scrollY}px`;
+      // if (selection.rect !== null) {
+      //   rect = {...selection.rect.toJSON()};
+      //   rect.top += document.documentElement.scrollTop;
+      //   hoverAnchor.style.left = `${Math.floor(rect.left) + 25}px`;
+      //   hoverAnchor.style.top = `${Math.floor(rect.top) + 25}px`;
+      // }      
+      ReactDOM.render(
+        <HoverInteraction type={'RQ'} content={selection.text} clip={clipClicked}/>, 
+        hoverAnchor
+      );
+      dragElement(document.getElementById("hover-box"));
+
     } else if (request.msg === actionTypes.ADD_PIECE_CONTEXT_MENU_CLICKED) {
       // console.log('should put up interaction box');
       let selection = getDocumentSelection();

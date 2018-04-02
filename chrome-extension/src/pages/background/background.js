@@ -112,6 +112,17 @@ chrome.contextMenus.create({
 });
 
 chrome.contextMenus.create({
+  title: 'Add a requirement',
+  onclick: (_, tab) => {
+    console.log(tab);
+    // send to content scripts
+    chrome.tabs.sendMessage(tab.id, {
+      msg: actionTypes.ADD_REQUIREMENT_CONTEXT_MENU_CLICKED
+    }, () => {});
+  }
+});
+
+chrome.contextMenus.create({
   title: 'Add "%s" as an Option',
   "contexts": ["selection"],
   onclick: (_, tab) => {
@@ -119,6 +130,18 @@ chrome.contextMenus.create({
     // send to content scripts
     chrome.tabs.sendMessage(tab.id, {
       msg: actionTypes.ADD_OPTION_CONTEXT_MENU_CLICKED
+    }, () => {});
+  }
+});
+
+chrome.contextMenus.create({
+  title: 'Add "%s" as a Requirement',
+  "contexts": ["selection"],
+  onclick: (_, tab) => {
+    console.log(tab);
+    // send to content scripts
+    chrome.tabs.sendMessage(tab.id, {
+      msg: actionTypes.ADD_REQUIREMENT_CONTEXT_MENU_CLICKED
     }, () => {});
   }
 });

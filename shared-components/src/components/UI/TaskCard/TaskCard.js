@@ -91,24 +91,10 @@ class TaskCard extends Component {
 
 
   deleteTaskWithId = (event, id) => {
-    console.log('delete:' + id);
-    // chrome.runtime.sendMessage({
-    //   msg: actionTypes.DELETE_TASK_WITH_ID,
-    //   payload: {
-    //     id
-    //   }
-    // });
     FirebaseStore.deleteTaskWithId(id);
   }
 
   titleClickedHandler = (event, id) => {
-    // switching current task
-    // chrome.runtime.sendMessage({
-    //   msg: actionTypes.SWITCH_CURRENT_TASK,
-    //   payload: {
-    //     id
-    //   }
-    // });
     FirebaseStore.switchCurrentTask(id);
 
     // rerouting
@@ -116,12 +102,6 @@ class TaskCard extends Component {
   }
 
   starClicked = (event, id) => {
-    // chrome.runtime.sendMessage({
-    //   msg: actionTypes.SWITCH_STAR_STATUS_OF_SELECTED_TASK,
-    //   payload: {
-    //     id
-    //   }
-    // });
     FirebaseStore.switchStarStatusOfSelectedTask(id);
   }
 
