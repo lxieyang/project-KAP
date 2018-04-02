@@ -207,6 +207,7 @@ const SnippetsGroup = (props) => {
                 timestamp={p.timestamp}
                 postTags={p.postTags}
                 notes={p.notes}
+                attitudeList={p.attitudeList}
                 attitudeOptionPairsList={attitudeOptionPairsList}
                 deleteThisSnippet={props.deleteSnippet}
                 makeInteractionBox={props.makeInteractionBox}

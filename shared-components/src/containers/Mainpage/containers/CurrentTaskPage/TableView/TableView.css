@@ -183,6 +183,31 @@ tr:nth-child(even) {background-color: #f2f2f2;} */
   width: 40px;
   height: 40px;
   transition: all 0.1s ease-in;
+  border-radius: 50%;
+  border: 2px solid transparent;
+}
+
+.AttitudeInTableCell:hover {
+  /* border: 2px solid red; */
+  box-shadow: 0 4px 10px 0 rgba(0,0,0,0.2),0 4px 20px 0 rgba(0,0,0,0.19);
+  z-index: 99999;
+}
+
+.TooltipOverAttitude {
+  /* overflow: auto; */
+  z-index: 99999;
+  max-width: 300px;
+  padding: 0px 0px !important;
+  /* margin: 0 !important; */
+  /* box-shadow: 0 4px 10px 0 rgba(0,0,0,0.2),0 4px 20px 0 rgba(0,0,0,0.19); */
+  opacity: 1 !important;
+  background-color: white !important;
+  pointer-events: auto !important;
+}
+
+.TooltipOverAttitude:hover {
+  visibility: visible !important;
+  opacity: 1 !important;
 }
 
 

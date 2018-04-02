@@ -88,6 +88,7 @@ class TableHeader extends Component {
         <div 
           style={{ opacity }}
           className={styles.RequirementInTableHeaderContainer}>
+          {/*
           <div
             className={[styles.ShowHideRequirementContainer, styles.ShowHideRequirement].join(' ')}
             onClick={(event) => this.switchRequirementStatus(event, rq.id)}>
@@ -97,6 +98,7 @@ class TableHeader extends Component {
               : <FontAwesomeIcon icon={fasCheckCircle} className={styles.ShowHideRequirementIcon}/>
             }
           </div>
+          */}
           <div style={{height: '100%'}}>
           <div 
             className={[styles.RequirementStar, (

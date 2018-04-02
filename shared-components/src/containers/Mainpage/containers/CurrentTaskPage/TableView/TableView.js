@@ -14,6 +14,7 @@ import ToggleSwitch from '../../../../../components/UI/ToggleSwitch/ToggleSwitch
 import InteractionBox from '../../../../../components/InteractionBox/InteractionBox';
 import ThumbV1 from '../../../../../components/UI/Thumbs/ThumbV1/ThumbV1';
 import QuestionMark from '../../../../../components/UI/Thumbs/QuestionMark/QuestionMark';
+import SnippetCard from '../../../../../components/UI/SnippetCards/SnippetCard/SnippetCard';
 // import * as actionTypes from '../../../../../shared/actionTypes';
 import styles from './TableView.css';
 import { SNIPPET_TYPE } from '../../../../../shared/constants';
@@ -453,6 +454,7 @@ class TableView extends Component {
                   }
                 }
               }
+              piecesInThisCell = reverse(sortBy(piecesInThisCell, ['attitude']));
 
               return (
                 <td key={rq.id}>
@@ -466,12 +468,45 @@ class TableView extends Component {
                         default: break;
                       }
                       return (
-                        <div 
-                          key={idx}
-                          title={p.id}
-                          className={styles.AttitudeInTableCell}>
-                          {thumb}
-                        </div>
+                        <Aux key={`${p.id}${op.id}${rq.id}`}>
+                          <div 
+                            className={styles.AttitudeInTableCell}
+                            data-tip
+                            data-for={`${p.id}${op.id}${rq.id}`}>
+                            {thumb}
+                          </div>
+                          <ReactTooltip
+                            place="right" 
+                            type="light" 
+                            effect="solid"
+                            id={`${p.id}${op.id}${rq.id}`}
+                            className={styles.TooltipOverAttitude}
+                            getContent={() => {
+                              return (
+                                <SnippetCard
+                                  id={p.id} 
+                                  type={p.type}
+                                  isInTableView={true}
+                                  allPieces={this.state.pieces}
+                                  options={this.state.options}
+                                  status={true}
+                                  pieceIds={p.type === SNIPPET_TYPE.PIECE_GROUP ? p.pieceIds : []}
+                                  title={p.type === SNIPPET_TYPE.PIECE_GROUP ? p.name : p.title}
+                                  texts={p.type === SNIPPET_TYPE.PIECE_GROUP ? p.name : p.texts}
+                                  name={p.type === SNIPPET_TYPE.PIECE_GROUP ? null : (new URL(p.url)).hostname}
+                                  link={p.url}
+                                  icon={p.url}
+                                  htmls={p.htmls}
+                                  timestamp={p.timestamp}
+                                  postTags={p.postTags}
+                                  notes={p.notes}
+                                  attitudeList={p.attitudeList}
+                                  makeInteractionBox={(event, id) => this.makeInteractionbox(event, id)}/>
+                              );
+                            }}>
+                            
+                          </ReactTooltip>
+                        </Aux>
                       );
                     })}
                   </div>

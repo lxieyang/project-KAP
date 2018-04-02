@@ -137,13 +137,17 @@ class SnippetCard extends Component {
     let content = null;
     if (props.type === SNIPPET_TYPE.SELECTION) {
       content = (
-        <div className={styles.ContentContainer}>
+        <div 
+          className={styles.ContentContainer}
+          style={{maxHeight: props.isInTableView === true ? '400px' : '200px'}}>
           {getFirstNWords(10,props.texts)}
         </div>
       );
     } else if (props.type === SNIPPET_TYPE.LASSO || props.type === SNIPPET_TYPE.POST_SNAPSHOT) {
       content = (
-        <div className={styles.ContentContainer}>
+        <div 
+          className={styles.ContentContainer}
+          style={{maxHeight: props.isInTableView === true ? '400px' : '200px'}}>
           <div 
             className={styles.HTMLPreview} 
             contentEditable="true"
@@ -154,7 +158,9 @@ class SnippetCard extends Component {
       );
     } else if (props.type === SNIPPET_TYPE.PIECE_GROUP) {
       content = (
-        <div className={styles.ContentContainer}>
+        <div 
+          className={styles.ContentContainer}
+          style={{maxHeight: props.isInTableView === true ? '400px' : '200px'}}>
           <div className={styles.PieceGroupNameContainer}>
             <textarea
               rows={'2'} 
@@ -316,44 +322,49 @@ class SnippetCard extends Component {
               </div>
             </div>
         }
-        <div
-          title={props.type === SNIPPET_TYPE.PIECE_GROUP ? 'Discard this group\n(pieces will be preserved)' : 'Delete this piece'}
-          className={styles.DeleteContainer}
-          onClick={(event) => props.deleteThisSnippet(event, props.id, props.type)}>
-          <FontAwesomeIcon 
-            icon={fasTrash}
-            className={styles.Icon}
-            />
-        </div>
+        {
+          props.isInTableView === true 
+          ? null
+          : <div
+              title={props.type === SNIPPET_TYPE.PIECE_GROUP ? 'Discard this group\n(pieces will be preserved)' : 'Delete this piece'}
+              className={styles.DeleteContainer}
+              onClick={(event) => props.deleteThisSnippet(event, props.id, props.type)}>
+              <FontAwesomeIcon 
+                icon={fasTrash}
+                className={styles.Icon}
+                />
+            </div>
+        }
+        
       </div>
     );
 
     
 
-    const attitudes = (
-      <div className={styles.AttitudeContainer}>
-        <ul>
-          {props.attitudeOptionPairsList.map((pair, idx) => {
-            return (
-              <li key={idx}>
-                <div className={styles.OptionName}>
-                  {pair.optionName}
-                </div>
-                <div className={styles.Attitude}>
-                  {
-                    pair.attitude === true
-                    ? <ThumbV1 type='up' />
-                    : pair.attitude === false
-                      ? <ThumbV1 type='down' />
-                      : <QuestionMark />
-                  }
-                </div>
-              </li>
-            );
-          })}
-        </ul>
-      </div>
-    );
+    // const attitudes = (
+    //   <div className={styles.AttitudeContainer}>
+    //     <ul>
+    //       {props.attitudeOptionPairsList.map((pair, idx) => {
+    //         return (
+    //           <li key={idx}>
+    //             <div className={styles.OptionName}>
+    //               {pair.optionName}
+    //             </div>
+    //             <div className={styles.Attitude}>
+    //               {
+    //                 pair.attitude === true
+    //                 ? <ThumbV1 type='up' />
+    //                 : pair.attitude === false
+    //                   ? <ThumbV1 type='down' />
+    //                   : <QuestionMark />
+    //               }
+    //             </div>
+    //           </li>
+    //         );
+    //       })}
+    //     </ul>
+    //   </div>
+    // );
 
     const footer = (
       <div className={styles.Footer}>
@@ -373,10 +384,11 @@ class SnippetCard extends Component {
         style={{
           transform: isActive ? 'scale(1.2)' : 'scale(1.0)',
           opacity: isDragging ? '0.3' : '1.0',
-          cursor: isDragging ? 'move' : 'auto'
+          cursor: isDragging ? 'move' : 'auto',
+          width: props.isInTableView === true ? '100%' : '250px'
         }}>
         {header}
-        {attitudes}
+        {/*attitudes*/}
         <HorizontalDivider margin="5px" />
         {footer}
       </div>
