@@ -209,6 +209,8 @@ const SnippetsGroup = (props) => {
                 postTags={p.postTags}
                 notes={p.notes}
                 attitudeList={p.attitudeList}
+                codeFilterOn={props.codeFilterOn}
+                notesFilterOn={props.notesFilterOn}
                 attitudeOptionPairsList={attitudeOptionPairsList}
                 deleteThisSnippet={props.deleteSnippet}
                 makeInteractionBox={props.makeInteractionBox}
@@ -415,8 +417,8 @@ class CollectionView extends Component {
       });
     }
 
+    const { codeFilterOn, notesFilterOn } = this.state;  
     let filteredPiecesAccordingToFilterStatus = piecesList.filter(p => {
-      const { codeFilterOn, notesFilterOn } = this.state;
       let codeQualified = true;
       let notesQualified = true;
 
@@ -453,6 +455,8 @@ class CollectionView extends Component {
         isOpen={this.state.allSnippetSIsOpen}
         options={task.options}
         pieces={task.pieces}
+        codeFilterOn={codeFilterOn}
+        notesFilterOn={notesFilterOn}
         requirements={task.requirements}
         piecesList={filteredPiecesAccordingToFilterStatus}
         makeInteractionBox={this.makeInteractionbox}
@@ -483,6 +487,8 @@ class CollectionView extends Component {
         options={task.options}
         pieces={task.pieces}
         requirements={task.requirements}
+        codeFilterOn={codeFilterOn}
+        notesFilterOn={notesFilterOn}
         // piecesList={newPiecesList}
         piecesList={piecesListClone}
         makeInteractionBox={this.makeInteractionbox}

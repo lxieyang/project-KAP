@@ -123,6 +123,23 @@
 
 
 
+.NotesContainer {
+  font-size: 0.70rem;
+  opacity: 0.8;
+  padding-bottom: 2px;
+}
+
+.NotesContent {
+  padding: 0px 10px;
+  font-size: 1.0rem;
+  color: black;
+}
+
+
+
+
+
+
 .Footer {
   font-size: 0.70rem;
   opacity: 0.8;

@@ -8,6 +8,7 @@ import farClock from '@fortawesome/fontawesome-free-regular/faClock';
 import fasTrash from '@fortawesome/fontawesome-free-solid/faTrash';
 import fasEye from '@fortawesome/fontawesome-free-solid/faEye';
 import fasStar from '@fortawesome/fontawesome-free-solid/faStar';
+import fasStickyNote from '@fortawesome/fontawesome-free-solid/faStickyNote';
 import { GET_FAVICON_URL_PREFIX } from '../../../../shared/constants';
 import HorizontalDivider from '../../../UI/Divider/HorizontalDivider/HorizontalDivider';
 import styles from './SnippetCard.css';
@@ -441,6 +442,21 @@ class SnippetCard extends Component {
       </div>
     )
 
+    const notes = (
+      <div className={styles.NotesContainer}>
+        <div className={styles.MetaInfo}>
+          <FontAwesomeIcon 
+            icon={fasStickyNote}
+            className={styles.Icon}
+            />
+          Notes:
+        </div>
+        <div className={styles.NotesContent}>
+          {props.notes}
+        </div>
+      </div>
+    )
+
     const footer = (
       <div className={styles.Footer}>
         <div className={styles.MetaInfo}>
@@ -465,6 +481,14 @@ class SnippetCard extends Component {
         {header}
         {attitudes}
         <HorizontalDivider margin="5px" />
+        {
+          props.notesFilterOn === true 
+          ? <Aux>
+              {notes}
+              <HorizontalDivider margin="5px" />
+            </Aux>
+          : null
+        }
         {footer}
       </div>
     ));
