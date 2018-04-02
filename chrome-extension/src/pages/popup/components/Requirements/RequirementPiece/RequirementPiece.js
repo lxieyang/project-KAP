@@ -84,17 +84,20 @@ class RequirementPiece extends Component {
 
     return connectDragSource(connectDropTarget(
       <li style={{ opacity }}>
-        <span className={styles.Ordinal}>{ordinal(index + 1)}</span>
-        <div className={styles.Requirement}>
-          <div 
-            className={[styles.RequirementStar, (
-              rq.starred === true ? styles.ActiveStar : null
-            )].join(' ')}
-            onClick={(event) => this.props.switchStarStatusOfRequirement(rq.id)}>
-            <FontAwesomeIcon icon={fasStar} />
+        <div style={{display: 'flex', alignItems: 'center'}}>
+          <span className={styles.Ordinal}>{ordinal(index + 1)}</span>
+          <div className={styles.Requirement}>
+            <div 
+              className={[styles.RequirementStar, (
+                rq.starred === true ? styles.ActiveStar : null
+              )].join(' ')}
+              onClick={(event) => this.props.switchStarStatusOfRequirement(rq.id)}>
+              <FontAwesomeIcon icon={fasStar} />
+            </div>
+            {rq.name}
           </div>
-          {rq.name}
         </div>
+        
         <span  
           onClick={(event) => this.props.deleteRequirementWithId(rq.id)}>
           <FontAwesomeIcon 

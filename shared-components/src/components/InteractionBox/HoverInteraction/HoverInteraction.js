@@ -1,9 +1,12 @@
 import React, { Component } from 'react';
 
 import FontAwesomeIcon from '@fortawesome/react-fontawesome';
-import fasLink from '@fortawesome/fontawesome-free-solid/faLink';
+import farClock from '@fortawesome/fontawesome-free-regular/faClock';
+import fasStar from '@fortawesome/fontawesome-free-solid/faStar';
+import fasListAlt from '@fortawesome/fontawesome-free-solid/faListAlt';
 import fasSave from '@fortawesome/fontawesome-free-solid/faSave';
 import fasArrowsAlt from '@fortawesome/fontawesome-free-solid/faArrowsAlt';
+import fasFlagCheckered from '@fortawesome/fontawesome-free-solid/faFlagCheckered';
 import Input from '../../UI/Input/Input';
 import styles from './HoverInteraction.css';
 import { 
@@ -11,13 +14,17 @@ import {
   currentTaskIdRef
 } from '../../../firebase/index';
 import * as FirebaseStore from '../../../firebase/store';
+import ordinal from 'ordinal';
+import { sortBy } from 'lodash';
 
 
 class HoverInteraction extends Component {
   state = {
+    type: this.props.type !== undefined ? this.props.type : 'OP',   // 'OP' or 'RQ'
     currentTaskName: null,
     newOptionInput: this.props.content ? this.props.content : '',
     existingOptions: [],
+    existingRequirements: [],
     canSubmit: false
   }
 
@@ -35,6 +42,16 @@ class HoverInteraction extends Component {
           });
         });
         this.setState({existingOptions: transformedOptions});
+      });
+      tasksRef.child(snapshot.val() + '/requirements').on('value', (data) => {
+        let transformedRequirements = [];
+        data.forEach((rqSnapshot) => {
+          transformedRequirements.push({
+            ...rqSnapshot.val(),
+            id: rqSnapshot.key
+          });
+        });
+        this.setState({existingRequirements: sortBy(transformedRequirements, ['order'])});
       });
     });
 
@@ -62,7 +79,12 @@ class HoverInteraction extends Component {
       //     optionName: this.state.newOptionInput
       //   }
       // });
-      FirebaseStore.addAnOptionForCurrentTask(this.state.newOptionInput);
+      if (this.state.type === 'OP') {
+        FirebaseStore.addAnOptionForCurrentTask(this.state.newOptionInput);
+      } else {
+        FirebaseStore.addARequirementForCurrentTask(this.state.newOptionInput);
+      }
+      
     }
 
     this.setState({newOptionInput: ''});
@@ -83,7 +105,7 @@ class HoverInteraction extends Component {
   }
 
   render() {
-    const { newOptionInput, existingOptions } = this.state;
+    const { type, newOptionInput, existingOptions, existingRequirements } = this.state;
 
     return (
       <div className={styles.HoverInteraction}>
@@ -101,20 +123,24 @@ class HoverInteraction extends Component {
         <div className={styles.AddPane}>
           {/*<span style={{marginBottom: '10px'}}>Add this option: </span>*/}
           <div className={styles.CurrentTaskNContainer}>
-            <div className={styles.CurrentTaskLabel}>Current Task:</div>
+            <div className={styles.CurrentTaskLabel}>
+              <FontAwesomeIcon icon={farClock} /> &nbsp;
+              Current Task:
+            </div>
             <div className={styles.CurrentTaskName}>{this.state.currentTaskName}</div>
           </div>
-          <Input 
-            id="kap-add-option-input-box"
-            elementType='input' 
-            elementConfig={{placeholder: 'Add an option'}} 
-            value={newOptionInput}
-            changed={this.inputChangedHandler}
-            />
-          <div style={{display: 'flex', justifyContent: 'center', margin: '10px'}}>
+          <div style={{margin: '10px'}}>
+            <Input 
+              id="kap-add-option-input-box"
+              elementType='input' 
+              elementConfig={{placeholder: type === 'OP' ? 'Add an option' : 'Add a requirement'}} 
+              value={newOptionInput}
+              changed={this.inputChangedHandler}
+              />
+            <br />
             <div className={styles.ClipButtonContainer}>
               <button
-                title="Save this option"
+                title={type === 'OP' ? 'Save this option' : 'Save this requirement'}
                 className={styles.ClipButton}
                 onClick={(event) => this.submitHandler(event)}
                 >
@@ -132,21 +158,44 @@ class HoverInteraction extends Component {
                       ? styles.ButtonTextDisappear
                       : null
                     )].join(' ')}>
-                    <FontAwesomeIcon icon={fasSave} className={styles.ClipButtonIcon}/>
+                    <FontAwesomeIcon icon={fasSave} className={styles.ClipButtonIcon}/> Save as an {type === 'OP' ? 'Option' : 'Requirement'}
                   </span>
                 </div>
               </button>
             </div>
           </div>
         </div>
+
         <div className={styles.showPane}>
+          <div className={styles.CurrentTaskLabel}>
+            <FontAwesomeIcon icon={type === 'OP' ? fasListAlt : fasFlagCheckered} /> &nbsp;
+            Existing {type === 'OP' ? 'Options' : 'Requirements'}:
+          </div>
           <div className={styles.OptionList}>
             <ul>
-              {existingOptions.map((op, idx) => (
-                <li key={op.id}>
-                  <span className={styles.Option}>{op.name}</span>
-                </li>
-              ))}
+              {
+                type === 'OP'
+                ? existingOptions.map((op, idx) => (
+                    <li key={op.id}>
+                      <span className={styles.Option}>{op.name}</span>
+                    </li>
+                  ))
+                : existingRequirements.map((rq, idx) => (
+                    <li key={rq.id}>
+                      <span className={styles.Ordinal}>{ordinal(idx + 1)}</span>
+                      <div className={styles.Requirement}>
+                        <div 
+                          className={[styles.RequirementStar, (
+                            rq.starred === true ? styles.ActiveStar : null
+                          )].join(' ')}
+                          onClick={(event) => this.props.switchStarStatusOfRequirement(rq.id)}>
+                          <FontAwesomeIcon icon={fasStar} />
+                        </div>
+                        {rq.name}
+                      </div>
+                    </li>
+                  ))
+              }
             </ul>
         </div>
         </div>

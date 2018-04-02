@@ -29,6 +29,7 @@ import TableHeader from './TableHeader/TableHeader';
 import update from 'immutability-helper';
 
 
+
 class TableView extends Component {
   state = {
     pieces: this.props.task.pieces,
@@ -586,8 +587,9 @@ class TableView extends Component {
           </div>
         </div>
         
-        
         {modal}
+
+
       </Aux>
     );
   }

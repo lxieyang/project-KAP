@@ -142,7 +142,7 @@ class SnippetCard extends Component {
       content = (
         <div 
           className={styles.ContentContainer}
-          style={{maxHeight: props.isInTableView === true ? '400px' : '200px'}}>
+          style={{maxHeight: props.isInTableView === true ? '350px' : '200px'}}>
           {getFirstNWords(10,props.texts)}
         </div>
       );
@@ -150,7 +150,7 @@ class SnippetCard extends Component {
       content = (
         <div 
           className={styles.ContentContainer}
-          style={{maxHeight: props.isInTableView === true ? '400px' : '200px'}}>
+          style={{maxHeight: props.isInTableView === true ? '350px' : '200px'}}>
           <div 
             className={styles.HTMLPreview} 
             contentEditable="true"
@@ -163,7 +163,7 @@ class SnippetCard extends Component {
       content = (
         <div 
           className={styles.ContentContainer}
-          style={{maxHeight: props.isInTableView === true ? '400px' : '200px'}}>
+          style={{maxHeight: props.isInTableView === true ? '350px' : '200px'}}>
           <div className={styles.PieceGroupNameContainer}>
             <textarea
               rows={'2'} 
@@ -341,33 +341,6 @@ class SnippetCard extends Component {
         
       </div>
     );
-
-    
-
-    // const attitudes = (
-    //   <div className={styles.AttitudeContainer}>
-    //     <ul>
-    //       {props.attitudeOptionPairsList.map((pair, idx) => {
-    //         return (
-    //           <li key={idx}>
-    //             <div className={styles.OptionName}>
-    //               {pair.optionName}
-    //             </div>
-    //             <div className={styles.Attitude}>
-    //               {
-    //                 pair.attitude === true
-    //                 ? <ThumbV1 type='up' />
-    //                 : pair.attitude === false
-    //                   ? <ThumbV1 type='down' />
-    //                   : <QuestionMark />
-    //               }
-    //             </div>
-    //           </li>
-    //         );
-    //       })}
-    //     </ul>
-    //   </div>
-    // );
 
     let transformedAttitudeList = [];
     for (let opkey in props.attitudeList) {

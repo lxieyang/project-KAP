@@ -2,7 +2,7 @@
   font-size: 14px;
   font-family: Arial, Helvetica, sans-serif;
   padding: 8px 14px;
-  max-width: 450px;
+  max-width: 500px;
   height: auto;
   background-color: rgba(226, 236, 244, 1);
   font-size: 1.13rem;
@@ -29,11 +29,12 @@
 }
 
 .AddPane {
-  margin-top: 8px;
+  font-size: 14px;
+  margin-top: 12px;
   font-size: 18px;
   margin-right: 20px;
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   flex-flow: column;
 }
 
@@ -42,10 +43,13 @@
 }
 
 .CurrentTaskLabel {
+
   font-weight: 600;
 }
 
 .CurrentTaskName {
+  margin-top: 8px;
+  font-size: 22px;
   color: gray;
 }
 
@@ -74,12 +78,15 @@
 
 .showPane {
   flex: 1;
+  flex-shrink: 0;
+  min-width: 250px;
+  margin-top: 12px;
+  margin-right: 10px;
 }
 
 .OptionList {
   font-size: 1rem;
-  border-left: 1px solid grey;
-  padding-left: 20px;
+  padding-left: 10px;
 }
 
 .OptionList ul {
@@ -91,22 +98,63 @@
 .OptionList ul li {
   margin: 10px 0px;
   display: flex;
-  justify-content: space-between;
+  align-items: center;
 }
 
 .Option {
-  color: black;
+  font-size: 15px;
+  color: white;
   font-weight: 300;
   font-family: 'Encode Sans Semi Expanded', sans-serif;
-  background-color: #E4E5E7;
-  padding: 3px 10px;
+  background-color: #4e89bc;
+  padding: 4px 10px;
   border-radius: 5px;
   box-sizing: border-box;
   box-shadow: 0 1px 1px 0 rgba(0,0,0,0.16), 0 1px 5px 0 rgba(0,0,0,0.12);
 }
 
+.Requirement {
+  font-size: 15px;
+  color: white;
+  font-weight: 300;
+  font-family: 'Encode Sans Semi Expanded', sans-serif;
+  background-color: #72c8e2;
+  padding: 4px 10px;
+  border-radius: 5px;
+  box-sizing: border-box;
+  box-shadow: 0 1px 1px 0 rgba(0,0,0,0.16), 0 1px 5px 0 rgba(0,0,0,0.12);
 
+  position: relative;
+}
 
+.RequirementStar {
+  position: absolute;
+  top: -8px;
+  left: -8px;
+  color: rgb(255, 232,90);
+  transition: all 0.1s ease-in;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.ActiveStar {
+  opacity: 1;
+}
+
+.Ordinal {
+  flex-shrink: 0;
+  cursor: default;
+  margin-right: 6px;
+  padding: 3px 6px;
+  width: 30px;
+  text-align: center;
+  border-radius: 4px;
+  font-size: 15px;
+  font-weight: 500;
+  color: white;
+  background-color: #4a8bfc;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.12);
+}
 
 
 
@@ -124,7 +172,8 @@
 
 .ClipButton:focus,
 .ClipButton {
-  width: 70px;
+  max-width: 220px;
+  padding: 3px 12px;
   height: 40px;
   background: rgb(236, 236, 236);
   color: gray;
@@ -154,7 +203,7 @@
 }
 
 .ButtonText {
-  font-size: 24px;
+  font-size: 14px;
 }
 
 .CheckmarkContainer {
