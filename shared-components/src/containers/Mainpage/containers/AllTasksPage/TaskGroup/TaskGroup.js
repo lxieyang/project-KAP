@@ -42,7 +42,8 @@ class TaskGroup extends Component {
                 taskName={task.displayName}
                 time={task.time}
                 numPieces={Object.keys(task.pieces).length}
-                numOptions={Object.keys(task.options).length} />
+                numOptions={Object.keys(task.options).length}
+                numRequirements={Object.keys(task.requirements).length} />
             );
           })}
         </div>

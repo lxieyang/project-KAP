@@ -7,6 +7,7 @@ import fasStar from '@fortawesome/fontawesome-free-solid/faStar';
 import farStar from '@fortawesome/fontawesome-free-regular/faStar';
 import fasTrash from '@fortawesome/fontawesome-free-solid/faTrash';
 import fasListUl from '@fortawesome/fontawesome-free-solid/faListUl';
+import fasFlagCheckered from '@fortawesome/fontawesome-free-solid/faFlagCheckered';
 import fasPuzzlePiece from '@fortawesome/fontawesome-free-solid/faPuzzlePiece';
 import HorizontalDivider from '../../UI/Divider/HorizontalDivider/HorizontalDivider';
 import styles from './TaskCard.css';
@@ -177,6 +178,10 @@ class TaskCard extends Component {
           <div className={styles.MetaInfo}>
             <FontAwesomeIcon icon={fasListUl} className={styles.Icon}/>
             {this.props.numOptions} options
+          </div>
+          <div className={styles.MetaInfo}>
+            <FontAwesomeIcon icon={fasFlagCheckered} className={styles.Icon}/>
+            {this.props.numRequirements} requirements
           </div>
           <div className={styles.MetaInfo}>
             <FontAwesomeIcon icon={fasPuzzlePiece} className={styles.Icon}/>

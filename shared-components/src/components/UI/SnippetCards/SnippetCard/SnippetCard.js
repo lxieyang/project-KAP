@@ -388,7 +388,6 @@ class SnippetCard extends Component {
         listOfAttitudes: transformedAttitudeOfOptionList
       });
     }
-    console.log(transformedAttitudeList);
 
     const attitudes = (
       <div className={styles.AttitudeContainer}>
