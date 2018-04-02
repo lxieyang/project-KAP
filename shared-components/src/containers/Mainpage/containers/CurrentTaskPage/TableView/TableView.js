@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { findDOMNode } from 'react-dom';
 
 import Aux from '../../../../../hoc/Aux/Aux';
 
@@ -467,10 +468,11 @@ class TableView extends Component {
                         case 'idk':   thumb = (<QuestionMark />); break;
                         default: break;
                       }
+
                       return (
                         <Aux key={`${p.id}${op.id}${rq.id}`}>
                           <div 
-                            className={styles.AttitudeInTableCell}
+                            className={[styles.AttitudeInTableCell].join(' ')}
                             data-tip
                             data-for={`${p.id}${op.id}${rq.id}`}>
                             {thumb}
