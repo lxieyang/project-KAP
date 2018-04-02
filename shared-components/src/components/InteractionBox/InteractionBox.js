@@ -5,6 +5,7 @@ import fasLink from '@fortawesome/fontawesome-free-solid/faLink';
 import fasSave from '@fortawesome/fontawesome-free-solid/faSave';
 import fasArrowsAlt from '@fortawesome/fontawesome-free-solid/faArrowsAlt';
 import fasTrash from '@fortawesome/fontawesome-free-solid/faTrash';
+import fasStar from '@fortawesome/fontawesome-free-solid/faStar';
 import ThumbV1 from '../../components/UI/Thumbs/ThumbV1/ThumbV1';
 import QuestionMark from '../../components/UI/Thumbs/QuestionMark/QuestionMark';
 import Input from '../../components/UI/Input/Input';
@@ -334,6 +335,10 @@ class interactionBox extends Component {
     }
   }
 
+  switchStarStatusOfRequirement = (id) => {
+    FirebaseStore.switchStarStatusOfARequirementWithId(id);
+  }
+
   submitPieceHandler = (event) => {
     event.preventDefault();
     let piece = {
@@ -511,6 +516,13 @@ class interactionBox extends Component {
                             ? styles.InactiveRequirement
                             : null
                           )].join(' ')}>
+                          <div 
+                            className={[styles.RequirementStar, (
+                              rq.starred === true ? styles.ActiveStar : null
+                            )].join(' ')}
+                            onClick={(event) => this.switchStarStatusOfRequirement(rq.id)}>
+                            <FontAwesomeIcon icon={fasStar}/>
+                          </div>
                           <div className={styles.RequirementAttitude}>
                             {attitudeDisplay}
                           </div>
