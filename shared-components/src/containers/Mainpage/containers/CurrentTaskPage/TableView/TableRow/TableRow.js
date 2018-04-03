@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { debounce, sortBy, reverse } from 'lodash';
 import FontAwesomeIcon from '@fortawesome/react-fontawesome';
 import fasStar from '@fortawesome/fontawesome-free-solid/faStar';
-import fasMinusCircle from '@fortawesome/fontawesome-free-solid/faMinusCircle';
 import fasCheckCircle from '@fortawesome/fontawesome-free-solid/faCheckCircle';
 import fasToggleOn from '@fortawesome/fontawesome-free-solid/faToggleOn';
 import fasToggleOff from '@fortawesome/fontawesome-free-solid/faToggleOff';
@@ -11,12 +10,6 @@ import ordinal from 'ordinal';
 import PropTypes from 'prop-types';
 import { findDOMNode } from 'react-dom';
 import { DragSource, DropTarget } from 'react-dnd';
-
-import Aux from '../../../../../../hoc/Aux/Aux';
-import SnippetCard from '../../../../../../components/UI/SnippetCards/SnippetCard/SnippetCard';
-import { SNIPPET_TYPE } from '../../../../../../shared/constants';
-import ThumbV1 from '../../../../../../components/UI/Thumbs/ThumbV1/ThumbV1';
-import QuestionMark from '../../../../../../components/UI/Thumbs/QuestionMark/QuestionMark';
 import styles from './TableRow.css';
 
 
@@ -111,7 +104,7 @@ class TableRow extends Component {
     const { op, index, inactiveOpacity, isDragging, connectDragSource, connectDropTarget } = this.props;
     const opacity = isDragging ? 0 : 1;
     return connectDragSource(connectDropTarget(
-        <td style={{ opacity, position: 'relative' }}>
+        <td style={{ opacity, position: 'relative'}}>
           <div 
             className={styles.ShowHideOption}
             onClick={(event) => this.props.switchHideStatusOfAnOption(index, op.id, op.hide)}>
@@ -121,7 +114,13 @@ class TableRow extends Component {
               : <FontAwesomeIcon icon={fasToggleOn} className={styles.ShowHidePieceIcon}/>
             }
           </div>
-          <div style={{display: 'flex', alignItems: 'center', opacity: op.hide === true ? `${inactiveOpacity}` : '1'}}>
+          <div style={{
+              display: 'flex', 
+              alignItems: 'center', 
+              padding: '5px',
+              borderRadius: '3px',
+              opacity: op.hide === true ? `${inactiveOpacity}` : '1',
+              backgroundColor: op.used === true ? 'rgba(82, 184, 101, 0.3)' : 'transparent' }}>
             <div style={{height: '100%'}}>
               <div 
                 className={[styles.OptionStar, (
@@ -131,6 +130,13 @@ class TableRow extends Component {
                 <FontAwesomeIcon icon={fasStar} />
               </div>
               <span className={styles.Ordinal}>{ordinal(index + 1)}</span>
+              <div 
+                className={[styles.OptionUseStatus, (
+                  op.used === true ? styles.UsedOption : null
+                )].join(' ')}
+                onClick={(event) => this.props.switchUsedStatusOfOption(op.id, op.used)}>
+                <FontAwesomeIcon icon={fasCheckCircle} />
+              </div>
             </div>
             <div className={[styles.OptionNameContainer, !op.active ? styles.InactiveOption : null].join(' ')}>
               <span 

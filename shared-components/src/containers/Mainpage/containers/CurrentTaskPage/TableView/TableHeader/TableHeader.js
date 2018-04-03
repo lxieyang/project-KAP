@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
 
 import FontAwesomeIcon from '@fortawesome/react-fontawesome';
-import fasMinusCircle from '@fortawesome/fontawesome-free-solid/faMinusCircle';
-import fasCheckCircle from '@fortawesome/fontawesome-free-solid/faCheckCircle';
 import fasToggleOn from '@fortawesome/fontawesome-free-solid/faToggleOn';
 import fasToggleOff from '@fortawesome/fontawesome-free-solid/faToggleOff';
 import fasStar from '@fortawesome/fontawesome-free-solid/faStar';

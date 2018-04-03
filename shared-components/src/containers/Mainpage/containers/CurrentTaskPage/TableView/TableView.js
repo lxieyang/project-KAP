@@ -452,6 +452,14 @@ class TableView extends Component {
     FirebaseStore.switchStarStatusOfAnOptionWithId(id);
   }
 
+  switchUsedStatusOfOption = (id, used) => {
+    if (used === true) {
+      FirebaseStore.unUseAnOption(id);
+    } else {
+      FirebaseStore.useAnOption(id);
+    }
+  }
+
   render () {
     // let pieceViewOption = (
     //   <Aux>
@@ -502,6 +510,7 @@ class TableView extends Component {
             inactiveOpacity={inactiveOpacity}
             switchStarStatusOfOption={this.switchStarStatusOfOption}
             switchHideStatusOfAnOption={this.switchHideStatusOfAnOption}
+            switchUsedStatusOfOption={this.switchUsedStatusOfOption}
             newRequirementsList={newRequirementsList}
             pieces={this.state.pieces}
             options={this.state.options}
