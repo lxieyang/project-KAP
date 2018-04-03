@@ -101,9 +101,7 @@ class OptionPiece extends Component {
         <div style={{display: 'flex', alignItems: 'center'}}>
           <span className={styles.Ordinal}>{ordinal(index + 1)}</span>
           <div 
-            className={[styles.Option, (
-              activeId === op.id ? styles.ActiveOption : null
-            )].join(' ')}>
+            className={styles.Option}>
             <div 
               className={[styles.OptionStar, (
                 op.starred === true ? styles.ActiveStar : null

@@ -9,6 +9,7 @@ import { getSearchTerm, getOrigin } from '../../../../shared-components/src/shar
 import * as actionTypes from '../../../../shared-components/src/shared/actionTypes';
 import classes from './content.annotation.css';
 import { PageCountHelper, dragElement } from './content.utility';
+import { getFirstSentence } from '../../../../shared-components/src/shared/utilities';
 import { SNIPPET_TYPE } from '../../../../shared-components/src/shared/constants';
 import * as FirebaseStore from '../../../../shared-components/src/firebase/store';
 import { setUserIdAndName } from '../../../../shared-components/src/firebase/index';
@@ -455,7 +456,7 @@ if(window.location.hostname === "stackoverflow.com") {
     );
   });
 
-  $('.kap-clip-post-button').on('click', function (event) {
+  $('.kap-clip-post-button').on('click', async function (event) {
     let checkmark = $(this).parents('.post-layout').find('.kap-clip-post-checkmark');
     let buttonText = $(this).parents('.post-layout').find('.kap-button-text');
     if ($(checkmark).hasClass('kap-checkmark-spin')) {
@@ -479,6 +480,7 @@ if(window.location.hostname === "stackoverflow.com") {
         console.log('Save this snippet');
         let postTextNode = $(this).parents('.post-layout').find('.post-text')[0];
         let postTextSnippet = KAPCaptureHelper.createCodeSnippetsFromNode(postTextNode);
+        console.log(postTextSnippet);
         let codeSnippetInPostText = $(this).parents('.post-layout').find('pre.prettyprint');
         let codeSnippets = [];
         if (codeSnippetInPostText.length > 0) {
@@ -498,20 +500,18 @@ if(window.location.hostname === "stackoverflow.com") {
           url: window.location.href,
           type: SNIPPET_TYPE.POST_SNAPSHOT,
           notes: '',
+          title: getFirstSentence(postTextSnippet.text),
+          autoSuggestedTitle: true,
           htmls: postTextSnippet.htmls,
           postTags: postTags,
-          originalDimensions: postTextSnippet.originalDimensions,
+          originalDimensions: postTextSnippet.initialDimensions,
           texts: postTextSnippet.text,
           codeSnippetHTMLs: codeSnippets.map(snp => snp.htmls),
           codeSnippetTexts: codeSnippets.map(snp => snp.text) 
         }
-        // chrome.runtime.sendMessage({
-        //   msg: actionTypes.ADD_A_PIECE_TO_CURRENT_TASK,
-        //   payload: {piece}
-        // }, (databack) => {
-        //   collectedPostKey = databack.key;
-        // });
-        collectedPostKey = FirebaseStore.addAPieceToCurrentTask(piece);
+        FirebaseStore.addAPieceToCurrentTask(piece).then((data) => {
+          collectedPostKey = data;
+        });
       }, 5);
     }
     $(this).blur();

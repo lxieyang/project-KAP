@@ -78,16 +78,42 @@
   opacity: 0.5;
 }
 
-.Section .FilterName {
+.Section .SectionFilterContainer {
+  /* position: relative; */
+  margin: 0px 20px;
+  display: flex;
+  align-items: center;
+}
+
+.SectionFilterBadge {
+  /* position: absolute;
+  top: -8px;
+  left: -8px; */
+  margin-right: 2px;
+  font-size: 12px;
+  font-weight: 600;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
+
+.SectionFilterBadgeDanger {
+  color: white;
+  background-color: #d9534f;
+}
+
+.Section .SectionFilterName {
   font-size: 1.2rem;
   opacity: 0.2;
   cursor: pointer;
-  margin: 0px 10px;
   padding: 2px 7px;
   transition: all 0.10s ease-in;
 }
 
-.Section .FilterName.Active {
+.Section .SectionFilterName.Active {
   opacity: 0.9;
   color: white;
   background: #5cb85c;

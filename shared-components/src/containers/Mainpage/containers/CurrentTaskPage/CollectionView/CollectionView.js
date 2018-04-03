@@ -8,6 +8,7 @@ import fasChevronUp from '@fortawesome/fontawesome-free-solid/faChevronUp';
 import fasCode from '@fortawesome/fontawesome-free-solid/faCode';
 import fasStickyNote from '@fortawesome/fontawesome-free-solid/faStickyNote';
 import fasPuzzlePiece from '@fortawesome/fontawesome-free-solid/faPuzzlePiece';
+import farQuestionCircle from '@fortawesome/fontawesome-free-regular/faQuestionCircle';
 import fasFilter from '@fortawesome/fontawesome-free-solid/faFilter';
 import InteractionBox from '../../../../../components/InteractionBox/InteractionBox';
 // import * as actionTypes from '../../../../../shared/actionTypes';
@@ -211,6 +212,7 @@ const SnippetsGroup = (props) => {
                 attitudeList={p.attitudeList}
                 codeFilterOn={props.codeFilterOn}
                 notesFilterOn={props.notesFilterOn}
+                unCategorizedFilterOn={props.unCategorizedFilterOn}
                 attitudeOptionPairsList={attitudeOptionPairsList}
                 deleteThisSnippet={props.deleteSnippet}
                 makeInteractionBox={props.makeInteractionBox}
@@ -245,7 +247,8 @@ class CollectionView extends Component {
     withCodeSnippetIsOpen: false,
     withNodeSnippetsIsOpen: false,
     codeFilterOn: false,
-    notesFilterOn: false
+    notesFilterOn: false,
+    unCategorizedFilterOn: false
   }
 
   componentWillReceiveProps (nextProps) {
@@ -279,6 +282,10 @@ class CollectionView extends Component {
     } else if (type === 'notes') {
       this.setState(prevState => {
         return {notesFilterOn: !prevState.notesFilterOn};
+      });
+    } else if (type === 'uncat') {
+      this.setState(prevState => {
+        return {unCategorizedFilterOn: !prevState.unCategorizedFilterOn};
       });
     }
   }
@@ -390,10 +397,11 @@ class CollectionView extends Component {
       });
     }
 
-    const { codeFilterOn, notesFilterOn } = this.state;  
+    const { codeFilterOn, notesFilterOn, unCategorizedFilterOn } = this.state;  
     let filteredPiecesAccordingToFilterStatus = piecesList.filter(p => {
       let codeQualified = true;
       let notesQualified = true;
+      let uncategorizedQualified = true;
 
       if (codeFilterOn) {   // filtering code
         
@@ -420,8 +428,18 @@ class CollectionView extends Component {
         }
       }
 
-      return codeQualified && notesQualified;
+      if (unCategorizedFilterOn) {  // filtering for uncategorized ones
+        if (p.attitudeList === undefined || Object.keys(p.attitudeList).length === 0) {
+          uncategorizedQualified = true;
+        } else {
+          uncategorizedQualified = false;
+        }
+      }
+
+      return codeQualified && notesQualified && uncategorizedQualified;
     });
+
+    let unCategorizedCount = piecesList.filter(p => p.attitudeList === undefined || Object.keys(p.attitudeList).length === 0).length;
 
     let filteredPieces = (
       <SnippetsGroup
@@ -430,6 +448,7 @@ class CollectionView extends Component {
         pieces={task.pieces}
         codeFilterOn={codeFilterOn}
         notesFilterOn={notesFilterOn}
+        unCategorizedFilterOn={unCategorizedFilterOn}
         requirements={task.requirements}
         piecesList={filteredPiecesAccordingToFilterStatus}
         makeInteractionBox={this.makeInteractionbox}
@@ -462,6 +481,7 @@ class CollectionView extends Component {
         requirements={task.requirements}
         codeFilterOn={codeFilterOn}
         notesFilterOn={notesFilterOn}
+        unCategorizedFilterOn={unCategorizedFilterOn}
         // piecesList={newPiecesList}
         piecesList={piecesListClone}
         makeInteractionBox={this.makeInteractionbox}
@@ -551,34 +571,62 @@ class CollectionView extends Component {
                       <div>
                         <FontAwesomeIcon icon={fasFilter} className={styles.FilterIcon}/>
                       </div>
-                      <div
-                        className={[styles.FilterName,
-                          (
-                            this.state.codeFilterOn === true
-                            ? styles.Active
-                            : null
-                          )
-                        ].join(' ')}
-                        onClick={() => this.switchFilterStatus('code')}>
-                        With Code <FontAwesomeIcon icon={fasCode} />
+                      <div className={styles.SectionFilterContainer}>
+                        <div
+                          className={[styles.SectionFilterName,
+                            (
+                              this.state.codeFilterOn === true
+                              ? styles.Active
+                              : null
+                            )
+                          ].join(' ')}
+                          onClick={() => this.switchFilterStatus('code')}>
+                          With Code <FontAwesomeIcon icon={fasCode} />
+                        </div>
                       </div>
-                      <div
-                        className={[styles.FilterName,
-                          (
-                            this.state.notesFilterOn === true
-                            ? styles.Active
-                            : null
-                          )
-                        ].join(' ')}
-                        onClick={() => this.switchFilterStatus('notes')}>
-                        With Notes <FontAwesomeIcon icon={fasStickyNote} />
+
+                      <div className={styles.SectionFilterContainer}>
+                        <div
+                          className={[styles.SectionFilterName,
+                            (
+                              this.state.notesFilterOn === true
+                              ? styles.Active
+                              : null
+                            )
+                          ].join(' ')}
+                          onClick={() => this.switchFilterStatus('notes')}>
+                          With Notes <FontAwesomeIcon icon={fasStickyNote} />
+                        </div>
                       </div>
+                      
+                      <div className={styles.SectionFilterContainer}>
+                        {
+                          unCategorizedCount !== 0 
+                          ? <div 
+                              className={[styles.SectionFilterBadge, styles.SectionFilterBadgeDanger].join(' ')}>
+                              {unCategorizedCount}
+                            </div>
+                          : null
+                        }
+                        <div
+                          className={[styles.SectionFilterName,
+                            (
+                              this.state.unCategorizedFilterOn === true
+                              ? styles.Active
+                              : null
+                            )
+                          ].join(' ')}
+                          onClick={() => this.switchFilterStatus('uncat')}>
+                          Uncategorized <FontAwesomeIcon icon={farQuestionCircle} />
+                        </div>
+                      </div>
+                      
                       
                     </div>
                   </div>
                 </Aux>
                 {
-                  this.state.codeFilterOn || this.state.notesFilterOn
+                  this.state.codeFilterOn || this.state.notesFilterOn || this.state.unCategorizedFilterOn
                   ? filteredPieces
                   : allPieces
                 }
