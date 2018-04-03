@@ -9,6 +9,7 @@ import fasTrash from '@fortawesome/fontawesome-free-solid/faTrash';
 import fasEye from '@fortawesome/fontawesome-free-solid/faEye';
 import fasStar from '@fortawesome/fontawesome-free-solid/faStar';
 import fasStickyNote from '@fortawesome/fontawesome-free-solid/faStickyNote';
+import fasCheckCircle from '@fortawesome/fontawesome-free-solid/faCheckCircle';
 import { GET_FAVICON_URL_PREFIX } from '../../../../shared/constants';
 import HorizontalDivider from '../../../UI/Divider/HorizontalDivider/HorizontalDivider';
 import styles from './SnippetCard.css';
@@ -293,9 +294,29 @@ class SnippetCard extends Component {
         {
           props.type === SNIPPET_TYPE.PIECE_GROUP
           ? null
-          : <div className={styles.Title}>
-              {props.title}
+          : <div className={styles.TitleContainer}>
+              <div className={styles.Title}>
+                {props.title}
+              </div>
+              { // TODO: activate this feature once we get the code base information in
+                props.usedInCode !== undefined && props.usedInCode !== null
+                ? <div className={styles.CodeUsedContainer}>
+                    <FontAwesomeIcon 
+                      icon={fasCheckCircle} 
+                      className={styles.CodeBadge}
+                      data-tip 
+                      data-for={`${props.id}-tooltip`}/>
+                    <ReactTooltip
+                      place="right" type="dark" effect="solid"
+                      id={`${props.id}-tooltip`}
+                      className={styles.CodeBadgeTooltip}>
+                      lol
+                    </ReactTooltip>
+                  </div>
+                : null
+              }
             </div>
+            
         }
         {
           props.title === undefined || props.type === SNIPPET_TYPE.PIECE_GROUP ? null : <HorizontalDivider margin="5px" />

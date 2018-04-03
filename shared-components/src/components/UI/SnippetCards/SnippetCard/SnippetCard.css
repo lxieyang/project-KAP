@@ -27,11 +27,43 @@
   padding-top: 8px;
 }
 
+.TitleContainer {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.CodeUsedContainer {
+  width: 20%;
+}
+
+.CodeBadge {
+  font-size: 24px;
+  color: rgb(82, 184, 101);
+  border-radius: 50%;
+  border: 1px solid transparent;
+  transition: all 0.1s ease-in;
+}
+
+.CodeBadge:hover {
+  /* border: 2px solid red; */
+  transform: scale(1.1);
+  box-shadow: 0 4px 10px 0 rgba(0,0,0,0.2),0 4px 20px 0 rgba(0,0,0,0.19);
+}
+
+.CodeBadgeTooltip {
+  /* max-width: 200px !important; */
+  /* min-width: 100px !important; */
+  /* padding: 6px 6px !important; */
+}
+
+
 .Title {
   font-size: 1.0rem;
   font-weight: 600;
   word-wrap: break-word; 
   margin-left: 10px;
+  width: 75%;
 }
 
 .ContentInHeader {
