@@ -210,7 +210,10 @@ export const addAnOptionForCurrentTask = async (optionName) => {
 
   let newOptionRef = tasksRef.child(currentTaskId + '/options').push();
   newOptionRef.set({
-    name: optionName
+    name: optionName,
+    order: currentTaskOptions.length,
+    starred: false,
+    hide: false
   });
   tasksRef.child(currentTaskId + '/options').on('child_added', (snapshot) => {
     tasksRef.child(currentTaskId + '/currentOptionId').set(snapshot.key);
@@ -325,7 +328,9 @@ export const addARequirementForCurrentTask = async (requirementName) => {
   let newRequirementRef = tasksRef.child(currentTaskId + '/requirements').push();
   newRequirementRef.set({
     name: requirementName,
-    starred: false
+    order: currentTaskRequirements.length,
+    starred: false,
+    hide: false
   });
 }
 
