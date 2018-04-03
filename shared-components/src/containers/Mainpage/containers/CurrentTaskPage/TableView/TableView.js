@@ -492,15 +492,14 @@ class TableView extends Component {
     );
 
     let newTableBody = newOptionsList.map((op, idx) => {
-      const opacity = op.hide === true ? inactiveOpacity : 1;
       return (
         <tr 
-          key={op.id}
-          style={{opacity}}>
+          key={op.id}>
           <TableRow 
             op={op}
             index={idx}
             moveRow={this.moveRow}
+            inactiveOpacity={inactiveOpacity}
             switchStarStatusOfOption={this.switchStarStatusOfOption}
             switchHideStatusOfAnOption={this.switchHideStatusOfAnOption}
             newRequirementsList={newRequirementsList}
@@ -533,7 +532,7 @@ class TableView extends Component {
                 piecesInThisCell = reverse(sortBy(piecesInThisCell, ['attitude']));
     
                 return (
-                  <td key={rq.id} style={{opacity: rq.hide === true ? `${inactiveOpacity}` : '1'}}>
+                  <td key={rq.id} style={{opacity: rq.hide === true || op.hide === true ? `${inactiveOpacity}` : '1'}}>
                     <div className={styles.AttitudeThumbInTableCellContainer}>
                       {piecesInThisCell.map((p, idx) => {
                         let thumb = null;

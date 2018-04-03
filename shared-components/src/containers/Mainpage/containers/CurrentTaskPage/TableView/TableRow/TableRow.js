@@ -4,6 +4,8 @@ import FontAwesomeIcon from '@fortawesome/react-fontawesome';
 import fasStar from '@fortawesome/fontawesome-free-solid/faStar';
 import fasMinusCircle from '@fortawesome/fontawesome-free-solid/faMinusCircle';
 import fasCheckCircle from '@fortawesome/fontawesome-free-solid/faCheckCircle';
+import fasToggleOn from '@fortawesome/fontawesome-free-solid/faToggleOn';
+import fasToggleOff from '@fortawesome/fontawesome-free-solid/faToggleOff';
 import ReactTooltip from 'react-tooltip';
 import ordinal from 'ordinal';
 import PropTypes from 'prop-types';
@@ -106,7 +108,7 @@ class TableRow extends Component {
   }
 
   render () {
-    const { op, index, isDragging, connectDragSource, connectDropTarget } = this.props;
+    const { op, index, inactiveOpacity, isDragging, connectDragSource, connectDropTarget } = this.props;
     const opacity = isDragging ? 0 : 1;
     return connectDragSource(connectDropTarget(
         <td style={{ opacity, position: 'relative' }}>
@@ -115,11 +117,11 @@ class TableRow extends Component {
             onClick={(event) => this.props.switchHideStatusOfAnOption(index, op.id, op.hide)}>
             {
               op.hide !== true 
-              ? <FontAwesomeIcon icon={fasMinusCircle} className={styles.ShowHidePieceIcon}/>
-              : <FontAwesomeIcon icon={fasCheckCircle} className={styles.ShowHidePieceIcon}/>
+              ? <FontAwesomeIcon icon={fasToggleOff} className={styles.ShowHidePieceIcon}/>
+              : <FontAwesomeIcon icon={fasToggleOn} className={styles.ShowHidePieceIcon}/>
             }
           </div>
-          <div style={{display: 'flex', alignItems: 'center'}}>
+          <div style={{display: 'flex', alignItems: 'center', opacity: op.hide === true ? `${inactiveOpacity}` : '1'}}>
             <div style={{height: '100%'}}>
               <div 
                 className={[styles.OptionStar, (

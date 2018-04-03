@@ -3,6 +3,8 @@ import React, { Component } from 'react';
 import FontAwesomeIcon from '@fortawesome/react-fontawesome';
 import fasMinusCircle from '@fortawesome/fontawesome-free-solid/faMinusCircle';
 import fasCheckCircle from '@fortawesome/fontawesome-free-solid/faCheckCircle';
+import fasToggleOn from '@fortawesome/fontawesome-free-solid/faToggleOn';
+import fasToggleOff from '@fortawesome/fontawesome-free-solid/faToggleOff';
 import fasStar from '@fortawesome/fontawesome-free-solid/faStar';
 import PropTypes from 'prop-types';
 import { findDOMNode } from 'react-dom';
@@ -98,21 +100,19 @@ class TableHeader extends Component {
     const { rq, index, inactiveOpacity, isDragging, connectDragSource, connectDropTarget } = this.props;
     const opacity = isDragging ? 0 : 1;
     return connectDragSource(connectDropTarget(
-      <th style={{opacity: rq.hide === true ? `${inactiveOpacity}` : '1'}}>
-        <div 
-          style={{ opacity }}
-          className={styles.RequirementInTableHeaderContainer}>
-          
-          <div
+      <th style={{ opacity }}>
+        <div
             className={styles.ShowHideRequirement}
             onClick={(event) => this.props.switchHideStatusOfARequirement(index, rq.id, rq.hide)}>
             {
               rq.hide !== true
-              ? <FontAwesomeIcon icon={fasMinusCircle} className={styles.ShowHideRequirementIcon}/>
-              : <FontAwesomeIcon icon={fasCheckCircle} className={styles.ShowHideRequirementIcon}/>
+              ? <FontAwesomeIcon icon={fasToggleOff} className={styles.ShowHideRequirementIcon}/>
+              : <FontAwesomeIcon icon={fasToggleOn} className={styles.ShowHideRequirementIcon}/>
             }
           </div>
-          
+        <div 
+          style={{opacity: rq.hide === true ? `${inactiveOpacity}` : '1'}}
+          className={styles.RequirementInTableHeaderContainer}>
           <div style={{height: '100%'}}>
             <div 
               className={[styles.RequirementStar, (

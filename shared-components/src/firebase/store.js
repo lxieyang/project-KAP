@@ -213,7 +213,8 @@ export const addAnOptionForCurrentTask = async (optionName) => {
     name: optionName,
     order: currentTaskOptions.length,
     starred: false,
-    hide: false
+    hide: false,
+    used: false
   });
   tasksRef.child(currentTaskId + '/options').on('child_added', (snapshot) => {
     tasksRef.child(currentTaskId + '/currentOptionId').set(snapshot.key);
@@ -228,6 +229,28 @@ export const updateOptionName = async (optionId, optionName) => {
       ...snap.val(),
       name: optionName
     })
+  });
+}
+
+export const useAnOption = async (optionId) => {
+  currentTaskId = (await currentTaskIdRef.once('value')).val();
+  let optionRef = tasksRef.child(currentTaskId + '/options').child(optionId);
+  optionRef.once('value', (snap) => {
+    optionRef.set({
+      ...snap.val(),
+      used: true
+    });
+  });
+}
+
+export const unUseAnOption = async (optionId) => {
+  currentTaskId = (await currentTaskIdRef.once('value')).val();
+  let optionRef = tasksRef.child(currentTaskId + '/options').child(optionId);
+  optionRef.once('value', (snap) => {
+    optionRef.set({
+      ...snap.val(),
+      used: false
+    });
   });
 }
 
