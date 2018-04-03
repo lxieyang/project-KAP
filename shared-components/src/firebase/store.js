@@ -242,6 +242,17 @@ export const deleteOptionWithId = async (id) => {
   });
 }
 
+export const updateOptionsOrdering = async (ordering) => {
+  currentTaskId = (await currentTaskIdRef.once('value')).val();
+  let optionsRef = tasksRef.child(currentTaskId).child('options');
+  let options = await optionsRef.once('value');
+  options.forEach((snap) => {
+    optionsRef.child(snap.key).set({
+      ...snap.val(),
+      order: ordering[snap.key]
+    });
+  });
+}
 
 
 

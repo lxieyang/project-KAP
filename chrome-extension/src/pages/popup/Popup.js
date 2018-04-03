@@ -114,6 +114,10 @@ class Popup extends Component {
     this.setState({newOptionInput: ''});
   }
 
+  updateOptionsOrdering = (ordering) => {
+    FirebaseStore.updateOptionsOrdering(ordering);
+  }
+
   deleteOptionHandler = (id) => {
     FirebaseStore.deleteOptionWithId(id);
   }
@@ -223,7 +227,8 @@ class Popup extends Component {
               changed={this.inputChangedHandlerForOption}
               addOption={this.submitHandlerForOption}
               deleteOptionWithId={this.deleteOptionHandler}
-              updateOptionName={this.updateOptionName}/>
+              updateOptionName={this.updateOptionName}
+              updateOptionsOrdering={this.updateOptionsOrdering}/>
             <Requirements 
               requirements={currentTaskRequirementNames} 
               newRequirementValue={newRequirementInput}

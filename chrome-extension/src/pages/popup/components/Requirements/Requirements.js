@@ -36,22 +36,12 @@ class Requirements extends Component {
     const { requirements } = this.state;
     const dragPiece = requirements[dragIndex];
 
-    // this.setState(update(this.state, {
-    //   requirements: {
-    //     $splice: [
-    //       [dragIndex, 1],
-    //       [hoverIndex, 0, dragPiece],
-    //     ],
-    //   },
-    // }));
-
     let newRequirements = update(requirements, {
       $splice: [
         [dragIndex, 1],
         [hoverIndex, 0, dragPiece]
       ]
     });
-    
 
     this.setState({requirements: newRequirements});
 
@@ -75,16 +65,18 @@ class Requirements extends Component {
           </div>
           <div className={styles.RequirementList}>
             <ul>
-              {requirements !== null ? requirements.map((rq, idx) => (
-                <RequirementPiece 
-                  key={rq.id}
-                  index={idx}
-                  rq={rq}
-                  movePiece={this.movePiece}
-                  deleteRequirementWithId={this.props.deleteRequirementWithId}
-                  switchStarStatusOfRequirement={this.props.switchStarStatusOfRequirement}
-                  updateRequirementName={this.props.updateRequirementName}/>
-              )) : null}
+              {
+                requirements !== null ? requirements.map((rq, idx) => (
+                  <RequirementPiece 
+                    key={rq.id}
+                    index={idx}
+                    rq={rq}
+                    movePiece={this.movePiece}
+                    deleteRequirementWithId={this.props.deleteRequirementWithId}
+                    switchStarStatusOfRequirement={this.props.switchStarStatusOfRequirement}
+                    updateRequirementName={this.props.updateRequirementName}/>
+                )) : null
+              }
               <Input 
                 elementType={'input'} 
                 elementConfig={inputConfig}
@@ -97,7 +89,6 @@ class Requirements extends Component {
       </div>
     );
   }
-  
 }
 
 export default Requirements;

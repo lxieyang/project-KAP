@@ -2,31 +2,61 @@ import React, { Component } from 'react';
 
 import FontAwesomeIcon from '@fortawesome/react-fontawesome';
 import fasListAlt from '@fortawesome/fontawesome-free-solid/faListAlt';
-import fasTrash from '@fortawesome/fontawesome-free-solid/faTrash';
 import Input from '../../../../../../shared-components/src/components/UI/Input/Input';
-import { debounce } from 'lodash';
+import OptionPiece from './OptionPiece/OptionPiece';
+import { sortBy } from 'lodash';
+import update from 'immutability-helper';
 import styles from './Options.css';
+
 
 const inputConfig = {
   placeholder: 'Add an option'
 }
 
 class Options extends Component {
-  componentDidMount() {
-    this.inputCallback = debounce((event, id) => {
-      this.props.updateOptionName(id, event.target.innerText.trim());
-      event.target.innerText = event.target.innerText.trim();
-      event.target.blur();
-    }, 500);
+
+  state = {
+    options: null
   }
 
-  inputChangedHandler = (event, id) => {
-    event.persist();
-    this.inputCallback(event, id);
+  componentDidMount () {
+    this.transformOptions(this.props.options);
+  }
+
+  componentWillReceiveProps (nextProps) {
+    this.transformOptions(nextProps.options);
+  }
+
+  transformOptions = (options) => {
+    options = sortBy(options, ['order']);
+    this.setState({options});
+  }
+
+  movePiece = (dragIndex, hoverIndex) => {
+    const { options } = this.state;
+    const dragPiece = options[dragIndex];
+
+    let newOptions = update(options, {
+      $splice: [
+        [dragIndex, 1],
+        [hoverIndex, 0, dragPiece]
+      ]
+    });
+
+    this.setState({options: newOptions});
+
+    // update order
+    let ordering = {};
+    for (let idx = 0; idx < newOptions.length; idx++) {
+      ordering[newOptions[idx].id] = idx;
+    }
+    this.props.updateOptionsOrdering(ordering);
   }
 
   render () {
-    const { options, activeId } = this.props;
+    const { activeId } = this.props;
+    const { options } = this.state;
+
     return (
       <div style={{display: 'flex'}}>
         <div className={styles.Options}>
@@ -36,26 +66,20 @@ class Options extends Component {
           </div>
           <div className={styles.OptionList}>
             <ul>
-              {options.map((op, idx) => (
-                <li key={op.id}>
-                  <span 
-                    contentEditable={true}
-                    suppressContentEditableWarning={true}
-                    onInput={(event) => this.inputChangedHandler(event, op.id)}
-                    className={styles.Option}>
-                    {op.name}
-                  </span>
-                  {activeId === op.id 
-                  ? <span className={styles.ActiveBadge}>active</span>
-                  : null}
-                  <span  
-                    onClick={(event) => this.props.deleteOptionWithId(op.id)}>
-                    <FontAwesomeIcon 
-                      icon={fasTrash}
-                      className={styles.TrashIcon}/>
-                  </span>
-                </li>
-              ))}
+              {
+                options !== null ? options.map((op, idx) => {
+                  return (
+                    <OptionPiece 
+                      key={op.id}
+                      index={idx}
+                      op={op}
+                      movePiece={this.movePiece}
+                      activeId={activeId}
+                      deleteOptionWithId={this.props.deleteOptionWithId}
+                      updateOptionName={this.props.updateOptionName}/>
+                  )
+                }) : null
+              }
               <Input 
                 elementType={'input'} 
                 elementConfig={inputConfig}
@@ -68,7 +92,6 @@ class Options extends Component {
       </div>
     );
   }
-  
 }
 
 export default Options;
