@@ -34,10 +34,11 @@ const cardSource = {
   },
 
   canDrag(props) {
-    if (props.type === SNIPPET_TYPE.PIECE_GROUP) {
-      return false;
-    }
-    return true;
+    // if (props.type === SNIPPET_TYPE.PIECE_GROUP) {
+    //   return false;
+    // }
+    // return true;
+    return false;
   },
 
   endDrag(props, monitor, component) {
@@ -377,7 +378,16 @@ class SnippetCard extends Component {
                   <span className={styles.Ordinal}>
                     {(op.order + 1)}
                   </span>
-                  <span className={styles.OptionName}>{op.optionName}</span>
+                  <div 
+                    className={styles.OptionName}>
+                    <div 
+                      className={[styles.OptionStar, (
+                        op.starred === true ? styles.ActiveStar : null
+                      )].join(' ')}>
+                      <FontAwesomeIcon icon={fasStar} />
+                    </div>
+                    {op.optionName}
+                  </div>
                 </div>
                 <div className={styles.AttitudeListContainer}>
                   {op.listOfAttitudes.map((pair, index) => {

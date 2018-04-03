@@ -210,6 +210,22 @@
   border-radius: 5px;
   box-sizing: border-box;
   box-shadow: 0 1px 1px 0 rgba(0,0,0,0.16), 0 1px 5px 0 rgba(0,0,0,0.12);
+
+  position: relative;
+}
+
+.OptionStar {
+  position: absolute;
+  top: -6px;
+  left: -6px;
+  color: rgb(255, 232,90);
+  transition: all 0.1s ease-in;
+  opacity: 0;
+  cursor: default;
+}
+
+.ActiveStar {
+  opacity: 1;
 }
 
 .Ordinal {
