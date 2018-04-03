@@ -118,6 +118,10 @@ class Popup extends Component {
     FirebaseStore.updateOptionsOrdering(ordering);
   }
 
+  switchStarStatusOfOption = (id) => {
+    FirebaseStore.switchStarStatusOfAnOptionWithId(id);
+  }
+
   deleteOptionHandler = (id) => {
     FirebaseStore.deleteOptionWithId(id);
   }
@@ -228,6 +232,7 @@ class Popup extends Component {
               addOption={this.submitHandlerForOption}
               deleteOptionWithId={this.deleteOptionHandler}
               updateOptionName={this.updateOptionName}
+              switchStarStatusOfOption={this.switchStarStatusOfOption}
               updateOptionsOrdering={this.updateOptionsOrdering}/>
             <Requirements 
               requirements={currentTaskRequirementNames} 

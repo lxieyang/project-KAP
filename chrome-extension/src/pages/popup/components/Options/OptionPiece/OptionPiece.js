@@ -4,6 +4,7 @@ import { findDOMNode } from 'react-dom';
 import { DragSource, DropTarget } from 'react-dnd';
 import FontAwesomeIcon from '@fortawesome/react-fontawesome';
 import fasTrash from '@fortawesome/fontawesome-free-solid/faTrash';
+import fasStar from '@fortawesome/fontawesome-free-solid/faStar';
 import { debounce } from 'lodash';
 import ordinal from 'ordinal';
 import styles from './OptionPiece.css';
@@ -82,7 +83,7 @@ class OptionPiece extends Component {
       this.props.updateOptionName(id, event.target.innerText.trim());
       event.target.innerText = event.target.innerText.trim();
       event.target.blur();
-    }, 500);
+    }, 1000);
   }
 
   inputChangedHandler = (event, id) => {
@@ -99,15 +100,25 @@ class OptionPiece extends Component {
       <li style={{ opacity, cursor }}>
         <div style={{display: 'flex', alignItems: 'center'}}>
           <span className={styles.Ordinal}>{ordinal(index + 1)}</span>
-          <span 
-            contentEditable={true}
-            suppressContentEditableWarning={true}
-            onInput={(event) => this.inputChangedHandler(event, op.id)}
+          <div 
             className={[styles.Option, (
               activeId === op.id ? styles.ActiveOption : null
             )].join(' ')}>
-            {op.name}
-          </span>
+            <div 
+              className={[styles.OptionStar, (
+                op.starred === true ? styles.ActiveStar : null
+              )].join(' ')}
+              onClick={(event) => this.props.switchStarStatusOfOption(op.id)}>
+              <FontAwesomeIcon icon={fasStar} />
+            </div>
+            <span
+              className={styles.OptionText}
+              contentEditable={true}
+              suppressContentEditableWarning={true}
+              onInput={(event) => this.inputChangedHandler(event, op.id)}>
+              {op.name}
+            </span>
+          </div>
         </div>
         <span  
           onClick={(event) => this.props.deleteOptionWithId(op.id)}>

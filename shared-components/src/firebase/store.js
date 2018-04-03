@@ -228,6 +228,15 @@ export const updateOptionName = async (optionId, optionName) => {
   });
 }
 
+export const switchStarStatusOfAnOptionWithId = async (id) => {
+  currentTaskId = (await currentTaskIdRef.once('value')).val();
+  let op = await tasksRef.child(currentTaskId).child('options').child(id).once('value');
+  tasksRef.child(currentTaskId).child('options').child(id).set({
+    ...op.val(),
+    starred: !op.val().starred
+  });
+}
+
 export const deleteOptionWithId = async (id) => {
   currentTaskId = (await currentTaskIdRef.once('value')).val();
   tasksRef.child(currentTaskId).child('options').child(id).set(null);

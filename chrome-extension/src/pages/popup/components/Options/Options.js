@@ -76,6 +76,7 @@ class Options extends Component {
                       movePiece={this.movePiece}
                       activeId={activeId}
                       deleteOptionWithId={this.props.deleteOptionWithId}
+                      switchStarStatusOfOption={this.props.switchStarStatusOfOption}
                       updateOptionName={this.props.updateOptionName}/>
                   )
                 }) : null
