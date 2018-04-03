@@ -21,6 +21,7 @@ import PropTypes from 'prop-types';
 import ReactTooltip from 'react-tooltip';
 import { debounce, reverse, sortBy } from 'lodash';
 import * as FirebaseStore from '../../../../firebase/store';
+import ordinal from 'ordinal';
 
 
 /* drag and drop */
@@ -357,11 +358,13 @@ class SnippetCard extends Component {
       }
       transformedAttitudeOfOptionList = reverse(sortBy(transformedAttitudeOfOptionList, ['attitude']));
       transformedAttitudeList.push({
+        ...options[opkey],
         optionId: opkey,
         optionName: options[opkey].name,
         listOfAttitudes: transformedAttitudeOfOptionList
       });
     }
+    transformedAttitudeList = sortBy(transformedAttitudeList, ['order']);
 
     const attitudes = (
       <div className={styles.AttitudeContainer}>
@@ -370,8 +373,11 @@ class SnippetCard extends Component {
             
             return (
               <li key={idx}>
-                <div className={styles.OptionName}>
-                  {op.optionName}
+                <div style={{display: 'flex', alignItems: 'center', width: '70%'}}>
+                  <span className={styles.Ordinal}>
+                    {(op.order + 1)}
+                  </span>
+                  <span className={styles.OptionName}>{op.optionName}</span>
                 </div>
                 <div className={styles.AttitudeListContainer}>
                   {op.listOfAttitudes.map((pair, index) => {
@@ -397,8 +403,9 @@ class SnippetCard extends Component {
                           place="right" type="dark" effect="float">
                           <div>
                             {pair.starred === true 
-                             ? <FontAwesomeIcon icon={fasStar} />
-                             : null}
+                              ? <span><FontAwesomeIcon icon={fasStar} /> &nbsp;</span>
+                              : null} 
+                            {ordinal(pair.order+1)}
                           </div>
                           <div>
                             {pair.name}

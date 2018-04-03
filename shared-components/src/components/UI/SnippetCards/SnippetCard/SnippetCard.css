@@ -179,7 +179,7 @@
 
 
 .AttitudeContainer {
-  padding: 0px 12px;
+  padding: 0px 8px;
   margin-bottom: 5px;
 }
 
@@ -199,7 +199,7 @@
 .OptionName {
   margin-left: 0px;
   font-size: 0.8rem;
-  max-width: 60%;
+  max-width: 95%;
   white-space: pre-wrap;
   word-break: keep-all;
   color: white;
@@ -212,6 +212,25 @@
   box-shadow: 0 1px 1px 0 rgba(0,0,0,0.16), 0 1px 5px 0 rgba(0,0,0,0.12);
 }
 
+.Ordinal {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+
+  flex-shrink: 0;
+  cursor: default;
+  margin-right: 2px;
+  width: 12px;
+  height: 12px;
+  text-align: center;
+  border-radius: 50%;
+  font-size: 10px;
+  font-weight: 500;
+  color: white;
+  background-color: #f0ad4e;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.12);
+}
+
 .AttitudeListContainer {
   max-width: 40%;
   display: flex;
@@ -219,9 +238,9 @@
 }
 
 .Attitude {
-  margin-right: 5px;
-  width: 20px;
-  height: 20px;
+  margin-right: 2px;
+  width: 18px;
+  height: 18px;
   border-radius: 50%;
   border: 1px solid transparent;
   transition: all 0.1s ease-in;
