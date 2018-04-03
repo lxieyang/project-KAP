@@ -17,44 +17,20 @@
   outline: none;
 }
 
-.AttitudeThumbInTableCellContainer {
-  display: flex;
-  flex-wrap: wrap;
-}
-
-.AttitudeInTableCell {
-  font-size: 1.8rem;
-  margin-right: 5px;
-  width: 40px;
-  height: 40px;
+.OptionStar {
+  color: rgb(255, 232,90);
   transition: all 0.1s ease-in;
-  border-radius: 50%;
-  border: 2px solid transparent;
+  opacity: 0;
+  cursor: pointer;
 }
 
-/* .AttitudeInTableCellIsShowing, */
-.AttitudeInTableCell:hover {
-  /* border: 2px solid red; */
+.OptionStar:hover {
+  opacity: 0.8;
   transform: scale(1.1);
-  box-shadow: 0 4px 10px 0 rgba(0,0,0,0.2),0 4px 20px 0 rgba(0,0,0,0.19);
-  z-index: 9999999;
 }
 
-.TooltipOverAttitude {
-  /* overflow: auto; */
-  max-width: 320px;
-  margin: 0px 0px !important;
-  padding: 0px 0px !important;
-  /* margin: 0 !important; */
-  /* box-shadow: 0 4px 10px 0 rgba(0,0,0,0.2),0 4px 20px 0 rgba(0,0,0,0.19); */
-  opacity: 1 !important;
-  background-color: white !important;
-  pointer-events: auto !important;
-}
-
-.TooltipOverAttitude:hover {
-  visibility: visible !important;
-  opacity: 1 !important;
+.ActiveStar {
+  opacity: 1;
 }
 
 .Ordinal {

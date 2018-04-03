@@ -399,6 +399,10 @@ class TableView extends Component {
     FirebaseStore.switchStarStatusOfARequirementWithId(id);
   }
 
+  switchStarStatusOfOption = (id) => {
+    FirebaseStore.switchStarStatusOfAnOptionWithId(id);
+  }
+
   render () {
     // let pieceViewOption = (
     //   <Aux>
@@ -444,6 +448,7 @@ class TableView extends Component {
             op={op}
             index={idx}
             moveRow={this.moveRow}
+            switchStarStatusOfOption={this.switchStarStatusOfOption}
             newRequirementsList={newRequirementsList}
             pieces={this.state.pieces}
             options={this.state.options}

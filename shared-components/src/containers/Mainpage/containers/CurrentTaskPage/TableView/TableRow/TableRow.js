@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import { debounce, sortBy, reverse } from 'lodash';
+import FontAwesomeIcon from '@fortawesome/react-fontawesome';
+import fasStar from '@fortawesome/fontawesome-free-solid/faStar';
 import ReactTooltip from 'react-tooltip';
 import ordinal from 'ordinal';
 import PropTypes from 'prop-types';
@@ -119,6 +121,13 @@ class TableRow extends Component {
           */}
           <div style={{display: 'flex', alignItems: 'center'}}>
             <div style={{height: '100%'}}>
+              <div 
+                className={[styles.OptionStar, (
+                  op.starred === true ? styles.ActiveStar : null
+                )].join(' ')}
+                onClick={(event) => this.props.switchStarStatusOfOption(op.id)}>
+                <FontAwesomeIcon icon={fasStar} />
+              </div>
               <span className={styles.Ordinal}>{ordinal(index + 1)}</span>
             </div>
             <div className={[styles.OptionNameContainer, !op.active ? styles.InactiveOption : null].join(' ')}>
