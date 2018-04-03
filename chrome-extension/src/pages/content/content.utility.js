@@ -12,7 +12,8 @@ export class PageCountHelper {
     'localhost',
     'login',
     'logout',
-    'autolab'
+    'autolab',
+    '127.0.0.1'
     // should be more
   ];
 }
