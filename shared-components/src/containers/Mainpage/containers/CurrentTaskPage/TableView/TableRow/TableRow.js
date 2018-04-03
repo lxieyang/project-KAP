@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import { debounce, sortBy, reverse } from 'lodash';
 import FontAwesomeIcon from '@fortawesome/react-fontawesome';
 import fasStar from '@fortawesome/fontawesome-free-solid/faStar';
+import fasMinusCircle from '@fortawesome/fontawesome-free-solid/faMinusCircle';
+import fasCheckCircle from '@fortawesome/fontawesome-free-solid/faCheckCircle';
 import ReactTooltip from 'react-tooltip';
 import ordinal from 'ordinal';
 import PropTypes from 'prop-types';
@@ -107,18 +109,16 @@ class TableRow extends Component {
     const { op, index, isDragging, connectDragSource, connectDropTarget } = this.props;
     const opacity = isDragging ? 0 : 1;
     return connectDragSource(connectDropTarget(
-        <td style={{ opacity }}>
-          {/*
+        <td style={{ opacity, position: 'relative' }}>
           <div 
-            className={[styles.ShowHidePieceContainer, styles.ShowHideOption].join(' ')}
-            onClick={(event) => this.switchOptionStatus(event, op.id)}>
+            className={styles.ShowHideOption}
+            onClick={(event) => this.props.switchHideStatusOfAnOption(index, op.id, op.hide)}>
             {
-              op.active 
+              op.hide !== true 
               ? <FontAwesomeIcon icon={fasMinusCircle} className={styles.ShowHidePieceIcon}/>
               : <FontAwesomeIcon icon={fasCheckCircle} className={styles.ShowHidePieceIcon}/>
             }
           </div>
-          */}
           <div style={{display: 'flex', alignItems: 'center'}}>
             <div style={{height: '100%'}}>
               <div 

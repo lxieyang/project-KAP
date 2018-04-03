@@ -47,3 +47,28 @@
   background-color: #f0ad4e;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.12);
 }
+
+
+.ShowHidePieceContainer {
+  color: inherit;
+  z-index: 900;
+  width: 20px;
+}
+
+.ShowHideOption {
+  position: absolute;
+  top: 4px;
+  right: 12px;
+}
+
+.ShowHidePieceIcon {
+  cursor: pointer;
+  opacity: 0.05;
+  font-size: 1.0rem;
+  transition: all 0.1s ease-in;
+}
+
+.ShowHidePieceIcon:hover {
+  opacity: 0.8;
+}
+

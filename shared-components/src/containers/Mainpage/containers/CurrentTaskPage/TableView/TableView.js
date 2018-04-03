@@ -362,7 +362,7 @@ class TableView extends Component {
         [dragIndex, 1],
         [hoverIndex, 0, dragHeader]
       ]
-    })
+    });
 
     this.setState({requirementsList: newRequirementsList});
 
@@ -375,6 +375,7 @@ class TableView extends Component {
   }
 
   moveRow = (dragIndex, hoverIndex) => {
+
     const { optionsList } = this.state;
     const dragRow = optionsList[dragIndex];
 
@@ -383,7 +384,7 @@ class TableView extends Component {
         [dragIndex, 1],
         [hoverIndex, 0, dragRow]
       ]
-    })
+    });
 
     this.setState({optionsList: newOptionsList});
 
@@ -393,6 +394,31 @@ class TableView extends Component {
       ordering[newOptionsList[idx].id] = idx;
     }
     FirebaseStore.updateOptionsOrdering(ordering);
+  }
+
+  switchHideStatusOfAnOption = (toHideIndex, optionId, hide) => {
+    let toIndex = this.state.optionsList.length - 1;
+    const { optionsList } = this.state;
+    const fromRow = optionsList[toHideIndex];
+
+    let newOptionsList = update(optionsList, {
+      $splice: [
+        [toHideIndex, 1],
+        [toIndex, 0, fromRow]
+      ]
+    });
+    console.log(newOptionsList);
+
+    this.setState({optionsList: newOptionsList});
+
+    // update order
+    let ordering = {};
+    for (let idx = 0; idx < newOptionsList.length; idx++) {
+      ordering[newOptionsList[idx].id] = idx;
+    }
+
+    FirebaseStore.switchHideStatusOfAnOptionWithId(optionId, hide, ordering);
+
   }
 
   switchStarStatusOfRequirement = (id) => {
@@ -441,14 +467,17 @@ class TableView extends Component {
     );
 
     let newTableBody = newOptionsList.map((op, idx) => {
+      const opacity = op.hide === true ? 0.3 : 1;
       return (
         <tr 
-          key={op.id}>
+          key={op.id}
+          style={{opacity}}>
           <TableRow 
             op={op}
             index={idx}
             moveRow={this.moveRow}
             switchStarStatusOfOption={this.switchStarStatusOfOption}
+            switchHideStatusOfAnOption={this.switchHideStatusOfAnOption}
             newRequirementsList={newRequirementsList}
             pieces={this.state.pieces}
             options={this.state.options}

@@ -237,6 +237,29 @@ export const switchStarStatusOfAnOptionWithId = async (id) => {
   });
 }
 
+export const switchHideStatusOfAnOptionWithId = async (id, hide, ordering) => {
+  currentTaskId = (await currentTaskIdRef.once('value')).val();
+  if (hide !== true) {
+    let optionsRef = tasksRef.child(currentTaskId).child('options');
+    let options = await optionsRef.once('value');
+    options.forEach((snap) => {
+      optionsRef.child(snap.key).set({
+        ...snap.val(),
+        order: ordering[snap.key],
+        hide: id === snap.key ? true : snap.val().hide
+      });
+    });
+  } else {
+    let op = await tasksRef.child(currentTaskId).child('options').child(id).once('value');
+    tasksRef.child(currentTaskId).child('options').child(id).set({
+      ...op.val(),
+      hide: false
+    });
+  }
+  
+  
+}
+
 export const deleteOptionWithId = async (id) => {
   currentTaskId = (await currentTaskIdRef.once('value')).val();
   tasksRef.child(currentTaskId).child('options').child(id).set(null);
