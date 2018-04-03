@@ -570,7 +570,9 @@ class interactionBox extends Component {
                             {/* onClick={(event) => this.switchStarStatusOfRequirement(rq.id)} */}
                             <FontAwesomeIcon icon={fasStar}/>
                           </div>
-                          <div className={styles.RequirementAttitude}>
+                          <div 
+                            className={styles.RequirementAttitude}
+                            onClick={(event) => this.attitudeChangeHandler(event, op.id, rq.id, attitude)}>
                             {attitudeDisplay}
                           </div>
                           <div 
