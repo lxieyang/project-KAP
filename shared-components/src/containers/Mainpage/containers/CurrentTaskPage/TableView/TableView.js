@@ -11,6 +11,7 @@ import fasCode from '@fortawesome/fontawesome-free-solid/faCode';
 import fasMinusCircle from '@fortawesome/fontawesome-free-solid/faMinusCircle';
 import fasCheckCircle from '@fortawesome/fontawesome-free-solid/faCheckCircle';
 
+import TableRow from './TableRow/TableRow';
 import ToggleSwitch from '../../../../../components/UI/ToggleSwitch/ToggleSwitch';
 import InteractionBox from '../../../../../components/InteractionBox/InteractionBox';
 import ThumbV1 from '../../../../../components/UI/Thumbs/ThumbV1/ThumbV1';
@@ -38,7 +39,7 @@ class TableView extends Component {
     requirements: this.props.task.requirements,
     pieceGroups: this.props.task.pieceGroups,
     optionsList: [],
-    requirementList: [],
+    requirementsList: [],
     piecesList: [],
     isDetailed: true,
     showModal: false,
@@ -64,17 +65,6 @@ class TableView extends Component {
         this.dismissModal();
       }
     });
-
-    this.optionCallback = debounce((event, id) => {
-      FirebaseStore.updateOptionName(id, event.target.innerText.trim());
-      event.target.innerText = event.target.innerText.trim();
-      event.target.blur();
-    }, 500);
-  }
-
-  optionNameChangedHandler = (event, id) => {
-    event.persist();
-    this.optionCallback(event, id);
   }
 
   transformData = (task) => {
@@ -87,18 +77,19 @@ class TableView extends Component {
         active: true,
       });
     }
+    optionsList = sortBy(optionsList, ['order']);
     // console.log(optionsList);
 
     // extract requirements
-    let requirementList = [];
+    let requirementsList = [];
     for (let rqKey in task.requirements) {
-      requirementList.push({
+      requirementsList.push({
         ...task.requirements[rqKey],
         id: rqKey,
         active: true
       })
     }
-    requirementList = sortBy(requirementList, ['order']);
+    requirementsList = sortBy(requirementsList, ['order']);
 
     // extract pieces ==> disabling piece grouping
     let piecesList = [];
@@ -123,7 +114,7 @@ class TableView extends Component {
     }
     
 
-    this.setState({optionsList, requirementList, piecesList});
+    this.setState({optionsList, requirementsList, piecesList});
   }
 
   getOrderedPiecesListFromState () {
@@ -155,9 +146,9 @@ class TableView extends Component {
   }
 
   getOrderedRequirementListFromState () {
-    let { requirementList } = this.state;
-    requirementList = reverse(sortBy(requirementList, ['active', 'order']));
-    return requirementList;
+    let { requirementsList } = this.state;
+    requirementsList = reverse(sortBy(requirementsList, ['active', 'order']));
+    return requirementsList;
   }
 
   getOrderedOptionListFromState () {
@@ -201,16 +192,16 @@ class TableView extends Component {
   switchRequirementStatus = (event, requirementId) => {
     let idx = 0;
     let updatedRequirement = {};
-    for(; idx < this.state.requirementList.length; idx++) {
-      if (this.state.requirementList[idx].id === requirementId) {
-        updatedRequirement = {...this.state.requirementList[idx]};
+    for(; idx < this.state.requirementsList.length; idx++) {
+      if (this.state.requirementsList[idx].id === requirementId) {
+        updatedRequirement = {...this.state.requirementsList[idx]};
         break;
       }
     }
     updatedRequirement.active = !updatedRequirement.active;
-    let updatedRequirementList = [...this.state.requirementList];
+    let updatedRequirementList = [...this.state.requirementsList];
     updatedRequirementList[idx] = updatedRequirement;
-    this.setState({requirementList: updatedRequirementList});
+    this.setState({requirementsList: updatedRequirementList});
   }
 
   dismissModal = () => {
@@ -363,24 +354,45 @@ class TableView extends Component {
 
   /* For Dnd */
   moveHeader = (dragIndex, hoverIndex) => {
-    const { requirementList } = this.state;
-    const dragHeader = requirementList[dragIndex];
+    const { requirementsList } = this.state;
+    const dragHeader = requirementsList[dragIndex];
 
-    let newRequirementList = update(requirementList, {
+    let newRequirementsList = update(requirementsList, {
       $splice: [
         [dragIndex, 1],
         [hoverIndex, 0, dragHeader]
       ]
     })
 
-    this.setState({requirementList: newRequirementList});
+    this.setState({requirementsList: newRequirementsList});
 
     // update order
     let ordering = {};
-    for (let idx = 0; idx < newRequirementList.length; idx++) {
-      ordering[newRequirementList[idx].id] = idx;
+    for (let idx = 0; idx < newRequirementsList.length; idx++) {
+      ordering[newRequirementsList[idx].id] = idx;
     }
     FirebaseStore.updateRequirementOrdering(ordering);
+  }
+
+  moveRow = (dragIndex, hoverIndex) => {
+    const { optionsList } = this.state;
+    const dragRow = optionsList[dragIndex];
+
+    let newOptionsList = update(optionsList, {
+      $splice: [
+        [dragIndex, 1],
+        [hoverIndex, 0, dragRow]
+      ]
+    })
+
+    this.setState({optionsList: newOptionsList});
+
+    // update order
+    let ordering = {};
+    for (let idx = 0; idx < newOptionsList.length; idx++) {
+      ordering[newOptionsList[idx].id] = idx;
+    }
+    FirebaseStore.updateOptionsOrdering(ordering);
   }
 
   switchStarStatusOfRequirement = (id) => {
@@ -388,34 +400,28 @@ class TableView extends Component {
   }
 
   render () {
-
-    
-    let pieceViewOption = (
-      <Aux>
-        <div className={styles.Label}>
-          <span>View Detailed Pieces</span>
-        </div>
-        <div className={styles.Slider}>
-          <ToggleSwitch 
-            checked={this.state.isDetailed} 
-            statusChanged={this.detailedViewChangeHandler}/>
-        </div>
-      </Aux>
-    );
+    // let pieceViewOption = (
+    //   <Aux>
+    //     <div className={styles.Label}>
+    //       <span>View Detailed Pieces</span>
+    //     </div>
+    //     <div className={styles.Slider}>
+    //       <ToggleSwitch 
+    //         checked={this.state.isDetailed} 
+    //         statusChanged={this.detailedViewChangeHandler}/>
+    //     </div>
+    //   </Aux>
+    // );
 
 
-
-
-
-
-    let newRequirementList = this.state.requirementList; // this.getOrderedRequirementListFromState();
-    let newOptionsList = this.getOrderedOptionListFromState();
+    let newRequirementsList = this.state.requirementsList; // this.getOrderedRequirementListFromState();
+    let newOptionsList = this.state.optionsList; // this.getOrderedOptionListFromState();
 
     let newTableHeader = (
       <tr>
         <th></th>
         {
-          newRequirementList.map((rq, idx) => {
+          newRequirementsList.map((rq, idx) => {
             return (
               <TableHeader 
                 key={rq.id}
@@ -432,110 +438,101 @@ class TableView extends Component {
 
     let newTableBody = newOptionsList.map((op, idx) => {
       return (
-        <tr key={idx}>
-          <td>
-            <div 
-              className={[styles.ShowHidePieceContainer, styles.ShowHideOption].join(' ')}
-              onClick={(event) => this.switchOptionStatus(event, op.id)}>
-              {
-                op.active 
-                ? <FontAwesomeIcon icon={fasMinusCircle} className={styles.ShowHidePieceIcon}/>
-                : <FontAwesomeIcon icon={fasCheckCircle} className={styles.ShowHidePieceIcon}/>
-              }
-            </div>
-            <div className={[styles.OptionNameContainer, !op.active ? styles.InactiveOption : null].join(' ')}>
-              <span 
-                contentEditable={true}
-                suppressContentEditableWarning={true}
-                onInput={(event) => this.optionNameChangedHandler(event, op.id)}
-                className={styles.OptionText}>
-                {op.name}
-              </span>
-            </div>
-          </td>
-          {
-            newRequirementList.map((rq, index) => {
-              // find all pieces in the piecesList that has option id = op.id and requirement id = rq.id
-              let piecesInThisCell = [];
-              for (let pKey in this.state.pieces) {
-                let piece = this.state.pieces[pKey];
-                let attitudeList = piece.attitudeList;
-                if (attitudeList !== undefined) {
-                  let attitudeRequirementPairs = attitudeList[op.id];
-                  if (attitudeRequirementPairs !== undefined) {
-                    let attitude = attitudeRequirementPairs[rq.id];
-                    if (attitude !== undefined) {
-                      piecesInThisCell.push({
-                        ...piece,
-                        id: pKey,
-                        attitude: attitude
-                      })
+        <tr 
+          key={op.id}>
+          <TableRow 
+            op={op}
+            index={idx}
+            moveRow={this.moveRow}
+            newRequirementsList={newRequirementsList}
+            pieces={this.state.pieces}
+            options={this.state.options}
+            requirements={this.state.requirements}
+            updateOptionName={FirebaseStore.updateOptionName}
+            makeInteractionbox={this.makeInteractionbox}/>
+            {
+              newRequirementsList.map((rq, index) => {
+                // find all pieces in the piecesList that has option id = op.id and requirement id = rq.id
+                let piecesInThisCell = [];
+                for (let pKey in this.state.pieces) {
+                  let piece = this.state.pieces[pKey];
+                  let attitudeList = piece.attitudeList;
+                  if (attitudeList !== undefined) {
+                    let attitudeRequirementPairs = attitudeList[op.id];
+                    if (attitudeRequirementPairs !== undefined) {
+                      let attitude = attitudeRequirementPairs[rq.id];
+                      if (attitude !== undefined) {
+                        piecesInThisCell.push({
+                          ...piece,
+                          id: pKey,
+                          attitude: attitude
+                        })
+                      }
                     }
                   }
                 }
-              }
-              piecesInThisCell = reverse(sortBy(piecesInThisCell, ['attitude']));
-
-              return (
-                <td key={rq.id}>
-                  <div className={styles.AttitudeThumbInTableCellContainer}>
-                    {piecesInThisCell.map((p, idx) => {
-                      let thumb = null;
-                      switch (p.attitude) {
-                        case 'good':  thumb = (<ThumbV1 type='up' />); break;
-                        case 'bad':   thumb = (<ThumbV1 type='down' />); break;
-                        case 'idk':   thumb = (<QuestionMark />); break;
-                        default: break;
-                      }
-
-                      return (
-                        <Aux key={`${p.id}${op.id}${rq.id}`}>
-                          <div 
-                            className={[styles.AttitudeInTableCell].join(' ')}
-                            data-tip
-                            data-for={`${p.id}${op.id}${rq.id}`}>
-                            {thumb}
-                          </div>
-                          <ReactTooltip
-                            place="right" 
-                            type="light" 
-                            effect="solid"
-                            id={`${p.id}${op.id}${rq.id}`}
-                            className={styles.TooltipOverAttitude}
-                            getContent={() => {
-                              return (
-                                <SnippetCard
-                                  id={p.id} 
-                                  type={p.type}
-                                  isInTableView={true}
-                                  allPieces={this.state.pieces}
-                                  options={this.state.options}
-                                  requirements={this.state.requirements}
-                                  status={true}
-                                  pieceIds={p.type === SNIPPET_TYPE.PIECE_GROUP ? p.pieceIds : []}
-                                  title={p.type === SNIPPET_TYPE.PIECE_GROUP ? p.name : p.title}
-                                  texts={p.type === SNIPPET_TYPE.PIECE_GROUP ? p.name : p.texts}
-                                  name={p.type === SNIPPET_TYPE.PIECE_GROUP ? null : (new URL(p.url)).hostname}
-                                  link={p.url}
-                                  icon={p.url}
-                                  htmls={p.htmls}
-                                  timestamp={p.timestamp}
-                                  postTags={p.postTags}
-                                  notes={p.notes}
-                                  attitudeList={p.attitudeList}
-                                  makeInteractionBox={(event, id) => this.makeInteractionbox(event, id)}/>
-                              );
-                            }}>
-                            
-                          </ReactTooltip>
-                        </Aux>
-                      );
-                    })}
-                  </div>
-                </td>
-              );
-            })
-          }
+                piecesInThisCell = reverse(sortBy(piecesInThisCell, ['attitude']));
+    
+                return (
+                  <td key={rq.id}>
+                    <div className={styles.AttitudeThumbInTableCellContainer}>
+                      {piecesInThisCell.map((p, idx) => {
+                        let thumb = null;
+                        switch (p.attitude) {
+                          case 'good':  thumb = (<ThumbV1 type='up' />); break;
+                          case 'bad':   thumb = (<ThumbV1 type='down' />); break;
+                          case 'idk':   thumb = (<QuestionMark />); break;
+                          default: break;
+                        }
+    
+                        return (
+                          <Aux key={`${p.id}${op.id}${rq.id}`}>
+                            <div 
+                              className={[styles.AttitudeInTableCell].join(' ')}
+                              data-tip
+                              data-for={`${p.id}${op.id}${rq.id}`}>
+                              {thumb}
+                            </div>
+                            <ReactTooltip
+                              place="right" 
+                              type="light" 
+                              effect="solid"
+                              id={`${p.id}${op.id}${rq.id}`}
+                              className={styles.TooltipOverAttitude}
+                              getContent={() => {
+                                return (
+                                  <SnippetCard
+                                    id={p.id} 
+                                    type={p.type}
+                                    isInTableView={true}
+                                    allPieces={this.state.pieces}
+                                    options={this.state.options}
+                                    requirements={this.state.requirements}
+                                    status={true}
+                                    pieceIds={p.type === SNIPPET_TYPE.PIECE_GROUP ? p.pieceIds : []}
+                                    title={p.type === SNIPPET_TYPE.PIECE_GROUP ? p.name : p.title}
+                                    texts={p.type === SNIPPET_TYPE.PIECE_GROUP ? p.name : p.texts}
+                                    name={p.type === SNIPPET_TYPE.PIECE_GROUP ? null : (new URL(p.url)).hostname}
+                                    link={p.url}
+                                    icon={p.url}
+                                    htmls={p.htmls}
+                                    timestamp={p.timestamp}
+                                    postTags={p.postTags}
+                                    notes={p.notes}
+                                    attitudeList={p.attitudeList}
+                                    makeInteractionBox={(event, id) => this.props.makeInteractionbox(event, id)}/>
+                                );
+                              }}>
+                              
+                            </ReactTooltip>
+                          </Aux>
+                        );
+                      })}
+                    </div>
+                  </td>
+                );
+              })
+            }
         </tr>
       );
     });

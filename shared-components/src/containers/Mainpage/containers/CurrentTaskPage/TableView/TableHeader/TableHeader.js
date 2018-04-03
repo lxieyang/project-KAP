@@ -114,13 +114,13 @@ class TableHeader extends Component {
           </div>
           */}
           <div style={{height: '100%'}}>
-          <div 
-            className={[styles.RequirementStar, (
-              rq.starred === true ? styles.ActiveStar : null
-            )].join(' ')}
-            onClick={(event) => this.props.switchStarStatusOfRequirement(rq.id)}>
-            <FontAwesomeIcon icon={fasStar} />
-          </div>
+            <div 
+              className={[styles.RequirementStar, (
+                rq.starred === true ? styles.ActiveStar : null
+              )].join(' ')}
+              onClick={(event) => this.props.switchStarStatusOfRequirement(rq.id)}>
+              <FontAwesomeIcon icon={fasStar} />
+            </div>
             <span className={styles.Ordinal}>{ordinal(index + 1)}</span>
           </div>
           <div

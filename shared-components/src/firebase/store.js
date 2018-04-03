@@ -204,7 +204,7 @@ export const addAnOptionForCurrentTask = async (optionName) => {
     }
   }
 
-  if (optionName === '') {
+  if (optionName.trim() === '') {
     return;
   }
 
@@ -281,7 +281,7 @@ export const addARequirementForCurrentTask = async (requirementName) => {
     }
   }
 
-  if (requirementName === '') {
+  if (requirementName.trim() === '') {
     return;
   }
 

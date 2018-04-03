@@ -95,9 +95,10 @@ class RequirementPiece extends Component {
   render () {
     const { rq, index, isDragging, connectDragSource, connectDropTarget } = this.props;
     const opacity = isDragging ? 0 : 1;
+    const cursor = isDragging ? 'move' : null;
 
     return connectDragSource(connectDropTarget(
-      <li style={{ opacity }}>
+      <li style={{ opacity, cursor }}>
         <div style={{display: 'flex', alignItems: 'center'}}>
           <span className={styles.Ordinal}>{ordinal(index + 1)}</span>
           <div className={styles.Requirement}>

@@ -91,7 +91,6 @@ class OptionPiece extends Component {
   }
 
   render () {
-
     const { op, activeId, index, isDragging, connectDragSource, connectDropTarget } = this.props;
     const opacity = isDragging ? 0 : 1;
     const cursor = isDragging ? 'move' : null;
