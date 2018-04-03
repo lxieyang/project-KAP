@@ -243,11 +243,18 @@ export const switchHideStatusOfAnOptionWithId = async (id, hide, ordering) => {
     let optionsRef = tasksRef.child(currentTaskId).child('options');
     let options = await optionsRef.once('value');
     options.forEach((snap) => {
-      optionsRef.child(snap.key).set({
-        ...snap.val(),
-        order: ordering[snap.key],
-        hide: id === snap.key ? true : snap.val().hide
-      });
+      if (id === snap.key) {
+        optionsRef.child(snap.key).set({
+          ...snap.val(),
+          order: ordering[snap.key],
+          hide: true
+        });
+      } else {
+        optionsRef.child(snap.key).set({
+          ...snap.val(),
+          order: ordering[snap.key]
+        });
+      }
     });
   } else {
     let op = await tasksRef.child(currentTaskId).child('options').child(id).once('value');
@@ -256,8 +263,6 @@ export const switchHideStatusOfAnOptionWithId = async (id, hide, ordering) => {
       hide: false
     });
   }
-  
-  
 }
 
 export const deleteOptionWithId = async (id) => {
@@ -342,6 +347,34 @@ export const switchStarStatusOfARequirementWithId = async (id) => {
     ...rq.val(),
     starred: !rq.val().starred
   });
+}
+
+export const switchHideStatusOfARequirementWithId = async (id, hide, ordering) => {
+  currentTaskId = (await currentTaskIdRef.once('value')).val();
+  if (hide !== true) {
+    let requirementsRef = tasksRef.child(currentTaskId).child('requirements');
+    let requirements = await requirementsRef.once('value');
+    requirements.forEach((snap) => {
+      if (id === snap.key) {
+        requirementsRef.child(snap.key).set({
+          ...snap.val(),
+          order: ordering[snap.key],
+          hide: true
+        });
+      } else {
+        requirementsRef.child(snap.key).set({
+          ...snap.val(),
+          order: ordering[snap.key]
+        });
+      }
+    });
+  } else {
+    let rq = await tasksRef.child(currentTaskId).child('requirements').child(id).once('value');
+    tasksRef.child(currentTaskId).child('requirements').child(id).set({
+      ...rq.val(),
+      hide: false
+    });
+  }
 }
 
 export const deleteRequirementWithId = async (id) => {

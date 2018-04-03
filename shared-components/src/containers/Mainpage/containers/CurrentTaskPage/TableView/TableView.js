@@ -29,6 +29,7 @@ import * as FirebaseStore from '../../../../../firebase/store';
 import TableHeader from './TableHeader/TableHeader';
 import update from 'immutability-helper';
 
+const inactiveOpacity = 0.2;
 
 
 class TableView extends Component {
@@ -374,6 +375,29 @@ class TableView extends Component {
     FirebaseStore.updateRequirementOrdering(ordering);
   }
 
+  switchHideStatusOfARequirement = (toHideIndex, requirementId, hide) => {
+    const { requirementsList } = this.state;
+    const fromHeader = requirementsList[toHideIndex];
+    let toIndex = requirementsList.length - 1;
+
+    let newRequirementsList = update(requirementsList, {
+      $splice: [
+        [toHideIndex, 1],
+        [toIndex, 0, fromHeader]
+      ]
+    });
+
+    this.setState({requirementsList: newRequirementsList});
+
+    // update order
+    let ordering = {};
+    for (let idx = 0; idx < newRequirementsList.length; idx++) {
+      ordering[newRequirementsList[idx].id] = idx;
+    }
+
+    FirebaseStore.switchHideStatusOfARequirementWithId(requirementId, hide, ordering);
+  }
+
   moveRow = (dragIndex, hoverIndex) => {
 
     const { optionsList } = this.state;
@@ -397,9 +421,10 @@ class TableView extends Component {
   }
 
   switchHideStatusOfAnOption = (toHideIndex, optionId, hide) => {
-    let toIndex = this.state.optionsList.length - 1;
+    
     const { optionsList } = this.state;
     const fromRow = optionsList[toHideIndex];
+    let toIndex = optionsList.length - 1;
 
     let newOptionsList = update(optionsList, {
       $splice: [
@@ -407,7 +432,6 @@ class TableView extends Component {
         [toIndex, 0, fromRow]
       ]
     });
-    console.log(newOptionsList);
 
     this.setState({optionsList: newOptionsList});
 
@@ -418,7 +442,6 @@ class TableView extends Component {
     }
 
     FirebaseStore.switchHideStatusOfAnOptionWithId(optionId, hide, ordering);
-
   }
 
   switchStarStatusOfRequirement = (id) => {
@@ -458,7 +481,9 @@ class TableView extends Component {
                 rq={rq} 
                 index={idx} 
                 moveHeader={this.moveHeader}
+                inactiveOpacity={inactiveOpacity}
                 switchStarStatusOfRequirement={this.switchStarStatusOfRequirement}
+                switchHideStatusOfARequirement={this.switchHideStatusOfARequirement}
                 updateRequirementName={FirebaseStore.updateRequirementName}/>
             );
           })
@@ -467,7 +492,7 @@ class TableView extends Component {
     );
 
     let newTableBody = newOptionsList.map((op, idx) => {
-      const opacity = op.hide === true ? 0.3 : 1;
+      const opacity = op.hide === true ? inactiveOpacity : 1;
       return (
         <tr 
           key={op.id}
@@ -508,7 +533,7 @@ class TableView extends Component {
                 piecesInThisCell = reverse(sortBy(piecesInThisCell, ['attitude']));
     
                 return (
-                  <td key={rq.id}>
+                  <td key={rq.id} style={{opacity: rq.hide === true ? `${inactiveOpacity}` : '1'}}>
                     <div className={styles.AttitudeThumbInTableCellContainer}>
                       {piecesInThisCell.map((p, idx) => {
                         let thumb = null;

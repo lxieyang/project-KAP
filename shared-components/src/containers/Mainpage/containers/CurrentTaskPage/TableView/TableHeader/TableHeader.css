@@ -3,15 +3,10 @@
   align-items: center;
 }
 
-.ShowHideRequirementContainer {
-  color: inherit;
-  z-index: 900;
-}
-
 .ShowHideRequirement {
   position: absolute;
   top: 4px;
-  right: 4px;
+  right: 6px;
 }
 
 .ShowHideRequirementIcon {

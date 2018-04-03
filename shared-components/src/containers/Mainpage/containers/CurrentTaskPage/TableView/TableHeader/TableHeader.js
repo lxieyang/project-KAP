@@ -95,24 +95,24 @@ class TableHeader extends Component {
   }
 
   render () {
-    const { rq, index, isDragging, connectDragSource, connectDropTarget } = this.props;
+    const { rq, index, inactiveOpacity, isDragging, connectDragSource, connectDropTarget } = this.props;
     const opacity = isDragging ? 0 : 1;
     return connectDragSource(connectDropTarget(
-      <th>
+      <th style={{opacity: rq.hide === true ? `${inactiveOpacity}` : '1'}}>
         <div 
           style={{ opacity }}
           className={styles.RequirementInTableHeaderContainer}>
-          {/*
+          
           <div
-            className={[styles.ShowHideRequirementContainer, styles.ShowHideRequirement].join(' ')}
-            onClick={(event) => this.switchRequirementStatus(event, rq.id)}>
+            className={styles.ShowHideRequirement}
+            onClick={(event) => this.props.switchHideStatusOfARequirement(index, rq.id, rq.hide)}>
             {
-              rq.active
+              rq.hide !== true
               ? <FontAwesomeIcon icon={fasMinusCircle} className={styles.ShowHideRequirementIcon}/>
               : <FontAwesomeIcon icon={fasCheckCircle} className={styles.ShowHideRequirementIcon}/>
             }
           </div>
-          */}
+          
           <div style={{height: '100%'}}>
             <div 
               className={[styles.RequirementStar, (
