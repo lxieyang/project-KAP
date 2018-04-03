@@ -476,12 +476,14 @@ class interactionBox extends Component {
             return (
               <tr key={op.id} className={styles.OptionTableRow}>
                 <td>
+                  {/*
                   <div 
                     title="Delete this option"
                     className={styles.DeleteOptionIconContainer}
                     onClick={(event) => this.deleteOption(event, op.id)}>
                     <FontAwesomeIcon icon={fasTrash} />
                   </div>
+                  */}
                 </td>
                 <td>
                   <div 
@@ -528,9 +530,11 @@ class interactionBox extends Component {
                 </td>
                 */}
                 <td>
+                  {/*
                   <div className={styles.InTermsOf}>
                     is
                   </div>
+                  */}
                 </td>
                 <td>
                   <div className={styles.RequirementsContainer}>
@@ -672,17 +676,24 @@ class interactionBox extends Component {
               }
             
           </div>
-          <div style={{marginRight: '20px', fontSize: '16px', opacity: '0.6'}}>
-            <a target="_blank" href={this.state.url} style={{color: 'black'}} onClick={(event) => openLinkInTextEditorExtension(event, this.state.url)} title="Open the original page in a new tab"><FontAwesomeIcon icon={fasLink}/></a>
-          </div>
+          {
+            this.state.mode !== 'NEW'
+            ? <div style={{marginRight: '20px', fontSize: '16px', opacity: '0.6'}}>
+                <a target="_blank" href={this.state.url} style={{color: 'black'}} onClick={(event) => openLinkInTextEditorExtension(event, this.state.url)} title="Open the original page in a new tab"><FontAwesomeIcon icon={fasLink}/></a>
+              </div>
+            : null
+          }
+          
         </div>
         
         <div style={{display: 'flex', width: '100%', marginBottom: '10px', alignItems: 'flex-end'}}>
           {snippet}
         </div>
 
-        {this.props.specificPieceId === undefined || this.props.specificPieceId === null ? addOptionRequirement : null}
         {experimentalOptionList}
+
+        {this.props.specificPieceId === undefined || this.props.specificPieceId === null ? addOptionRequirement : null}
+        
         
         <div className={styles.FooterContainer}>
           <div className={styles.NoteContainer}>

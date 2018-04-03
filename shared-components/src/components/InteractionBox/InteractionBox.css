@@ -60,7 +60,7 @@
   color: #fff;
   text-align: center;
   white-space: nowrap;
-  box-shadow: 0 1px 2px 0 rgba(0,0,0,0.16),0 1px 5px 0 rgba(0,0,0,0.12);
+  cursor: default;
 }
 
 .selectedText {
@@ -317,7 +317,7 @@ button:hover {
   height: 15px;
   margin: 0px 0px;
   cursor: pointer;
-  opacity: 0.05;
+  opacity: 0.10;
   filter: grayscale(100%);
   transition: all 0.1s ease-in;
 }
@@ -345,7 +345,7 @@ button:hover {
   color: rgb(255, 232,90);
   transition: all 0.1s ease-in;
   opacity: 0;
-  cursor: pointer;
+  cursor: default;
 }
 
 /* .RequirementStar:hover {
