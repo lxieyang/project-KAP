@@ -13,7 +13,6 @@ class TextDocumentContentProvider implements vscode.TextDocumentContentProvider 
   }
 
   public update(uri: vscode.Uri) {
-    console.log(uri);
     this._onDidChange.fire(uri);
   }
 
@@ -67,13 +66,15 @@ class TextDocumentContentProvider implements vscode.TextDocumentContentProvider 
               document.getElementById('debug').innerHTML = openLinkAnchor.getAttribute("href");
               openLinkAnchor.click();
 
-            } else if (data.type === 'SET_USER') {
-              var userId = data.payload.userId;
-              var setUserAnchor = document.getElementById('set-user');
-              setUserAnchor.href = "${encodeURI('command:extension.setUser?')}" + encodeURIComponent(JSON.stringify([userId]));
-              setUserAnchor.click();
+            } 
+            // temporarily disable setting user
+            // else if (data.type === 'SET_USER') {
+            //   var userId = data.payload.userId;
+            //   var setUserAnchor = document.getElementById('set-user');
+            //   setUserAnchor.href = "${encodeURI('command:extension.setUser?')}" + encodeURIComponent(JSON.stringify([userId]));
+            //   setUserAnchor.click();
 
-            }
+            // }
           }
         }, false);
 

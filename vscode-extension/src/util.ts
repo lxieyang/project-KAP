@@ -1,7 +1,6 @@
 import * as vscode from 'vscode';
 var exec = require('child_process').exec;
 var ncp = require("copy-paste");
-import * as FirebaseStore from './firebase/store';
 
 
 export const open = (url) => {
@@ -46,6 +45,7 @@ export const commentString = (content: string, document: vscode.TextDocument): s
     return "";
 };
 
+
 export const getLanguageType = () => {
     let document = vscode.window.activeTextEditor.document;
     for(let lan of supportedLanguages) {
@@ -55,6 +55,7 @@ export const getLanguageType = () => {
     }
     return "";
 };
+
 
 export const commentStringStartEnd = (document: vscode.TextDocument): any => {
     let supportedLanguages = [
@@ -73,6 +74,7 @@ export const commentStringStartEnd = (document: vscode.TextDocument): any => {
     }
     return "";
 };
+
 
 export const prepareCopiedCodeLegacy = (context: vscode.ExtensionContext, payload: any): void => {  
     const { name, url, content } = payload;
@@ -104,67 +106,24 @@ export const prepareCopiedCodeLegacy = (context: vscode.ExtensionContext, payloa
     });
 };
 
+
 export const prepareCopiedCode = (context: vscode.ExtensionContext, payload: any): void => {  
-    /*
-    let msg = {
-        secret: 'secret-transmission-from-iframe',
-        type: 'COPY_DETECTED',
-        payload: {
-            title: this.state.title,
-            content: window.getSelection().toString(),
-            note: this.state.note,
-            url: this.state.url,
-            existingOptions: this.state.existingOptions,
-            userId: window.userId,
-            taskId: window.currentTaskId,
-            pieceId: this.state.id
-        }
-    };
-    */
-
-    const { title, content, notes, url, existingOptions, userId, taskId, pieceId } = payload;
-    let cmtString = commentString(`@@@source: (${userId}) (${taskId}) (${pieceId}) (${title}) @@@`, vscode.window.visibleTextEditors[0].document);
-    // console.log(cmtString + "\n" + content);
-    ncp.copy(cmtString + "\n" + content, () => {
-        // let mappings = context.workspaceState.get('mappings', []);
-        let userStachedMappings = context.workspaceState.get('userStashedMappings', []);
-        
-        let shouldAddToMapping = true;
-
-        for (let map of userStachedMappings) {
-            if (map.title === title 
-                && map.content === content 
-                && map.userId === userId
-                && map.taskId === taskId
-                && map.pieceId === pieceId) {
-                shouldAddToMapping = false;
-            }
-        }
-
-        if (shouldAddToMapping) {
-            let entry = {
-                pieceId: pieceId,
-                userId: userId,
-                taskId: taskId,
-                content: content,
-                notes: notes,
-                existingOptions: existingOptions,
-                url: url,
-                title: title,
-                type: 'COPIED'
-            };
-            userStachedMappings.push(entry);
-            context.workspaceState.update('userStashedMappings', userStachedMappings);
-            // mappings.push(entry);
-
-            // let newEntry = FirebaseStore.codebasesRef.child(FirebaseStore.codebaseId).child('entries').push();
-            // newEntry.set(entry);
-        }
-
-    });
+    const { title, content, userId, taskId, pieceId } = payload;
+    if (vscode.window.visibleTextEditors.length > 0 && vscode.window.visibleTextEditors[0].document !== undefined) {
+        let cmtString = commentString(`@@@source: (${userId}) (${taskId}) (${pieceId}) (${title}) @@@`, vscode.window.visibleTextEditors[0].document);
+        ncp.copy(cmtString + "\n" + content, () => {
+            console.log('COPY MODIFICATION COMPLETE');
+        });
+    }
 };
+
 
 export const getFileNameWithinWorkspace = (workspaceName: string, filePath: string) => {
     let idx = filePath.indexOf(workspaceName);
-    return filePath.substr(idx);
+    if (idx !== -1) {
+        return filePath.substr(idx);
+    } else {
+        return null;
+    }
+    
 };

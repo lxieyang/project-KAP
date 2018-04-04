@@ -4,6 +4,7 @@ import { open, getLanguageType, prepareCopiedCode, getFileNameWithinWorkspace } 
 import * as FirebaseStore from './firebase/store';
 var fs = require('fs');
 var path = require('path');
+var getRepoInfo = require('git-repo-info');
 
 
 interface Decoration {
@@ -29,16 +30,14 @@ interface Decoration {
 export function activate(context: vscode.ExtensionContext) {
     console.log("USER ID: " + FirebaseStore.userId);
     
-
-    // context.workspaceState.update('mappings', mappings).then(response => {});
-    
     let mappings = [];
     let activeLanguage: string = "";
-    let copiedPayload = {};
+    let copiedPayload: any = {};
+
     // listen for code copies
     FirebaseStore.userEditorIntegrationRef.child('copyPayload').on('value', (snap) => {
-        copiedPayload = snap.val();
-        if (copiedPayload !== null) {
+        if (snap.val() !== null) {
+            copiedPayload = snap.val();
             prepareCopiedCode(context, copiedPayload);
         }
     });
@@ -89,13 +88,10 @@ export function activate(context: vscode.ExtensionContext) {
                     });
                     return false;   // https://stackoverflow.com/questions/39845758/argument-of-type-snap-datasnapshot-void-is-not-assignable-to-parameter-o
                 });
-                
-                // console.log('UPDATEING LOCAL MAPPINGS');
             }
             
             // update in workspace
             context.workspaceState.update('mappings', maps).then(response => {
-                // console.log(response);
                 throttledScan();
             });
         });
@@ -168,10 +164,10 @@ export function activate(context: vscode.ExtensionContext) {
         }
         throttleId = setTimeout(() => scan(), timeout);
     };
+
     const scan = () => {
-        console.log("scanning");
+        // console.log("scanning");
         const editor = vscode.window.activeTextEditor;
-        // console.log(editor.document);
         if (editor) {
             lastScanResult = [];
             collectEntries(editor, '@@@source', '@@@', lastScanResult);
@@ -180,9 +176,8 @@ export function activate(context: vscode.ExtensionContext) {
 
     const collectEntries = (editor: vscode.TextEditor, identifier: string, endingIdentifier: string,lastScanResult: Decoration[]) => {
         mappings = context.workspaceState.get('mappings', []);
-        // let userStashedMappings = context.workspaceState.get('userStashedMappings', []);
-        console.log(mappings);
-        console.log(getFileNameWithinWorkspace(vscode.workspace.name, editor.document.fileName));
+        let currentFilePath = getFileNameWithinWorkspace(vscode.workspace.name, editor.document.fileName);
+        let gitInfo = getRepoInfo(path.resolve(vscode.workspace.rootPath, '.git'));
 
         let max = editor.document.lineCount;
         for (let lineIdx = 0; lineIdx < max; lineIdx++) {
@@ -202,19 +197,13 @@ export function activate(context: vscode.ExtensionContext) {
                     let lineIdentity = line.substring(start, end).trim();
 
                     // check copy
-                    FirebaseStore.userEditorIntegrationRef.child('copyPayload').once('value', (snap) => {
-                        let payload = snap.val();
-                        if (payload !== null) {
-                            const { userId, taskId, pieceId, title } = payload;
-                            console.log(lineIdentity);
-                            if (`@@@source: (${userId}) (${taskId}) (${pieceId}) (${title})` === lineIdentity) {
-                                let newEntry = FirebaseStore.codebasesRef.child(FirebaseStore.codebaseId).child('entries').push();
-                                newEntry.set(payload);
-                                FirebaseStore.userEditorIntegrationRef.child('copyPayload').set(null);
-                            }  
-                        }
-                        
-                    });
+                    if (copiedPayload !== null) {
+                        const { userId, taskId, pieceId, title } = copiedPayload;
+                        if (`@@@source: (${userId}) (${taskId}) (${pieceId}) (${title})` === lineIdentity) {
+                            FirebaseStore.addNewEntryInCodebase(copiedPayload, currentFilePath, lineIdx, gitInfo);
+                        }  
+                    }
+
 
                     // find mapping
                     for (let entry of mappings) {
@@ -238,12 +227,12 @@ export function activate(context: vscode.ExtensionContext) {
 
     const updateLanType = () => {
         activeLanguage = getLanguageType();
-        console.log(activeLanguage);
+        // console.log(activeLanguage);
         FirebaseStore.database.ref('editor/languagetype').set(activeLanguage);
     };
     
 
-    let previewUri = vscode.Uri.parse('open-webview://open-webview/http://localhost:3001/');
+    let previewUri = vscode.Uri.parse('open-webview://open-webview/http://localhost:3002/');
     let provider = new TextDocumentContentProvider();
     let registration = vscode.workspace.registerTextDocumentContentProvider('open-webview', provider);
 
@@ -317,12 +306,12 @@ export function activate(context: vscode.ExtensionContext) {
 
     vscode.commands.registerCommand('extension.openTask', () => {
         // console.log(taskToNavigateTo);
-        vscode.commands.executeCommand('vscode.previewHtml', previewUri, vscode.ViewColumn.Two, 'KAP').then((success) => {
+        vscode.commands.executeCommand('extension.openWebview').then(() => {
             FirebaseStore.database.ref('users').child(FirebaseStore.userId).child('editor').child('taskToNavigateTo').set(taskToNavigateTo);
         }, (reason) => {
             vscode.window.showErrorMessage(reason);
         });    
-        FirebaseStore.database.ref('users').child(FirebaseStore.userId).child('editor').child('taskToNavigateTo').set(taskToNavigateTo);
+        // FirebaseStore.database.ref('users').child(FirebaseStore.userId).child('editor').child('taskToNavigateTo').set(taskToNavigateTo);
     });
 
     vscode.commands.registerCommand('extension.openLink', (link) => {
