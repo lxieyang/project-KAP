@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import firebase from './firebase';
-import { SSL_OP_SSLREF2_REUSE_CERT_TYPE_BUG } from 'constants';
+var _ = require('lodash');
 
 // Get a reference to the database service
 export let database = firebase.database();
@@ -38,21 +38,9 @@ export const addNewEntryInCodebase = async (payload, filePath, lineIdx, gitInfo)
                                 usedBy.push({
                                     filePath: filePath,
                                     isUsing: true,
-                                    useHistory: [{lineIdx, gitInfo, isUsing: true}]
+                                    useHistory: [{gitInfo, isUsing: true, lineIndices: [lineIdx]}]
                                 });
                                 codebasesRef.child(codebaseId).child('entries').child(key).child('usedBy').set(usedBy);
-                            } else {
-                                for (let result of filtered) {
-                                    let useHistory = result.useHistory;
-                                    if (useHistory !== undefined && useHistory !== null) {
-                                        let filteredUseHistory = useHistory.filter(h => h.lineIdx === lineIdx);
-                                        if (filteredUseHistory.length === 0) {
-                                            useHistory.push({lineIdx, gitInfo, isUsing: true});
-                                            codebasesRef.child(codebaseId).child('entries').child(key).child('usedBy').set(usedBy);
-                                        }
-                                    }
-                                    
-                                }
                             }
                         }
                     });
@@ -66,8 +54,56 @@ export const addNewEntryInCodebase = async (payload, filePath, lineIdx, gitInfo)
         codebasesRef.child(codebaseId).child('entries').child(newEntry.key).child('usedBy').set([{
             filePath: filePath,
             isUsing: true,
-            useHistory: [{lineIdx, gitInfo, isUsing: true}]
+            useHistory: [{gitInfo, isUsing: true, lineIndices: [lineIdx]}]
         }]);
         userEditorIntegrationRef.child('copyPayload').set(null);
     }
+};
+
+
+export const updateLineIndices = async (mappings, filePath, gitInfo) => {
+    let reconstuctedEntries = {};
+    for (let entry of mappings) {
+        let usedBy = entry.usedBy;
+        if (usedBy !== undefined) {
+            let useIndex = 0;
+            for (; useIndex < usedBy.length; useIndex++) {
+                let use = usedBy[useIndex];
+                if (use.filePath === filePath) {
+                    let useHistory = use.useHistory;
+                    if (useHistory.newLineIndices === undefined || useHistory.newLineIndices === null || useHistory.newLineIndices.length === 0) {
+                        // not using any more
+                        // console.log('NOT USING ANY MORE');
+                        if (_.last(useHistory).gitInfo.sha === gitInfo.sha) {
+                            // directly update the last element
+                            useHistory[useHistory.length - 1].isUsing = false;
+                            useHistory[useHistory.length - 1].lineIndices = [];
+                        }                     
+                    } else {
+                        if (_.isEqual(_.sortBy(_.last(useHistory).lineIndices), _.sortBy(useHistory.newLineIndices))) {
+                            // no need to update
+                            // console.log('NO NEED TO UPDATE');
+                        } else {
+                            if (_.last(useHistory).gitInfo.sha === gitInfo.sha) {
+                                // directly update the last element
+                                // console.log('DIRECTLY UPDATE THE LAST ELEMENT');
+                                useHistory[useHistory.length - 1].isUsing = true;
+                                useHistory[useHistory.length - 1].lineIndices = _.sortBy(useHistory.newLineIndices);
+                            } else {
+                                // push a new entry in useHistory
+                                // console.log('PUSH IN A NEW ENTRY');
+                                useHistory.push({
+                                    gitInfo, 
+                                    isUsing: true, lineIndices: _.sortBy(useHistory.newLineIndices)
+                                });
+                            }
+                        }
+                    }
+                    useHistory.newLineIndices = null;
+                }
+            }
+        }
+        reconstuctedEntries[entry.entryId] = {...entry, entryId: null};
+    }
+    codebasesRef.child(codebaseId).child('entries').set(reconstuctedEntries);
 };

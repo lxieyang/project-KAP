@@ -206,22 +206,46 @@ export function activate(context: vscode.ExtensionContext) {
 
 
                     // find mapping
-                    for (let entry of mappings) {
-                        const { userId, taskId, pieceId, title } = entry;
-                        console.log(lineIdentity);
-                        if (`@@@source: (${userId}) (${taskId}) (${pieceId}) (${title})` === lineIdentity) {
-                            console.log("pushed");
-                            let payload = {
-                                ...entry
-                            };
-                            lastScanResult.push({
-                                decorations,
-                                payload
-                            });
-                        }           
+                    if (mappings !== undefined && mappings.length > 0) {
+                        for (let entry of mappings) {
+                            const { userId, taskId, pieceId, title } = entry;
+                            console.log(lineIdentity);
+                            if (`@@@source: (${userId}) (${taskId}) (${pieceId}) (${title})` === lineIdentity) {
+                                console.log("pushed");
+                                let payload = {
+                                    ...entry
+                                };
+                                lastScanResult.push({
+                                    decorations,
+                                    payload
+                                });
+    
+                                // update line index
+                                let usedBy = entry.usedBy;
+                                if (usedBy !== undefined) {
+                                    let targetIdx = 0;
+                                    for (; targetIdx < usedBy.length; targetIdx++) {
+                                        if (usedBy[targetIdx].filePath === currentFilePath) {
+                                            let useHistory = usedBy[targetIdx].useHistory;
+                                            if (useHistory.newLineIndices === undefined || useHistory.newLineIndices === null) {
+                                                useHistory.newLineIndices = [lineIdx];
+                                            } else {
+                                                useHistory.newLineIndices.push(lineIdx);
+                                            }
+                                        }
+                                    }
+                                }
+                            }           
+                        }
                     }
+                    
                 }
             }
+        }
+
+        // check mappings again before update firebase
+        if (mappings !== undefined && mappings.length > 0) {
+            FirebaseStore.updateLineIndices(mappings, currentFilePath, gitInfo);
         }
     };
 
