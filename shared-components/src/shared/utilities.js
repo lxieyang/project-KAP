@@ -48,7 +48,6 @@ export const getFirstSentence = (str) => {
       break;
     }
   }
-  console.log(split);
   return first;
 }
 

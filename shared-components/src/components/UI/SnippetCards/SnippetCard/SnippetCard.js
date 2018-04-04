@@ -146,10 +146,10 @@ class SnippetCard extends Component {
         <div 
           className={styles.ContentContainer}
           style={{maxHeight: props.isInTableView === true ? '350px' : '200px'}}>
-          {getFirstNWords(10,props.texts)}
+          {getFirstNWords(10, props.texts)}
         </div>
       );
-    } else if (props.type === SNIPPET_TYPE.LASSO || props.type === SNIPPET_TYPE.POST_SNAPSHOT) {
+    } else if (props.type === SNIPPET_TYPE.LASSO || props.type === SNIPPET_TYPE.POST_SNAPSHOT || props.type === SNIPPET_TYPE.COPIED_PIECE) {
       content = (
         <div 
           className={styles.ContentContainer}

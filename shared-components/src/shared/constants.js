@@ -4,5 +4,6 @@ export const SNIPPET_TYPE = {
   SELECTION: 1,
   LASSO: 2,
   POST_SNAPSHOT: 3,
-  PIECE_GROUP: 4
+  PIECE_GROUP: 4,
+  COPIED_PIECE: 5
 }

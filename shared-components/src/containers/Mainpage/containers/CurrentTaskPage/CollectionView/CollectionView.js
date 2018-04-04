@@ -412,7 +412,7 @@ class CollectionView extends Component {
           let htmls = p.htmls;
           for (let html of htmls) {
             if (html.indexOf('prettyprint') !== -1 
-            || (html.indexOf('<code') !== -1 && html.indexOf('</code>') !== -1)) {
+            || ((html.indexOf('<code') !== -1 && html.indexOf('</code>') !== -1))) {
               codeQualified = true;
               break;
             } 

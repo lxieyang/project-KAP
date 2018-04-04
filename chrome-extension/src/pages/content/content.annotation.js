@@ -190,12 +190,14 @@ const getDocumentSelection = () => {
     console.log('HAVE SELECTED');
     return {
       text: selection.toString(),
+      range: selection.getRangeAt(0),
       rect: selection.getRangeAt(0).getBoundingClientRect()
     };
     
   }
   return {
     text: '',
+    range: null,
     rect: null
   };
 }
@@ -430,6 +432,33 @@ window.addEventListener('keydown', (event) => {
 //   }
 // });
 
+
+
+window.addEventListener('copy', function (event) {
+  let selection = window.getSelection();
+  let range = selection.getRangeAt(0);
+  let parentPiece = KAPCaptureHelper.createCodeSnippetsFromNode(range.commonAncestorContainer);
+  let postTags = [];
+  $(document.body).find('.post-taglist .post-tag').each((idx, tagNode) => {
+    postTags.push($(tagNode).text().toLowerCase());
+  });
+  // save to firebase
+  let piece = {
+    timestamp: (new Date()).getTime(),
+    url: window.location.href,
+    type: SNIPPET_TYPE.COPIED_PIECE,
+    notes: '',
+    title: getFirstSentence(selection.toString()),
+    autoSuggestedTitle: true,
+    htmls: parentPiece.htmls,
+    postTags: postTags,
+    originalDimensions: parentPiece.initialDimensions,
+    texts: parentPiece.text,
+    codeSnippetHTMLs: [],
+    codeSnippetTexts: [] 
+  }
+  FirebaseStore.addAPieceToCurrentTask(piece);
+});
 
 
 

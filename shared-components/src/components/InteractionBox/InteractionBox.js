@@ -628,7 +628,7 @@ class interactionBox extends Component {
             {this.state.selectedText}
         </div>
       );
-    } else if (this.state.type === SNIPPET_TYPE.LASSO || this.state.type === SNIPPET_TYPE.POST_SNAPSHOT) {
+    } else if (this.state.type === SNIPPET_TYPE.LASSO || this.state.type === SNIPPET_TYPE.POST_SNAPSHOT  || this.state.type === SNIPPET_TYPE.COPIED_PIECE) {
       snippet = (
         <div 
           id="interaction-box-editable-selected-text"
