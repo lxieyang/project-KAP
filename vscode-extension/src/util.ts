@@ -126,10 +126,12 @@ export const prepareCopiedCode = (context: vscode.ExtensionContext, payload: any
     let cmtString = commentString(`@@@source: (${userId}) (${taskId}) (${pieceId}) (${title}) @@@`, vscode.window.visibleTextEditors[0].document);
     // console.log(cmtString + "\n" + content);
     ncp.copy(cmtString + "\n" + content, () => {
-        let mappings = context.workspaceState.get('mappings', []);
+        // let mappings = context.workspaceState.get('mappings', []);
+        let userStachedMappings = context.workspaceState.get('userStashedMappings', []);
+        
         let shouldAddToMapping = true;
 
-        for (let map of mappings) {
+        for (let map of userStachedMappings) {
             if (map.title === title 
                 && map.content === content 
                 && map.userId === userId
@@ -151,10 +153,12 @@ export const prepareCopiedCode = (context: vscode.ExtensionContext, payload: any
                 title: title,
                 type: 'COPIED'
             };
-            mappings.push(entry);
+            userStachedMappings.push(entry);
+            context.workspaceState.update('userStashedMappings', userStachedMappings);
+            // mappings.push(entry);
 
-            let newEntry = FirebaseStore.codebasesRef.child(FirebaseStore.codebaseId).child('entries').push();
-            newEntry.set(entry);
+            // let newEntry = FirebaseStore.codebasesRef.child(FirebaseStore.codebaseId).child('entries').push();
+            // newEntry.set(entry);
         }
 
     });

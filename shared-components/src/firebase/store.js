@@ -3,6 +3,7 @@ import {
   // database,
   tasksRef,
   currentTaskIdRef,
+  editorIntegrationRef,
   isDisabledRef
 } from './index';
 
@@ -504,4 +505,14 @@ export const updateAPieceGroupAttitudeOptionPairsWithId = async (groupId, attitu
 export const deleteAPieceGroup = async (groupId) => {
   currentTaskId = (await currentTaskIdRef.once('value')).val();
   tasksRef.child(currentTaskId).child('pieceGroups').child(groupId).set(null);
+}
+
+
+
+
+
+
+/* COPY PASTE SUPPORT */
+export const setCopyData = async (payload) => {
+  editorIntegrationRef.child('copyPayload').set(payload);
 }

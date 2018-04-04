@@ -21,6 +21,7 @@ export let sampleListRef = database.ref(userPrefix + 'sampleList');
 export let isDisabledRef = database.ref(userPrefix).child('isDisabled');
 export let tasksRef = database.ref(userPrefix).child('tasks');
 export let currentTaskIdRef = database.ref(userPrefix).child('currentTaskId');
+export let editorIntegrationRef = database.ref(userPrefix).child('editorSupport');
 
 const updatePaths = () => {
   sampleActionRef = database.ref(userPrefix + 'sampleAction');
@@ -28,6 +29,7 @@ const updatePaths = () => {
   isDisabledRef = database.ref(userPrefix).child('isDisabled');
   tasksRef = database.ref(userPrefix).child('tasks');
   currentTaskIdRef = database.ref(userPrefix).child('currentTaskId');
+  editorIntegrationRef = database.ref(userPrefix).child('editorSupport');
 }
 
 

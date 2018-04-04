@@ -1,9 +1,6 @@
-// The module 'vscode' contains the VS Code extensibility API
-// Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
 import TextDocumentContentProvider from './TextDocumentContentProvider';
 import { open, getLanguageType, prepareCopiedCode, getFileNameWithinWorkspace } from './util';
-// import { database, codebasesRef, codebaseId, setCodebaseId, userId } from './firebase/store';
 import * as FirebaseStore from './firebase/store';
 var fs = require('fs');
 var path = require('path');
@@ -31,12 +28,20 @@ interface Decoration {
 // your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
     console.log("USER ID: " + FirebaseStore.userId);
+    
 
     // context.workspaceState.update('mappings', mappings).then(response => {});
     
     let mappings = [];
     let activeLanguage: string = "";
     let copiedPayload = {};
+    // listen for code copies
+    FirebaseStore.userEditorIntegrationRef.child('copyPayload').on('value', (snap) => {
+        copiedPayload = snap.val();
+        if (copiedPayload !== null) {
+            prepareCopiedCode(context, copiedPayload);
+        }
+    });
 
     let handleConfigFile = () => {
         fs.readFile(path.resolve(vscode.workspace.rootPath, 'kap.json'), 'utf8', (error, data) => {
@@ -175,8 +180,10 @@ export function activate(context: vscode.ExtensionContext) {
 
     const collectEntries = (editor: vscode.TextEditor, identifier: string, endingIdentifier: string,lastScanResult: Decoration[]) => {
         mappings = context.workspaceState.get('mappings', []);
+        // let userStashedMappings = context.workspaceState.get('userStashedMappings', []);
         console.log(mappings);
         console.log(getFileNameWithinWorkspace(vscode.workspace.name, editor.document.fileName));
+
         let max = editor.document.lineCount;
         for (let lineIdx = 0; lineIdx < max; lineIdx++) {
             let lineObject = editor.document.lineAt(lineIdx);
@@ -193,10 +200,25 @@ export function activate(context: vscode.ExtensionContext) {
                 let end = line.lastIndexOf(endingIdentifier);
                 if (start !== -1 && end !== -1) {
                     let lineIdentity = line.substring(start, end).trim();
+
+                    // check copy
+                    FirebaseStore.userEditorIntegrationRef.child('copyPayload').once('value', (snap) => {
+                        let payload = snap.val();
+                        if (payload !== null) {
+                            const { userId, taskId, pieceId, title } = payload;
+                            console.log(lineIdentity);
+                            if (`@@@source: (${userId}) (${taskId}) (${pieceId}) (${title})` === lineIdentity) {
+                                let newEntry = FirebaseStore.codebasesRef.child(FirebaseStore.codebaseId).child('entries').push();
+                                newEntry.set(payload);
+                                FirebaseStore.userEditorIntegrationRef.child('copyPayload').set(null);
+                            }  
+                        }
+                        
+                    });
+
                     // find mapping
                     for (let entry of mappings) {
                         const { userId, taskId, pieceId, title } = entry;
-                        // console.log("@@@source: (" + userId + ") (" + pieceId + ")");
                         console.log(lineIdentity);
                         if (`@@@source: (${userId}) (${taskId}) (${pieceId}) (${title})` === lineIdentity) {
                             console.log("pushed");
@@ -276,6 +298,9 @@ export function activate(context: vscode.ExtensionContext) {
             provider.update(previewUri);
         }
     });
+
+
+
 
 
 

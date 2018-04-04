@@ -9,5 +9,7 @@ export let setCodebaseId = (id) => {
     codebaseId = id;
 };
 export let userId = vscode.workspace.getConfiguration().userId;
+export let userEditorIntegrationRef = database.ref('users').child(userId).child('editorSupport');
+
 
 

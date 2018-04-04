@@ -205,23 +205,35 @@ class interactionBox extends Component {
 
   copyCodeListener () {
     console.log('copied!');
-    let msg = {
-      secret: 'secret-transmission-from-iframe',
-      type: 'COPY_DETECTED',
-      payload: {
-        title: this.state.title,
-        content: window.getSelection().toString(),
-        originalCodeSnippet: this.state.codeSnippetTexts,
-        notes: this.state.notes,
-        url: this.state.url,
-        existingOptions: this.state.existingOptions,
-        userId: window.userId,
-        taskId: window.currentTaskId,
-        pieceId: this.state.id
-      }
+    let payload = {
+      title: this.state.title,
+      content: window.getSelection().toString(),
+      originalCodeSnippet: this.state.codeSnippetTexts,
+      notes: this.state.notes,
+      url: this.state.url,
+      existingOptions: this.state.existingOptions,
+      userId: window.userId,
+      taskId: window.currentTaskId,
+      pieceId: this.state.id
     };
-    window.parent.postMessage(JSON.stringify(msg), '*');
-    console.log(msg);
+    // let msg = {
+    //   secret: 'secret-transmission-from-iframe',
+    //   type: 'COPY_DETECTED',
+    //   payload: {
+    //     title: this.state.title,
+    //     content: window.getSelection().toString(),
+    //     originalCodeSnippet: this.state.codeSnippetTexts,
+    //     notes: this.state.notes,
+    //     url: this.state.url,
+    //     existingOptions: this.state.existingOptions,
+    //     userId: window.userId,
+    //     taskId: window.currentTaskId,
+    //     pieceId: this.state.id
+    //   }
+    // };
+    // window.parent.postMessage(JSON.stringify(msg), '*');
+    // console.log(msg);
+    FirebaseStore.setCopyData(payload);
   }
 
   keyDownListener (event) {
