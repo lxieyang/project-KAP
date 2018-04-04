@@ -21,7 +21,17 @@
                 "command": "extension.openWebview",
                 "title": "Open KAP"
             }
-        ]
+        ],
+        "configuration": {
+            "title": "KAP Configuration",
+            "properties": {
+                "userId": {
+                    "type": "string",
+                    "default": "lisa",
+                    "description": "Must matching user id in the chrome extension"
+                }
+            }
+        }
     },
     "scripts": {
         "vscode:prepublish": "npm run compile",

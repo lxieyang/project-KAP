@@ -5,7 +5,6 @@ class TextDocumentContentProvider implements vscode.TextDocumentContentProvider 
   private _onDidChange = new vscode.EventEmitter<vscode.Uri>();
 
   public provideTextDocumentContent(uri: vscode.Uri): string {
-    console.log(uri);
     return this.displayPreview(uri.path.substr(1));
   }
 

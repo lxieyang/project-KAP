@@ -2,8 +2,9 @@
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
 import TextDocumentContentProvider from './TextDocumentContentProvider';
-import { open, getLanguageType, prepareCopiedCode } from './util';
-import { database, codebasesRef, codebaseId, setCodebaseId } from './util';
+import { open, getLanguageType, prepareCopiedCode, getFileNameWithinWorkspace } from './util';
+// import { database, codebasesRef, codebaseId, setCodebaseId, userId } from './firebase/store';
+import * as FirebaseStore from './firebase/store';
 var fs = require('fs');
 var path = require('path');
 
@@ -13,27 +14,23 @@ interface Decoration {
     payload: any;
 }
 
-interface Mapping {
-    pieceId: string;
-    userId: string;
-    taskId: string;
-    content: string;
-    note: string;
-    existingOptions: Object;
-    originalCodeSnippet: string[];
-    url: string;
-    title: string;
-    type: string;
-}
+// interface Mapping {
+//     pieceId: string;
+//     userId: string;
+//     taskId: string;
+//     content: string;
+//     note: string;
+//     existingOptions: Object;
+//     originalCodeSnippet: string[];
+//     url: string;
+//     title: string;
+//     type: string;
+// }
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
-
-    // Use the console to output diagnostic information (console.log) and errors (console.error)
-    // This line of code will only be executed once when your extension is activated
-    console.log('Congratulations, your extension "open-webview" is now active!');
-    let userId: string = "";
+    console.log("USER ID: " + FirebaseStore.userId);
 
     // context.workspaceState.update('mappings', mappings).then(response => {});
     
@@ -41,20 +38,20 @@ export function activate(context: vscode.ExtensionContext) {
     let activeLanguage: string = "";
     let copiedPayload = {};
 
-
     let handleConfigFile = () => {
         fs.readFile(path.resolve(vscode.workspace.rootPath, 'kap.json'), 'utf8', (error, data) => {
             if (error ) {
                 // console.log(error);
                 // create such a file
-                let newCodebase = codebasesRef.push();
-                setCodebaseId(newCodebase.key);
+                let newCodebase = FirebaseStore.codebasesRef.push();
+                FirebaseStore.setCodebaseId(newCodebase.key);
                 let config = {
-                    workspaceId: codebaseId,
+                    workspaceId: FirebaseStore.codebaseId,
                     timestamp: (new Date()).getTime()
-                }
+                };
                 newCodebase.set({
                     created: config.timestamp,
+                    name: vscode.workspace.name !== undefined ? vscode.workspace.name : null,
                     entries: null
                 });
     
@@ -68,16 +65,17 @@ export function activate(context: vscode.ExtensionContext) {
             } else {
                 // console.log(data);
                 let config = JSON.parse(data);
-                setCodebaseId(config.workspaceId);
-                // console.log(codebaseId);
+                FirebaseStore.setCodebaseId(config.workspaceId);
+                // update codebase name
+                FirebaseStore.codebasesRef.child(FirebaseStore.codebaseId).child('name').set(vscode.workspace.name !== undefined ? vscode.workspace.name : null);
                 syncFromCloud();
             }
         });
-    }
+    };
     
     let syncFromCloud = () => {
         let maps = [];
-        codebasesRef.child(codebaseId).child('entries').on('value', (snap) => {
+        FirebaseStore.codebasesRef.child(FirebaseStore.codebaseId).child('entries').on('value', (snap) => {
             if (snap.val() !== null) {
                 snap.forEach((childSnap) => {
                     maps.push({
@@ -96,7 +94,7 @@ export function activate(context: vscode.ExtensionContext) {
                 throttledScan();
             });
         });
-    }
+    };
 
 
 
@@ -104,7 +102,7 @@ export function activate(context: vscode.ExtensionContext) {
         userId: "",
         taskId: "",
         pieceId: ""
-    }
+    };
     
     let hoverProvider = {
         provideHover(document: vscode.TextDocument, position: vscode.Position, token: vscode.CancellationToken): Thenable<vscode.Hover> {
@@ -117,7 +115,7 @@ export function activate(context: vscode.ExtensionContext) {
                 return {
                     item: item,
                     range: item.decorations[0].range
-                }
+                };
             }).find(pair => pair.range !== null && pair.range.start.line === range.start.line);            
 
             let result: Thenable<vscode.Hover> = undefined;
@@ -178,6 +176,7 @@ export function activate(context: vscode.ExtensionContext) {
     const collectEntries = (editor: vscode.TextEditor, identifier: string, endingIdentifier: string,lastScanResult: Decoration[]) => {
         mappings = context.workspaceState.get('mappings', []);
         console.log(mappings);
+        console.log(getFileNameWithinWorkspace(vscode.workspace.name, editor.document.fileName));
         let max = editor.document.lineCount;
         for (let lineIdx = 0; lineIdx < max; lineIdx++) {
             let lineObject = editor.document.lineAt(lineIdx);
@@ -213,13 +212,13 @@ export function activate(context: vscode.ExtensionContext) {
                 }
             }
         }
-    }
+    };
 
     const updateLanType = () => {
         activeLanguage = getLanguageType();
         console.log(activeLanguage);
-        database.ref('editor/languagetype').set(activeLanguage);
-    }
+        FirebaseStore.database.ref('editor/languagetype').set(activeLanguage);
+    };
     
 
     let previewUri = vscode.Uri.parse('open-webview://open-webview/http://localhost:3001/');
@@ -228,7 +227,10 @@ export function activate(context: vscode.ExtensionContext) {
 
 
 
-    // change listener
+
+
+
+    /* Change Listeners */
     vscode.workspace.onDidChangeTextDocument((e: vscode.TextDocumentChangeEvent) => {
         // console.log(e);
         throttledScan();
@@ -279,7 +281,7 @@ export function activate(context: vscode.ExtensionContext) {
 
 
 
-    // register commands
+    /* Register Commands */
     let disposable = vscode.commands.registerCommand('extension.openWebview', () => {
         return vscode.commands.executeCommand('vscode.previewHtml', previewUri, vscode.ViewColumn.Two, 'KAP').then((success) => {
 
@@ -291,11 +293,11 @@ export function activate(context: vscode.ExtensionContext) {
     vscode.commands.registerCommand('extension.openTask', () => {
         // console.log(taskToNavigateTo);
         vscode.commands.executeCommand('vscode.previewHtml', previewUri, vscode.ViewColumn.Two, 'KAP').then((success) => {
-            database.ref('users').child(userId).child('editor').child('taskToNavigateTo').set(taskToNavigateTo);
+            FirebaseStore.database.ref('users').child(FirebaseStore.userId).child('editor').child('taskToNavigateTo').set(taskToNavigateTo);
         }, (reason) => {
             vscode.window.showErrorMessage(reason);
         });    
-        database.ref('users').child(userId).child('editor').child('taskToNavigateTo').set(taskToNavigateTo);
+        FirebaseStore.database.ref('users').child(FirebaseStore.userId).child('editor').child('taskToNavigateTo').set(taskToNavigateTo);
     });
 
     vscode.commands.registerCommand('extension.openLink', (link) => {
@@ -303,39 +305,27 @@ export function activate(context: vscode.ExtensionContext) {
         open(link);
     });
 
-    vscode.commands.registerCommand('extension.setUser', (_userId) => {
-        // console.log(userId);
-        userId = _userId;
-    });
+    // vscode.commands.registerCommand('extension.setUser', (_userId) => {
+    //     console.log(userId);
+    //     userId = _userId;
+    // });
 
     vscode.commands.registerCommand('extension.copyDetected', (payload) => {
         // console.log(payload);
         copiedPayload = payload;
         prepareCopiedCode(context, payload);
-   
     });
 
 
 
 
 
-    // vscode.commands.registerCommand('extension.copyDetected', (name, url, content) => {
-    //     copiedPayload = {
-    //         name, url, content
-    //     };
-
-    //     prepareCopiedCode(context, copiedPayload);
-   
-    // });
-
-    
 
 
-
-
-    // disposable
+    /* Disposable */
     context.subscriptions.push(disposable, registration, dummy);
 }
+
 
 // this method is called when your extension is deactivated
 export function deactivate() {
