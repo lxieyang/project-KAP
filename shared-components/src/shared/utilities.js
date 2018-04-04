@@ -1,3 +1,4 @@
+import $ from 'jquery';
 // https://stackoverflow.com/questions/6045477/extract-keyword-from-google-search-in-javascript?rq=1
 export const getParameterByName = (name, url) => {
   name = name.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
@@ -43,7 +44,7 @@ export const getFirstSentence = (str) => {
   let split = str.split(/[\n\r\!\,\.\?]/);
   let first = "";
   for (let sp of split) {
-    if (sp.trim() !== '') {
+    if (sp.trim() !== '' && !$.isNumeric(sp.trim())) {
       first = sp.trim();
       break;
     }

@@ -136,6 +136,9 @@ const hoverAnchor = document.body.appendChild(document.createElement('div'));
 hoverAnchor.className = classes.InteractionBoxAnchor;
 hoverAnchor.setAttribute('id', 'hover-box');
 
+let interactionBoxIsMounted = false;
+let hoverBoxIsMounted = false;
+
 // interactionBoxAnchor.style.left = '100px';
 // interactionBoxAnchor.style.top = '100px';
 // ReactDOM.render(<InteractionBox />, interactionBoxAnchor);
@@ -148,6 +151,8 @@ const clean = () => {
     ReactDOM.unmountComponentAtNode(interactionBoxAnchor);
     ReactDOM.unmountComponentAtNode(hoverAnchor);
     // document.getSelection().empty();
+    interactionBoxIsMounted = false;
+    hoverBoxIsMounted = false;
   } catch (err) {
     console.log(err);
   }
@@ -226,6 +231,7 @@ chrome.runtime.onMessage.addListener(
         <HoverInteraction content={selection.text} clip={clipClicked}/>, 
         hoverAnchor
       );
+      hoverBoxIsMounted = true;
       dragElement(document.getElementById("hover-box"));
 
     } else if (request.msg === actionTypes.ADD_REQUIREMENT_CONTEXT_MENU_CLICKED) {
@@ -244,6 +250,7 @@ chrome.runtime.onMessage.addListener(
         <HoverInteraction type={'RQ'} content={selection.text} clip={clipClicked}/>, 
         hoverAnchor
       );
+      hoverBoxIsMounted = true;
       dragElement(document.getElementById("hover-box"));
 
     } else if (request.msg === actionTypes.ADD_PIECE_CONTEXT_MENU_CLICKED) {
@@ -275,7 +282,7 @@ chrome.runtime.onMessage.addListener(
           clip={clipClicked}
         />, 
       interactionBoxAnchor);
-
+      interactionBoxIsMounted = true
       dragElement(document.getElementById("interaction-box"));
     }
   }
@@ -394,7 +401,7 @@ window.addEventListener('mouseup', (event) => {
           clip={clipClicked}
         />, 
       interactionBoxAnchor);
-
+      interactionBoxIsMounted = true;
       dragElement(document.getElementById("interaction-box"));
 
       if (!movingCaptureWindow) {
@@ -435,29 +442,31 @@ window.addEventListener('keydown', (event) => {
 
 
 window.addEventListener('copy', function (event) {
-  let selection = window.getSelection();
-  let range = selection.getRangeAt(0);
-  let parentPiece = KAPCaptureHelper.createCodeSnippetsFromNode(range.commonAncestorContainer);
-  let postTags = [];
-  $(document.body).find('.post-taglist .post-tag').each((idx, tagNode) => {
-    postTags.push($(tagNode).text().toLowerCase());
-  });
-  // save to firebase
-  let piece = {
-    timestamp: (new Date()).getTime(),
-    url: window.location.href,
-    type: SNIPPET_TYPE.COPIED_PIECE,
-    notes: '',
-    title: getFirstSentence(selection.toString()),
-    autoSuggestedTitle: true,
-    htmls: parentPiece.htmls,
-    postTags: postTags,
-    originalDimensions: parentPiece.initialDimensions,
-    texts: parentPiece.text,
-    codeSnippetHTMLs: [],
-    codeSnippetTexts: [] 
+  if (hoverBoxIsMounted === false && interactionBoxIsMounted === false) {
+    let selection = window.getSelection();
+    let range = selection.getRangeAt(0);
+    let parentPiece = KAPCaptureHelper.createCodeSnippetsFromNode(range.commonAncestorContainer);
+    let postTags = [];
+    $(document.body).find('.post-taglist .post-tag').each((idx, tagNode) => {
+      postTags.push($(tagNode).text().toLowerCase());
+    });
+    // save to firebase
+    let piece = {
+      timestamp: (new Date()).getTime(),
+      url: window.location.href,
+      type: SNIPPET_TYPE.COPIED_PIECE,
+      notes: '',
+      title: getFirstSentence(selection.toString()),
+      autoSuggestedTitle: true,
+      htmls: parentPiece.htmls,
+      postTags: postTags,
+      originalDimensions: parentPiece.initialDimensions,
+      texts: parentPiece.text,
+      codeSnippetHTMLs: [],
+      codeSnippetTexts: [] 
+    }
+    FirebaseStore.addAPieceToCurrentTask(piece);
   }
-  FirebaseStore.addAPieceToCurrentTask(piece);
 });
 
 
