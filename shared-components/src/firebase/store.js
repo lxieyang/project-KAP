@@ -162,12 +162,24 @@ export const addAPageToCountList = async (url, domainName, siteTitle) => {
       domainName: domainName,
       siteTitle: siteTitle,
       numPieces: 0,
-      visitedCount: 1
+      visitedCount: 1,
+      notes: ''
     });
   } else {
     let visitedCount = (await tasksRef.child(currentTaskId).child('pageCountList').child(dupKey).child('visitedCount').once('value')).val();
     tasksRef.child(currentTaskId).child('pageCountList').child(dupKey).child('visitedCount').set(visitedCount + 1);
   }
+}
+
+export const updatePageNotes = async (pageId, notes) => {
+  currentTaskId = (await currentTaskIdRef.once('value')).val();
+  let pageRef = tasksRef.child(currentTaskId).child('pageCountList').child(pageId);
+  pageRef.once('value', (snap) => {
+    pageRef.set({
+      ...snap.val(),
+      notes: notes
+    })
+  });
 }
 
 export const deleteAPageFromCountList = async (id) => {

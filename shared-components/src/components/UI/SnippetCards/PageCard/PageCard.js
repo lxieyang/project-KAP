@@ -7,8 +7,22 @@ import { GET_FAVICON_URL_PREFIX } from '../../../../shared/constants';
 import HorizontalDivider from '../../../UI/Divider/HorizontalDivider/HorizontalDivider';
 import styles from './PageCard.css';
 import { openLinkInTextEditorExtension } from '../../../../shared/utilities';
+import { debounce } from 'lodash';
 
 class PageCard extends Component {
+
+  componentDidMount() {
+    this.inputCallback = debounce((event, id) => {
+      this.props.updatePageNotes(id, event.target.innerText.trim());
+      event.target.innerText = event.target.innerText.trim();
+      event.target.blur();
+    }, 1000);
+  }
+
+  inputChangedHandler = (event, id) => {
+    event.persist();
+    this.inputCallback(event, id);
+  }
 
   render () {
     const { props } = this;
@@ -69,6 +83,21 @@ class PageCard extends Component {
       </div>
     );
 
+    const notes = (
+      <div className={styles.NotesContainer}>
+        <div className={styles.NotesLabel}>
+          Notes:
+        </div>
+        <div
+          contentEditable={true}
+          suppressContentEditableWarning={true}
+          onInput={(event) => this.inputChangedHandler(event, props.id)}
+          className={styles.NotesContent}>
+            {props.notes !== undefined ? props.notes : ''}
+        </div>
+      </div>
+    );
+
     const footer = (
       <div className={styles.Footer}>
         <div className={styles.MetaInfo}>
@@ -84,6 +113,8 @@ class PageCard extends Component {
     return (
       <div className={styles.SnippetCard}>
         {header}
+        <HorizontalDivider margin="5px" />
+        {notes}
         <HorizontalDivider margin="5px" />
         {footer}
       </div>

@@ -101,9 +101,11 @@ const TopPages = (props) => {
                 siteName={page.domainName}
                 siteLink={page.url}
                 siteIcon={page.url}
+                notes={page.notes}
                 times={page.visitedCount}
                 numPieces={page.numPieces}
-                deleteThisPage={props.deletePage} />
+                deleteThisPage={props.deletePage}
+                updatePageNotes={props.updatePageNotes} />
             );
           })}
         </div>
@@ -268,6 +270,10 @@ class CollectionView extends Component {
     });
   }
 
+  updatePageNotes = (pageId, notes) => {
+    FirebaseStore.updatePageNotes(pageId, notes);
+  }
+
   switchTopPageOpenStatus = (event) => {
     this.setState(prevState => {
       return {topPageIsOpen: !prevState.topPageIsOpen};
@@ -379,6 +385,7 @@ class CollectionView extends Component {
         isOpen={this.state.topPageIsOpen}
         windowSize={this.state.windowSize}
         pages={ordered_page_list}
+        updatePageNotes={this.updatePageNotes}
         deletePage={this.deletePageHandler}
         displayNumber={this.state.numTopPageToDisplay}
         switchDisplayNum={this.changeTopPageDisplayNumberTo}/>
