@@ -70,3 +70,15 @@
   margin-left: 7px;
   font-weight: 600;
 }
+
+.CopyButton {
+  margin-left: 10px;
+  opacity: 0.6;
+  transition: all 0.1s ease-in;
+  cursor: pointer;
+}
+
+.CopyButton:hover {
+  opacity: 0.9;
+  transform: scale(1.15);
+}

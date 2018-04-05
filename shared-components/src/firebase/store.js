@@ -1,6 +1,6 @@
 import { uniq, isEqual } from 'lodash';
 import { 
-  // database,
+  database,
   tasksRef,
   currentTaskIdRef,
   editorIntegrationRef,
@@ -139,7 +139,13 @@ export const combineTasks = (sourceTaskId, targetTaskId, newTaskName) => {
   });
 }
 
-
+export const cloneATaskForCurrentUser = async (originalUserId, originalTaskId) => {
+  database.ref('users').child(originalUserId).child('tasks').child(originalTaskId).once('value', (snap) => {
+    let newTaskRef = tasksRef.push();
+    newTaskRef.set(snap.val());
+    switchCurrentTask(newTaskRef.key);
+  });
+}
 
 
 

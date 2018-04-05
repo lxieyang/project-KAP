@@ -1,8 +1,12 @@
 import React, { Component } from 'react';
+import { withRouter } from 'react-router-dom';
 
+import FontAwesomeIcon from '@fortawesome/react-fontawesome';
+import fasCopy from '@fortawesome/fontawesome-free-solid/faCopy';
 import CollectionView from './CollectionView/CollectionView';
 import TableView from './TableView/TableView';
 import styles from './CurrentTaskPage.css';
+import * as FirebaseStore from '../../../../firebase/store';
 
 // import InteractionBox from '../../../../components/InteractionBox/InteractionBox';
 // import HoverInteraction from '../../../../components/InteractionBox/HoverInteraction/HoverInteraction';
@@ -135,6 +139,15 @@ class CurrentTaskPage extends Component {
       }
     })
   }
+
+  copyButtonClicked = (event) => {
+    if (window.userId !== this.props.match.params.userId) {
+      FirebaseStore.cloneATaskForCurrentUser(this.props.match.params.userId, this.props.match.params.taskId);
+    } else {
+      FirebaseStore.switchCurrentTask(this.props.match.params.taskId);
+    }
+    this.props.history.push('/currtask');
+  }
   
 
   render () {
@@ -165,6 +178,11 @@ class CurrentTaskPage extends Component {
                 <span className={styles.SpecificTaskName}>
                   {this.state.specificTask.displayName}
                 </span>
+                <span  
+                  className={styles.CopyButton}
+                  onClick={(event) => this.copyButtonClicked(event)}>
+                  <FontAwesomeIcon icon={fasCopy}/>
+                </span>
               </div> 
             : null
           }
@@ -194,4 +212,4 @@ class CurrentTaskPage extends Component {
   }
 }
 
-export default CurrentTaskPage;
+export default withRouter(CurrentTaskPage);
