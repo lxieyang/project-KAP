@@ -198,8 +198,8 @@ export function activate(context: vscode.ExtensionContext) {
 
                     // check copy
                     if (copiedPayload !== null) {
-                        const { userId, taskId, pieceId, title } = copiedPayload;
-                        if (`@@@source: (${userId}) (${taskId}) (${pieceId}) (${title})` === lineIdentity) {
+                        const { userId, taskId, pieceId, title, timestamp } = copiedPayload;
+                        if (`@@@source: (${userId}) (${taskId}) (${pieceId}) (${timestamp})` === lineIdentity) {
                             FirebaseStore.addNewEntryInCodebase(copiedPayload, currentFilePath, lineIdx, gitInfo);
                         }  
                     }
@@ -208,10 +208,10 @@ export function activate(context: vscode.ExtensionContext) {
                     // find mapping
                     if (mappings !== undefined && mappings.length > 0) {
                         for (let entry of mappings) {
-                            const { userId, taskId, pieceId, title } = entry;
-                            console.log(lineIdentity);
-                            if (`@@@source: (${userId}) (${taskId}) (${pieceId}) (${title})` === lineIdentity) {
-                                console.log("pushed");
+                            const { userId, taskId, pieceId, title, timestamp } = entry;
+                            // console.log(lineIdentity);
+                            if (`@@@source: (${userId}) (${taskId}) (${pieceId}) (${timestamp})` === lineIdentity) {
+                                // console.log("pushed");
                                 let payload = {
                                     ...entry
                                 };
@@ -275,7 +275,6 @@ export function activate(context: vscode.ExtensionContext) {
     });
 
     vscode.window.onDidChangeActiveTextEditor((e: vscode.TextEditor) => {
-        // console.log(e);
         throttledScan();
         if (Object.keys(copiedPayload).length > 0) {
             prepareCopiedCode(context, copiedPayload);

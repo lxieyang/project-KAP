@@ -24,28 +24,6 @@ import { openLinkInTextEditorExtension, getFirstNWords, getFirstSentence } from 
 
 const dummyText = 'Please select some text';
 const dummyHtml = [`<p>Please lasso select some text</p>`];
-const dummyRqList = [
-  {
-    id: '1',
-    name: 'accessible from content script'
-  },
-  {
-    id: '2',
-    name: 'sync across different devices'
-  },
-  {
-    id: '3',
-    name: 'high speed, low laggings'
-  },
-  {
-    id: '4',
-    name: 'accessible from content script accessible from content script accessible from content script'
-  },
-  {
-    id: '5',
-    name: 'free of charge'
-  }
-]
 
 const selectKeyCode = 18;
 
@@ -215,7 +193,8 @@ class interactionBox extends Component {
       existingRequirements: this.state.existingRequirements,
       userId: window.userId,
       taskId: window.currentTaskId,
-      pieceId: this.state.id
+      pieceId: this.state.id,
+      timestamp: (new Date()).toString()
     };
     FirebaseStore.setCopyData(payload);
   }

@@ -22,6 +22,7 @@ export let isDisabledRef = database.ref(userPrefix).child('isDisabled');
 export let tasksRef = database.ref(userPrefix).child('tasks');
 export let currentTaskIdRef = database.ref(userPrefix).child('currentTaskId');
 export let editorIntegrationRef = database.ref(userPrefix).child('editorSupport');
+export let codebasesRef = database.ref('codebases');
 
 const updatePaths = () => {
   sampleActionRef = database.ref(userPrefix + 'sampleAction');

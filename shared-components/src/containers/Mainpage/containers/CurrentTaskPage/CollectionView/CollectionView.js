@@ -211,6 +211,7 @@ const SnippetsGroup = (props) => {
                 timestamp={p.timestamp}
                 postTags={p.postTags}
                 notes={p.notes}
+                codeUseInfo={p.codeUseInfo}
                 attitudeList={p.attitudeList}
                 codeFilterOn={props.codeFilterOn}
                 notesFilterOn={props.notesFilterOn}

@@ -11,6 +11,7 @@ import { capitalizeFirstLetter } from '../../shared/utilities';
 import { 
   tasksRef,
   currentTaskIdRef,
+  codebasesRef,
   userId,
   database,
   setUserIdAndName
@@ -128,6 +129,54 @@ class Mainpage extends Component {
         });
       });
       this.setState({tasks: transformedTasks});
+
+
+      let taskIds = transformedTasks.map((t) => {
+        return t.id;
+      });
+      
+      codebasesRef.on('value', (snapshot) => {
+        snapshot.forEach((snap) => {
+          let codebase = snap.val();
+          let entries = codebase.entries;
+          if (entries !== undefined && entries !== null) {
+            for (let entryKey in entries) {
+              let entry = entries[entryKey];
+              let winningIdx = taskIds.indexOf(entry.taskId);
+              if (winningIdx !== -1) {
+                if (transformedTasks[winningIdx].pieces[entry.pieceId].codeUseInfo === undefined) {
+                  transformedTasks[winningIdx].pieces[entry.pieceId].codeUseInfo = [
+                    {
+                      codebase: codebase.name,
+                      codebaseId: snap.key,
+                      useInfo: [{usedBy: entry.usedBy, content: entry.content, timestamp: entry.timestamp}]
+                    }
+                  ];
+                } else {
+                  let codeUseInfo = transformedTasks[winningIdx].pieces[entry.pieceId].codeUseInfo;
+                  let isNewCodebase = true;
+                  codeUseInfo = codeUseInfo.map((use) => {
+                    if (use.codebaseId === snap.key) {
+                      use.useInfo.push({usedBy: entry.usedBy, content: entry.content, timestamp: entry.timestamp});
+                      isNewCodebase = false;
+                    }
+                    return use;
+                  });
+                  if (isNewCodebase) {
+                    codeUseInfo.push({
+                      codebase: codebase.name,
+                      codebaseId: snap.key,
+                      useInfo: [{usedBy: entry.usedBy, content: entry.content, timestamp: entry.timestamp}]
+                    });
+                  }
+                }
+              }
+            }
+          }
+        });
+        console.log(transformedTasks);
+        this.setState({tasks: transformedTasks});
+      });
     });
   }
 

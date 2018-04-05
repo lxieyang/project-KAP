@@ -52,9 +52,25 @@
 }
 
 .CodeBadgeTooltip {
-  /* max-width: 200px !important; */
-  /* min-width: 100px !important; */
-  /* padding: 6px 6px !important; */
+  z-index: 99999;
+  width: 350px !important;
+  height: 500px !important;
+  overflow: auto !important;
+  opacity: 1 !important;
+  margin: 0px 0px !important;
+  padding: 0px 0px !important;
+  box-shadow: 0 4px 10px 0 rgba(0,0,0,0.2),0 4px 20px 0 rgba(0,0,0,0.19);
+  padding: 6px 6px !important;
+  pointer-events: auto !important;
+
+  background-color: white !important;
+
+  visibility: visible !important;
+}
+
+.CodeBadgeTooltip:hover {
+  visibility: visible !important;
+  opacity: 1 !important;
 }
 
 

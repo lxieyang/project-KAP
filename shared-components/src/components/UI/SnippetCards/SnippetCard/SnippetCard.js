@@ -10,6 +10,8 @@ import fasEye from '@fortawesome/fontawesome-free-solid/faEye';
 import fasStar from '@fortawesome/fontawesome-free-solid/faStar';
 import fasStickyNote from '@fortawesome/fontawesome-free-solid/faStickyNote';
 import fasCheckCircle from '@fortawesome/fontawesome-free-solid/faCheckCircle';
+import fasCode from '@fortawesome/fontawesome-free-solid/faCode';
+import fasCodeBranch from '@fortawesome/fontawesome-free-solid/faCodeBranch';
 import { GET_FAVICON_URL_PREFIX } from '../../../../shared/constants';
 import HorizontalDivider from '../../../UI/Divider/HorizontalDivider/HorizontalDivider';
 import styles from './SnippetCard.css';
@@ -20,7 +22,7 @@ import { getFirstNWords } from '../../../../shared/utilities';
 import { DragSource, DropTarget } from 'react-dnd';
 import PropTypes from 'prop-types';
 import ReactTooltip from 'react-tooltip';
-import { debounce, reverse, sortBy } from 'lodash';
+import { debounce, reverse, sortBy, last, first } from 'lodash';
 import * as FirebaseStore from '../../../../firebase/store';
 import ordinal from 'ordinal';
 
@@ -299,7 +301,7 @@ class SnippetCard extends Component {
                 {props.title}
               </div>
               { // TODO: activate this feature once we get the code base information in
-                props.usedInCode !== undefined && props.usedInCode !== null
+                props.codeUseInfo !== undefined && props.codeUseInfo !== null
                 ? <div className={styles.CodeUsedContainer}>
                     <FontAwesomeIcon 
                       icon={fasCheckCircle} 
@@ -307,10 +309,57 @@ class SnippetCard extends Component {
                       data-tip 
                       data-for={`${props.id}-tooltip`}/>
                     <ReactTooltip
-                      place="right" type="dark" effect="solid"
+                      place="right" type="light" effect="solid"
                       id={`${props.id}-tooltip`}
+                      delayHide={200}
                       className={styles.CodeBadgeTooltip}>
-                      lol
+                      Used in {props.codeUseInfo.length} codebase(s):
+                      {props.codeUseInfo.map((cb, idx) => {
+                        return (
+                          <div key={idx}>
+                            <FontAwesomeIcon icon={fasCode} />{cb.codebase} ({cb.useInfo.length} occasions)
+                            <ul>
+                              {cb.useInfo.map((use, idx1) => {
+                                return (
+                                  <li key={idx1}>
+                                    <div>
+                                      {use.content}
+                                    </div>
+                                    <div>
+                                      {moment(new Date(use.timestamp)).format("dddd, MMMM Do YYYY")}
+                                    </div>
+                                    <div>
+                                      <ul>
+                                        {use.usedBy.map((record, idx2) => {
+                                          return (
+                                            <li key={idx2}>
+                                              <div>
+                                                {record.filePath} ({record.isUsing ? 'Still in use ' + `(line ${last(record.useHistory).lineIndices.join(', ')})` : 'Not in use'})
+                                              </div>
+                                              <div>
+                                                {
+                                                  record.isUsing 
+                                                  ? <div>
+                                                      Introduced in <span className={styles.CommitSha}>{first(record.useHistory).gitInfo.abbreviatedSha}</span>(<span className={styles.CommitMessage}>{first(record.useHistory).gitInfo.commitMessage}</span>) <br />
+                                                      Last edit in <span className={styles.CommitSha}>{last(record.useHistory).gitInfo.abbreviatedSha}</span>(<span className={styles.CommitMessage}>{last(record.useHistory).gitInfo.commitMessage}</span>)
+                                                    </div>
+                                                  : <div>
+                                                      Last appeared in <span className={styles.CommitSha}>{last(record.useHistory).gitInfo.abbreviatedSha}</span>(<span className={styles.CommitMessage}>{last(record.useHistory).gitInfo.commitMessage}</span>)
+                                                    </div>
+                                                }
+                                              </div>
+                                            </li>
+                                          );
+                                        })}
+                                      </ul>
+                                    </div>
+                                  </li>
+                                );
+                              })}
+                            </ul>
+                          </div>
+                        );
+                      })}
                     </ReactTooltip>
                   </div>
                 : null
