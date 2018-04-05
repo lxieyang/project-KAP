@@ -11,7 +11,10 @@ import fasStar from '@fortawesome/fontawesome-free-solid/faStar';
 import fasStickyNote from '@fortawesome/fontawesome-free-solid/faStickyNote';
 import fasCheckCircle from '@fortawesome/fontawesome-free-solid/faCheckCircle';
 import fasCode from '@fortawesome/fontawesome-free-solid/faCode';
+import fasFileCode from '@fortawesome/fontawesome-free-solid/faFileCode';
 import fasCodeBranch from '@fortawesome/fontawesome-free-solid/faCodeBranch';
+import fasCheck from '@fortawesome/fontawesome-free-solid/faCheck';
+import fasTimes from '@fortawesome/fontawesome-free-solid/faTimes';
 import { GET_FAVICON_URL_PREFIX } from '../../../../shared/constants';
 import HorizontalDivider from '../../../UI/Divider/HorizontalDivider/HorizontalDivider';
 import styles from './SnippetCard.css';
@@ -309,42 +312,101 @@ class SnippetCard extends Component {
                       data-tip 
                       data-for={`${props.id}-tooltip`}/>
                     <ReactTooltip
-                      place="right" type="light" effect="solid"
+                      place="bottom" type="light" effect="solid"
                       id={`${props.id}-tooltip`}
                       delayHide={200}
                       className={styles.CodeBadgeTooltip}>
-                      Used in {props.codeUseInfo.length} codebase(s):
+                      <div className={styles.CodeBadgeTooltipStats}>
+                        Used in {props.codeUseInfo.length} codebase(s):
+                      </div>
+                      
                       {props.codeUseInfo.map((cb, idx) => {
                         return (
-                          <div key={idx}>
-                            <FontAwesomeIcon icon={fasCode} />{cb.codebase} ({cb.useInfo.length} occasions)
-                            <ul>
+                          <div 
+                            key={idx}
+                            className={styles.CodebaseContainer}>
+                            <div className={styles.CodebaseNameContainer}>
+                              <FontAwesomeIcon icon={fasCode} className={styles.CodebaseIcon}/>
+                              <span className={styles.CodebaseName}>{cb.codebase}</span> 
+                              <span className={styles.CodebaseStats}>({cb.useInfo.length} occasions)</span>
+                            </div>
+                            
+                            <ul style={{listStyleType: 'none', margin: '0', padding: '0'}}>
                               {cb.useInfo.map((use, idx1) => {
                                 return (
-                                  <li key={idx1}>
-                                    <div>
-                                      {use.content}
+                                  <li key={idx1} style={{marginBottom: '10px', paddingBottom: '6px', borderBottom: '1px solid lightgray'}}>
+                                    <div className={styles.UsedTimestamp}>
+                                      Used on {moment(new Date(use.timestamp)).format("dddd, MMMM Do YYYY, h:mm:ss a")}
+                                    </div>
+                                    <div className={styles.CodeContentContainer}>
+                                      <pre>{use.content}</pre>
                                     </div>
                                     <div>
-                                      {moment(new Date(use.timestamp)).format("dddd, MMMM Do YYYY")}
-                                    </div>
-                                    <div>
-                                      <ul>
+                                      <ul style={{listStyleType: 'none', margin: '0', padding: '0'}}>
                                         {use.usedBy.map((record, idx2) => {
                                           return (
-                                            <li key={idx2}>
+                                            <li key={idx2} style={{marginBottom: '4px', lineHeight: '1.8'}}>
                                               <div>
-                                                {record.filePath} ({record.isUsing ? 'Still in use ' + `(line ${last(record.useHistory).lineIndices.join(', ')})` : 'Not in use'})
+                                                <FontAwesomeIcon icon={fasFileCode} className={styles.CodebaseIcon}/>
+                                                <span className={styles.FilePath}>
+                                                  {record.filePath}
+                                                </span>
+                                                {
+                                                  record.isUsing 
+                                                  ? <span style={{marginLeft: '4px'}}>
+                                                      <FontAwesomeIcon icon={fasCheck} style={{color: 'rgb(82, 184, 101)'}}/> (line {last(record.useHistory).lineIndices.join(', ')}) 
+                                                    </span>
+                                                  : <span style={{marginLeft: '4px'}}>
+                                                      <FontAwesomeIcon icon={fasTimes} style={{color: 'rgb(174, 60, 55)'}}/> 
+                                                    </span>
+                                                }
                                               </div>
                                               <div>
                                                 {
                                                   record.isUsing 
                                                   ? <div>
-                                                      Introduced in <span className={styles.CommitSha}>{first(record.useHistory).gitInfo.abbreviatedSha}</span>(<span className={styles.CommitMessage}>{first(record.useHistory).gitInfo.commitMessage}</span>) <br />
-                                                      Last edit in <span className={styles.CommitSha}>{last(record.useHistory).gitInfo.abbreviatedSha}</span>(<span className={styles.CommitMessage}>{last(record.useHistory).gitInfo.commitMessage}</span>)
+                                                      Introduced in 
+                                                      <span className={styles.Branch}>
+                                                        <FontAwesomeIcon icon={fasCodeBranch}/>
+                                                        {first(record.useHistory).gitInfo.branch}
+                                                      </span>
+                                                      <span className={styles.CommitMessage}>
+                                                        {
+                                                          getFirstNWords(4, first(record.useHistory).gitInfo.commitMessage)
+                                                        } (
+                                                        {
+                                                          first(record.useHistory).gitInfo.abbreviatedSha
+                                                        })
+                                                      </span>
+                                                      <br />
+                                                      Last edit in 
+                                                      <span className={styles.Branch}>
+                                                        <FontAwesomeIcon icon={fasCodeBranch}/>
+                                                        {last(record.useHistory).gitInfo.branch}
+                                                      </span>
+                                                      <span className={styles.CommitMessage}>
+                                                        {
+                                                          getFirstNWords(4, last(record.useHistory).gitInfo.commitMessage)
+                                                        } (
+                                                        {
+                                                          last(record.useHistory).gitInfo.abbreviatedSha
+                                                        })
+                                                      </span>
                                                     </div>
                                                   : <div>
-                                                      Last appeared in <span className={styles.CommitSha}>{last(record.useHistory).gitInfo.abbreviatedSha}</span>(<span className={styles.CommitMessage}>{last(record.useHistory).gitInfo.commitMessage}</span>)
+                                                      Last appeared in 
+                                                      <span className={styles.Branch}>
+                                                        <FontAwesomeIcon icon={fasCodeBranch}/>
+                                                        {last(record.useHistory).gitInfo.branch}
+                                                      </span>
+                                                      <span className={styles.CommitMessage}>
+                                                        {
+                                                          getFirstNWords(4, last(record.useHistory).gitInfo.commitMessage)
+                                                        } (
+                                                        {
+                                                          last(record.useHistory).gitInfo.abbreviatedSha
+                                                        })
+                                                      </span>
                                                     </div>
                                                 }
                                               </div>

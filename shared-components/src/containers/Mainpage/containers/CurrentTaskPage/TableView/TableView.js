@@ -269,8 +269,8 @@ class TableView extends Component {
             if (pair.optionId === optionId) {
               shouldPushNew = false;
               return changedAttitude === null 
-                     ? {optionId: optionId}
-                     : {attitude: changedAttitude, optionId: optionId}
+                      ? {optionId: optionId}
+                      : {attitude: changedAttitude, optionId: optionId}
             }
             return pair;
           });
@@ -313,8 +313,8 @@ class TableView extends Component {
             if (pair.optionId === optionId) {
               shouldPushNew = false;
               return changedAttitude === null 
-                     ? {optionId: optionId}
-                     : {attitude: changedAttitude, optionId: optionId}
+                      ? {optionId: optionId}
+                      : {attitude: changedAttitude, optionId: optionId}
             }
             return pair;
           });
@@ -586,6 +586,7 @@ class TableView extends Component {
                                     timestamp={p.timestamp}
                                     postTags={p.postTags}
                                     notes={p.notes}
+                                    codeUseInfo={p.codeUseInfo}
                                     attitudeList={p.attitudeList}
                                     makeInteractionBox={(event, id) => this.props.makeInteractionbox(event, id)}/>
                                 );

@@ -52,7 +52,7 @@
 }
 
 .CodeBadgeTooltip {
-  z-index: 99999;
+  z-index: 999999;
   width: 350px !important;
   height: 500px !important;
   overflow: auto !important;
@@ -60,18 +60,106 @@
   margin: 0px 0px !important;
   padding: 0px 0px !important;
   box-shadow: 0 4px 10px 0 rgba(0,0,0,0.2),0 4px 20px 0 rgba(0,0,0,0.19);
-  padding: 6px 6px !important;
+  padding: 12px 12px !important;
   pointer-events: auto !important;
 
   background-color: white !important;
 
-  visibility: visible !important;
+  /* visibility: visible !important; */
 }
 
 .CodeBadgeTooltip:hover {
   visibility: visible !important;
   opacity: 1 !important;
 }
+
+.CodeBadgeTooltipStats {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.CodebaseContainer {
+  background: rgb(250, 250, 250);
+  margin: 6px 0px;
+  padding: 6px 12px;
+  box-shadow: 0 4px 10px 0 rgba(0,0,0,0.2),0 4px 20px 0 rgba(0,0,0,0.19);
+}
+
+.CodebaseNameContainer {
+}
+
+.CodebaseIcon {
+  color: gray;
+  margin-right: 4px;
+}
+
+.CodebaseName {
+  font-size: 17px;
+  font-weight: 500;
+  margin-right: 4px;
+}
+
+.CodebaseStats {
+
+}
+
+.UsedTimestamp {
+
+}
+
+.CodeContentContainer {
+
+}
+
+.CodeContentContainer pre {
+  font-family: monospace;
+  background: #f4f4f4;
+  border: 1px solid #ddd;
+  border-left: 3px solid #f36d33;
+  color: #666;
+  page-break-inside: avoid;
+  font-size: 12px;
+  line-height: 1.3;
+  margin-bottom: 6px;
+  margin-top: 4px;
+  max-width: 100%;
+  overflow: auto;
+  padding: 3px 8px;
+  display: block;
+  word-wrap: break-word;
+  cursor: auto;
+}
+
+.FilePath {
+  font-family: monospace;
+  background: rgb(220, 226, 233);
+  border-radius: 3px;
+  padding: 1px 3px;
+}
+
+.Branch {
+  background-color: rgb(79, 79, 79);
+  color: white;
+  margin-left: 4px;
+  padding: 0px 3px;
+}
+
+.CommitMessage {
+  /* border: 1px solid rgb(221,218,193); */
+  background-color: rgb(56, 142, 192);
+  color: white;
+  padding: 0px 3px;
+}
+
+
+
+
+
+
+
+
+
+
 
 
 .Title {
