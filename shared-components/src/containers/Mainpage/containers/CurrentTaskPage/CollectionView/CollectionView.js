@@ -466,6 +466,7 @@ class CollectionView extends Component {
     // const { pieceGroups } = task;
     // let pieceGroupsList = [];
     let piecesListClone = piecesList.map(p => JSON.parse(JSON.stringify(p)));   // ==> temporarily disable poece grouping
+    piecesListClone = sortBy(piecesListClone, ['codeUseInfo']);
     // for (let pgKey in pieceGroups) {
     //   let group = pieceGroups[pgKey];
     //   pieceGroupsList.push({

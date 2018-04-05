@@ -26,6 +26,7 @@ class Mainpage extends Component {
   }
 
   componentDidMount () {    
+    window.isInKAP = true;
     let userIdCached = localStorage.getItem('userId');
     if (userIdCached !== null) {
       setUserIdAndName(userIdCached, 'Master ' + userIdCached);
@@ -136,6 +137,7 @@ class Mainpage extends Component {
       });
       
       codebasesRef.on('value', (snapshot) => {
+        let transformedTaskClone = JSON.parse(JSON.stringify(transformedTasks));
         snapshot.forEach((snap) => {
           let codebase = snap.val();
           let entries = codebase.entries;
@@ -144,8 +146,8 @@ class Mainpage extends Component {
               let entry = entries[entryKey];
               let winningIdx = taskIds.indexOf(entry.taskId);
               if (winningIdx !== -1) {
-                if (transformedTasks[winningIdx].pieces[entry.pieceId].codeUseInfo === undefined) {
-                  transformedTasks[winningIdx].pieces[entry.pieceId].codeUseInfo = [
+                if (transformedTaskClone[winningIdx].pieces[entry.pieceId].codeUseInfo === undefined) {
+                  transformedTaskClone[winningIdx].pieces[entry.pieceId].codeUseInfo = [
                     {
                       codebase: codebase.name,
                       codebaseId: snap.key,
@@ -153,7 +155,7 @@ class Mainpage extends Component {
                     }
                   ];
                 } else {
-                  let codeUseInfo = transformedTasks[winningIdx].pieces[entry.pieceId].codeUseInfo;
+                  let codeUseInfo = transformedTaskClone[winningIdx].pieces[entry.pieceId].codeUseInfo;
                   let isNewCodebase = true;
                   codeUseInfo = codeUseInfo.map((use) => {
                     if (use.codebaseId === snap.key) {
@@ -174,8 +176,8 @@ class Mainpage extends Component {
             }
           }
         });
-        console.log(transformedTasks);
-        this.setState({tasks: transformedTasks});
+        console.log(transformedTaskClone);
+        this.setState({tasks: transformedTaskClone});
       });
     });
   }

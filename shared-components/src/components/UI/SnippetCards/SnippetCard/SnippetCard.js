@@ -320,7 +320,8 @@ class SnippetCard extends Component {
                         Used in {props.codeUseInfo.length} codebase(s):
                       </div>
                       
-                      {props.codeUseInfo.map((cb, idx) => {
+                      { props.codeUseInfo !== undefined && props.codeUseInfo !== null ?
+                        props.codeUseInfo.map((cb, idx) => {
                         return (
                           <div 
                             key={idx}
@@ -332,7 +333,8 @@ class SnippetCard extends Component {
                             </div>
                             
                             <ul style={{listStyleType: 'none', margin: '0', padding: '0'}}>
-                              {cb.useInfo.map((use, idx1) => {
+                              { cb.useInfo !== undefined && cb.useInfo !== null ?
+                                cb.useInfo.map((use, idx1) => {
                                 return (
                                   <li key={idx1} style={{marginBottom: '10px', paddingBottom: '6px', borderBottom: '1px solid lightgray'}}>
                                     <div className={styles.UsedTimestamp}>
@@ -343,7 +345,8 @@ class SnippetCard extends Component {
                                     </div>
                                     <div>
                                       <ul style={{listStyleType: 'none', margin: '0', padding: '0'}}>
-                                        {use.usedBy.map((record, idx2) => {
+                                        { use.usedBy !== undefined && use.usedBy !== null ?
+                                          use.usedBy.map((record, idx2) => {
                                           return (
                                             <li key={idx2} style={{marginBottom: '4px', lineHeight: '1.8'}}>
                                               <div>
@@ -412,16 +415,16 @@ class SnippetCard extends Component {
                                               </div>
                                             </li>
                                           );
-                                        })}
+                                        }): null}
                                       </ul>
                                     </div>
                                   </li>
                                 );
-                              })}
+                              }): null}
                             </ul>
                           </div>
                         );
-                      })}
+                      }): null}
                     </ReactTooltip>
                   </div>
                 : null
