@@ -47,12 +47,13 @@
 
 .CodeBadge:hover {
   /* border: 2px solid red; */
+  z-index: 999999;
   transform: scale(1.1);
   box-shadow: 0 4px 10px 0 rgba(0,0,0,0.2),0 4px 20px 0 rgba(0,0,0,0.19);
 }
 
 .CodeBadgeTooltip {
-  z-index: 999999;
+  z-index: 9999999;
   width: 350px !important;
   height: 500px !important;
   overflow: auto !important;
