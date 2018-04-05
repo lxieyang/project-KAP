@@ -303,7 +303,7 @@ class SnippetCard extends Component {
               <div className={styles.Title}>
                 {props.title}
               </div>
-              { // TODO: activate this feature once we get the code base information in
+              { 
                 props.codeUseInfo !== undefined && props.codeUseInfo !== null
                 ? <div className={styles.CodeUsedContainer}>
                     <FontAwesomeIcon 

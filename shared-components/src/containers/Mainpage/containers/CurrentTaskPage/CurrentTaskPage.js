@@ -94,36 +94,38 @@ class CurrentTaskPage extends Component {
             if (entries !== undefined && entries !== null) {
               for (let entryKey in entries) {
                 let entry = entries[entryKey];
-                if (thisTask.pieces[entry.pieceId].codeUseInfo === undefined) {
-                  thisTask.pieces[entry.pieceId].codeUseInfo = [
-                    {
-                      codebase: codebase.name,
-                      codebaseId: snap.key,
-                      useInfo: [{usedBy: entry.usedBy, content: entry.content, timestamp: entry.timestamp}]
-                    }
-                  ];
-                } else {
-                  let codeUseInfo = thisTask.pieces[entry.pieceId].codeUseInfo;
-                  let isNewCodebase = true;
-                  codeUseInfo = codeUseInfo.map((use) => {
-                    if (use.codebaseId === snap.key) {
-                      use.useInfo.push({usedBy: entry.usedBy, content: entry.content, timestamp: entry.timestamp});
-                      isNewCodebase = false;
-                    }
-                    return use;
-                  });
-                  if (isNewCodebase) {
-                    codeUseInfo.push({
-                      codebase: codebase.name,
-                      codebaseId: snap.key,
-                      useInfo: [{usedBy: entry.usedBy, content: entry.content, timestamp: entry.timestamp}]
+                if (thisTask.pieces[entry.pieceId] !== undefined) {
+                  if (thisTask.pieces[entry.pieceId].codeUseInfo === undefined) {
+                    thisTask.pieces[entry.pieceId].codeUseInfo = [
+                      {
+                        codebase: codebase.name,
+                        codebaseId: snap.key,
+                        useInfo: [{usedBy: entry.usedBy, content: entry.content, timestamp: entry.timestamp}]
+                      }
+                    ];
+                  } else {
+                    let codeUseInfo = thisTask.pieces[entry.pieceId].codeUseInfo;
+                    let isNewCodebase = true;
+                    codeUseInfo = codeUseInfo.map((use) => {
+                      if (use.codebaseId === snap.key) {
+                        use.useInfo.push({usedBy: entry.usedBy, content: entry.content, timestamp: entry.timestamp});
+                        isNewCodebase = false;
+                      }
+                      return use;
                     });
+                    if (isNewCodebase) {
+                      codeUseInfo.push({
+                        codebase: codebase.name,
+                        codebaseId: snap.key,
+                        useInfo: [{usedBy: entry.usedBy, content: entry.content, timestamp: entry.timestamp}]
+                      });
+                    }
                   }
                 }
               }
             }
           });
-          console.log(thisTask);
+          // console.log(thisTask);
           this.setState({specificTask: thisTask});
         });       
 

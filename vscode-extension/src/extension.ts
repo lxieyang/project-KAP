@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 import TextDocumentContentProvider from './TextDocumentContentProvider';
 import { open, getLanguageType, prepareCopiedCode, getFileNameWithinWorkspace } from './util';
 import * as FirebaseStore from './firebase/store';
+var moment = require('moment');
 var fs = require('fs');
 var path = require('path');
 var getRepoInfo = require('git-repo-info');
@@ -131,18 +132,37 @@ export function activate(context: vscode.ExtensionContext) {
 
                 let hoverMessage = "";
 
-                hoverMessage += `### Original Code Snippets:   \n`;
+                hoverMessage += `### [${payload.title} ](${payload.url})    \n`;
+                hoverMessage += `(${moment(new Date(payload.timestamp)).format("dddd, MMMM Do YYYY, h:mm:ss a")})   \n`;
+                hoverMessage += `#### [View Original Task in side Panel](command:extension.openTask)    \n`;
+                hoverMessage += `----   \n`;
+
+                hoverMessage += `#### Original Code Snippets:   \n`;
                 hoverMessage += `\`\`\`${activeLanguage}  \n`;
-                hoverMessage += `${matchingDecorationAndItem.item.payload.content}   `;
+                hoverMessage += `${payload.content}   `;
                 hoverMessage += `\`\`\`   \n`;
+                hoverMessage += `----  \n`;
 
-                hoverMessage += `#### Options involved:   \n`;
-                for (let op of matchingDecorationAndItem.item.payload.existingOptions.filter(op => op.active === true)) {
-                    hoverMessage += `> - ${op.name}: ${op.attitude === true ? '👍' : op.attitude === false ? '👎' : '❓'}  \n`;
+
+                let existingOptions = payload.existingOptions;
+                if (existingOptions !== undefined ) {
+                    let requirements = {};
+                    payload.existingRequirements.map((rq) => {
+                        requirements[rq.id] = {...rq};
+                    });
+
+                    hoverMessage += `#### Options & Requirements:   \n`;
+                    for (let op of existingOptions.filter(op => op.attitudeRequirementPairs !== null)) {
+                        hoverMessage += `- ${op.name}:  \n`;
+                        let attitudeRequirementPairs = op.attitudeRequirementPairs;
+                        for (let rqKey of Object.keys(attitudeRequirementPairs)) {
+                            let attitude = attitudeRequirementPairs[rqKey];
+                            let rqName = requirements[rqKey].name;
+                            hoverMessage += `> - ${rqName}: ${attitude === 'good' ? '👍' : attitude === 'bad' ? '👎' : '❓'}  \n`;
+                        }
+
+                    }
                 }
-
-                hoverMessage += `#### [${matchingDecorationAndItem.item.payload.title}](${matchingDecorationAndItem.item.payload.url})    \n`;
-                hoverMessage += `#### [Check out original task](command:extension.openTask)    \n`;
                 
                 let constructed = new vscode.MarkdownString(hoverMessage);
                 constructed.isTrusted = true;

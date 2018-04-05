@@ -137,7 +137,7 @@ class Mainpage extends Component {
       });
       
       codebasesRef.on('value', (snapshot) => {
-        let transformedTaskClone = JSON.parse(JSON.stringify(transformedTasks));
+        let transformedTasksClone = JSON.parse(JSON.stringify(transformedTasks));
         snapshot.forEach((snap) => {
           let codebase = snap.val();
           let entries = codebase.entries;
@@ -145,9 +145,9 @@ class Mainpage extends Component {
             for (let entryKey in entries) {
               let entry = entries[entryKey];
               let winningIdx = taskIds.indexOf(entry.taskId);
-              if (winningIdx !== -1) {
-                if (transformedTaskClone[winningIdx].pieces[entry.pieceId].codeUseInfo === undefined) {
-                  transformedTaskClone[winningIdx].pieces[entry.pieceId].codeUseInfo = [
+              if (winningIdx !== -1 && transformedTasksClone[winningIdx].pieces[entry.pieceId] !== undefined) {
+                if (transformedTasksClone[winningIdx].pieces[entry.pieceId].codeUseInfo === undefined) {
+                  transformedTasksClone[winningIdx].pieces[entry.pieceId].codeUseInfo = [
                     {
                       codebase: codebase.name,
                       codebaseId: snap.key,
@@ -155,7 +155,7 @@ class Mainpage extends Component {
                     }
                   ];
                 } else {
-                  let codeUseInfo = transformedTaskClone[winningIdx].pieces[entry.pieceId].codeUseInfo;
+                  let codeUseInfo = transformedTasksClone[winningIdx].pieces[entry.pieceId].codeUseInfo;
                   let isNewCodebase = true;
                   codeUseInfo = codeUseInfo.map((use) => {
                     if (use.codebaseId === snap.key) {
@@ -176,8 +176,8 @@ class Mainpage extends Component {
             }
           }
         });
-        console.log(transformedTaskClone);
-        this.setState({tasks: transformedTaskClone});
+        // console.log(transformedTasksClone);
+        this.setState({tasks: transformedTasksClone});
       });
     });
   }

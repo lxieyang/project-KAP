@@ -41,6 +41,7 @@ export const getFirstNWords = (n, str) => {
 
 export const getFirstSentence = (str) => {
   // https://stackoverflow.com/questions/23200446/finding-the-first-sentence-with-jquery
+  str = str.replace(/[.,\/#!$%\^&\*;:{}\[\]=\-_`~()]/g,"");
   let split = str.split(/[\n\r\!\,\.\?]/);
   let first = "";
   for (let sp of split) {

@@ -4,6 +4,7 @@ import {
   tasksRef,
   currentTaskIdRef,
   editorIntegrationRef,
+  userId,
   isDisabledRef
 } from './index';
 
@@ -454,10 +455,26 @@ export const updateRequirementOrdering = async (ordering) => {
 
 
 /* PIECES */
-export const addAPieceToCurrentTask = async (piece) => {
+export const addAPieceToCurrentTask = async (piece, alsoSetCopyData = false) => {
   currentTaskId = (await currentTaskIdRef.once('value')).val();
   let newPieceRef = tasksRef.child(currentTaskId + '/pieces').push();
   newPieceRef.set(piece);
+  if (alsoSetCopyData === true) {
+    let payload = {
+      title: piece.title,
+      content: piece.content,
+      originalCodeSnippet: null,
+      notes: piece.notes,
+      url: piece.url,
+      existingOptions: [],
+      existingRequirements: [],
+      userId: userId,
+      taskId: currentTaskId,
+      pieceId: newPieceRef.key,
+      timestamp: (new Date()).toString()
+    };
+    setCopyData(payload);
+  }
   return newPieceRef.key;
 }
 

@@ -457,6 +457,7 @@ window.addEventListener('copy', function (event) {
       type: SNIPPET_TYPE.COPIED_PIECE,
       notes: '',
       title: getFirstSentence(selection.toString()),
+      content: selection.toString(),
       autoSuggestedTitle: true,
       htmls: parentPiece.htmls,
       postTags: postTags,
@@ -465,7 +466,7 @@ window.addEventListener('copy', function (event) {
       codeSnippetHTMLs: [],
       codeSnippetTexts: [] 
     }
-    FirebaseStore.addAPieceToCurrentTask(piece);
+    FirebaseStore.addAPieceToCurrentTask(piece, true);
   }
 });
 

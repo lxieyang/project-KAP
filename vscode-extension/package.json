@@ -51,6 +51,7 @@
         "firebase": "^4.10.1",
         "git-repo-info": "^2.0.0",
         "lodash": "^4.17.5",
+        "moment": "^2.22.0",
         "query-string": "^5.1.0",
         "uniqid": "^4.1.1"
     }
