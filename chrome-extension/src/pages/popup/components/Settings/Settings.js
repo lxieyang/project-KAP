@@ -16,11 +16,15 @@ const settings = (props) => {
             icon={fasPowerOff}
             className={styles.ConfigureIcon}
           /> &nbsp;
-          <span>Temporarily disable KAP</span>
+          {
+            props.enabled === true
+            ? <span>UNAKITE Enabled</span>
+            : <span>UNAKITE Disabled</span>
+          } 
         </div>
         <div className={styles.Slider}>
           <ToggleSwitch 
-            checked={props.disabled} 
+            checked={props.enabled} 
             statusChanged={props.disableHandler}/>
         </div>
       </div>

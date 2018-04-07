@@ -16,6 +16,7 @@ import {
 } from '../../../../shared-components/src/firebase/index';
 import * as FirebaseStore from '../../../../shared-components/src/firebase/store';
 
+
 let userIdCached = localStorage.getItem('userId');
 if (userIdCached !== null) {
   setUserIdAndName(userIdCached, 'Master ' + userIdCached);
@@ -98,6 +99,29 @@ chrome.runtime.onConnect.addListener(function(port) {
 });
 
 
+
+/* Enable / Disable plugin */
+let enabled = true;
+chrome.runtime.onMessage.addListener(
+  function(request, sender, sendResponse) {
+    if (request.msg === 'SWITCH_WORKING_STATUS') {
+      enabled = !enabled;
+      chrome.runtime.sendMessage({
+        msg: 'CURRENT_WORKING_STATUS',
+        payload: {
+          status: enabled
+        }
+      });
+    } else if (request.msg === 'GET_WORKING_STATUS') {
+      sendResponse({
+        status: enabled
+      })
+    }
+  }
+)
+
+
+
 /* create context menu items */
 chrome.contextMenus.removeAll();
 chrome.contextMenus.create({
@@ -158,9 +182,5 @@ chrome.contextMenus.create({
   }
 });
 
-export {
-  tasksRef,
-  currentTaskIdRef,
-  isDisabledRef,
-  FirebaseStore
-}
+
+

@@ -36,10 +36,26 @@ class Popup extends Component {
     isEditingOption: true,
     currentTaskIdIsLoading: true,
     tasksIsLoading: true,
-    disabled: false
+    enabled: true
   }
 
   componentDidMount() {
+    chrome.runtime.sendMessage({
+      msg: 'GET_WORKING_STATUS'
+    }, (data) => {
+      console.log('WORKING STATUS: ' + data.status);
+      this.setState({enabled: data.status});
+    });
+
+    chrome.runtime.onMessage.addListener(
+      (request, sender, sendResponse) => {
+        if (request.msg === 'CURRENT_WORKING_STATUS') {
+          console.log('WORKING STATUS: ' + request.payload.status);      
+          this.setState({enabled: request.payload.status});
+        }
+      }
+    )
+
     let port = chrome.runtime.connect({name: 'FROM_POPUP'});
     port.postMessage({msg: 'GET_USER_INFO'});
     port.onMessage.addListener((response) => {
@@ -165,13 +181,17 @@ class Popup extends Component {
   }
 
   disablePluginHandler = () => {
-    FirebaseStore.switchWorkingStatus();
+    // FirebaseStore.switchWorkingStatus();
+    console.log('changed status');
+    chrome.runtime.sendMessage({
+      msg: 'SWITCH_WORKING_STATUS'
+    });
   }
 
   render () {
     let appTitle = (<AppHeader logoSize='38px' hover={false}/>);
 
-    const { currentTaskIdIsLoading, tasksIsLoading, disabled } = this.state;
+    const { currentTaskIdIsLoading, tasksIsLoading, enabled } = this.state;
 
     let toRender = (
       <Aux>{appTitle}</Aux>
@@ -245,10 +265,11 @@ class Popup extends Component {
               updateRequirementName={this.updateRequirementName}/>
           </div>
           
-
+          {/*
           <HorizontalDivider margin={dividerOptions.margin.long}/>
 
-          <Settings disabled={disabled} disableHandler={this.disablePluginHandler}/>
+          <Settings enabled={enabled} disableHandler={this.disablePluginHandler}/>
+          */}
         </Aux>
       );
     }
