@@ -1,6 +1,7 @@
 import React, { Component }from 'react';
 
 import FontAwesomeIcon from '@fortawesome/react-fontawesome';
+import fasShareSquare from '@fortawesome/fontawesome-free-solid/faShareSquare';
 import fasLink from '@fortawesome/fontawesome-free-solid/faLink';
 import fasSave from '@fortawesome/fontawesome-free-solid/faSave';
 import fasArrowsAlt from '@fortawesome/fontawesome-free-solid/faArrowsAlt';
@@ -671,7 +672,7 @@ class interactionBox extends Component {
           {
             this.state.mode !== 'NEW'
             ? <div style={{marginRight: '20px', fontSize: '16px', opacity: '0.6'}}>
-                <a target="_blank" href={this.state.url} style={{color: 'black'}} onClick={(event) => openLinkInTextEditorExtension(event, this.state.url)} title="Open the original page in a new tab"><FontAwesomeIcon icon={fasLink}/></a>
+                <a target="_blank" href={this.state.url} style={{color: 'black', textDecoration: 'none'}} onClick={(event) => openLinkInTextEditorExtension(event, this.state.url)} title="Open the original page in a new tab"><FontAwesomeIcon icon={fasShareSquare}/> Open in new tab</a>
               </div>
             : null
           }

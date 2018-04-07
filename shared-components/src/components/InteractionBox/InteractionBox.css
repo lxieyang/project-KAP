@@ -509,6 +509,12 @@ button:hover {
 .ClipButtonIcon {
 }
 
+.ButtonTextContainer {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
+
 .ButtonText {
   font-size: 26px;
 }
