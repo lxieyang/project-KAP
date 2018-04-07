@@ -447,6 +447,21 @@ class interactionBox extends Component {
       <div className={styles.OptionList}>
         <table className={styles.Table}>
         <tbody>
+          <tr>
+            <td></td>
+            <td>
+              <div className={styles.TableTitle}>
+                <FontAwesomeIcon icon={fasListAlt}/> &nbsp;Options
+              </div>
+            </td>
+            <td>
+            </td>
+            <td>
+              <div className={styles.TableTitle}>
+                <FontAwesomeIcon icon={fasFlagCheckered}/> &nbsp;Requirements
+              </div>
+            </td>
+          </tr>
           {existingOptions.map((op, idx) => {
             return (
               <tr key={op.id} className={styles.OptionTableRow}>
@@ -637,8 +652,8 @@ class interactionBox extends Component {
           &#10005;
         </div>
         <div style={{display: 'flex', width: '100%', justifyContent: 'space-between', alignItems: 'center'}}>
-          <div style={{display: 'flex', width: '80%', marginBottom: '10px', alignItems: 'center'}}>  
-            <span style={{fontWeight: '600'}}>Title: &nbsp;</span>
+          <div style={{display: 'flex', width: '80%', marginTop: '6px',marginBottom: '16px', alignItems: 'center'}}>  
+            <span style={{fontSize: '16px', fontWeight: '600'}}>Title: &nbsp;</span>
             <input 
               type="text" 
               value={this.state.title} 

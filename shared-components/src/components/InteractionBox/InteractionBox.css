@@ -37,11 +37,12 @@
   border: 0px solid transparent !important;
   width: 70%;
   text-overflow: ellipsis;
-  font-size: 14px;background-color: rgba(226, 236, 244, 1);
+  font-size: 16px;
   background-color: transparent !important;
   box-shadow: none !important;
   text-align: left;
-  padding: 5px 10px;
+  padding: 2px 2px;
+  border-bottom: 1px dashed lightgray !important;
   color: rgba(0,0,0,.87);
   
 }
@@ -211,6 +212,13 @@ button:hover {
 .OptionTableRow {
   /* height: 100%; */
   border-bottom: 1px solid #ddd;
+}
+
+.TableTitle {
+  font-size: 18px;
+  font-weight: 600;
+  /* text-align: center; */
+  width: 100%;
 }
 
 .DeleteOptionIconContainer {
