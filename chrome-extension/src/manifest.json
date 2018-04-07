@@ -16,11 +16,6 @@
       "matches": [
         "<all_urls>"
       ],
-      "exclude_matches": [
-        "localhost*",
-        "127.0.0.1*",
-        "*firebaseapp.com"
-      ],
       "js": [
         "contentAnnotation.bundle.js"
       ],

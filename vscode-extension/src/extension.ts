@@ -137,7 +137,7 @@ export function activate(context: vscode.ExtensionContext) {
                 hoverMessage += `#### [View Original Task in side Panel](command:extension.openTask)    \n`;
                 hoverMessage += `----   \n`;
 
-                hoverMessage += `#### Original Code Snippets:   \n`;
+                hoverMessage += `#### Pasted Code Snippets:   \n`;
                 hoverMessage += `\`\`\`${activeLanguage}  \n`;
                 hoverMessage += `${payload.content}   `;
                 hoverMessage += `\`\`\`   \n`;
