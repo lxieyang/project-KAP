@@ -2,10 +2,11 @@
   font-size: 1.15rem;
   width: 250px;
   height: auto;
-  margin: 15px 15px;
+  margin: 15px 10px;
   border: 1px solid lightgray;
   border-radius: 3px;
   box-shadow: 0 1px 1px 0 rgba(0,0,0,0.10), 0 1px 3px 0 rgba(0,0,0,0.06);
+  box-sizing: border-box;
   position: relative;
 }
 

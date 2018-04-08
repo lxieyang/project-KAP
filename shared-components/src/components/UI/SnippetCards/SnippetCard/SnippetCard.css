@@ -34,7 +34,7 @@
 }
 
 .CodeUsedContainer {
-  width: 20%;
+  width: 50%;
 }
 
 .CodeBadge {
@@ -52,10 +52,24 @@
   box-shadow: 0 4px 10px 0 rgba(0,0,0,0.2),0 4px 20px 0 rgba(0,0,0,0.19);
 }
 
+.CodeUsedTooltipHandle {
+  font-size: 11px;
+  display: flex;
+  align-items: center;
+}
+
+.CodeUsedTooltipHandle span {
+  color: #fff;
+  background-color: #26a69a;border-radius: 2px;
+  padding: 0 4px;
+  line-height: 22px;
+  height: 20px;
+}
+
 .CodeBadgeTooltip {
   z-index: 9999999;
   width: 350px !important;
-  height: 500px !important;
+  max-height: 500px !important;
   overflow: auto !important;
   opacity: 1 !important;
   margin: 0px 0px !important;
@@ -158,16 +172,11 @@
 
 
 
-
-
-
-
-
 .Title {
   font-size: 1.0rem;
   font-weight: 600;
   word-wrap: break-word; 
-  margin-left: 10px;
+  padding-left: 10px;
   width: 75%;
 }
 

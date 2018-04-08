@@ -22,7 +22,7 @@ import { sortBy, reverse, slice } from 'lodash';
 
 
 const getNumColInResponsiveGridLayout = (windowSize) => {
-  let maxNumCol = 6;
+  let maxNumCol = 99;  // make it so big that this is useless
 
   // if (windowSize > 1730) {
   //   maxNumCol = 5;
@@ -168,6 +168,7 @@ const SnippetsGroup = (props) => {
 
   /* Experimental responsive grid */
   let maxNumCol = getNumColInResponsiveGridLayout(props.windowSize);
+  console.log(maxNumCol);
 
   let responsiveGridViewPartitionOfSnippets = [];
   for (let i = 0; i < maxNumCol; i++)

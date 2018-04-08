@@ -306,11 +306,22 @@ class SnippetCard extends Component {
               { 
                 props.codeUseInfo !== undefined && props.codeUseInfo !== null
                 ? <div className={styles.CodeUsedContainer}>
+                    <div 
+                      className={styles.CodeUsedTooltipHandle}
+                      data-tip 
+                      data-for={`${props.id}-tooltip`}>
+                      <span>
+                        <FontAwesomeIcon icon={fasCode} /> &nbsp;
+                        {props.codeUseInfo.length} usage(s) 
+                      </span>
+                    </div>
+                    {/*
                     <FontAwesomeIcon 
                       icon={fasCheckCircle} 
                       className={styles.CodeBadge}
                       data-tip 
                       data-for={`${props.id}-tooltip`}/>
+                    */}
                     <ReactTooltip
                       place="bottom" type="light" effect="solid"
                       id={`${props.id}-tooltip`}
