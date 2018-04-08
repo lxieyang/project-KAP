@@ -442,7 +442,7 @@ window.addEventListener('keydown', (event) => {
 
 
 window.addEventListener('copy', function (event) {
-  if (hoverBoxIsMounted === false && interactionBoxIsMounted === false && window.isInKAP !== true) {
+  if (hoverBoxIsMounted === false && interactionBoxIsMounted === false && window.isInKAP !== true && window.location.href.indexOf('stackoverflow.com') !== -1) {
     let selection = window.getSelection();
     let range = selection.getRangeAt(0);
     let parentPiece = KAPCaptureHelper.createCodeSnippetsFromNode(range.commonAncestorContainer);

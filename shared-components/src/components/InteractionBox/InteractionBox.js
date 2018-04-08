@@ -672,7 +672,7 @@ class interactionBox extends Component {
           {
             this.state.mode !== 'NEW'
             ? <div style={{marginRight: '20px', fontSize: '16px', opacity: '0.6'}}>
-                <a target="_blank" href={this.state.url} style={{color: 'black', textDecoration: 'none'}} onClick={(event) => openLinkInTextEditorExtension(event, this.state.url)} title="Open the original page in a new tab"><FontAwesomeIcon icon={fasShareSquare}/> Open in new tab</a>
+                <a target="_blank" href={this.state.url} style={{color: 'black', textDecoration: 'none', fontSize: '13px'}} onClick={(event) => openLinkInTextEditorExtension(event, this.state.url)} title="Open the original page in a new tab"><FontAwesomeIcon icon={fasShareSquare}/> Open in new tab</a>
               </div>
             : null
           }

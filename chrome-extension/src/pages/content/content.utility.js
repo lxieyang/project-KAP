@@ -6,6 +6,7 @@ export class PageCountHelper {
     'www.youtube.com',
     'accounts.google.com',
     'facebook.com',
+    'instagram',
     'twitter.com',
     'messenger.com',
     'slack.com',
