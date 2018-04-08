@@ -1,4 +1,5 @@
 import * as vscode from 'vscode';
+import { machineIdSync } from 'node-machine-id';
 import firebase from './firebase';
 var _ = require('lodash');
 
@@ -12,6 +13,23 @@ export let setCodebaseId = (id) => {
 export let userId = vscode.workspace.getConfiguration().userId;
 export let userEditorIntegrationRef = database.ref('users').child(userId).child('editorSupport');
 
+
+export const addNewCodebase = async (timestamp, name, rootPath) => {
+    let newCodebase = codebasesRef.push();
+    setCodebaseId(newCodebase.key);
+    newCodebase.set({
+        created: timestamp,
+        name: name,
+        rootPaths: {[machineIdSync()]: rootPath},
+        entries: null
+    });
+};
+
+
+export const updateCodebaseRootPath = async (rootPath) => {
+    let machineId = machineIdSync();
+    codebasesRef.child(codebaseId).child('rootPaths').child(machineId).set(rootPath);
+};
 
 
 export const addNewEntryInCodebase = async (payload, filePath, lineIdx, gitInfo) => {

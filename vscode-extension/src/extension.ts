@@ -1,4 +1,5 @@
 import * as vscode from 'vscode';
+import { machineIdSync } from 'node-machine-id';
 import TextDocumentContentProvider from './TextDocumentContentProvider';
 import { open, getLanguageType, prepareCopiedCode, getFileNameWithinWorkspace } from './util';
 import * as FirebaseStore from './firebase/store';
@@ -6,6 +7,7 @@ var moment = require('moment');
 var fs = require('fs');
 var path = require('path');
 var getRepoInfo = require('git-repo-info');
+
 
 
 interface Decoration {
@@ -48,17 +50,15 @@ export function activate(context: vscode.ExtensionContext) {
             if (error ) {
                 // console.log(error);
                 // create such a file
-                let newCodebase = FirebaseStore.codebasesRef.push();
-                FirebaseStore.setCodebaseId(newCodebase.key);
                 let config = {
                     workspaceId: FirebaseStore.codebaseId,
                     timestamp: (new Date()).getTime()
                 };
-                newCodebase.set({
-                    created: config.timestamp,
-                    name: vscode.workspace.name !== undefined ? vscode.workspace.name : null,
-                    entries: null
-                });
+                FirebaseStore.addNewCodebase(
+                    config.timestamp, 
+                    vscode.workspace.name !== undefined ? vscode.workspace.name : null,
+                    vscode.workspace.rootPath
+                );
     
                 fs.writeFile(path.resolve(vscode.workspace.rootPath, 'kap.json'), JSON.stringify(config, null, 2), 'utf8', (err) => {
                     // console.log("WRITE ERROR: " + err);
@@ -71,6 +71,8 @@ export function activate(context: vscode.ExtensionContext) {
                 // console.log(data);
                 let config = JSON.parse(data);
                 FirebaseStore.setCodebaseId(config.workspaceId);
+                // TODO: update code base rootPath on this machine
+                FirebaseStore.updateCodebaseRootPath(vscode.workspace.rootPath);
                 // update codebase name
                 FirebaseStore.codebasesRef.child(FirebaseStore.codebaseId).child('name').set(vscode.workspace.name !== undefined ? vscode.workspace.name : null);
                 syncFromCloud();
