@@ -368,10 +368,12 @@ class SnippetCard extends Component {
                                                 {
                                                   record.isUsing 
                                                   ? <span style={{marginLeft: '4px'}}>
-                                                      <FontAwesomeIcon icon={fasCheck} style={{color: 'rgb(82, 184, 101)'}}/> (line {last(record.useHistory).lineIndices.join(', ')}) 
+                                                      <span className={styles.InUseBadge}>In Use</span>
+                                                      &nbsp;(line {last(record.useHistory).lineIndices.map(l => l + 1).join(', ')}) 
                                                     </span>
-                                                  : <span style={{marginLeft: '4px'}}>
-                                                      <FontAwesomeIcon icon={fasTimes} style={{color: 'rgb(174, 60, 55)'}}/> 
+                                                  : <span style={{marginLeft: '4px'}}
+                                                    className={styles.DeletedBadge}> 
+                                                      Deleted
                                                     </span>
                                                 }
                                               </div>

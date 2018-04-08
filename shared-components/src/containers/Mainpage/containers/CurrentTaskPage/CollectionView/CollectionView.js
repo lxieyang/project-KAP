@@ -168,7 +168,6 @@ const SnippetsGroup = (props) => {
 
   /* Experimental responsive grid */
   let maxNumCol = getNumColInResponsiveGridLayout(props.windowSize);
-  console.log(maxNumCol);
 
   let responsiveGridViewPartitionOfSnippets = [];
   for (let i = 0; i < maxNumCol; i++)

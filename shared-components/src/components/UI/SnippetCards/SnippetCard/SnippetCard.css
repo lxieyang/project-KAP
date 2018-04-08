@@ -166,7 +166,21 @@
   padding: 0px 3px;
 }
 
+.InUseBadge {
+  font-size: 10px;
+  color: #fff;
+  background-color: rgb(82, 184, 101);
+  border-radius: 2px;
+  padding: 1px 4px;
+}
 
+.DeletedBadge {
+  font-size: 10px;
+  color: #fff;
+  background-color: rgb(202, 91, 84);
+  border-radius: 2px;
+  padding: 1px 4px;
+}
 
 
 
