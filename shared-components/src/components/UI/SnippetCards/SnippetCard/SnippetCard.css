@@ -10,6 +10,7 @@
   box-sizing: border-box;
   position: relative;
   transition: all 0.06s ease-in;
+  pointer-events: auto;
   z-index: inherit;
 }
 
@@ -114,17 +115,6 @@
   margin-right: 4px;
 }
 
-.CodebaseStats {
-
-}
-
-.UsedTimestamp {
-
-}
-
-.CodeContentContainer {
-
-}
 
 .CodeContentContainer pre {
   font-family: monospace;

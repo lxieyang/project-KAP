@@ -161,8 +161,8 @@ class SnippetCard extends Component {
           style={{maxHeight: props.isInTableView === true ? '350px' : '200px'}}>
           <div 
             className={styles.HTMLPreview} 
-            contentEditable="true"
-            suppressContentEditableWarning="true"
+            // contentEditable="true"
+            // suppressContentEditableWarning="true"
             dangerouslySetInnerHTML={getHTML(props.htmls)}>
           </div>
         </div>
@@ -224,8 +224,8 @@ class SnippetCard extends Component {
                           ? <div className={styles.ContentContainer}>
                               <div 
                                 className={styles.HTMLPreview} 
-                                contentEditable="true"
-                                suppressContentEditableWarning="true"
+                                // contentEditable="true"
+                                // suppressContentEditableWarning="true"
                                 dangerouslySetInnerHTML={getHTML(piece.htmls)}>
                               </div>
                             </div>
@@ -607,7 +607,9 @@ class SnippetCard extends Component {
       </div>
     );
 
-    return connectDropTarget(connectDragSource(
+    // disable Drag and Drop so that the content are selectable
+    // return connectDropTarget(connectDragSource(
+    return (
       <div 
         className={[styles.SnippetCard, props.status ? null : styles.Hide].join(' ')}
         style={{
@@ -629,7 +631,8 @@ class SnippetCard extends Component {
         }
         {footer}
       </div>
-    ));
+    // ));
+    );
   }
 }
 
