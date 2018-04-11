@@ -588,7 +588,7 @@ class TableView extends Component {
                                     notes={p.notes}
                                     codeUseInfo={p.codeUseInfo}
                                     attitudeList={p.attitudeList}
-                                    makeInteractionBox={(event, id) => this.props.makeInteractionbox(event, id)}/>
+                                    makeInteractionBox={(event, id) => this.makeInteractionbox(event, id)}/>
                                 );
                               }}>
                               

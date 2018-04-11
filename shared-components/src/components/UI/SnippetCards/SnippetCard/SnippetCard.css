@@ -164,6 +164,15 @@
   padding: 1px 4px;
 }
 
+.LineNumber {
+  cursor: pointer;
+}
+
+.LineNumber:hover {
+  text-decoration: underline;
+  color: rgb(56, 142, 192);
+}
+
 .DeletedBadge {
   font-size: 10px;
   color: #fff;

@@ -1,5 +1,4 @@
 import * as vscode from 'vscode';
-import { machineIdSync } from 'node-machine-id';
 import TextDocumentContentProvider from './TextDocumentContentProvider';
 import { open, getLanguageType, prepareCopiedCode, getFileNameWithinWorkspace } from './util';
 import * as FirebaseStore from './firebase/store';
@@ -58,15 +57,18 @@ export function activate(context: vscode.ExtensionContext) {
                     config.timestamp, 
                     vscode.workspace.name !== undefined ? vscode.workspace.name : null,
                     vscode.workspace.rootPath
-                );
+                ).then(() => {
+                    config.workspaceId = FirebaseStore.codebaseId;
+                    fs.writeFile(path.resolve(vscode.workspace.rootPath, 'kap.json'), JSON.stringify(config, null, 2), 'utf8', (err) => {
+                        // console.log("WRITE ERROR: " + err);
+                    });
+                    context.workspaceState.update('mappings', []).then(response => {
+                        // console.log(response);
+                        throttledScan();
+                    });
+                });
     
-                fs.writeFile(path.resolve(vscode.workspace.rootPath, 'kap.json'), JSON.stringify(config, null, 2), 'utf8', (err) => {
-                    // console.log("WRITE ERROR: " + err);
-                });
-                context.workspaceState.update('mappings', []).then(response => {
-                    // console.log(response);
-                    throttledScan();
-                });
+                
             } else {
                 // console.log(data);
                 let config = JSON.parse(data);
@@ -124,6 +126,7 @@ export function activate(context: vscode.ExtensionContext) {
 
             let result: Thenable<vscode.Hover> = undefined;
 
+
             if (matchingDecorationAndItem) {
                 let payload = matchingDecorationAndItem.item.payload;
                 taskToNavigateTo = {
@@ -131,6 +134,7 @@ export function activate(context: vscode.ExtensionContext) {
                     taskId: payload.taskId,
                     pieceId: payload.pieceId
                 };
+
 
                 let hoverMessage = "";
 
@@ -147,14 +151,15 @@ export function activate(context: vscode.ExtensionContext) {
 
 
                 let existingOptions = payload.existingOptions;
-                if (existingOptions !== undefined ) {
+                if (existingOptions !== undefined) {
                     let requirements = {};
                     payload.existingRequirements.map((rq) => {
                         requirements[rq.id] = {...rq};
                     });
 
+
                     hoverMessage += `#### Options & Requirements:   \n`;
-                    for (let op of existingOptions.filter(op => op.attitudeRequirementPairs !== null)) {
+                    for (let op of existingOptions.filter(o => o.attitudeRequirementPairs !== undefined)) {
                         hoverMessage += `- ${op.name}:  \n`;
                         let attitudeRequirementPairs = op.attitudeRequirementPairs;
                         for (let rqKey of Object.keys(attitudeRequirementPairs)) {
@@ -165,9 +170,13 @@ export function activate(context: vscode.ExtensionContext) {
 
                     }
                 }
+
+
                 
                 let constructed = new vscode.MarkdownString(hoverMessage);
                 constructed.isTrusted = true;
+
+                console.log(constructed);
 
                 return Promise.resolve(new vscode.Hover(constructed, document.getWordRangeAtPosition(position)));
             }
@@ -278,10 +287,9 @@ export function activate(context: vscode.ExtensionContext) {
     };
     
 
-    let previewUri = vscode.Uri.parse('open-webview://open-webview/http://localhost:3002/');
+    let previewUri = vscode.Uri.parse('open-webview://open-webview/http://localhost:3001/');
     let provider = new TextDocumentContentProvider();
     let registration = vscode.workspace.registerTextDocumentContentProvider('open-webview', provider);
-
 
 
 

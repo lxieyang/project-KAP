@@ -369,7 +369,21 @@ class SnippetCard extends Component {
                                                   record.isUsing 
                                                   ? <span style={{marginLeft: '4px'}}>
                                                       <span className={styles.InUseBadge}>In Use</span>
-                                                      &nbsp;(line {last(record.useHistory).lineIndices.map(l => l + 1).join(', ')}) 
+                                                      &nbsp;(line <span> </span>
+                                                        {
+                                                          last(record.useHistory).lineIndices.map(l => l + 1).map((l, idxxx) => (
+                                                            <span 
+                                                              key={idxxx}>
+                                                              <span
+                                                                title={`Go to line ${l} of this file`}
+                                                                className={styles.LineNumber}>
+                                                                {l} 
+                                                              </span>
+                                                              {idxxx !== last(record.useHistory).lineIndices.length - 1
+                                                              ? <span>, </span> : null} 
+                                                            </span>
+                                                          ))
+                                                        }) 
                                                     </span>
                                                   : <span style={{marginLeft: '4px'}}
                                                     className={styles.DeletedBadge}> 
@@ -379,7 +393,8 @@ class SnippetCard extends Component {
                                               </div>
                                               <div>
                                                 {
-                                                  record.isUsing 
+                                                  first(record.useHistory).gitInfo.branch !== undefined && last(record.useHistory).gitInfo.branch !== undefined ?
+                                                  record.isUsing
                                                   ? <div>
                                                       Introduced in 
                                                       <span className={styles.Branch}>
@@ -423,7 +438,7 @@ class SnippetCard extends Component {
                                                           last(record.useHistory).gitInfo.abbreviatedSha
                                                         })
                                                       </span>
-                                                    </div>
+                                                    </div> : null
                                                 }
                                               </div>
                                             </li>
