@@ -139,7 +139,8 @@ export function activate(context: vscode.ExtensionContext) {
                 let hoverMessage = "";
 
                 hoverMessage += `### [${payload.title} ](${payload.url})    \n`;
-                hoverMessage += `(${moment(new Date(payload.timestamp)).format("dddd, MMMM Do YYYY, h:mm:ss a")})   \n`;
+                hoverMessage += `(${moment(new Date(payload.timestamp)).format("dddd, MMMM Do YYYY, h:mm:ss a")})   \n\n`;
+                hoverMessage += `**Notes**: ${payload.notes}\n`;
                 hoverMessage += `#### [View Original Task in side Panel](command:extension.openTask)    \n`;
                 hoverMessage += `----   \n`;
 
@@ -157,15 +158,14 @@ export function activate(context: vscode.ExtensionContext) {
                         requirements[rq.id] = {...rq};
                     });
 
-
                     hoverMessage += `#### Options & Requirements:   \n`;
                     for (let op of existingOptions.filter(o => o.attitudeRequirementPairs !== undefined)) {
-                        hoverMessage += `- ${op.name}:  \n`;
+                        hoverMessage += `- **${op.name}**:  \n`;
                         let attitudeRequirementPairs = op.attitudeRequirementPairs;
                         for (let rqKey of Object.keys(attitudeRequirementPairs)) {
                             let attitude = attitudeRequirementPairs[rqKey];
                             let rqName = requirements[rqKey].name;
-                            hoverMessage += `> - ${rqName}: ${attitude === 'good' ? '👍' : attitude === 'bad' ? '👎' : '❓'}  \n`;
+                            hoverMessage += `> - **${rqName}**: ${attitude === 'good' ? '👍' : attitude === 'bad' ? '👎' : '❓'}  \n`;
                         }
 
                     }
