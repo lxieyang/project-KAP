@@ -203,7 +203,7 @@ class Mainpage extends Component {
           (routeProps) => (<CurrentTaskPage {...routeProps} task={currentTaskObject} specific={false}/>)
         } />
         <Route path={appRoutes.ALL_TASKS} render={
-          (routeProps) => (<AllTasksPage {...routeProps} tasks={tasks} />)
+          (routeProps) => (<AllTasksPage {...routeProps} tasks={tasks} currentTaskId={currentTaskId}/>)
         }/>
         <Route path={appRoutes.TASK_WITH_ID} render={
           (routeProps) => (<CurrentTaskPage {...routeProps} specific={true} database={database}/>)

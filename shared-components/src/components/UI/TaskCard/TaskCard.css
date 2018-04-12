@@ -22,6 +22,20 @@
   justify-content: flex-start;
 }
 
+.CurrentTaskBadge {
+  margin-left: 15px;
+  background-color: #f0ad4e;
+  display: inline;
+  padding: 1px 6px;
+  font-size: 11px;
+  border-radius: 4px;
+  font-weight: 500;
+  color: #fff;
+  text-align: center;
+  white-space: nowrap;
+  cursor: default;
+}
+
 .Header .Right {
   display: flex;
   align-items: center;

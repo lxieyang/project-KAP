@@ -132,6 +132,14 @@ class TaskCard extends Component {
                 ? styles.Starred
                 : null
               )].join(' ')}/>
+            {
+              this.props.id === this.props.currentTaskId
+              ? <span 
+                  className={styles.CurrentTaskBadge}>
+                  Current Task
+                </span>
+              : null
+            }
           </div>
           <div className={styles.Right}>
             <span className={styles.Time}>

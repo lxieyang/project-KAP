@@ -35,6 +35,7 @@ class TaskGroup extends Component {
           { tasks.map((task, idx) => {
             return (
               <TaskCard 
+                currentTaskId={this.props.currentTaskId}
                 combineSourceTaskWithTargetTask={this.props.combineSourceTaskWithTargetTask}
                 id={task.id}
                 isStarred={task.isStarred}

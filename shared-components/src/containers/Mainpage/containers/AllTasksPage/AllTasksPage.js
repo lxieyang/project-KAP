@@ -33,9 +33,11 @@ class AllTasksPage extends Component {
       <div className={styles.AllTasksContainer}>
         <TaskGroup 
           category='starred' tasks={starredTasks}
+          currentTaskId={this.props.currentTaskId}
           combineSourceTaskWithTargetTask={this.combineSourceTaskWithTargetTask}/>
         <TaskGroup 
           category='all' tasks={tasks}
+          currentTaskId={this.props.currentTaskId}
           combineSourceTaskWithTargetTask={this.combineSourceTaskWithTargetTask}/>
       </div>
     );
