@@ -6,6 +6,7 @@ import Logo from '../../../../components/UI/Logo/Logo';
 import SearchBar from '../../../../components/UI/SeachBar/SearchBar';
 import styles from './Header.css';
 import Yoda from '../../../../assets/images/yoda.png';
+import ProfileImg from '../../../../assets/images/profile-img.png';
 import ReactTooltip from 'react-tooltip';
 import { capitalizeFirstLetter } from '../../../../shared/utilities';
 
@@ -67,8 +68,8 @@ class Header extends Component {
               <SearchBar />
             </div>
             <div className={styles.Profile}>
-              <img src={Yoda} alt=""className={styles.ProfileImg}/> 
-              <span>{'Master ' + capitalizeFirstLetter(this.props.userId)}</span>
+              <img src={ProfileImg} alt=""className={styles.ProfileImg}/> 
+              <span>{capitalizeFirstLetter(this.props.userId)}</span>
             </div>
           </div>
         </header>
