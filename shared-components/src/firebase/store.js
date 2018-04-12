@@ -543,3 +543,11 @@ export const deleteAPieceGroup = async (groupId) => {
 export const setCopyData = async (payload) => {
   editorIntegrationRef.child('copyPayload').set(payload);
 }
+
+export const setToOpenFile = async (codebaseId, filePath, lineNumber) => {
+  editorIntegrationRef.child('toOpenFileAndLineNumber').set({
+    codebaseId: codebaseId,
+    filePath: filePath,
+    lineNumber: lineNumber
+  });
+}

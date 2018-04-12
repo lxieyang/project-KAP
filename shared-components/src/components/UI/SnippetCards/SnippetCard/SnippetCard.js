@@ -137,6 +137,10 @@ class SnippetCard extends Component {
     this.inputCallback(event);
   }
 
+  goToThisLine = (lineNumber, codebaseId, filePath) => {
+    FirebaseStore.setToOpenFile(codebaseId, filePath, lineNumber);
+  }
+
   render () {
     const props = this.props;
     
@@ -376,7 +380,8 @@ class SnippetCard extends Component {
                                                               key={idxxx}>
                                                               <span
                                                                 title={`Go to line ${l} of this file`}
-                                                                className={styles.LineNumber}>
+                                                                className={styles.LineNumber}
+                                                                onClick={(event) => this.goToThisLine(l, cb.codebaseId, record.filePath)}>
                                                                 {l} 
                                                               </span>
                                                               {idxxx !== last(record.useHistory).lineIndices.length - 1

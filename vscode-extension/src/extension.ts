@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 import TextDocumentContentProvider from './TextDocumentContentProvider';
 import { open, getLanguageType, prepareCopiedCode, getFileNameWithinWorkspace } from './util';
 import * as FirebaseStore from './firebase/store';
+import { machineIdSync } from 'node-machine-id';
 var moment = require('moment');
 var fs = require('fs');
 var path = require('path');
@@ -41,6 +42,30 @@ export function activate(context: vscode.ExtensionContext) {
         if (snap.val() !== null) {
             copiedPayload = snap.val();
             prepareCopiedCode(context, copiedPayload);
+        }
+    });
+
+    FirebaseStore.userEditorIntegrationRef.child('toOpenFileAndLineNumber').on('value', (snap) => {
+        if (snap.val() !== null) {
+            let payload = snap.val();
+            FirebaseStore.codebasesRef.child(payload.codebaseId).once('value', (snapp) => {
+                let name = snapp.val().name;
+                let rootPaths = snapp.val().rootPaths;
+                let currentMachineId = machineIdSync();
+                if (rootPaths[currentMachineId] !== undefined && rootPaths[currentMachineId] !== null) {
+                    let rootPath: string = rootPaths[currentMachineId];
+                    let pathToFile = rootPath.replace(name, '') + payload.filePath;
+                    console.log(pathToFile);
+                    vscode.workspace.openTextDocument(pathToFile).then(document => vscode.window.showTextDocument(document).then(editor => {
+                        let range = editor.document.lineAt(payload.lineNumber-1).range;
+                        console.log(range);
+                        editor.selection =  new vscode.Selection(range.start, range.start);
+                        editor.revealRange(range);
+                    }));
+                } else {
+                    vscode.window.showErrorMessage("Codebase not on local on this machine.");
+                }
+            });
         }
     });
 
