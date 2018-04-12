@@ -79,6 +79,10 @@ export const switchCurrentTask = (id) => {
   currentTaskIdRef.set(id);
 }
 
+export const updateTaskName = async (id, taksName) => {
+  tasksRef.child(id).child('name').set(taksName);
+}
+
 export const deleteTaskWithId = async (id) => {
   await tasksRef.child(id).set(null);
   let tasks = await tasksRef.once('value');

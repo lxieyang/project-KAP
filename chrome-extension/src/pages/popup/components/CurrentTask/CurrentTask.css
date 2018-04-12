@@ -23,6 +23,10 @@
   width: 85%;
 }
 
+.TaskName:focus {
+  outline: none;
+}
+
 .TaskSelect {
   width: 20px;
   margin-top: 5px;

@@ -180,6 +180,10 @@ class Popup extends Component {
     FirebaseStore.updateRequirementName(id, name);
   }
 
+  updateTaskName = (id, taskName) => {
+    FirebaseStore.updateTaskName(id, taskName);
+  }
+
   disablePluginHandler = () => {
     // FirebaseStore.switchWorkingStatus();
     console.log('changed status');
@@ -239,7 +243,8 @@ class Popup extends Component {
             tasks={tasks} 
             currentTaskName={currentTaskName}
             currentTaskId={currentTaskId} 
-            onSwitch={this.switchCurrentTaskHandler}/>
+            onSwitch={this.switchCurrentTaskHandler}
+            updateTaskName={this.updateTaskName}/>
 
           <HorizontalDivider margin={dividerOptions.margin.short}/>
 
