@@ -108,7 +108,7 @@ export const prepareCopiedCodeLegacy = (context: vscode.ExtensionContext, payloa
 
 
 export const prepareCopiedCode = (context: vscode.ExtensionContext, payload: any): void => {  
-    const { title, timestamp, content, userId, taskId, pieceId } = payload;
+    const { timestamp, content, userId, taskId, pieceId } = payload;
     if (vscode.window.visibleTextEditors.length > 0 && vscode.window.visibleTextEditors[0].document !== undefined) {
         let cmtString = commentString(`@@@source: (${userId}) (${taskId}) (${pieceId}) (${timestamp}) @@@`, vscode.window.visibleTextEditors[0].document);
         ncp.copy(cmtString + "\n" + content, () => {

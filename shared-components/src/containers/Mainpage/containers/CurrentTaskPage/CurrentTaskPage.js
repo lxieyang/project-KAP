@@ -197,7 +197,7 @@ class CurrentTaskPage extends Component {
           <button
             onClick={(event) => this.switchView(event, true)}
             className={[isTable ? styles.Active : null]}>
-            Make comparisons
+            Comparison Table
           </button>
         </div>
       </div>
