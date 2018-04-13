@@ -552,13 +552,13 @@ class CollectionView extends Component {
               <div className={styles.Section}>
                 {topPages}
               </div>
-              
+
               <div className={styles.Section}>
                 <Aux>
                   <div className={styles.Header}>
                     <div className={styles.HeaderNameContainer}>
                       <div className={styles.HeaderName}>
-                        <span>All Pieces Collected</span>
+                        <span>All Snippets</span>
                       </div>
                       {
                         piecesList.length > 0
