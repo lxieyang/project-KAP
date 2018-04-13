@@ -88,7 +88,7 @@ class TableView extends Component {
         ...task.requirements[rqKey],
         id: rqKey,
         active: true
-      })
+      });
     }
     requirementsList = sortBy(requirementsList, ['order']);
 

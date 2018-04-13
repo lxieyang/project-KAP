@@ -3,6 +3,7 @@ import TextDocumentContentProvider from './TextDocumentContentProvider';
 import { open, getLanguageType, prepareCopiedCode, getFileNameWithinWorkspace } from './util';
 import * as FirebaseStore from './firebase/store';
 import { machineIdSync } from 'node-machine-id';
+import { sortBy, reverse } from 'lodash';
 var moment = require('moment');
 var fs = require('fs');
 var path = require('path');
@@ -121,14 +122,11 @@ export async function activate(context: vscode.ExtensionContext) {
                     // update task name, piece name
                     let userId = childSnap.val().userId;
                     let taskId = childSnap.val().taskId;
-                    let pieceId = childSnap.val().pieceId;
                     let taskRef = FirebaseStore.database.ref('users').child(userId).child('tasks').child(taskId);
                     promises.push(taskRef.once('value', taskSnap => {
                         if (taskSnap.val() !== null) {
                             updated.taskName = taskSnap.val().name;
-                            if (taskSnap.val().pieces[pieceId] !== null) {
-                                updated.title = taskSnap.val().pieces[pieceId].title;
-                            }
+                            updated.task = taskSnap.val();
                         }
                         maps.push(updated);
                     }));
@@ -141,6 +139,7 @@ export async function activate(context: vscode.ExtensionContext) {
             // update in workspace
             Promise.all(promises).then(() => {
                 context.workspaceState.update('mappings', maps).then(response => {
+                    console.log('updated mappings');
                     throttledScan();
                 });
             });
@@ -173,6 +172,34 @@ export async function activate(context: vscode.ExtensionContext) {
 
             if (matchingDecorationAndItem) {
                 let payload = matchingDecorationAndItem.item.payload;
+                let task = payload.task;
+                let optionsList = [];
+                for (let opKey in task.options) {
+                    optionsList.push({
+                        ...task.options[opKey],
+                        id: opKey,
+                        active: true,
+                    });
+                }
+                optionsList = sortBy(optionsList, ['order']);
+                let requirementsList = [];
+                for (let rqKey in task.requirements) {
+                    requirementsList.push({
+                        ...task.requirements[rqKey],
+                        id: rqKey,
+                        active: true
+                    });
+                }
+                requirementsList = sortBy(requirementsList, ['order']);
+                let piecesList = [];
+                for (let pKey in task.pieces) {
+                    piecesList.push({
+                        ...task.pieces[pKey],
+                        id: pKey,
+                        active: true // toInactivePiecesList.indexOf(pKey) === -1
+                    });
+                }
+
                 taskToNavigateTo = {
                     userId: payload.userId,
                     taskId: payload.taskId,
@@ -182,29 +209,98 @@ export async function activate(context: vscode.ExtensionContext) {
 
                 let hoverMessage = "";
 
-                hoverMessage += `### Task: ${payload.taskName}   \n`;
-
-                hoverMessage += `### [${payload.title} ](${payload.url})    \n`;
+                // Task
+                hoverMessage += `## [Task: ${payload.taskName}](command:extension.openTask)   \n`;
                 hoverMessage += `(${moment(new Date(payload.timestamp)).format("dddd, MMMM Do YYYY, h:mm:ss a")})   \n\n`;
-                hoverMessage += `**Notes**: ${payload.notes}\n`;
-                hoverMessage += `#### [View Original Task in side Panel](command:extension.openTask)    \n`;
+
+                if (optionsList.length !== 0 && requirementsList.length !== 0) {
+                    hoverMessage += `### Comparison Table   \n`;
+                    hoverMessage += `
+|  | ${requirementsList.map(rq => rq.name + ' |').join('')}
+| :----: | ${requirementsList.map(rq => ' :---: |').join('')}         
+                    `;
+                    for (let op of optionsList) {
+                        hoverMessage += `| ${op.name} | ${requirementsList.map((rq, index) => {
+                            // find all pieces in the piecesList that has option id = op.id and requirement id = rq.id
+                            let piecesInThisCell = [];
+                            for (let pKey in task.pieces) {
+                                let piece = task.pieces[pKey];
+                                let attitudeList = piece.attitudeList;
+                                if (attitudeList !== undefined) {
+                                    let attitudeRequirementPairs = attitudeList[op.id];
+                                    if (attitudeRequirementPairs !== undefined) {
+                                        let attitude = attitudeRequirementPairs[rq.id];
+                                        if (attitude !== undefined) {
+                                            piecesInThisCell.push({
+                                                ...piece,
+                                                id: pKey,
+                                                attitude: attitude
+                                            });
+                                        }
+                                    }
+                                }
+                            }
+                            piecesInThisCell = reverse(sortBy(piecesInThisCell, ['attitude']));
+                            return piecesInThisCell.map((p, idx) => {
+                                let thumb = null;
+                                switch (p.attitude) {
+                                    case 'good':  thumb = '👍 '; break;
+                                    case 'bad':   thumb = '👎 '; break;
+                                    case 'idk':   thumb = '❓ '; break;
+                                    default: break;
+                                }
+                                return thumb;
+                            }).join('') + ' |';
+                        }).join('')}\n`;
+                        
+                    }
+                }
                 hoverMessage += `----   \n`;
 
-                hoverMessage += `#### Pasted Code Snippets:   \n`;
-                hoverMessage += `\`\`\`${activeLanguage}  \n`;
-                hoverMessage += `${payload.content}   `;
-                hoverMessage += `\`\`\`   \n`;
-                hoverMessage += `----  \n`;
 
+                // Piece info
+                hoverMessage += `## [${payload.title}](command:extension.openTask)    \n`;
+                hoverMessage += `### [Source](${payload.url})    \n`;
+                if (payload.notes !== '') {
+                    hoverMessage += `Notes: ${payload.notes.trim()}   \n`;
+                }
 
                 let existingOptions = payload.existingOptions;
+                // let existingRequirements = payload.existingRequirements;
+//                 if (existingOptions !== undefined && existingRequirements !== undefined) {
+//                     hoverMessage += `
+// | Options | ${existingRequirements.map(rq => rq.name + ' |').join('')}
+// | :----: | ${existingRequirements.map(rq => ' :---: |').join('')}         
+//                     `;
+//                     // hoverMessage += `| Options | ${existingRequirements.map(rq => rq.name + ' |').join('')}\n`;
+//                     // hoverMessage += `| ---- | ${existingRequirements.map(rq => ' ---- |').join('')}\n`;
+//                     for (let op of existingOptions) {
+//                         if (op.attitudeRequirementPairs !== undefined) {
+//                             hoverMessage += `| ${op.name} | ${existingRequirements.map(rq => {
+//                                 let attitudeRequirementPairs = op.attitudeRequirementPairs;
+//                                 for (let rqKey of Object.keys(attitudeRequirementPairs)) {
+//                                     let attitude = attitudeRequirementPairs[rqKey];
+//                                     if (rq.id === rqKey) {
+//                                         return `${attitude === 'good' ? '👍' : attitude === 'bad' ? '👎' : '❓'} |`;
+//                                     }
+//                                     break;
+//                                 }
+//                                 return ' |';
+//                             }).join('')}\n`;
+//                         } else {
+//                             hoverMessage += `| ${op.name} | ${existingRequirements.map(rq => '  |').join('')}\n`;
+//                         }
+//                     }
+//                 }
+                
+
                 if (existingOptions !== undefined) {
                     let requirements = {};
                     payload.existingRequirements.map((rq) => {
                         requirements[rq.id] = {...rq};
                     });
 
-                    hoverMessage += `#### Options & Requirements:   \n`;
+                    hoverMessage += `### Options & Requirements :   \n`;
                     for (let op of existingOptions.filter(o => o.attitudeRequirementPairs !== undefined)) {
                         hoverMessage += `- **${op.name}**:  \n`;
                         let attitudeRequirementPairs = op.attitudeRequirementPairs;
@@ -213,11 +309,18 @@ export async function activate(context: vscode.ExtensionContext) {
                             let rqName = requirements[rqKey].name;
                             hoverMessage += `> - **${rqName}**: ${attitude === 'good' ? '👍' : attitude === 'bad' ? '👎' : '❓'}  \n`;
                         }
-
                     }
                 }
 
+                hoverMessage += `\n`;
+                hoverMessage += `----  \n`;
+                hoverMessage += `## Pasted Code Snippets:   \n`;
+                hoverMessage += `\`\`\`${activeLanguage}  \n`;
+                hoverMessage += `${payload.content}   `;
+                hoverMessage += `\`\`\`   \n \n \n \n`;
 
+
+                
                 
                 let constructed = new vscode.MarkdownString(hoverMessage);
                 constructed.isTrusted = true;

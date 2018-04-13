@@ -91,11 +91,11 @@ export const updateLineIndices = async (mappings, filePath, gitInfo) => {
             for (; useIndex < usedBy.length; useIndex++) {
                 let use = usedBy[useIndex];
                 if (use.filePath === filePath) {
-                    console.log(filePath);
+                    // console.log(filePath);
                     let useHistory = use.useHistory;
                     if (useHistory.newLineIndices === undefined || useHistory.newLineIndices === null || useHistory.newLineIndices.length === 0) {
                         // not using any more
-                        console.log('NOT USING ANY MORE');
+                        // console.log('NOT USING ANY MORE');
                         if (_.last(useHistory).gitInfo.sha === gitInfo.sha) {
                             // directly update the last element
                             useHistory[useHistory.length - 1].isUsing = false;
@@ -105,16 +105,16 @@ export const updateLineIndices = async (mappings, filePath, gitInfo) => {
                     } else {
                         if (_.isEqual(_.sortBy(_.last(useHistory).lineIndices), _.sortBy(useHistory.newLineIndices))) {
                             // no need to update
-                            console.log('NO NEED TO UPDATE');
+                            // console.log('NO NEED TO UPDATE');
                         } else {
                             if (_.last(useHistory).gitInfo.sha === gitInfo.sha) {
                                 // directly update the last element
-                                console.log('DIRECTLY UPDATE THE LAST ELEMENT');
+                                // console.log('DIRECTLY UPDATE THE LAST ELEMENT');
                                 useHistory[useHistory.length - 1].isUsing = true;
                                 useHistory[useHistory.length - 1].lineIndices = _.sortBy(useHistory.newLineIndices);
                             } else {
                                 // push a new entry in useHistory
-                                console.log('PUSH IN A NEW ENTRY');
+                                // console.log('PUSH IN A NEW ENTRY');
                                 useHistory.push({
                                     gitInfo, 
                                     isUsing: true, lineIndices: _.sortBy(useHistory.newLineIndices)
