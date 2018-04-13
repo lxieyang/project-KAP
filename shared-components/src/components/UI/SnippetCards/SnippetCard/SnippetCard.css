@@ -14,6 +14,12 @@
   z-index: inherit;
 }
 
+.FamousCard {
+  outline-style: dotted;
+  outline-color: rgb(255, 153, 0);
+  outline-width: 3px;
+}
+
 .SnippetCard:hover {
   z-index: 1000;
   transform: scale(1.05);

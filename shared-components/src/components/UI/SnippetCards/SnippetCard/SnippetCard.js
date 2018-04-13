@@ -631,7 +631,7 @@ class SnippetCard extends Component {
     // return connectDropTarget(connectDragSource(
     return (
       <div 
-        className={[styles.SnippetCard, props.status ? null : styles.Hide].join(' ')}
+        className={[styles.SnippetCard, props.status ? null : styles.Hide, props.specificPieceId === props.id ? styles.FamousCard : null].join(' ')}
         style={{
           transform: isActive ? 'scale(1.2)' : 'scale(1.0)',
           opacity: isDragging ? '0.3' : '1.0',

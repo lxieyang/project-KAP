@@ -215,6 +215,7 @@ const SnippetsGroup = (props) => {
                 attitudeList={p.attitudeList}
                 codeFilterOn={props.codeFilterOn}
                 notesFilterOn={props.notesFilterOn}
+                specificPieceId={props.specificPieceId}
                 unCategorizedFilterOn={props.unCategorizedFilterOn}
                 attitudeOptionPairsList={attitudeOptionPairsList}
                 deleteThisSnippet={props.deleteSnippet}
@@ -459,6 +460,7 @@ class CollectionView extends Component {
         unCategorizedFilterOn={unCategorizedFilterOn}
         requirements={task.requirements}
         piecesList={filteredPiecesAccordingToFilterStatus}
+        specificPieceId={this.state.specificPieceId}
         makeInteractionBox={this.makeInteractionbox}
         deleteSnippet={this.deletePieceHandler} />
     );
@@ -493,6 +495,7 @@ class CollectionView extends Component {
         unCategorizedFilterOn={unCategorizedFilterOn}
         // piecesList={newPiecesList}
         piecesList={piecesListClone}
+        specificPieceId={this.state.specificPieceId}
         makeInteractionBox={this.makeInteractionbox}
         deleteSnippet={this.deletePieceHandler} 
         createAPieceGroup={this.createAPieceGroup}
@@ -520,7 +523,6 @@ class CollectionView extends Component {
                 specificPieceId={this.state.specificPieceId}
                 options={this.props.task.options}
                 requirements={this.props.task.requirements}
-                
                 attitudeList={piece.attitudeList}
                 type={piece.type}
                 url={piece.url}
@@ -547,14 +549,10 @@ class CollectionView extends Component {
         <div className={styles.CollectionView}>
             <div className={styles.Main} id="scrollable-content-container">
               
-            
-            
               <div className={styles.Section}>
                 {topPages}
               </div>
-
-
-
+              
               <div className={styles.Section}>
                 <Aux>
                   <div className={styles.Header}>

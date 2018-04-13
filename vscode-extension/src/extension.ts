@@ -318,8 +318,6 @@ export async function activate(context: vscode.ExtensionContext) {
                 hoverMessage += `\`\`\`${activeLanguage}  \n`;
                 hoverMessage += `${payload.content}   `;
                 hoverMessage += `\`\`\`   \n \n \n \n`;
-
-
                 
                 
                 let constructed = new vscode.MarkdownString(hoverMessage);
