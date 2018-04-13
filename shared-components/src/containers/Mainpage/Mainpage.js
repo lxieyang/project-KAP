@@ -83,7 +83,7 @@ class Mainpage extends Component {
 
   updateInbackground () {
     if (window.chrome !== undefined && window.chrome.extension !== undefined) {
-      console.log('update in background');
+      // console.log('update in background');
       chrome.runtime.sendMessage({
         msg: 'RESET_USER_ID',
         payload: {userId}

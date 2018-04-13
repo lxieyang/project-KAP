@@ -250,12 +250,30 @@
   cursor: pointer;
   font-size: 0.9rem;
   color: inherit;
-  justify-self: flex-end;
   transition: all 0.1s ease-in;
 }
 
 .ViewIcon:hover {
   opacity: 0.8;
+}
+
+.ExternalLink {
+  margin-left: 8px;
+  opacity: 0.5;
+  cursor: pointer;
+  font-size: 0.9rem;
+  color: inherit;
+  transition: all 0.1s ease-in;
+  display: flex;
+  align-items: center;
+}
+
+.ExternalLink:hover {
+  opacity: 0.8;
+}
+
+.IconInside {
+  font-size: 12px;
 }
 
 

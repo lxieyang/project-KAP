@@ -10,6 +10,7 @@ import fasEye from '@fortawesome/fontawesome-free-solid/faEye';
 import fasStar from '@fortawesome/fontawesome-free-solid/faStar';
 import fasStickyNote from '@fortawesome/fontawesome-free-solid/faStickyNote';
 import fasCheckCircle from '@fortawesome/fontawesome-free-solid/faCheckCircle';
+import fasShareSquare from '@fortawesome/fontawesome-free-solid/faShareSquare';
 import fasCode from '@fortawesome/fontawesome-free-solid/faCode';
 import fasFileCode from '@fortawesome/fontawesome-free-solid/faFileCode';
 import fasCodeBranch from '@fortawesome/fontawesome-free-solid/faCodeBranch';
@@ -488,11 +489,20 @@ class SnippetCard extends Component {
               <div className={styles.SiteDomainName}>
                 {props.name}
               </div>
+              <a 
+                title={'Open in new tab'}
+                className={styles.ExternalLink}
+                href={props.link}
+                target='_blank'>
+                <FontAwesomeIcon icon={fasShareSquare} className={styles.IconInside}/>
+              </a>
               <div 
+                title={'View in detail'}
                 className={styles.ViewIcon}
                 onClick={(event) => props.makeInteractionBox(event, props.id)}>
-                <FontAwesomeIcon icon={fasEye} />
+                <FontAwesomeIcon icon={fasEye}/>
               </div>
+              
             </div>
         }
         {

@@ -2,10 +2,10 @@ import React, { Component }from 'react';
 
 import FontAwesomeIcon from '@fortawesome/react-fontawesome';
 import fasShareSquare from '@fortawesome/fontawesome-free-solid/faShareSquare';
-import fasLink from '@fortawesome/fontawesome-free-solid/faLink';
+// import fasLink from '@fortawesome/fontawesome-free-solid/faLink';
 import fasSave from '@fortawesome/fontawesome-free-solid/faSave';
 import fasArrowsAlt from '@fortawesome/fontawesome-free-solid/faArrowsAlt';
-import fasTrash from '@fortawesome/fontawesome-free-solid/faTrash';
+// import fasTrash from '@fortawesome/fontawesome-free-solid/faTrash';
 import fasStar from '@fortawesome/fontawesome-free-solid/faStar';
 import fasListAlt from '@fortawesome/fontawesome-free-solid/faListAlt';
 import fasPaperPlane from '@fortawesome/fontawesome-free-solid/faPaperPlane';
