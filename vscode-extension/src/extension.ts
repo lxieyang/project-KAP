@@ -30,7 +30,7 @@ interface Decoration {
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
-export function activate(context: vscode.ExtensionContext) {
+export async function activate(context: vscode.ExtensionContext) {
     console.log("USER ID: " + FirebaseStore.userId);
     
     let mappings = [];
@@ -61,6 +61,7 @@ export function activate(context: vscode.ExtensionContext) {
                         console.log(range);
                         editor.selection =  new vscode.Selection(range.start, range.start);
                         editor.revealRange(range);
+                        FirebaseStore.userEditorIntegrationRef.child('toOpenFileAndLineNumber').set(null);
                     }));
                 } else {
                     vscode.window.showErrorMessage("Codebase not on local on this machine.");
@@ -110,24 +111,42 @@ export function activate(context: vscode.ExtensionContext) {
     let syncFromCloud = () => {
         let maps = [];
         FirebaseStore.codebasesRef.child(FirebaseStore.codebaseId).child('entries').on('value', (snap) => {
+            let promises = [];
             if (snap.val() !== null) {
                 snap.forEach((childSnap) => {
-                    maps.push({
+                    let updated = {
                         ...childSnap.val(),
                         entryId: childSnap.key
-                    });
-                    return false;   // https://stackoverflow.com/questions/39845758/argument-of-type-snap-datasnapshot-void-is-not-assignable-to-parameter-o
+                    };
+                    // update task name, piece name
+                    let userId = childSnap.val().userId;
+                    let taskId = childSnap.val().taskId;
+                    let pieceId = childSnap.val().pieceId;
+                    let taskRef = FirebaseStore.database.ref('users').child(userId).child('tasks').child(taskId);
+                    promises.push(taskRef.once('value', taskSnap => {
+                        if (taskSnap.val() !== null) {
+                            updated.taskName = taskSnap.val().name;
+                            if (taskSnap.val().pieces[pieceId] !== null) {
+                                updated.title = taskSnap.val().pieces[pieceId].title;
+                            }
+                        }
+                        maps.push(updated);
+                    }));
+                    
+                    return false;   
+                    // https://stackoverflow.com/questions/39845758/argument-of-type-snap-datasnapshot-void-is-not-assignable-to-parameter-o
                 });
             }
             
             // update in workspace
-            context.workspaceState.update('mappings', maps).then(response => {
-                throttledScan();
+            Promise.all(promises).then(() => {
+                context.workspaceState.update('mappings', maps).then(response => {
+                    throttledScan();
+                });
             });
+            
         });
     };
-
-
 
     let taskToNavigateTo = {
         userId: "",
@@ -162,6 +181,8 @@ export function activate(context: vscode.ExtensionContext) {
 
 
                 let hoverMessage = "";
+
+                hoverMessage += `### Task: ${payload.taskName}   \n`;
 
                 hoverMessage += `### [${payload.title} ](${payload.url})    \n`;
                 hoverMessage += `(${moment(new Date(payload.timestamp)).format("dddd, MMMM Do YYYY, h:mm:ss a")})   \n\n`;
@@ -200,8 +221,6 @@ export function activate(context: vscode.ExtensionContext) {
                 
                 let constructed = new vscode.MarkdownString(hoverMessage);
                 constructed.isTrusted = true;
-
-                console.log(constructed);
 
                 return Promise.resolve(new vscode.Hover(constructed, document.getWordRangeAtPosition(position)));
             }
@@ -254,7 +273,7 @@ export function activate(context: vscode.ExtensionContext) {
 
                     // check copy
                     if (copiedPayload !== null) {
-                        const { userId, taskId, pieceId, title, timestamp } = copiedPayload;
+                        const { userId, taskId, pieceId, timestamp } = copiedPayload;
                         if (`@@@source: (${userId}) (${taskId}) (${pieceId}) (${timestamp})` === lineIdentity) {
                             FirebaseStore.addNewEntryInCodebase(copiedPayload, currentFilePath, lineIdx, gitInfo);
                         }  
@@ -264,7 +283,7 @@ export function activate(context: vscode.ExtensionContext) {
                     // find mapping
                     if (mappings !== undefined && mappings.length > 0) {
                         for (let entry of mappings) {
-                            const { userId, taskId, pieceId, title, timestamp } = entry;
+                            const { userId, taskId, pieceId, timestamp } = entry;
                             // console.log(lineIdentity);
                             if (`@@@source: (${userId}) (${taskId}) (${pieceId}) (${timestamp})` === lineIdentity) {
                                 // console.log("pushed");
@@ -275,6 +294,13 @@ export function activate(context: vscode.ExtensionContext) {
                                     decorations,
                                     payload
                                 });
+
+                                // update overview ruler
+                                let decorationType = vscode.window.createTextEditorDecorationType({
+                                    overviewRulerLane: vscode.OverviewRulerLane.Full,
+                                    overviewRulerColor: 'rgb(78, 175, 96)'
+                                });
+                                editor.setDecorations(decorationType, [new vscode.Range(lineIdx+1, 0, lineIdx+1, 0)]);
     
                                 // update line index
                                 let usedBy = entry.usedBy;

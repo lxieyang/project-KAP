@@ -194,6 +194,7 @@ class interactionBox extends Component {
       existingRequirements: this.state.existingRequirements,
       userId: window.userId,
       taskId: window.currentTaskId,
+      taskName: window.taskName,
       pieceId: this.state.id,
       timestamp: (new Date()).toString()
     };

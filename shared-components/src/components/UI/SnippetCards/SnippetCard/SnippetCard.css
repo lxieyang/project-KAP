@@ -101,9 +101,6 @@
   box-shadow: 0 4px 10px 0 rgba(0,0,0,0.2),0 4px 20px 0 rgba(0,0,0,0.19);
 }
 
-.CodebaseNameContainer {
-}
-
 .CodebaseIcon {
   color: gray;
   margin-right: 4px;
@@ -114,7 +111,6 @@
   font-weight: 500;
   margin-right: 4px;
 }
-
 
 .CodeContentContainer pre {
   font-family: monospace;

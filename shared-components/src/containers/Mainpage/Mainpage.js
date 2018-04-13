@@ -70,6 +70,11 @@ class Mainpage extends Component {
     window.userId = userId;
     currentTaskIdRef.on('value', (snap) => {
       window.currentTaskId = snap.val();
+      if (snap.val() !== undefined && snap.val() !== null) {
+        tasksRef.child(snap.val()).child('name').once('value', (snapp) => {
+          window.taskName = snapp.val();
+        });
+      }
     });
     // window.currentTaskIdRef = currentTaskIdRef;
     window.tasksRef = tasksRef;
