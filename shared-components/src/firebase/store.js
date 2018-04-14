@@ -238,10 +238,23 @@ export const addAnOptionForCurrentTask = async (optionName) => {
     order: currentTaskOptions.length,
     starred: false,
     hide: false,
-    used: false
+    used: false,
+    notes: []
   });
   tasksRef.child(currentTaskId + '/options').on('child_added', (snapshot) => {
     tasksRef.child(currentTaskId + '/currentOptionId').set(snapshot.key);
+  });
+}
+
+export const switchShowOptionNotesStatus = async () => {
+  currentTaskId = (await currentTaskIdRef.once('value')).val();
+  let showOptionNotesref = tasksRef.child(currentTaskId).child('showOptionNotes');
+  showOptionNotesref.once('value', snap => {
+    if (snap.val() !== null) {
+      showOptionNotesref.set(!snap.val());
+    } else {
+      showOptionNotesref.set(true);
+    }
   });
 }
 
@@ -253,6 +266,45 @@ export const updateOptionName = async (optionId, optionName) => {
       ...snap.val(),
       name: optionName
     })
+  });
+}
+
+export const switchOptionNotesShowStatus = async (optionId) => {
+  currentTaskId = (await currentTaskIdRef.once('value')).val();
+  let optionNotesShowStatusRef = tasksRef.child(currentTaskId + '/options').child(optionId).child('showNotes');
+  optionNotesShowStatusRef.once('value', snap => {
+    if (snap.val() === null) {
+      optionNotesShowStatusRef.set(true);
+    } else {
+      optionNotesShowStatusRef.set(!snap.val());
+    }
+  });
+}
+
+export const addANoteToAnOption = async (optionId, note) => {
+  currentTaskId = (await currentTaskIdRef.once('value')).val();
+  let optionNotesRef = tasksRef.child(currentTaskId + '/options').child(optionId).child('notes');
+  optionNotesRef.once('value', (snap) => {
+    if (snap.val() === null) {
+      // no notes yet ==> add one to the list
+      optionNotesRef.set([note]);
+    } else {
+      let notes = snap.val();
+      notes.push(note);
+      optionNotesRef.set(notes);
+    }
+  })
+}
+
+export const deleteANoteFromAnOption = async (optionId, note) => {
+  currentTaskId = (await currentTaskIdRef.once('value')).val();
+  let optionNotesRef = tasksRef.child(currentTaskId + '/options').child(optionId).child('notes');
+  optionNotesRef.once('value', (snap) => {
+    if (snap.val() !== null) {
+      let notes = snap.val();
+      notes.splice(notes.indexOf(note), 1);
+      optionNotesRef.set(notes);
+    }
   });
 }
 

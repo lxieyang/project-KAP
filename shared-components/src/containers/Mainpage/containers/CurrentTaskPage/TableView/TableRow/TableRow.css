@@ -8,9 +8,87 @@
   font-weight: 600;
   text-overflow: ellipsis;
   max-width: 250px;
-  max-height: 150px;
+  min-width: 100px;
   padding-right: 30px;
   transition: all 0.1s ease-in;
+}
+
+.ShowHideNotes {
+  margin-left: 10px;
+  cursor: pointer;
+  color: gray;
+  transition: all 0.1s ease-in;
+}
+
+.ShowHideNotes:hover {
+  opacity: 0.8;
+}
+
+.OpenNotes {
+  opacity: 0.8;
+}
+
+.CloseNotes {
+  opacity: 0.1;
+}
+
+.NotesIcon {
+  font-size: 0.8rem;
+}
+
+.CollapsedNotes {
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.NotesBox {
+  margin-top: 5px;
+  padding-top: 5px;
+  border-top: 1px dashed lightgray;
+}
+
+.NotesContainer  ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.NotesContainer  ul li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 0px 0px;
+  margin-bottom: 5px;
+  padding: 0px 3px;
+  transition: all 0.1s ease-in;
+}
+
+.NotesContent {
+  padding: 3px;
+}
+
+.NotesContainer  ul li:hover {
+  box-shadow: 0 1px 1px 0 rgba(0,0,0,0.10), 0 1px 3px 0 rgba(0,0,0,0.06);
+}
+
+.TrashNoteIcon {
+  color: gray;
+  margin-left: 5px;
+  opacity: 0.3;
+  cursor: pointer;
+  transition: all 0.1s ease-in;
+}
+
+.TrashNoteIcon:hover {
+  opacity: 0.8;
+}
+
+.InputContainer {
+  width: 90%;
+}
+
+.Input {
+  font-size: 0.6rem;
 }
 
 .OptionText:focus {
@@ -84,4 +162,11 @@
 .ShowHidePieceIcon:hover {
   opacity: 0.8;
 }
+
+/* .ShowHideNotes {
+  position: absolute;
+  bottom: 4px;
+  right: 12px;
+  z-index: 999999;
+} */
 

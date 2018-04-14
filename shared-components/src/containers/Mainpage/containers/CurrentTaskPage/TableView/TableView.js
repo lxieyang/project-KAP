@@ -10,6 +10,8 @@ import fasICursor from '@fortawesome/fontawesome-free-solid/faICursor';
 import fasCode from '@fortawesome/fontawesome-free-solid/faCode';
 import fasMinusCircle from '@fortawesome/fontawesome-free-solid/faMinusCircle';
 import fasCheckCircle from '@fortawesome/fontawesome-free-solid/faCheckCircle';
+import fasToggleOn from '@fortawesome/fontawesome-free-solid/faToggleOn';
+import fasToggleOff from '@fortawesome/fontawesome-free-solid/faToggleOff';
 
 import TableRow from './TableRow/TableRow';
 import ToggleSwitch from '../../../../../components/UI/ToggleSwitch/ToggleSwitch';
@@ -43,6 +45,7 @@ class TableView extends Component {
     requirementsList: [],
     piecesList: [],
     isDetailed: true,
+    shouldShowNotes: this.props.task.showOptionNotes !== undefined ? this.props.task.showOptionNotes : false,
     showModal: false,
     modalPieceId: ''
   }
@@ -79,7 +82,6 @@ class TableView extends Component {
       });
     }
     optionsList = sortBy(optionsList, ['order']);
-    // console.log(optionsList);
 
     // extract requirements
     let requirementsList = [];
@@ -91,21 +93,9 @@ class TableView extends Component {
       });
     }
     requirementsList = sortBy(requirementsList, ['order']);
-
-    // extract pieces ==> disabling piece grouping
-    let piecesList = [];
-    // let toInactivePiecesList = [];
-    // for (let pgKey in task.pieceGroups) {
-    //   if (task.pieceGroups[pgKey].pieceIds) {
-    //     toInactivePiecesList = toInactivePiecesList.concat(task.pieceGroups[pgKey].pieceIds);
-    //   }
-    //   piecesList.push({
-    //     ...task.pieceGroups[pgKey],
-    //     id: pgKey,
-    //     active: true
-    //   });
-    // }
     
+    // extract pieces
+    let piecesList = [];
     for (let pKey in task.pieces) {
       piecesList.push({
         ...task.pieces[pKey],
@@ -113,37 +103,11 @@ class TableView extends Component {
         active: true // toInactivePiecesList.indexOf(pKey) === -1
       });
     }
-    
 
-    this.setState({optionsList, requirementsList, piecesList});
-  }
+    // show notes?
+    let shouldShowNotes = task.showOptionNotes;
 
-  getOrderedPiecesListFromState () {
-    let { optionsList, piecesList } = this.state;
-    
-    for (let pIdx in piecesList) {
-      let piece = piecesList[pIdx];
-      let count = 0;
-      if (piece.active) {  // && (piece.type === SNIPPET_TYPE.SELECTION || piece.type === SNIPPET_TYPE.LASSO)) {
-        let attitudeOptionPairs = piece.attitudeOptionPairs;
-        if (attitudeOptionPairs !== undefined) {
-          for (let pairIdx in attitudeOptionPairs) {
-            let opId = attitudeOptionPairs[pairIdx].optionId;
-            let optionIsActive = optionsList.filter(op => op.id === opId)[0].active;
-            if (optionIsActive) {
-              count++;
-            }
-          }
-        }
-        if (piece.type === SNIPPET_TYPE.PIECE_GROUP) {
-          count = 1000;
-        }
-      }
-      piece.count = count;
-    }
-
-    piecesList = reverse(sortBy(piecesList, ['active', 'count']));
-    return piecesList;
+    this.setState({optionsList, requirementsList, piecesList, shouldShowNotes});
   }
 
   getOrderedRequirementListFromState () {
@@ -247,6 +211,14 @@ class TableView extends Component {
     this.setState(prevState => {
       return {isDetailed: !prevState.isDetailed};
     });
+  }
+
+  showNotesChangedHandler = (event) => {
+    // this.setState(prevState => {
+    //   return {shouldShowNotes: !prevState.shouldShowNotes};
+    // });
+
+    FirebaseStore.switchShowOptionNotesStatus();
   }
 
   changeAttitude = (optionId, pieceId, originalAttitude, changedAttitude, type) => {
@@ -480,7 +452,22 @@ class TableView extends Component {
 
     let newTableHeader = (
       <tr>
-        <th></th>
+        <th style={{verticalAlign: 'bottom'}}>
+          <div className={styles.ConfigurationLine}>
+            <div className={styles.Label}>
+              <span>Show Notes</span>
+            </div>
+            <div 
+              className={styles.Slider}
+              onClick={(event) => this.showNotesChangedHandler(event)}>
+              {
+                this.state.shouldShowNotes 
+                ? <FontAwesomeIcon icon={fasToggleOn} className={[styles.SliderIcon, styles.SliderOn].join(' ')}/>
+                : <FontAwesomeIcon icon={fasToggleOff} className={[styles.SliderIcon, styles.SliderOff].join(' ')}/>
+              }
+            </div>
+          </div>
+        </th>
         {
           newRequirementsList.map((rq, idx) => {
             return (
@@ -516,6 +503,9 @@ class TableView extends Component {
             options={this.state.options}
             requirements={this.state.requirements}
             updateOptionName={FirebaseStore.updateOptionName}
+            addANoteToOption={FirebaseStore.addANoteToAnOption}
+            deleteANoteFromOption={FirebaseStore.deleteANoteFromAnOption}
+            shouldShowNotes={this.state.shouldShowNotes}
             makeInteractionbox={this.makeInteractionbox}/>
             {
               newRequirementsList.map((rq, index) => {

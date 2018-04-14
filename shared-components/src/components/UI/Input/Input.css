@@ -4,7 +4,7 @@
 
 .InputElement {
   outline: none;
-  font-size: 1.0rem;
+  font-size: inherit;
   margin: 0;
   max-width: 100%;
   text-align: left;

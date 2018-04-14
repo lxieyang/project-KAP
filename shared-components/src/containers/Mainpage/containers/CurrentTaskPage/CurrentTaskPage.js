@@ -60,6 +60,7 @@ class CurrentTaskPage extends Component {
           displayName: childSnapshot.val().name,
           time: childSnapshot.val().timestamp,
           searchQueries: childSnapshot.val().searchQueries,
+          showOptionNotes: childSnapshot.val().showOptionNotes,
           options: (
             childSnapshot.val().options === undefined 
             ? {} 

@@ -9,6 +9,23 @@
   justify-content: space-between;
 }
 
+.ConfigurationLine {
+  padding-right: 20px;
+  font-size: 1.0rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.SliderIcon {
+  font-size: 1.1rem;
+  cursor: pointer;
+}
+
+.SliderOn {
+  color: #5cb85c;
+}
+
 .OptionList {
   margin-top: 10px;
   display: flex;
@@ -33,13 +50,7 @@
   align-items: center;
 }
 
-.Label {
-  margin-right: 10px;
-}
 
-.Slider {
-
-}
 
 .Active {
   opacity: 1;
