@@ -529,11 +529,12 @@ class TableView extends Component {
                   }
                 }
                 piecesInThisCell = reverse(sortBy(piecesInThisCell, ['attitude']));
-    
+                
                 return (
                   <td key={rq.id} style={{opacity: rq.hide === true || op.hide === true ? `${inactiveOpacity}` : '1'}}>
                     <div className={styles.AttitudeThumbInTableCellContainer}>
-                      {piecesInThisCell.map((p, idx) => {
+                      { piecesInThisCell.length > 0 ?
+                        piecesInThisCell.map((p, idx) => {
                         let thumb = null;
                         switch (p.attitude) {
                           case 'good':  thumb = (<ThumbV1 type='up' />); break;
@@ -585,7 +586,8 @@ class TableView extends Component {
                             </ReactTooltip>
                           </Aux>
                         );
-                      })}
+                        
+                      }): null}
                     </div>
                   </td>
                 );
