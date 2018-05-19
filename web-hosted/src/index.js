@@ -6,7 +6,7 @@ import { BrowserRouter } from 'react-router-dom';
 import registerServiceWorker from './registerServiceWorker';
 
 if (window.top !== window.self) { 
-  document.body.style.zoom = '0.75';
+  document.body.style.zoom = '0.6';
 }
 
 const app = (

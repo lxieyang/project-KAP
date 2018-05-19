@@ -502,7 +502,7 @@ export async function activate(context: vscode.ExtensionContext) {
 
     /* Register Commands */
     let disposable = vscode.commands.registerCommand('extension.openWebview', () => {
-        return vscode.commands.executeCommand('vscode.previewHtml', previewUri, vscode.ViewColumn.Two, 'KAP').then((success) => {
+        return vscode.commands.executeCommand('vscode.previewHtml', previewUri, vscode.ViewColumn.Two, 'UNAKITE').then((success) => {
 
         }, (reason) => {
             vscode.window.showErrorMessage(reason);

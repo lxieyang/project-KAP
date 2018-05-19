@@ -18,7 +18,7 @@
         "commands": [
             {
                 "command": "extension.openWebview",
-                "title": "Open KAP"
+                "title": "Open UNAKITE"
             }
         ],
         "configuration": {

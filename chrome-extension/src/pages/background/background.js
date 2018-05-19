@@ -171,7 +171,7 @@ chrome.contextMenus.create({
 });
 
 chrome.contextMenus.create({
-  title: 'Collect it as a Piece',
+  title: 'Collect it as a Snippet',
   "contexts": ["selection"],
   onclick: (_, tab) => {
     console.log(tab);
