@@ -12,14 +12,19 @@ import {
   currentTaskIdRef,
   isDisabledRef,
   userId,
+  userName,
+  userProfilePhotoURL,
   setUserIdAndName
 } from '../../../../shared-components/src/firebase/index';
 import * as FirebaseStore from '../../../../shared-components/src/firebase/store';
 
 
 let userIdCached = localStorage.getItem('userId');
-if (userIdCached !== null) {
-  setUserIdAndName(userIdCached, 'Master ' + userIdCached);
+let userNameCached = localStorage.getItem('userName');
+let userProfilePhotoURLCached = localStorage.getItem('userProfilePhotoURL');
+    
+if (userIdCached !== null && userIdCached !== 'invalid') {
+  setUserIdAndName(userIdCached, userNameCached, userProfilePhotoURLCached);
 }
 
 let popPort;
@@ -28,10 +33,17 @@ let contentPort;
 chrome.runtime.onMessage.addListener(
   function(request, sender, sendResponse) {
     if (request.msg === 'RESET_USER_ID') {
-      setUserIdAndName(request.payload.userId);
+      setUserIdAndName(
+        request.payload.userId,
+        request.payload.userName,
+        request.payload.userProfilePhotoURL
+      );
       localStorage.setItem('userId', userId);
+      localStorage.setItem('userName', userName);
+      localStorage.setItem('userProfilePhotoURL', userProfilePhotoURL);
+      
       console.log("USERID: " + request.payload.userId);
-      console.log(tasksRef.path.pieces_);
+      // console.log(tasksRef.path.pieces_);
       try {
         popPort.postMessage({
           msg: 'USER_INFO',
@@ -40,7 +52,7 @@ chrome.runtime.onMessage.addListener(
           }
         });
       } catch (error) {
-        console.log(error);
+        // console.log(error);
       }
 
       try {
@@ -51,8 +63,13 @@ chrome.runtime.onMessage.addListener(
           }
         });
       } catch (error) {
-        console.log(error);
+        // console.log(error);
       }
+    } else if (request.msg === 'OPEN_NEW_TAB') {
+      console.log('open new tab in background');
+      chrome.tabs.create({}, function(tab) {
+          // Tab opened.
+      });
     }
   }
 );

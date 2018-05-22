@@ -1,6 +1,7 @@
 /* global chrome */
 import React, { Component } from "react";
-
+import FontAwesomeIcon from '@fortawesome/react-fontawesome';
+import fasExternalLinkAlt from '@fortawesome/fontawesome-free-solid/faExternalLinkAlt';
 import Aux from '../../../../shared-components/src/hoc/Aux/Aux';
 import AppHeader from '../../../../shared-components/src/components/UI/AppHeader/AppHeader';
 import HorizontalDivider from '../../../../shared-components/src/components/UI/Divider/HorizontalDivider/HorizontalDivider';
@@ -8,6 +9,7 @@ import CurrentTask from './components/CurrentTask/CurrentTask';
 import Options from './components/Options/Options';
 import Requirements from './components/Requirements/Requirements';
 import Settings from './components/Settings/Settings';
+import Spinner from '../../../../shared-components/src/components/UI/Spinner/Spinner';
 import { DragDropContext } from 'react-dnd';
 import HTML5Backend from 'react-dnd-html5-backend';
 import { 
@@ -36,7 +38,9 @@ class Popup extends Component {
     isEditingOption: true,
     currentTaskIdIsLoading: true,
     tasksIsLoading: true,
-    enabled: true
+    enabled: true,
+    loading: true,
+    userId: null
   }
 
   componentDidMount() {
@@ -62,6 +66,10 @@ class Popup extends Component {
       if(response.msg === 'USER_INFO') {
         const { payload } = response;
         setUserIdAndName(payload.userId);
+        this.setState({
+          loading: false,
+          userId: payload.userId
+        });
         this.updateTask();
       }
     });
@@ -192,14 +200,46 @@ class Popup extends Component {
     });
   }
 
+  openNewTabClickedHandler = () => {
+    console.log('open new tab');
+    chrome.runtime.sendMessage({
+      msg: 'OPEN_NEW_TAB'
+    });
+  }
+
   render () {
+
     let appTitle = (<AppHeader logoSize='38px' hover={false}/>);
+
+    // if (this.state.loading) {
+    //   return (
+    //     <div>
+    //       {appTitle}
+    //     </div>
+    //   );
+    // }
+
+    let toRender;
+
+    if (this.state.userId === null || this.state.userId === 'invalid') {
+      toRender = (
+        <Aux>
+          {appTitle}
+          <HorizontalDivider margin={dividerOptions.margin.short}/>
+          <div style={{width: '100%', height: '240px', display: 'flex', justifyContent: 'space-around', alignItems: 'center'}}>
+            <div className={styles.GoToNewTabBtn} onClick={(event) => this.openNewTabClickedHandler()}>
+              Please sign in from a new tab! &nbsp;
+              <FontAwesomeIcon icon={fasExternalLinkAlt} />
+            </div>
+          </div>
+        </Aux>
+      );
+
+      return (<div>{toRender}</div>);
+    }
 
     const { currentTaskIdIsLoading, tasksIsLoading, enabled } = this.state;
 
-    let toRender = (
-      <Aux>{appTitle}</Aux>
-    );
     if ((!currentTaskIdIsLoading) && (!tasksIsLoading)) {
       const { currentTaskId, tasks, newOptionInput, newRequirementInput } = this.state;
 
@@ -279,11 +319,7 @@ class Popup extends Component {
       );
     }
 
-    return (
-      <div>
-        {toRender}   
-      </div>
-    );
+    return (<div>{toRender}</div>);
   }
 }
 

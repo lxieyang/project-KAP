@@ -98,6 +98,8 @@ class Mainpage extends Component {
     setUserIdAndName(userId, 'Master ' + userId);
     this.syncWithEditorAndWindow(userId);
     localStorage.setItem('userId', userId);
+    localStorage.setItem('userName', userName);
+    localStorage.setItem('userProfilePhotoURL', userProfilePhotoURL);
     this.loadTasks();
     this.updateInbackground();
   }
@@ -131,7 +133,11 @@ class Mainpage extends Component {
       // console.log('update in background');
       chrome.runtime.sendMessage({
         msg: 'RESET_USER_ID',
-        payload: {userId}
+        payload: {
+          userId,
+          userName,
+          userProfilePhotoURL
+        }
       })
     }
   }

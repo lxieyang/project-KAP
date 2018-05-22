@@ -2,3 +2,13 @@
   display: flex;
   margin-top: 10px;
 }
+
+.GoToNewTabBtn {
+  font-weight: 600;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+.GoToNewTabBtn:hover {
+  text-decoration: underline;
+} 

@@ -107,7 +107,12 @@
 }
 
 .Label {
-  color: gray;
+  color: rgb(97, 96, 96);
+  transition: all 0.1s ease-in;
+}
+
+.Label:hover {
+  transform: scale(1.01);
 }
 
 .LogoutPopover {
@@ -116,5 +121,6 @@
   background-color: white;
   font-size: 1.3rem;
   text-decoration: none;
-  padding: 0
+  padding: 10px;
+  box-shadow: 0 2px 5px 0 rgba(0,0,0,0.16), 0 2px 10px 0 rgba(0,0,0,0.12);
 }

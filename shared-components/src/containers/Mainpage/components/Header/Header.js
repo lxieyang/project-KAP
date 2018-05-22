@@ -107,6 +107,7 @@ class Header extends Component {
                     to={appRoutes.LOG_OUT}
                     exact>
                     <div className={styles.Label}>
+                      &nbsp;
                       <FontAwesomeIcon icon={fasSignOutAlt} /> &nbsp;
                       Sign out
                     </div>
