@@ -44,7 +44,19 @@ class LoginPage extends Component {
   render () {
     if (!this.state.isSignedIn) {
       return (
-        <div>
+        <div className={styles.LoginPage}>
+          <div className={styles.WelcomeCardContainer}>
+            <div className={styles.WelcomeCard}>
+              <div style={{textAlign: 'center', fontSize: '1.3rem', fontWeight: '600'}}>
+                Welcome to UNAKITE!
+              </div>
+              <div>
+                <strong>UNAKITE</strong> helps you collect, organize, and use online resources while coding. 
+                <br />
+                Please Sign in with your Google account.
+              </div>
+            </div>
+          </div>
           <StyledFirebaseAuth uiConfig={this.uiConfig} firebaseAuth={firebase.auth()}/>
         </div>
       );
