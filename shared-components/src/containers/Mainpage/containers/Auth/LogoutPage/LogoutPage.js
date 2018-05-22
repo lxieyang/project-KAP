@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
-import { Redirect } from 'react-router-dom';
-import * as appRoutes from '../../../../../shared/routes';
 import firebase from '../../../../../firebase/firebase';
+import Spinner from '../../../../../components/UI/Spinner/Spinner';
 
 class LogoutPage extends Component {
   state = {
@@ -9,21 +8,15 @@ class LogoutPage extends Component {
   }
 
   componentWillMount() {
-    firebase.auth().signOut().then((use) => {
-      this.setState({ redirect: true });
-    })
+    firebase.auth().signOut();
   }
 
   render () {
-    if (this.state.redirect === true) {
-      return <Redirect to={appRoutes.LOG_IN} />
-    } 
-
     return (
-      <div>
-        <h1>Logging out ...</h1>
+      <div style={{ textAlign: "center", position: "absolute", top: "25%", left: "50%" }}>
+        <Spinner size="40px"/>
       </div>
-    )
+    );
   }
 }
 

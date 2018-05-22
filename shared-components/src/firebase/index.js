@@ -1,5 +1,7 @@
 import firebase from './firebase';
-import { defaultUserId, defaultUserName} from '../secrets.user';
+
+export let defaultUserId = 'invalid';
+export let defaultUserName = 'invalid';
 
 window.firebase = firebase;
 
@@ -8,7 +10,11 @@ export let userName = defaultUserName;
 export let userProfilePhotoURL = null;
 let userPrefix = 'users/' + userId;
 
-export const setUserIdAndName = (newUserId = defaultUserId, newUserName = defaultUserName, newProfilePhotoURL = null) => {
+export const setUserIdAndName = (
+  newUserId = defaultUserId, 
+  newUserName = defaultUserName, 
+  newProfilePhotoURL = null
+) => {
   userId = newUserId;
   userName = newUserName;
   userPrefix = 'users/' + userId;
