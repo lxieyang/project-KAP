@@ -14,8 +14,10 @@ class Layout extends Component {
     return (
       <Aux>
         <Header 
+          authenticated={this.props.authenticated}
           taskName={this.props.currentTaskName} 
           userName={this.props.userName}
+          userProfilePhotoURL={this.props.userProfilePhotoURL}
           userId={this.props.userId}
           resetParameters={this.props.resetParameters}/>
         <main className={styles.Content}>

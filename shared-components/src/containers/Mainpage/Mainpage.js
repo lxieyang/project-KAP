@@ -1,51 +1,96 @@
 /* global chrome */
 import React, { Component } from "react";
 import { Route, Switch, withRouter, Redirect } from 'react-router-dom';
+import Spinner from '../../components/UI/Spinner/Spinner';
 import Layout from './containers/Layout/Layout';
 import AllTasksPage from './containers/AllTasksPage/AllTasksPage';
 import CurrentTaskPage from './containers/CurrentTaskPage/CurrentTaskPage';
+import LoginPage from './containers/Auth/LoginPage/LoginPage';
+import LogoutPage from './containers/Auth/LogoutPage/LogoutPage';
 import * as appRoutes from '../../shared/routes';
 import HTML5Backend from 'react-dnd-html5-backend';
 import { DragDropContext } from 'react-dnd';
-import { capitalizeFirstLetter } from '../../shared/utilities';
 import { 
   tasksRef,
   currentTaskIdRef,
   codebasesRef,
   userId,
+  userName,
+  userProfilePhotoURL,
   database,
   setUserIdAndName
 } from '../../firebase/index';
+
+import firebase from '../../firebase/firebase';
 
 @DragDropContext(HTML5Backend)
 class Mainpage extends Component {
   state = {
     homepage: appRoutes.CURRENT_TASK,
     currentTaskId: null,
-    tasks: []
+    tasks: [],
+    authenticated: false,
+    loading: true
+  }
+
+  componentWillMount() {
+    this.removeAuthListerner = firebase.auth().onAuthStateChanged((user) => {
+      if (user !== null) {
+        setUserIdAndName(user.uid, user.displayName, user.photoURL);
+        this.syncWithEditorAndWindow(userId);
+        this.loadTasks();
+        this.updateInbackground();
+
+        // ckeck if should load other tasks
+        database.ref('users').child(userId).child('editor').child('taskToNavigateTo').on('value', (snapshot) => {
+          if (snapshot.val() !== null) {
+            this.props.history.push(`/tasks/${snapshot.val().userId}/${snapshot.val().taskId}/${snapshot.val().pieceId}`);
+            database.ref('users').child(userId).child('editor').child('taskToNavigateTo').set(null);
+          }
+        });
+
+        this.setState({
+          authenticated: true,
+          loading: false
+        });
+      } else {
+        setUserIdAndName();
+        this.syncWithEditorAndWindow(userId);
+        this.loadTasks();
+        this.updateInbackground();
+
+        this.setState({
+          authenticated: false,
+          loading: false
+        });
+      }
+    });
+  }
+
+  componentWillUnmount() {
+    this.removeAuthListerner();
   }
 
   componentDidMount () {    
     window.isInKAP = true;
-    let userIdCached = localStorage.getItem('userId');
-    if (userIdCached !== null) {
-      setUserIdAndName(userIdCached, 'Master ' + userIdCached);
-      
-    }
+    // let userIdCached = localStorage.getItem('userId');
+    // if (userIdCached !== null) {
+    //   setUserIdAndName(userIdCached, 'Master ' + userIdCached);
+    // }
 
-    this.syncWithEditorAndWindow(userId);
+    // this.syncWithEditorAndWindow(userId);
 
-    this.loadTasks();
-    this.updateInbackground();
+    // this.loadTasks();
+    // this.updateInbackground();
 
 
-    // ckeck if should load other tasks
-    database.ref('users').child(userId).child('editor').child('taskToNavigateTo').on('value', (snapshot) => {
-      if (snapshot.val() !== null) {
-        this.props.history.push(`/tasks/${snapshot.val().userId}/${snapshot.val().taskId}/${snapshot.val().pieceId}`);
-        database.ref('users').child(userId).child('editor').child('taskToNavigateTo').set(null);
-      }
-    });
+    // // ckeck if should load other tasks
+    // database.ref('users').child(userId).child('editor').child('taskToNavigateTo').on('value', (snapshot) => {
+    //   if (snapshot.val() !== null) {
+    //     this.props.history.push(`/tasks/${snapshot.val().userId}/${snapshot.val().taskId}/${snapshot.val().pieceId}`);
+    //     database.ref('users').child(userId).child('editor').child('taskToNavigateTo').set(null);
+    //   }
+    // });
 
   }
 
@@ -92,7 +137,6 @@ class Mainpage extends Component {
   }
 
   loadTasks () {
-    
     currentTaskIdRef.on('value', (snapshot) => {
       this.setState({currentTaskId: snapshot.val()});
     });
@@ -189,6 +233,15 @@ class Mainpage extends Component {
   }
 
   render () {
+
+    if (this.state.loading === true) {
+      return (
+        <div style={{ textAlign: "center", position: "absolute", top: "25%", left: "50%" }}>
+          <Spinner size="40px"/>
+        </div>
+      )
+    }
+
     const { currentTaskId, tasks } = this.state;
 
     let currentTaskName = null;
@@ -205,24 +258,38 @@ class Mainpage extends Component {
 
     let routes = (
       <Switch>
-        <Route path={appRoutes.CURRENT_TASK} render={
-          (routeProps) => (<CurrentTaskPage {...routeProps} task={currentTaskObject} specific={false}/>)
-        } />
-        <Route path={appRoutes.ALL_TASKS} render={
-          (routeProps) => (<AllTasksPage {...routeProps} tasks={tasks} currentTaskId={currentTaskId}/>)
-        }/>
-        <Route path={appRoutes.TASK_WITH_ID} render={
-          (routeProps) => (<CurrentTaskPage {...routeProps} specific={true} database={database}/>)
-        } />
-        <Redirect to={this.state.homepage} />
-      </Switch>
-    )
+        <Route exact path={appRoutes.LOG_IN} component={LoginPage}/>
+        <Redirect to={appRoutes.LOG_IN} />
+      </Switch> 
+    );
+
+    if (this.state.authenticated) {
+      routes = (
+        <Switch>
+          <Route exact path={appRoutes.LOG_OUT} component={LogoutPage} />
+          <Route path={appRoutes.CURRENT_TASK} render={
+            (routeProps) => (<CurrentTaskPage {...routeProps} task={currentTaskObject} specific={false}/>)
+          } />
+          <Route path={appRoutes.ALL_TASKS} render={
+            (routeProps) => (<AllTasksPage {...routeProps} tasks={tasks} currentTaskId={currentTaskId}/>)
+          }/>
+          <Route path={appRoutes.TASK_WITH_ID} render={
+            (routeProps) => (<CurrentTaskPage {...routeProps} specific={true} database={database}/>)
+          } />
+          <Redirect to={this.state.homepage} />
+        </Switch>
+      )
+    }
+
+    
 
     return (
       <div>
         <Layout 
+          authenticated={this.state.authenticated}
           currentTaskName={currentTaskName} 
-          userName={'Master ' + capitalizeFirstLetter(userId)}
+          userName={userName}
+          userProfilePhotoURL={userProfilePhotoURL}
           userId={userId}
           resetParameters={this.resetParameters}>
           {routes}

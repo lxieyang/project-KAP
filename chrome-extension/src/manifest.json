@@ -42,5 +42,5 @@
     "background"
   ],
   "manifest_version": 2,
-  "content_security_policy": "script-src 'self' 'unsafe-eval' https://gstatic.com https://*.google.com https://*.firebaseio.com https://cdn.firebase.com https://project-kap-dev.firebaseapp.com; object-src 'self'"
+  "content_security_policy": "script-src 'self' 'unsafe-eval' http://localhost:3000 http://localhost:3001 http://localhost:3002 https://gstatic.com https://*.google.com https://*.firebaseio.com https://cdn.firebase.com https://kap-project-nsh-2504.firebaseapp.com  https://project-kap-dev.firebaseapp.com; object-src 'self'"
 }

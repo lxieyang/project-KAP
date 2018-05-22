@@ -1,14 +1,18 @@
 import firebase from './firebase';
 import { defaultUserId, defaultUserName} from '../secrets.user';
 
+window.firebase = firebase;
+
 export let userId = defaultUserId;
 export let userName = defaultUserName;
+export let userProfilePhotoURL = null;
 let userPrefix = 'users/' + userId;
 
-export const setUserIdAndName = (newUserId, newUserName) => {
+export const setUserIdAndName = (newUserId = defaultUserId, newUserName = defaultUserName, newProfilePhotoURL = null) => {
   userId = newUserId;
   userName = newUserName;
   userPrefix = 'users/' + userId;
+  userProfilePhotoURL = newProfilePhotoURL;
   updatePaths();
 }
 
