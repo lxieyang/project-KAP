@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
+import qs from 'query-string';
 
 import FontAwesomeIcon from '@fortawesome/react-fontawesome';
 import fasCopy from '@fortawesome/fontawesome-free-solid/faCopy';
@@ -7,9 +8,6 @@ import CollectionView from './CollectionView/CollectionView';
 import TableView from './TableView/TableView';
 import styles from './CurrentTaskPage.css';
 import * as FirebaseStore from '../../../../firebase/store';
-
-// import InteractionBox from '../../../../components/InteractionBox/InteractionBox';
-// import HoverInteraction from '../../../../components/InteractionBox/HoverInteraction/HoverInteraction';
 
 class CurrentTaskPage extends Component {
 
@@ -22,12 +20,26 @@ class CurrentTaskPage extends Component {
   }
 
   switchView = (event, toState) => {
-    this.setState(prevState => {
-      return {isTable: prevState.isTable !== toState ? !prevState.isTable : prevState.isTable}
-    });
+    if (toState === false) {
+      const query = {
+        ...qs.parse(this.props.location.search),
+        view: 'collection'
+      };
+      this.props.history.push({
+        search: qs.stringify(query)
+      });
+    } else {
+      const query = {
+        ...qs.parse(this.props.location.search),
+        view: 'table'
+      };
+      this.props.history.push({
+        search: qs.stringify(query)
+      });
+    }
   }
 
-  componentWillReceiveProps (newProps) {
+  UNSAFE_componentWillReceiveProps (newProps) {
     this.setState({specific: newProps.specific});
     if (newProps.specific === true) {
       this.setState({isTable: false});
@@ -48,6 +60,28 @@ class CurrentTaskPage extends Component {
       this.setState({specificPieceId: pieceId});
       this.updateTask({database: this.props.database, userId, taskId});
     }
+
+    const query = {
+      ...qs.parse(this.props.location.search),
+      view: 'collection'
+    };
+    this.props.history.push({
+      search: qs.stringify(query)
+    });
+
+    this.unlisten = this.props.history.listen((location, action) => {
+      const search = qs.parse(location.search);
+      if (search.view === 'collection') {
+        this.setState({isTable: false});
+        
+      } else {
+        this.setState({isTable: true});
+      }
+    });
+  }
+
+  componentWillUnmount() {
+    this.unlisten();
   }
 
   updateTask (payload) {
@@ -153,6 +187,7 @@ class CurrentTaskPage extends Component {
 
   render () {
     const { isTable } = this.state;
+
     let content = null;
     if (this.state.specific === true) {
       if (this.state.specificTask !== null) {

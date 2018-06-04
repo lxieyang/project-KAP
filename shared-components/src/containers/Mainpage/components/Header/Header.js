@@ -42,7 +42,7 @@ class Header extends Component {
 
   componentDidMount() {
     this.unlisten = this.props.history.listen((location, action) => {
-      console.log('on route change ' + location.pathname);
+      // console.log('on route change ' + location.pathname);
       this.setState({searchString: ''});
     });
 
@@ -113,12 +113,12 @@ class Header extends Component {
       let fuse = new Fuse(this.state.searchContentForTasks, options);
 
       let results = fuse.search(this.state.searchString.trim());
-      console.log(results);
+      // console.log(results);
       this.setState({searchResults: results});
     };
 
     this.setState({searchString: event.target.value});
-    console.log(this.state.searchString);
+    // console.log(this.state.searchString);
     if (this.props.location.pathname === appRoutes.ALL_TASKS) {
       if (this.state.searchContentForTasks !== null && this.state.searchLoading === false) {
         // do the search using library: Fuse.js

@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import { findDOMNode } from 'react-dom';
+import { withRouter } from 'react-router-dom';
+import qs from 'query-string';
 
 import Aux from '../../../../../hoc/Aux/Aux';
 
@@ -50,7 +52,7 @@ class TableView extends Component {
     modalPieceId: ''
   }
 
-  componentWillReceiveProps (nextProps) {
+  UNSAFE_componentWillReceiveProps (nextProps) {
     if (nextProps.specificPieceId !== undefined) {
       this.setState({specificPieceId: nextProps.specificPieceId})
     } else {
@@ -60,15 +62,32 @@ class TableView extends Component {
     this.transformData(task);
   }
 
+  keyDownHandler = (event) => {
+    if (event.key === 'Escape') {
+      this.dismissModal();
+    }
+  }
+
   componentDidMount () {
     const { task } = this.props;
     this.transformData(task);
 
-    document.body.addEventListener('keydown',  (event) => {
-      if (event.key === 'Escape') {
-        this.dismissModal();
+    document.body.addEventListener('keydown',  this.keyDownHandler);
+
+    this.unlisten = this.props.history.listen((location, action) => {
+      const search = qs.parse(location.search);
+      if (search.pieceId !== null && search.pieceId !== undefined) {
+        this.setState({modalPieceId: search.pieceId, showModal: true});
+        
+      } else {
+        this.setState({showModal: false});
       }
     });
+  }
+
+  componentWillUnmount() {
+    this.unlisten();  
+    document.body.removeEventListener('keydown', this.keyDownHandler);
   }
 
   transformData = (task) => {
@@ -169,12 +188,34 @@ class TableView extends Component {
     this.setState({requirementsList: updatedRequirementList});
   }
 
+  // dismissModal = () => {
+  //   this.setState({showModal: false});
+  // }
+
+  // makeInteractionbox = (event, pieceId) => {
+  //   this.setState({modalPieceId: pieceId, showModal: true});
+  // }
+
   dismissModal = () => {
-    this.setState({showModal: false});
+    // this.setState({showModal: false});
+    const query = {
+      ...qs.parse(this.props.location.search)
+    };
+    delete query['pieceId'];
+    this.props.history.push({
+      search: qs.stringify(query)
+    });
   }
 
   makeInteractionbox = (event, pieceId) => {
-    this.setState({modalPieceId: pieceId, showModal: true});
+    // this.setState({modalPieceId: pieceId, showModal: true});
+    const query = {
+      ...qs.parse(this.props.location.search),
+      pieceId
+    };
+    this.props.history.push({
+      search: qs.stringify(query)
+    });
   }
 
   getTypeBadge = (type) => {
@@ -671,4 +712,4 @@ class TableView extends Component {
   }
 }
 
-export default TableView;
+export default withRouter(TableView);

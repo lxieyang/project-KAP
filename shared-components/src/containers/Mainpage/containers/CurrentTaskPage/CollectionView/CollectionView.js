@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import { withRouter } from 'react-router-dom';
+import qs from 'query-string';
 
 import {Collapse} from 'react-collapse';
 // import Scrollspy from 'react-scrollspy';
@@ -255,7 +257,7 @@ class CollectionView extends Component {
     unCategorizedFilterOn: false
   }
 
-  componentWillReceiveProps (nextProps) {
+  UNSAFE_componentWillReceiveProps (nextProps) {
     if (nextProps.specificPieceId !== undefined) {
       this.setState({specificPieceId: nextProps.specificPieceId})
     } else {
@@ -263,13 +265,30 @@ class CollectionView extends Component {
     }
   }
 
+  keyDownHandler = (event) => {
+    if (event.key === 'Escape') {
+      this.dismissModal();
+    }
+  }
+
   componentDidMount() {
     window.addEventListener('resize', this.windowSizeChangeHandler);
-    document.body.addEventListener('keydown',  (event) => {
-      if (event.key === 'Escape') {
-        this.dismissModal();
+    document.body.addEventListener('keydown',  this.keyDownHandler);
+
+    this.unlisten = this.props.history.listen((location, action) => {
+      const search = qs.parse(location.search);
+      if (search.pieceId !== null && search.pieceId !== undefined) {
+        this.setState({modalPieceId: search.pieceId, showModal: true});
+        
+      } else {
+        this.setState({showModal: false});
       }
     });
+  }
+
+  componentWillUnmount() {
+    document.body.removeEventListener('keydown', this.keyDownHandler);
+    this.unlisten();
   }
 
   updatePageNotes = (pageId, notes) => {
@@ -354,11 +373,25 @@ class CollectionView extends Component {
   }
 
   dismissModal = () => {
-    this.setState({showModal: false});
+    // this.setState({showModal: false});
+    const query = {
+      ...qs.parse(this.props.location.search)
+    };
+    delete query['pieceId'];
+    this.props.history.push({
+      search: qs.stringify(query)
+    });
   }
 
   makeInteractionbox = (event, pieceId) => {
-    this.setState({modalPieceId: pieceId, showModal: true});
+    // this.setState({modalPieceId: pieceId, showModal: true});
+    const query = {
+      ...qs.parse(this.props.location.search),
+      pieceId
+    };
+    this.props.history.push({
+      search: qs.stringify(query)
+    });
   }
 
   render () {
@@ -648,4 +681,4 @@ class CollectionView extends Component {
   }
 }
 
-export default CollectionView;
+export default withRouter(CollectionView);
