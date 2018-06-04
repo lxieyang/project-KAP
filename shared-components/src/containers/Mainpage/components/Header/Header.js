@@ -107,7 +107,7 @@ class Header extends Component {
     const doSearch = () => {
       var options = {
         keys: ['content'],
-        id: 'id'
+        // id: 'id'
       };
 
       let fuse = new Fuse(this.state.searchContentForTasks, options);
@@ -195,6 +195,7 @@ class Header extends Component {
               <SearchBar
                 searchFocused={this.state.searchFocused}
                 searchString={this.state.searchString}
+                searchLoading={this.state.searchLoading}
                 searchResults={this.state.searchString.trim() !== '' ? this.state.searchResults : []}
                 placeholder={searchBarPlaceHolder}
                 searchBlurHandler={this.searchBlurHandler}

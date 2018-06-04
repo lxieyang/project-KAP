@@ -4,6 +4,7 @@ import FontAwesomeIcon from '@fortawesome/react-fontawesome';
 import fasSearch from '@fortawesome/fontawesome-free-solid/faSearch';
 import fasArrowRight from '@fortawesome/fontawesome-free-solid/faArrowRight';
 import fasTimes from '@fortawesome/fontawesome-free-solid/faTimes';
+import Spinner from '../../UI/Spinner/Spinner';
 import styles from './SearchBar.css';
 
 const searchBar = (props) => {
@@ -30,16 +31,27 @@ const searchBar = (props) => {
       </div>
       <div 
         className={[styles.SearchResultsContainer, 
-          // props.searchResults.length === 0 ? styles.Hide : null
+          // props.searchResults.length === 0 || 
+          props.searchString.trim() === '' 
+          ? styles.Hide : null
         ].join(' ')}>
+        <div className={styles.ResultHeader}>
+          <span>Tasks</span>
+          {
+            props.searchLoading ? <Spinner size='15px' /> : null
+          }
+        </div>
         <ul>
+
           {
             props.searchResults.map((entry, idx) => {
               return (
                 <li 
                   key={idx}
-                  onClick={(event) => props.taskItemInSearchResultsClickedHandler(event, entry)}>
-                  {entry}
+                  onClick={(event) => props.taskItemInSearchResultsClickedHandler(event, entry.id)}>
+                  <div className={styles.ResultEntryName}>
+                    {entry.name}
+                  </div>
                 </li>
               );
             })
