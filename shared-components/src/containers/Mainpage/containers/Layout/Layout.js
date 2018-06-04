@@ -15,6 +15,7 @@ class Layout extends Component {
       <Aux>
         <Header 
           authenticated={this.props.authenticated}
+          thereIsTask={this.props.thereIsTask}
           taskName={this.props.currentTaskName} 
           userName={this.props.userName}
           userProfilePhotoURL={this.props.userProfilePhotoURL}

@@ -7,7 +7,7 @@ import styles from './NavigationItems.css';
 
 const navigationItems = (props) => (
   <ul className={styles.NavigationItems}>
-    <li className={styles.NavigationItem}>
+    <li className={[styles.NavigationItem, props.thereIsTask ? styles.ActiveNavigationItem : styles.InactiveNavigationItem].join(' ')}>
       <NavLink 
         to={appRoutes.CURRENT_TASK}
         exact
@@ -23,7 +23,7 @@ const navigationItems = (props) => (
       </NavLink>
     </li>
 
-    <li className={styles.NavigationItem}>
+    <li className={[styles.NavigationItem, styles.ActiveNavigationItem].join(' ')}>
       <NavLink 
         to={appRoutes.ALL_TASKS}
         exact

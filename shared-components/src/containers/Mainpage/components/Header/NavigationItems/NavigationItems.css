@@ -37,13 +37,28 @@
   margin-right: 10px;
 }
 
-.NavigationItem a:hover {
+.InactiveNavigationItem a {
+  cursor: default;
+}
+
+.ActiveNavigationItem a:hover {
   color: black;
   opacity: 0.8;
 }
 
-.NavigationItem a:active,
-.NavigationItem a.active {
+.InactiveNavigationItem a:hover {
+  color: inherit;
+  opacity: 0.4;
+}
+
+.ActiveNavigationItem a:active,
+.ActiveNavigationItem a.active {
   color: black;
   opacity: 1;
+}
+
+.InactiveNavigationItem a:active,
+.InactiveNavigationItem a.active {
+  color: inherit;
+  opacity: 0.4;
 }

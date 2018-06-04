@@ -243,6 +243,10 @@ class Mainpage extends Component {
       }
     }
 
+    if (tasks.length === 0) {
+      currentTaskName = 'No active tasks right now...';
+    }
+
     let routes = (
       <Switch>
         <Route exact path={appRoutes.LOG_IN} component={LoginPage}/>
@@ -251,21 +255,34 @@ class Mainpage extends Component {
     );
 
     if (this.state.authenticated) {
-      routes = (
-        <Switch>
-          <Route exact path={appRoutes.LOG_OUT} component={LogoutPage} />
-          <Route path={appRoutes.CURRENT_TASK} render={
-            (routeProps) => (<CurrentTaskPage {...routeProps} task={currentTaskObject} specific={false}/>)
-          } />
-          <Route path={appRoutes.ALL_TASKS} render={
-            (routeProps) => (<AllTasksPage {...routeProps} tasks={tasks} currentTaskId={currentTaskId}/>)
-          }/>
-          <Route path={appRoutes.TASK_WITH_ID} render={
-            (routeProps) => (<CurrentTaskPage {...routeProps} specific={true} database={database}/>)
-          } />
-          <Redirect to={this.state.homepage} />
-        </Switch>
-      )
+      if (tasks.length > 0) {
+        routes = (
+          <Switch>
+            <Route exact path={appRoutes.LOG_OUT} component={LogoutPage} />
+            <Route path={appRoutes.CURRENT_TASK} render={
+              (routeProps) => (<CurrentTaskPage {...routeProps} task={currentTaskObject} specific={false}/>)
+            } />
+            <Route path={appRoutes.ALL_TASKS} render={
+              (routeProps) => (<AllTasksPage {...routeProps} tasks={tasks} currentTaskId={currentTaskId}/>)
+            }/>
+            <Route path={appRoutes.TASK_WITH_ID} render={
+              (routeProps) => (<CurrentTaskPage {...routeProps} specific={true} database={database}/>)
+            } />
+            <Redirect to={this.state.homepage} />
+          </Switch>
+        )
+      } else {
+        routes = (
+          <Switch>
+            <Route exact path={appRoutes.LOG_OUT} component={LogoutPage} />
+            <Route path={appRoutes.ALL_TASKS} render={
+              (routeProps) => (<AllTasksPage {...routeProps} tasks={tasks} currentTaskId={currentTaskId}/>)
+            }/>
+            <Redirect to={appRoutes.ALL_TASKS} />
+          </Switch>
+        )
+      }
+      
     }
 
     
@@ -275,6 +292,7 @@ class Mainpage extends Component {
         <Layout 
           authenticated={this.state.authenticated}
           currentTaskName={currentTaskName} 
+          thereIsTask={tasks.length > 0}
           userName={userName}
           userProfilePhotoURL={userProfilePhotoURL}
           userId={userId}

@@ -186,7 +186,9 @@ class Header extends Component {
           
           
           <nav>
-            <NavigationItems currentTask={this.props.taskName}/>
+            <NavigationItems 
+              thereIsTask={this.props.thereIsTask}
+              currentTask={this.props.taskName}/>
           </nav>
   
   
