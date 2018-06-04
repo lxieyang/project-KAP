@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import {withRouter} from 'react-router-dom';
 import FontAwesomeIcon from '@fortawesome/react-fontawesome';
 import fasSignOutAlt from '@fortawesome/fontawesome-free-solid/faSignOutAlt';
 import Aux from '../../../../hoc/Aux/Aux';
@@ -8,15 +9,51 @@ import AppHeader from '../../../../components/UI/AppHeader/AppHeader';
 import SearchBar from '../../../../components/UI/SeachBar/SearchBar';
 import styles from './Header.css';
 import ProfileImg from '../../../../assets/images/profile-img.png';
-import ReactTooltip from 'react-tooltip';
 import Popover from 'react-tiny-popover';
 import { NavLink } from 'react-router-dom';
 import * as appRoutes from '../../../../shared/routes';
+import axios from 'axios';
+import { database } from '../../../../firebase/index';
+import Fuse from 'fuse.js';
+import * as FirebaseStore from '../../../../firebase/store';
 
 class Header extends Component {
   state = {
     userId: this.props.userId,
-    popoverOpen: false
+    popoverOpen: false,
+    searchFocused: false,
+    searchString: '',
+    searchResults: [
+      // {
+      //   type: 'task',
+      //   id: 'LDrZgZkmfgjitW2vqhu',
+      //   name: 'What to joke about barack obama?'
+      // },
+      // {
+      //   type: 'task',
+      //   id: 'LDrZgZkmfgjitW2vqeu',
+      //   name: 'What to joke about barack obama?'
+      // }
+    ],
+    searchLoading: false,
+    tasksUpdated: true,
+    searchContentForTasks: null
+  }
+
+  componentDidMount() {
+    this.unlisten = this.props.history.listen((location, action) => {
+      console.log('on route change ' + location.pathname);
+      this.setState({searchString: ''});
+    });
+
+    database.ref(`/users/${this.props.userId}/tasksUpdated`).on('value', (snapshot) => {
+      this.setState({tasksUpdated: snapshot.val()});
+    });
+
+  }
+
+  componentWillUnmount() {
+    this.unlisten();
   }
 
   handleClick(e) {
@@ -31,16 +68,90 @@ class Header extends Component {
     this.setState({userId: event.target.value});
   }
 
-  // buttonClickedHandler = (event) => {
-  //   const { userId } = this.state;
-  //   if (userId !== "") {
-  //     this.props.resetParameters(userId);
-  //     ReactTooltip.hide();
-  //   }
-  // }
+  searchBlurHandler = (event) => {
+    this.setState({
+      searchFocused: false,
+      // searchString: '',
+      // searchResults: []
+    });
+  }
+
+  searchFocusHandler = (event) => {
+    this.setState({searchFocused: true});
+
+    if (this.props.location.pathname === appRoutes.ALL_TASKS) {
+      if (this.state.tasksUpdated === true || this.state.searchContentForTasks === null) {
+        this.setState({searchLoading: true});
+        database.ref(`/users/${this.props.userId}/tasksUpdated`).set(false).then(() => {
+          axios.get('https://us-central1-kap-project-nsh-2504.cloudfunctions.net/getSearchableTaskInfo', {
+            params: {
+              userId: this.props.userId
+            }
+          }).then((response) => {
+            this.setState({
+              searchContentForTasks: response.data,
+              searchLoading: false
+            });
+          }).catch((error) => {
+            console.log(error);
+            this.setState({
+              searchLoading: false
+            });
+          });
+        });
+      }
+    }
+  }
+
+  searchInputHandler = (event) => {
+    const doSearch = () => {
+      var options = {
+        keys: ['content'],
+        id: 'id'
+      };
+
+      let fuse = new Fuse(this.state.searchContentForTasks, options);
+
+      let results = fuse.search(this.state.searchString.trim());
+      console.log(results);
+      this.setState({searchResults: results});
+    };
+
+    this.setState({searchString: event.target.value});
+    console.log(this.state.searchString);
+    if (this.props.location.pathname === appRoutes.ALL_TASKS) {
+      if (this.state.searchContentForTasks !== null && this.state.searchLoading === false) {
+        // do the search using library: Fuse.js
+        doSearch();
+      } else {
+        // loop around till searchLoading is false
+        let clear = setInterval(() => {
+          // console.log('checking is loading complete');
+          if (this.state.searchLoading === false) {
+            // console.log('loading complete!');
+            clearInterval(clear);
+            if (this.state.searchContentForTasks !== null) {
+              doSearch();
+            }
+          }
+        }, 100);
+      }
+    }
+  }
+
+  clearSearchHandler = (event) => {
+    this.setState({searchString: ''});
+  }
+
+  taskItemInSearchResultsClickedHandler = (event, id) => {
+    FirebaseStore.switchCurrentTask(id);
+
+    // rerouting
+    this.props.history.push(appRoutes.CURRENT_TASK);
+  }
 
   render () {
-    const { userName, userProfilePhotoURL, authenticated } = this.props;
+    const { userName, userProfilePhotoURL, authenticated, location } = this.props;
 
     if (!authenticated) {
       return (
@@ -54,34 +165,23 @@ class Header extends Component {
       )
     }
 
+    let searchBarPlaceHolder = '';
+
+    if (location.pathname === appRoutes.ALL_TASKS) {
+      searchBarPlaceHolder = 'Search...';
+    } else if (location.pathname === appRoutes.CURRENT_TASK) {
+      searchBarPlaceHolder = 'Search within this task...';
+    }
+
     return (
       <Aux>
         <header className={styles.Header}>
           <div>
             <div 
-              className={styles.LogoBox}
-              // data-tip
-              // data-event='click focus'
-              //data-for="hohohahei"
-              >
+              className={styles.LogoBox}>
               <Logo 
                 hover={true} size='38px'/>
             </div>
-            {/*<ReactTooltip 
-              id="hohohahei"
-              place="bottom" 
-              type="light" 
-              effect="solid"
-              className={styles.Tooltip}>
-              <input 
-                type="text" 
-                placeholder={'User ID'}
-                onChange={(event) => this.inputChangedHandler(event)}/><br />
-              <button
-                onClick={(event) => this.buttonClickedHandler(event)}>
-                Change
-              </button>
-            </ReactTooltip>*/}
           </div>
           
           
@@ -92,7 +192,16 @@ class Header extends Component {
   
           <div className={styles.ToTheRight}>
             <div className={styles.SearchBox}>
-              <SearchBar />
+              <SearchBar
+                searchFocused={this.state.searchFocused}
+                searchString={this.state.searchString}
+                searchResults={this.state.searchString.trim() !== '' ? this.state.searchResults : []}
+                placeholder={searchBarPlaceHolder}
+                searchBlurHandler={this.searchBlurHandler}
+                searchFocusHandler={this.searchFocusHandler}
+                searchInputHandler={this.searchInputHandler}
+                clearSearchHandler={this.clearSearchHandler}
+                taskItemInSearchResultsClickedHandler={this.taskItemInSearchResultsClickedHandler}/>
             </div>
             <Popover
               containerStyle={{zIndex: '100000'}}
@@ -144,4 +253,4 @@ class Header extends Component {
   }
 }
 
-export default Header;
+export default withRouter(Header);

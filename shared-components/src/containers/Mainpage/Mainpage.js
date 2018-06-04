@@ -33,7 +33,7 @@ class Mainpage extends Component {
     loading: true
   }
 
-  componentWillMount() {
+  UNSAFE_componentWillMount() {
     this.removeAuthListerner = firebase.auth().onAuthStateChanged((user) => {
       if (user !== null) {
         setUserIdAndName(user.uid, user.displayName, user.photoURL);
@@ -73,25 +73,6 @@ class Mainpage extends Component {
 
   componentDidMount () {    
     window.isInKAP = true;
-    // let userIdCached = localStorage.getItem('userId');
-    // if (userIdCached !== null) {
-    //   setUserIdAndName(userIdCached, 'Master ' + userIdCached);
-    // }
-
-    // this.syncWithEditorAndWindow(userId);
-
-    // this.loadTasks();
-    // this.updateInbackground();
-
-
-    // // ckeck if should load other tasks
-    // database.ref('users').child(userId).child('editor').child('taskToNavigateTo').on('value', (snapshot) => {
-    //   if (snapshot.val() !== null) {
-    //     this.props.history.push(`/tasks/${snapshot.val().userId}/${snapshot.val().taskId}/${snapshot.val().pieceId}`);
-    //     database.ref('users').child(userId).child('editor').child('taskToNavigateTo').set(null);
-    //   }
-    // });
-
   }
 
   resetParameters = (userId) => {

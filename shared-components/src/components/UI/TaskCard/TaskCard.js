@@ -98,7 +98,7 @@ class TaskCard extends Component {
     FirebaseStore.switchCurrentTask(id);
 
     // rerouting
-    this.props.history.push(appRoutes.CURRENT_TASK)
+    this.props.history.push(appRoutes.CURRENT_TASK);
   }
 
   starClicked = (event, id) => {
