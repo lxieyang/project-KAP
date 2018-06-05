@@ -3,6 +3,7 @@ import {
   database,
   tasksRef,
   currentTaskIdRef,
+  lastTaskIdRef,
   editorIntegrationRef,
   userId,
   isDisabledRef
@@ -77,6 +78,10 @@ export const addTaskFromSearchTerm = async (searchTerm, tabId) => {
 
 export const switchCurrentTask = (id) => {
   currentTaskIdRef.set(id);
+}
+
+export const setLastTask = (id) => {
+  lastTaskIdRef.set(id);
 }
 
 export const updateTaskName = async (id, taksName) => {

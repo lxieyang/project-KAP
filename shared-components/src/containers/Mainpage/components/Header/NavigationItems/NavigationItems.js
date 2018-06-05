@@ -15,7 +15,7 @@ const navigationItems = (props) => (
         <div className={styles.Label}>Current Task: </div>
         <div className={styles.TaskName}>
           {
-            props.currentTask
+            !props.tasksLoading
             ? props.currentTask
             : <Spinner size="20px" />
           }

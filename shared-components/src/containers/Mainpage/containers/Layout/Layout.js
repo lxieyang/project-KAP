@@ -16,7 +16,9 @@ class Layout extends Component {
         <Header 
           authenticated={this.props.authenticated}
           thereIsTask={this.props.thereIsTask}
+          tasksLoading={this.props.tasksLoading}
           taskName={this.props.currentTaskName} 
+          currentTaskId={this.props.currentTaskId}
           userName={this.props.userName}
           userProfilePhotoURL={this.props.userProfilePhotoURL}
           userId={this.props.userId}

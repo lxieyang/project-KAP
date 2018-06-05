@@ -22,7 +22,8 @@ exports.getSearchableTaskInfo = functions.https.onRequest((req, res) => {
       let originalTask = childSnapshot.val();
       let transformedTask = {
         id: childSnapshot.key,
-        name: originalTask.name
+        name: originalTask.name,
+        type: 'task'
       };
       let content = originalTask.name + ' ';
       // transform options

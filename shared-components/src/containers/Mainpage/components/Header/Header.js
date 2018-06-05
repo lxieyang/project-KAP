@@ -43,7 +43,10 @@ class Header extends Component {
   componentDidMount() {
     this.unlisten = this.props.history.listen((location, action) => {
       // console.log('on route change ' + location.pathname);
-      this.setState({searchString: ''});
+      this.setState({
+        searchString: '',
+        searchResults: []
+      });
     });
 
     database.ref(`/users/${this.props.userId}/tasksUpdated`).on('value', (snapshot) => {
@@ -144,6 +147,7 @@ class Header extends Component {
   }
 
   taskItemInSearchResultsClickedHandler = (event, id) => {
+    FirebaseStore.setLastTask(this.props.currentTaskId);
     FirebaseStore.switchCurrentTask(id);
 
     // rerouting
@@ -168,7 +172,7 @@ class Header extends Component {
     let searchBarPlaceHolder = '';
 
     if (location.pathname === appRoutes.ALL_TASKS) {
-      searchBarPlaceHolder = 'Search...';
+      searchBarPlaceHolder = 'Search tasks...';
     } else if (location.pathname === appRoutes.CURRENT_TASK) {
       searchBarPlaceHolder = 'Search within this task...';
     }
@@ -188,6 +192,7 @@ class Header extends Component {
           <nav>
             <NavigationItems 
               thereIsTask={this.props.thereIsTask}
+              tasksLoading={this.props.tasksLoading}
               currentTask={this.props.taskName}/>
           </nav>
   

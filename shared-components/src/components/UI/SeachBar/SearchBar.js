@@ -35,16 +35,18 @@ const searchBar = (props) => {
           props.searchString.trim() === '' 
           ? styles.Hide : null
         ].join(' ')}>
-        <div className={styles.ResultHeader}>
+        <div 
+          className={[styles.ResultHeader, 
+            props.searchLoading || (!props.searchLoading && props.searchResults.filter(entry => entry.type === 'task').length > 0) ? null : styles.Hide
+          ].join(' ')}>
           <span>Tasks</span>
           {
             props.searchLoading ? <Spinner size='15px' /> : null
           }
         </div>
         <ul>
-
           {
-            props.searchResults.map((entry, idx) => {
+            props.searchResults.filter(entry => entry.type === 'task').map((entry, idx) => {
               return (
                 <li 
                   key={idx}

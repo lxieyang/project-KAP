@@ -29,6 +29,7 @@ class Mainpage extends Component {
     homepage: appRoutes.CURRENT_TASK,
     currentTaskId: null,
     tasks: [],
+    tasksLoading: true,
     authenticated: false,
     loading: true
   }
@@ -166,7 +167,10 @@ class Mainpage extends Component {
           )
         });
       });
-      this.setState({tasks: transformedTasks});
+      this.setState({
+        tasks: transformedTasks,
+        tasksLoading: false
+      });
 
 
       let taskIds = transformedTasks.map((t) => {
@@ -255,33 +259,65 @@ class Mainpage extends Component {
     );
 
     if (this.state.authenticated) {
-      if (tasks.length > 0) {
-        routes = (
-          <Switch>
-            <Route exact path={appRoutes.LOG_OUT} component={LogoutPage} />
-            <Route path={appRoutes.CURRENT_TASK} render={
-              (routeProps) => (<CurrentTaskPage {...routeProps} task={currentTaskObject} specific={false}/>)
-            } />
-            <Route path={appRoutes.ALL_TASKS} render={
-              (routeProps) => (<AllTasksPage {...routeProps} tasks={tasks} currentTaskId={currentTaskId}/>)
-            }/>
-            <Route path={appRoutes.TASK_WITH_ID} render={
-              (routeProps) => (<CurrentTaskPage {...routeProps} specific={true} database={database}/>)
-            } />
-            <Redirect to={this.state.homepage} />
-          </Switch>
-        )
-      } else {
-        routes = (
-          <Switch>
-            <Route exact path={appRoutes.LOG_OUT} component={LogoutPage} />
-            <Route path={appRoutes.ALL_TASKS} render={
-              (routeProps) => (<AllTasksPage {...routeProps} tasks={tasks} currentTaskId={currentTaskId}/>)
-            }/>
-            <Redirect to={appRoutes.ALL_TASKS} />
-          </Switch>
-        )
-      }
+      routes = (
+        <Switch>
+          <Route exact path={appRoutes.LOG_OUT} component={LogoutPage} />
+          {
+            tasks.length > 0 
+            ? <Route path={appRoutes.CURRENT_TASK} render={
+                (routeProps) => (<CurrentTaskPage {...routeProps} task={currentTaskObject} specific={false}/>)
+              } />
+            : null 
+          }
+          <Route path={appRoutes.ALL_TASKS} render={
+            (routeProps) => (<AllTasksPage {...routeProps} tasks={tasks} currentTaskId={currentTaskId}/>)
+          }/>
+          {
+            tasks.length > 0 
+            ? <Route path={appRoutes.TASK_WITH_ID} render={
+                (routeProps) => (<CurrentTaskPage {...routeProps} specific={true} database={database}/>)
+              } />
+            : null 
+          }
+          {
+            tasks.length > 0 
+            ? <Redirect to={this.state.homepage} />
+            : null 
+          }
+          
+          
+          
+        </Switch>
+      );
+      // if (tasks.length > 0) {
+      //   console.log('TASKS LENGTH IS MORE THAN 0, REDIRECTING TO CURRENT TASK PAGE');
+      //   routes = (
+      //     <Switch>
+      //       <Route exact path={appRoutes.LOG_OUT} component={LogoutPage} />
+      //       <Route path={appRoutes.CURRENT_TASK} render={
+      //         (routeProps) => (<CurrentTaskPage {...routeProps} task={currentTaskObject} specific={false}/>)
+      //       } />
+      //       <Route path={appRoutes.ALL_TASKS} render={
+      //         (routeProps) => (<AllTasksPage {...routeProps} tasks={tasks} currentTaskId={currentTaskId}/>)
+      //       }/>
+      //       <Route path={appRoutes.TASK_WITH_ID} render={
+      //         (routeProps) => (<CurrentTaskPage {...routeProps} specific={true} database={database}/>)
+      //       } />
+      //       <Redirect to={this.state.homepage} />
+      //     </Switch>
+      //   );
+      // } else {
+      //   console.log('TASKS LENGTH IS 0, REDIRECTING TO ALL TASKS PAGE');
+      //   routes = (
+      //     <Switch>
+      //       <Route exact path={appRoutes.LOG_OUT} component={LogoutPage} />
+      //       <Route path={appRoutes.ALL_TASKS} render={
+      //         (routeProps) => (<AllTasksPage {...routeProps} tasks={tasks} currentTaskId={currentTaskId}/>)
+      //       }/>
+            
+      //     </Switch>
+      //   )
+      // }
       
     }
 
@@ -292,6 +328,8 @@ class Mainpage extends Component {
         <Layout 
           authenticated={this.state.authenticated}
           currentTaskName={currentTaskName} 
+          currentTaskId={currentTaskId}
+          tasksLoading={this.state.tasksLoading}
           thereIsTask={tasks.length > 0}
           userName={userName}
           userProfilePhotoURL={userProfilePhotoURL}

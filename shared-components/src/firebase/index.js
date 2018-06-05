@@ -31,6 +31,7 @@ export let sampleListRef = database.ref(userPrefix + 'sampleList');
 export let isDisabledRef = database.ref(userPrefix).child('isDisabled');
 export let tasksRef = database.ref(userPrefix).child('tasks');
 export let currentTaskIdRef = database.ref(userPrefix).child('currentTaskId');
+export let lastTaskIdRef = database.ref(userPrefix).child('lastTaskId');
 export let editorIntegrationRef = database.ref(userPrefix).child('editorSupport');
 export let codebasesRef = database.ref('codebases');
 
@@ -40,25 +41,6 @@ const updatePaths = () => {
   isDisabledRef = database.ref(userPrefix).child('isDisabled');
   tasksRef = database.ref(userPrefix).child('tasks');
   currentTaskIdRef = database.ref(userPrefix).child('currentTaskId');
+  lastTaskIdRef = database.ref(userPrefix).child('lastTaskId');
   editorIntegrationRef = database.ref(userPrefix).child('editorSupport');
 }
-
-
-
-
-
-
-// /* some automatic bookkeeping */
-// tasksRef.on('child_added', (snapshot) => {
-//   console.log(snapshot.key);
-//   currentTaskIdRef.set(snapshot.key);
-// });
-
-// tasksRef.on('child_removed', () => {
-//   tasksRef.once('value', (snapshot) => {
-//     snapshot.forEach((littleSnapshot) => {
-//       console.log(littleSnapshot.ley);
-//       currentTaskIdRef.set(littleSnapshot.key);
-//     });
-//   });
-// });
