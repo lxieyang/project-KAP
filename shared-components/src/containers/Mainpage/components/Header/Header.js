@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import {withRouter} from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
+import qs from 'query-string';
 import FontAwesomeIcon from '@fortawesome/react-fontawesome';
 import fasSignOutAlt from '@fortawesome/fontawesome-free-solid/faSignOutAlt';
 import Aux from '../../../../hoc/Aux/Aux';
@@ -23,21 +24,11 @@ class Header extends Component {
     popoverOpen: false,
     searchFocused: false,
     searchString: '',
-    searchResults: [
-      // {
-      //   type: 'task',
-      //   id: 'LDrZgZkmfgjitW2vqhu',
-      //   name: 'What to joke about barack obama?'
-      // },
-      // {
-      //   type: 'task',
-      //   id: 'LDrZgZkmfgjitW2vqeu',
-      //   name: 'What to joke about barack obama?'
-      // }
-    ],
+    searchResults: [],
     searchLoading: false,
     tasksUpdated: true,
-    searchContentForTasks: null
+    searchContentForTasks: null,
+    searchContentForPiecesInCurrentTask: null
   }
 
   componentDidMount() {
@@ -103,20 +94,40 @@ class Header extends Component {
           });
         });
       }
+    } else if (this.props.location.pathname === appRoutes.CURRENT_TASK) {
+      if (this.state.tasksUpdated === true || this.state.searchContentForTasks === null) {
+        this.setState({searchLoading: true});
+        database.ref(`/users/${this.props.userId}/tasksUpdated`).set(false).then(() => {
+          axios.get('https://us-central1-kap-project-nsh-2504.cloudfunctions.net/getSearchablePiecesInThisTaskInfo', {
+            params: {
+              userId: this.props.userId,
+              taskId: this.props.currentTaskId
+            }
+          }).then((response) => {
+            this.setState({
+              searchContentForPiecesInCurrentTask: response.data,
+              searchLoading: false
+            });
+          }).catch((error) => {
+            console.log(error);
+            this.setState({
+              searchLoading: false
+            });
+          });
+        });
+      }
     }
   }
 
   searchInputHandler = (event) => {
-    const doSearch = () => {
+    const doSearchWith = (source) => {
       var options = {
         keys: ['content'],
         // id: 'id'
       };
 
-      let fuse = new Fuse(this.state.searchContentForTasks, options);
-
+      let fuse = new Fuse(source, options);
       let results = fuse.search(this.state.searchString.trim());
-      // console.log(results);
       this.setState({searchResults: results});
     };
 
@@ -125,7 +136,7 @@ class Header extends Component {
     if (this.props.location.pathname === appRoutes.ALL_TASKS) {
       if (this.state.searchContentForTasks !== null && this.state.searchLoading === false) {
         // do the search using library: Fuse.js
-        doSearch();
+        doSearchWith(this.state.searchContentForTasks);
       } else {
         // loop around till searchLoading is false
         let clear = setInterval(() => {
@@ -134,7 +145,24 @@ class Header extends Component {
             // console.log('loading complete!');
             clearInterval(clear);
             if (this.state.searchContentForTasks !== null) {
-              doSearch();
+              doSearchWith(this.state.searchContentForTasks);
+            }
+          }
+        }, 100);
+      }
+    } else if (this.props.location.pathname === appRoutes.CURRENT_TASK) {
+      if (this.state.searchContentForPiecesInCurrentTask !== null && this.state.searchLoading === false) {
+        // do the search using library: Fuse.js
+        doSearchWith(this.state.searchContentForPiecesInCurrentTask);
+      } else {
+        // loop around till searchLoading is false
+        let clear = setInterval(() => {
+          // console.log('checking is loading complete');
+          if (this.state.searchLoading === false) {
+            // console.log('loading complete!');
+            clearInterval(clear);
+            if (this.state.searchContentForPiecesInCurrentTask !== null) {
+              doSearchWith(this.state.searchContentForPiecesInCurrentTask);
             }
           }
         }, 100);
@@ -146,12 +174,24 @@ class Header extends Component {
     this.setState({searchString: ''});
   }
 
-  taskItemInSearchResultsClickedHandler = (event, id) => {
-    FirebaseStore.setLastTask(this.props.currentTaskId);
-    FirebaseStore.switchCurrentTask(id);
-
-    // rerouting
-    this.props.history.push(appRoutes.CURRENT_TASK);
+  itemInSearchResultsClickedHandler = (event, id, isTask) => {
+    if (isTask) {
+      // TODO: Implement last task logic
+      FirebaseStore.setLastTask(this.props.currentTaskId);
+      FirebaseStore.switchCurrentTask(id);
+      // re-routing
+      this.props.history.push(appRoutes.CURRENT_TASK);
+    } else {
+      // pull up piece with pieceId = id
+      const query = {
+        ...qs.parse(this.props.location.search),
+        pieceId: id
+      };
+      this.props.history.push({
+        search: qs.stringify(query)
+      });
+    }
+    
   }
 
   render () {
@@ -200,6 +240,7 @@ class Header extends Component {
           <div className={styles.ToTheRight}>
             <div className={styles.SearchBox}>
               <SearchBar
+                isInAllTasksRoute={this.props.location.pathname === appRoutes.ALL_TASKS}
                 searchFocused={this.state.searchFocused}
                 searchString={this.state.searchString}
                 searchLoading={this.state.searchLoading}
@@ -209,7 +250,7 @@ class Header extends Component {
                 searchFocusHandler={this.searchFocusHandler}
                 searchInputHandler={this.searchInputHandler}
                 clearSearchHandler={this.clearSearchHandler}
-                taskItemInSearchResultsClickedHandler={this.taskItemInSearchResultsClickedHandler}/>
+                itemInSearchResultsClickedHandler={this.itemInSearchResultsClickedHandler}/>
             </div>
             <Popover
               containerStyle={{zIndex: '100000'}}

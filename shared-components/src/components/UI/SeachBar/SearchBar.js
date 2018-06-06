@@ -5,6 +5,7 @@ import fasSearch from '@fortawesome/fontawesome-free-solid/faSearch';
 import fasArrowRight from '@fortawesome/fontawesome-free-solid/faArrowRight';
 import fasTimes from '@fortawesome/fontawesome-free-solid/faTimes';
 import Spinner from '../../UI/Spinner/Spinner';
+import { GET_FAVICON_URL_PREFIX } from '../../../shared/constants';
 import styles from './SearchBar.css';
 
 const searchBar = (props) => {
@@ -37,22 +38,39 @@ const searchBar = (props) => {
         ].join(' ')}>
         <div 
           className={[styles.ResultHeader, 
-            props.searchLoading || (!props.searchLoading && props.searchResults.filter(entry => entry.type === 'task').length > 0) ? null : styles.Hide
+            props.searchLoading || (!props.searchLoading && (
+              props.isInAllTasksRoute
+              ? props.searchResults.filter(entry => entry.type === 'task').length > 0
+              : props.searchResults.filter(entry => entry.type === 'piece').length > 0
+            )) ? null : styles.Hide,
+            props.isInAllTasksRoute ? styles.TaskBadge : styles.PieceBadge
           ].join(' ')}>
-          <span>Tasks</span>
+          {
+            props.isInAllTasksRoute
+            ? <span>Tasks</span>
+            : <span>Snippets</span>
+          }
           {
             props.searchLoading ? <Spinner size='15px' /> : null
           }
         </div>
         <ul>
           {
-            props.searchResults.filter(entry => entry.type === 'task').map((entry, idx) => {
+            props.searchResults.filter(entry => entry.type === (props.isInAllTasksRoute ? 'task' : 'piece')).map((entry, idx) => {
               return (
                 <li 
                   key={idx}
-                  onClick={(event) => props.taskItemInSearchResultsClickedHandler(event, entry.id)}>
+                  onClick={(event) => props.itemInSearchResultsClickedHandler(event, entry.id, props.isInAllTasksRoute)}>
                   <div className={styles.ResultEntryName}>
-                    {entry.name}
+                    {
+                      props.isInAllTasksRoute 
+                      ? null
+                      : <img
+                        src={GET_FAVICON_URL_PREFIX + entry.url}
+                        alt={entry.url}
+                        className={styles.SiteIcon} />
+                    }
+                    <span>{entry.name}</span>
                   </div>
                 </li>
               );

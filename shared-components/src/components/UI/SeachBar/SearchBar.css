@@ -85,8 +85,9 @@
 }
 
 .SearchResultsContainer ul li {
-  padding: 5px 10px;
+  padding: 3px 7px;
   font-size: 1.0rem;
+  border-bottom: 0.5px dotted lightgray;
 
   cursor: pointer;
   transition: all 0.1s ease-in;
@@ -108,7 +109,6 @@
 
 .ResultHeader span {
   color: #fff;
-  background-color: #6c757d;
   display: inline-block;
   padding: .25em .4em;
   font-size: 95%;
@@ -118,4 +118,25 @@
   white-space: nowrap;
   vertical-align: baseline;
   border-radius: .25rem;
+}
+
+.TaskBadge span {
+  background-color: #6c757d;
+}
+
+.PieceBadge span {
+  background-color: #17a2b8;
+}
+
+.ResultEntryName {
+  display: flex;
+  align-items: center;
+}
+
+.SiteIcon {
+  width: 18px;
+  border-radius: 3px;
+  margin-right: 5px;
+  background: transparent;
+  box-shadow: 0 1px 2px 0 rgba(0,0,0,0.16), 0 1px 5px 0 rgba(0,0,0,0.12);
 }

@@ -45,11 +45,10 @@ exports.getSearchableTaskInfo = functions.https.onRequest((req, res) => {
         for (key in originalTask.pieces) {
           content += originalTask.pieces[key]['title'] + ' ';
           content += originalTask.pieces[key]['texts'].replace(/\s/g, ' ').replace(/(['"])/g, ' ') + ' ';
-          content += originalTask.pieces[key]['postTags'].join(' ') + ' ';
         }
       }
       
-      transformedTask['content'] = content;
+      transformedTask['content'] = content.replace(/[.,/#!$%^&*;:{}=\-_`~()]/g, '').replace(/\s{2,}/g, ' ');
       tasks.push(transformedTask);
     });
     return res.json(tasks);
@@ -58,6 +57,62 @@ exports.getSearchableTaskInfo = functions.https.onRequest((req, res) => {
     return res.send(error);
   });
 });
+
+
+exports.getSearchablePiecesInThisTaskInfo = functions.https.onRequest((req, res) => {
+  res.set('Access-Control-Allow-Origin', "*");
+  res.set('Access-Control-Allow-Methods', 'GET, POST');
+
+  const userId = req.query.userId;
+  const taskId = req.query.taskId;
+  console.log(`USER ID: ${userId} | TASK ID: ${taskId}`);
+  return admin.database().ref('users').child(userId).child("tasks").child(taskId).once('value').then((snapshot) => {
+    let transformedPieces = [];
+    let originalTask = snapshot.val();
+    let originalTaskId = taskId;
+    let originalTaskOptions = originalTask['options'];
+    let originalTaskRequirements = originalTask['requirements'];
+    // transform pieces
+    if (originalTask.pieces !== null) {
+      for (key in originalTask.pieces) {
+        let piece = originalTask.pieces[key];
+        let transformedPiece = {
+          id: key,
+          name: piece['title'],
+          type: 'piece',
+          url: piece['url'],
+          taskId: originalTaskId,
+          taskName: originalTask.name
+        };
+
+        let content = 
+          piece['title'] + ' ' 
+          + piece['texts'].replace(/\s/g, ' ').replace(/(['"])/g, ' ') 
+          + ' ';
+
+        // process attitude list
+        if (piece.attitudeList !== null) {
+          for (opKey in piece.attitudeList) {
+            content += originalTaskOptions[opKey]['name'] + ' ';
+            for (rqKey in piece.attitudeList[opKey]) {
+              content += originalTaskRequirements[rqKey]['name'] + ' ';
+            }
+          }
+        }
+
+        transformedPiece['content'] = content.replace(/[.,/#!$%^&*;:{}=\-_`~()]/g, '').replace(/\s{2,}/g, ' ');
+        transformedPieces.push(transformedPiece);
+      }
+    }
+
+    return res.json(transformedPieces);
+  }).catch((error) => {
+    console.log(error);
+    res.send(error);
+  });
+
+});
+
 
 exports.getSearchablePiecesInfo = functions.https.onRequest((req, res) => {
   res.set('Access-Control-Allow-Origin', "*");
@@ -79,7 +134,9 @@ exports.getSearchablePiecesInfo = functions.https.onRequest((req, res) => {
           let piece = originalTask.pieces[key];
           let transformedPiece = {
             id: key,
-            title: piece['title'],
+            name: piece['title'],
+            type: 'piece',
+            url: piece['url'],
             taskId: originalTaskId,
             taskName: originalTask.name
           };
@@ -87,7 +144,7 @@ exports.getSearchablePiecesInfo = functions.https.onRequest((req, res) => {
           let content = 
             piece['title'] + ' ' 
             + piece['texts'].replace(/\s/g, ' ').replace(/(['"])/g, ' ') 
-            + piece['postTags'].join(' ') + ' ';
+            + ' ';
 
           // process attitude list
           if (piece.attitudeList !== null) {
@@ -99,7 +156,7 @@ exports.getSearchablePiecesInfo = functions.https.onRequest((req, res) => {
             }
           }
 
-          transformedPiece['content'] = content;
+          transformedPiece['content'] = content.replace(/[.,/#!$%^&*;:{}=\-_`~()]/g, '').replace(/\s{2,}/g, ' ');
           transformedPieces.push(transformedPiece);
         }
       }
