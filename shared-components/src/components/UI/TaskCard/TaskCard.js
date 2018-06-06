@@ -173,7 +173,7 @@ class TaskCard extends Component {
           </div>
           <div className={styles.MetaInfo}>
             <FontAwesomeIcon icon={fasPuzzlePiece} className={styles.Icon}/>
-            {this.props.numPieces} pieces
+            {this.props.numPieces} snippets
           </div>
         </div>
 
