@@ -77,8 +77,15 @@ class Mainpage extends Component {
     this.removeAuthListerner();
   }
 
+  handleVisibilityChange = (event) => {
+    console.log('visibility change');
+    console.log(event);
+  }
+
   componentDidMount () {    
     window.isInKAP = true;
+    document.addEventListener('visibilitychange', this.handleVisibilityChange);
+
   }
 
   resetParameters = (userId) => {

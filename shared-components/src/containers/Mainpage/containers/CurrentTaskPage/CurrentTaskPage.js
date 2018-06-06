@@ -49,6 +49,16 @@ class CurrentTaskPage extends Component {
       this.setState({specificPieceId: pieceId});
       this.updateTask({database: newProps.database, userId, taskId});
     }
+
+    if (newProps.task.id !== this.props.task.id) {
+      const query = {
+        ...qs.parse(this.props.location.search),
+        view: 'collection'
+      };
+      this.props.history.push({
+        search: qs.stringify(query)
+      });
+    }
   }
 
   componentDidMount() {
