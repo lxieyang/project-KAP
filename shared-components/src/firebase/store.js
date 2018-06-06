@@ -76,12 +76,19 @@ export const addTaskFromSearchTerm = async (searchTerm, tabId) => {
   switchCurrentTask(newTaskRef.key);
 }
 
-export const switchCurrentTask = (id) => {
+export const switchCurrentTask = async (id) => {
+  currentTaskId = (await currentTaskIdRef.once('value')).val();
+  if (currentTaskId === id) {
+    lastTaskIdRef.set(null);
+  } else {
+    lastTaskIdRef.set(currentTaskId);
+  }
   currentTaskIdRef.set(id);
 }
 
-export const setLastTask = (id) => {
-  lastTaskIdRef.set(id);
+export const setCurrentTask = (id) => {
+  currentTaskIdRef.set(id);
+  lastTaskIdRef.set(null);
 }
 
 export const updateTaskName = async (id, taksName) => {

@@ -1,0 +1,13 @@
+.LastTaskNavigationContainer {
+  position: fixed;
+  bottom: 15px;
+  right: 10px; 
+  cursor: pointer;
+  opacity: 0.4;
+
+  transition: all 0.1s ease-in;
+}
+
+.LastTaskNavigationContainer:hover {
+  opacity: 1.0;
+}

@@ -205,42 +205,41 @@ class CurrentTaskPage extends Component {
 
     return (
       <div className={styles.CurrentTaskContainer}>
-      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
-        <div >
-          {
-            this.state.specific === true && this.state.specificTask !== null 
-            ? <div className={styles.SpecificTaskNameContainer}>
-                Reviewing task:  
-                <span className={styles.SpecificTaskName}>
-                  {this.state.specificTask.displayName}
-                </span>
-                <span  
-                  className={styles.CopyButton}
-                  onClick={(event) => this.copyButtonClicked(event)}>
-                  <FontAwesomeIcon icon={fasCopy}/>
-                </span>
-              </div> 
-            : null
-          }
-        </div>
-        <div className={styles.Switcher}>
-          <button
-            onClick={(event) => this.switchView(event, false)}
-            className={[isTable ? null : styles.Active]}>
-            Collections
-          </button>
+        <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+          <div>
+            {
+              this.state.specific === true && this.state.specificTask !== null 
+              ? <div className={styles.SpecificTaskNameContainer}>
+                  Reviewing task:  
+                  <span className={styles.SpecificTaskName}>
+                    {this.state.specificTask.displayName}
+                  </span>
+                  <span  
+                    className={styles.CopyButton}
+                    onClick={(event) => this.copyButtonClicked(event)}>
+                    <FontAwesomeIcon icon={fasCopy}/>
+                  </span>
+                </div> 
+              : null
+            }
+          </div>
+          <div className={styles.Switcher}>
+            <button
+              onClick={(event) => this.switchView(event, false)}
+              className={[isTable ? null : styles.Active]}>
+              Collections
+            </button>
 
-          <button
-            onClick={(event) => this.switchView(event, true)}
-            className={[isTable ? styles.Active : null]}>
-            Comparison Table
-          </button>
+            <button
+              onClick={(event) => this.switchView(event, true)}
+              className={[isTable ? styles.Active : null]}>
+              Comparison Table
+            </button>
+          </div>
         </div>
-      </div>
         
 
         <div className={styles.Content}>
-
           {content}
         </div>
       </div>

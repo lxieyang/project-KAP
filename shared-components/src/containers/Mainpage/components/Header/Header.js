@@ -177,7 +177,7 @@ class Header extends Component {
   itemInSearchResultsClickedHandler = (event, id, isTask) => {
     if (isTask) {
       // TODO: Implement last task logic
-      FirebaseStore.setLastTask(this.props.currentTaskId);
+      // FirebaseStore.setLastTask(this.props.currentTaskId);
       FirebaseStore.switchCurrentTask(id);
       // re-routing
       this.props.history.push(appRoutes.CURRENT_TASK);

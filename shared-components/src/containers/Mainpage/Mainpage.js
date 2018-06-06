@@ -7,12 +7,15 @@ import AllTasksPage from './containers/AllTasksPage/AllTasksPage';
 import CurrentTaskPage from './containers/CurrentTaskPage/CurrentTaskPage';
 import LoginPage from './containers/Auth/LoginPage/LoginPage';
 import LogoutPage from './containers/Auth/LogoutPage/LogoutPage';
+import FontAwesomeIcon from '@fortawesome/react-fontawesome';
+import fasArrowCircleRight from '@fortawesome/fontawesome-free-solid/faArrowCircleRight';
 import * as appRoutes from '../../shared/routes';
 import HTML5Backend from 'react-dnd-html5-backend';
 import { DragDropContext } from 'react-dnd';
 import { 
   tasksRef,
   currentTaskIdRef,
+  lastTaskIdRef,
   codebasesRef,
   userId,
   userName,
@@ -20,14 +23,16 @@ import {
   database,
   setUserIdAndName
 } from '../../firebase/index';
-
 import firebase from '../../firebase/firebase';
+import * as FirebaseStore from '../../firebase/store';
+import styles from './Mainpage.css';
 
 @DragDropContext(HTML5Backend)
 class Mainpage extends Component {
   state = {
     homepage: appRoutes.CURRENT_TASK,
     currentTaskId: null,
+    lastTaskId: null,
     tasks: [],
     tasksLoading: true,
     authenticated: false,
@@ -128,6 +133,9 @@ class Mainpage extends Component {
     currentTaskIdRef.on('value', (snapshot) => {
       this.setState({currentTaskId: snapshot.val()});
     });
+    lastTaskIdRef.on('value', (snapshot) => {
+      this.setState({lastTaskId: snapshot.val()});
+    });
 
     tasksRef.on('value', (snapshot) => {
       let transformedTasks = [];
@@ -223,6 +231,13 @@ class Mainpage extends Component {
     });
   }
 
+  navigateToLastTask = (event, id) => {
+    event.preventDefault();
+    FirebaseStore.setCurrentTask(id);
+    // rerouting
+    this.props.history.push(appRoutes.CURRENT_TASK);
+  }
+
   render () {
 
     if (this.state.loading === true) {
@@ -233,9 +248,10 @@ class Mainpage extends Component {
       )
     }
 
-    const { currentTaskId, tasks } = this.state;
+    const { currentTaskId, tasks, lastTaskId } = this.state;
 
     let currentTaskName = null;
+    let lastTaskName = null;
     let currentTaskObject = {};
     if (currentTaskId && tasks.length > 0) {
       let filteredTasks = tasks.filter(t => t.id === currentTaskId);
@@ -244,6 +260,13 @@ class Mainpage extends Component {
         currentTaskObject = filteredTasks[0];
       } else {
         currentTaskName = 'No active tasks right now...'
+      }
+    }
+
+    if (lastTaskId && tasks.length > 0) {
+      let filteredTasks = tasks.filter(t => t.id === lastTaskId);
+      if (filteredTasks.length > 0) {
+        lastTaskName = filteredTasks[0].displayName;
       }
     }
 
@@ -284,41 +307,8 @@ class Mainpage extends Component {
             ? <Redirect to={this.state.homepage} />
             : null 
           }
-          
-          
-          
         </Switch>
       );
-      // if (tasks.length > 0) {
-      //   console.log('TASKS LENGTH IS MORE THAN 0, REDIRECTING TO CURRENT TASK PAGE');
-      //   routes = (
-      //     <Switch>
-      //       <Route exact path={appRoutes.LOG_OUT} component={LogoutPage} />
-      //       <Route path={appRoutes.CURRENT_TASK} render={
-      //         (routeProps) => (<CurrentTaskPage {...routeProps} task={currentTaskObject} specific={false}/>)
-      //       } />
-      //       <Route path={appRoutes.ALL_TASKS} render={
-      //         (routeProps) => (<AllTasksPage {...routeProps} tasks={tasks} currentTaskId={currentTaskId}/>)
-      //       }/>
-      //       <Route path={appRoutes.TASK_WITH_ID} render={
-      //         (routeProps) => (<CurrentTaskPage {...routeProps} specific={true} database={database}/>)
-      //       } />
-      //       <Redirect to={this.state.homepage} />
-      //     </Switch>
-      //   );
-      // } else {
-      //   console.log('TASKS LENGTH IS 0, REDIRECTING TO ALL TASKS PAGE');
-      //   routes = (
-      //     <Switch>
-      //       <Route exact path={appRoutes.LOG_OUT} component={LogoutPage} />
-      //       <Route path={appRoutes.ALL_TASKS} render={
-      //         (routeProps) => (<AllTasksPage {...routeProps} tasks={tasks} currentTaskId={currentTaskId}/>)
-      //       }/>
-            
-      //     </Switch>
-      //   )
-      // }
-      
     }
 
     
@@ -337,6 +327,19 @@ class Mainpage extends Component {
           resetParameters={this.resetParameters}>
           {routes}
         </Layout>
+        {
+          lastTaskId 
+          ? <div 
+              onClick={(event) => this.navigateToLastTask(event, lastTaskId)}
+              className={styles.LastTaskNavigationContainer}>
+              Last task: &nbsp;
+              <span>
+                {lastTaskName}
+              </span> &nbsp;
+              <FontAwesomeIcon icon={fasArrowCircleRight}/>
+            </div>
+          : null
+        }
       </div>
     );
   }
