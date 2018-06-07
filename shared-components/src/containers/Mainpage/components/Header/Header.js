@@ -21,6 +21,7 @@ import * as FirebaseStore from '../../../../firebase/store';
 class Header extends Component {
   state = {
     userId: this.props.userId,
+    currentTaskId: this.props.currentTaskId,
     popoverOpen: false,
     searchFocused: false,
     searchString: '',
@@ -33,7 +34,6 @@ class Header extends Component {
 
   componentDidMount() {
     this.unlisten = this.props.history.listen((location, action) => {
-      // console.log('on route change ' + location.pathname);
       this.setState({
         searchString: '',
         searchResults: []
@@ -50,6 +50,20 @@ class Header extends Component {
     this.unlisten();
   }
 
+  static getDerivedStateFromProps (nextProps, prevState) {
+    if (nextProps.currentTaskId !== prevState.currentTaskId) {
+      return {
+        currentTaskId: nextProps.currentTaskId,
+        searchContentForPiecesInCurrentTask: null
+      }
+    }
+
+    return {
+      currentTaskId: nextProps.currentTaskId
+    };
+
+  }
+
   handleClick(e) {
     this.setState({popoverOpen: !this.state.popoverOpen});
   }
@@ -64,9 +78,7 @@ class Header extends Component {
 
   searchBlurHandler = (event) => {
     this.setState({
-      searchFocused: false,
-      // searchString: '',
-      // searchResults: []
+      searchFocused: false
     });
   }
 
@@ -176,8 +188,6 @@ class Header extends Component {
 
   itemInSearchResultsClickedHandler = (event, id, isTask) => {
     if (isTask) {
-      // TODO: Implement last task logic
-      // FirebaseStore.setLastTask(this.props.currentTaskId);
       FirebaseStore.switchCurrentTask(id);
       // re-routing
       this.props.history.push(appRoutes.CURRENT_TASK);
@@ -280,21 +290,6 @@ class Header extends Component {
                 <span>{userName}</span>
               </div>
             </Popover>
-            
-            
-            <div>
-              {/*<NavLink 
-                to={appRoutes.LOG_IN}
-                exact
-                activeClassName={styles.active}>
-                <div className={styles.Label}>Log in</div>
-              </NavLink>*/}
-              {/*<NavLink 
-                to={appRoutes.LOG_OUT}
-                exact>
-                <div className={styles.Label}>Log out</div>
-              </NavLink>*/}
-            </div>
           </div>
         </header>
       </Aux>

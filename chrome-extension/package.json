@@ -1,7 +1,7 @@
 {
   "name": "project-kap",
-  "version": "0.0.1",
-  "description": "Help developers code more effectively",
+  "version": "0.0.3",
+  "description": "Help developers code more effectively.",
   "license": "MIT",
   "repository": {
     "type": "git",

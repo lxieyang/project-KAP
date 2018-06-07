@@ -1,6 +1,5 @@
 {
   "name": "Project KAP",
-  "description": "Help Developers work more efficiently.",
   "background": {
     "page": "background.html",
     "persistent": true
