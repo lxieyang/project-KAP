@@ -23,7 +23,7 @@ class Requirements extends Component {
     this.transformRequirements(this.props.requirements);
   }
 
-  componentWillReceiveProps (nextProps) {
+  UNSAFE_componentWillReceiveProps (nextProps) {
     this.transformRequirements(nextProps.requirements);
   }
 
@@ -61,7 +61,7 @@ class Requirements extends Component {
         <div className={styles.Requirements}>
           <div className={styles.Label}>
             <FontAwesomeIcon icon={fasFlagCheckered} /> &nbsp;
-            Requirements:
+            Criteria / Features:
           </div>
           <div className={styles.RequirementList}>
             <ul>

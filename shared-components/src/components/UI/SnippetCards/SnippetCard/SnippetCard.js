@@ -509,7 +509,7 @@ class SnippetCard extends Component {
           props.isInTableView === true 
           ? null
           : <div
-              title={props.type === SNIPPET_TYPE.PIECE_GROUP ? 'Discard this group\n(pieces will be preserved)' : 'Delete this piece'}
+              title={props.type === SNIPPET_TYPE.PIECE_GROUP ? 'Discard this group\n(pieces will be preserved)' : 'Delete this snippet'}
               className={styles.DeleteContainer}
               onClick={(event) => props.deleteThisSnippet(event, props.id, props.type)}>
               <FontAwesomeIcon 

@@ -460,7 +460,8 @@ class interactionBox extends Component {
             </td>
             <td>
               <div className={styles.TableTitle}>
-                <FontAwesomeIcon icon={fasFlagCheckered}/> &nbsp;Requirements
+                <FontAwesomeIcon icon={fasFlagCheckered}/> &nbsp;
+                Criteria / Features
               </div>
             </td>
           </tr>
