@@ -3,10 +3,10 @@ const admin = require('firebase-admin');
 admin.initializeApp();
 
 
-exports.setUpdated = functions.database.ref('/users/{userId}/tasks')
+exports.setUpdated = functions.database.ref('/users/{userId}/tasks/{taskId}')
   .onWrite((snapshot, context) => {
-    console.log(snapshot.after.ref.parent);
-    return snapshot.after.ref.parent.child('tasksUpdated').set(true);
+    // console.log(snapshot.after.ref.parent);
+    return admin.database().ref(`/users/${context.params.userId}/tasksUpdated`).set(true);
   });
 
 
