@@ -41,6 +41,7 @@
     "<all_urls>",
     "background"
   ],
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAoKT+gdJ2p51k/Hz+EdDAFqm2W6DQIQTq8UurRmg8tWC92j5GkPt1Qz806i/VKks2nGigQDR/rtJmKIeMF695nKc/IRleXYRgE62cLPaBRvu5ni9wQ85IpNNCuHQeC+vJtUGdJTyvDa5rx6Wqz0SFDEVgVgn1o4pvZS3mlwHcmhCF7YlucakQoAF2Uo2LQKj+uXChDED/Tjg++fWveNlv5pfa0QvtNMX8UciK5EuElooqr9NYzb2yX+DP7+7IesIr8bcuVptVJWMqzNz2DXUh1ys4QN5CaIbDiqnGK96JcDKMosd7AWzIa3yXIReoOWN1CXBoO0UOv42G7L8P+/Ia9QIDAQAB",
   "manifest_version": 2,
   "content_security_policy": "script-src 'self' 'unsafe-eval' http://localhost:3000 http://localhost:3001 http://localhost:3002 https://gstatic.com https://*.google.com https://*.firebaseio.com https://cdn.firebase.com https://kap-project-nsh-2504.firebaseapp.com  https://project-kap-dev.firebaseapp.com; object-src 'self'"
 }
