@@ -142,7 +142,7 @@ chrome.runtime.onMessage.addListener(
 /* create context menu items */
 chrome.contextMenus.removeAll();
 chrome.contextMenus.create({
-  title: 'Add an option',
+  title: 'Add an Option',
   onclick: (_, tab) => {
     console.log(tab);
     // send to content scripts
@@ -153,7 +153,7 @@ chrome.contextMenus.create({
 });
 
 chrome.contextMenus.create({
-  title: 'Add a requirement',
+  title: 'Add a Criterion',
   onclick: (_, tab) => {
     console.log(tab);
     // send to content scripts
@@ -176,7 +176,7 @@ chrome.contextMenus.create({
 });
 
 chrome.contextMenus.create({
-  title: 'Add "%s" as a Requirement',
+  title: 'Add "%s" as a Criterion',
   "contexts": ["selection"],
   onclick: (_, tab) => {
     console.log(tab);
@@ -188,7 +188,7 @@ chrome.contextMenus.create({
 });
 
 chrome.contextMenus.create({
-  title: 'Collect it as a Piece',
+  title: 'Collect it as a Snippet',
   "contexts": ["selection"],
   onclick: (_, tab) => {
     console.log(tab);

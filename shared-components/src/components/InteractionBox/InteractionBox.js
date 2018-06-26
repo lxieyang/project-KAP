@@ -40,7 +40,7 @@ class interactionBox extends Component {
     postTags: this.props.postTags !== undefined ? this.props.postTags : [],
     htmls: this.props.htmls !== undefined ? this.props.htmls : dummyHtml,
     snippetDimension: this.props.originalDimensions !== undefined ? this.props.originalDimensions : null,
-    selectedText: this.props.selectedText ? this.props.selectedText : dummyText,
+    selectedText: this.props.selectedText !== undefined ? this.props.selectedText : dummyText,
     codeSnippetTexts: this.props.codeSnippetTexts !== undefined ? this.props.codeSnippetTexts : [],
     codeSnippetHTMLs: this.props.codeSnippetHTMLs !== undefined ? this.props.codeSnippetHTMLs : [],
     existingOptions: [],
@@ -326,6 +326,13 @@ class interactionBox extends Component {
   }
 
   submitPieceHandler = (event) => {
+    console.log(this.state.htmls);
+    console.log(this.state.selectedText);
+    if (this.state.htmls.length === 0 || this.state.selectedText === '') {
+      alert('Please make sure you clipped something before submiting.');
+      return;
+    }
+
     event.preventDefault();
     let piece = {
       timestamp: (new Date()).getTime(),

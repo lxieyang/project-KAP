@@ -106,8 +106,10 @@ const collectDrop = (connect, monitor) => {
 
 const getHTML = (htmls) => {
   let htmlString = ``;
-  for (let html of htmls) {
-    htmlString += html;
+  if (htmls !== undefined) {
+    for (let html of htmls) {
+      htmlString += html;
+    }
   }
   return {__html: htmlString};
 }
