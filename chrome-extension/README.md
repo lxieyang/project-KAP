@@ -1,28 +1,8 @@
-# Project KAP
-
-## To install:
-1. Clone the repository.
-2. Ask Michael for a `secrects.user.js` to configure the app
-3. Modify the content in `secrets.user.js` according to the insructions and place it under `src`
-4. Run `npm install`, then `npm start`
-5. Load your extension on Chrome following:
-    1. Access `chrome://extensions/`
-    2. Check `Developer mode`
-    3. Click on `Load unpacked extension`
-    4. Select the `build` folder.
-6. Have fun.
-
-
-## To build as production:
-1. Run `npm run build` instead of `npm start`
-
-
+# Project KAP - UNAKITE Chrome Extension
 
 # Chrome Extension Webpack Boilerplate (with React 16+)
 
-
 ***This boilerplate is React-enabled***
-
 
 A basic foundation boilerplate for rich Chrome Extensions using [Webpack](https://webpack.github.io/) and [React.js](https://facebook.github.io/react/) to help you write modular and modern Javascript code, load CSS easily and [automatic reload the browser on code changes](https://webpack.github.io/docs/webpack-dev-server.html#automatic-refresh).
 
