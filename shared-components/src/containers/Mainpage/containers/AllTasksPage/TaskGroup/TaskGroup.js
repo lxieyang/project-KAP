@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { reverse, sortBy } from 'lodash';
 
 import TaskCard from '../../../../../components/UI/TaskCard/TaskCard';
 import FontAwesome from 'react-fontawesome';
@@ -15,7 +16,8 @@ class TaskGroup extends Component {
   render () {
     
     const { category } = this.state;
-    const { tasks } = this.props;
+    let { tasks } = this.props;
+    tasks = reverse(sortBy(tasks, ['time']));
     
     let title = (
       <div className={styles.Header}>
