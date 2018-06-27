@@ -1,5 +1,5 @@
 {
-  "name": "Project KAP",
+  "name": "Knowledge Accelerator for Programming",
   "background": {
     "page": "background.html",
     "persistent": true
@@ -8,9 +8,7 @@
     "default_popup": "popup.html",
     "default_icon": "icon-34.png"
   },
-  "chrome_url_overrides": {
-      "newtab": "newtab.html"
-  },
+  "options_page": "options.html",
   "content_scripts": [
     {
       "matches": [

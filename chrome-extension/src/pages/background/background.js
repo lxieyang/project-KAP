@@ -2,12 +2,9 @@
 import '../../../../shared-components/src/assets/images/icon-128.png';
 import '../../../../shared-components/src/assets/images/icon-34.png';
 import * as actionTypes from '../../../../shared-components/src/shared/actionTypes';
-import { uniq, isEqual } from 'lodash';
 
 import { 
   // database,
-  sampleActionRef,
-  sampleListRef,
   tasksRef,
   currentTaskIdRef,
   isDisabledRef,
@@ -65,14 +62,22 @@ chrome.runtime.onMessage.addListener(
       } catch (error) {
         // console.log(error);
       }
-    } else if (request.msg === 'OPEN_NEW_TAB') {
-      console.log('open new tab in background');
-      chrome.tabs.create({}, function(tab) {
+    } else if (request.msg === 'OPEN_IN_NEW_TAB') {
+      chrome.tabs.create({
+        url: chrome.extension.getURL('newtab.html')
+      }, (tab) => {
+          // Tab opened.
+      });
+    } else if (request.msg === 'OPEN_SETTINGS_PAGE') {
+      chrome.tabs.create({
+        url: chrome.extension.getURL('options.html')
+      }, (tab) => {
           // Tab opened.
       });
     }
   }
 );
+
 
 chrome.tabs.onActivated.addListener((activeInfo) => {
   console.log(activeInfo);
@@ -80,7 +85,23 @@ chrome.tabs.onActivated.addListener((activeInfo) => {
     msg: 'USER_INFO',
     payload : {userId}
   })
-})
+});
+
+
+// conditionally replace newtab
+// https://kushagragour.in/blog/2017/07/conditional-newtab-override-chrome-extension/
+let shouldReplaceNewTabSetting = true;
+chrome.tabs.onCreated.addListener((tab) => {
+  if (tab.url === 'chrome://newtab/') {
+    if (shouldReplaceNewTabSetting === true) {
+      chrome.tabs.update(
+        tab.id, {
+          url: chrome.extension.getURL('newtab.html')
+        }
+      );
+    }
+  }
+});
 
 
 chrome.runtime.onConnect.addListener(function(port) {
@@ -116,7 +137,6 @@ chrome.runtime.onConnect.addListener(function(port) {
 });
 
 
-
 /* Enable / Disable plugin */
 let enabled = true;
 chrome.runtime.onMessage.addListener(
@@ -138,7 +158,6 @@ chrome.runtime.onMessage.addListener(
 )
 
 
-
 /* create context menu items */
 chrome.contextMenus.removeAll();
 chrome.contextMenus.create({
@@ -152,6 +171,7 @@ chrome.contextMenus.create({
   }
 });
 
+
 chrome.contextMenus.create({
   title: 'Add a Criterion',
   onclick: (_, tab) => {
@@ -162,6 +182,7 @@ chrome.contextMenus.create({
     }, () => {});
   }
 });
+
 
 chrome.contextMenus.create({
   title: 'Add "%s" as an Option',
@@ -175,6 +196,7 @@ chrome.contextMenus.create({
   }
 });
 
+
 chrome.contextMenus.create({
   title: 'Add "%s" as a Criterion',
   "contexts": ["selection"],
@@ -187,6 +209,7 @@ chrome.contextMenus.create({
   }
 });
 
+
 chrome.contextMenus.create({
   title: 'Collect it as a Snippet',
   "contexts": ["selection"],
@@ -198,6 +221,3 @@ chrome.contextMenus.create({
     }, () => {});
   }
 });
-
-
-

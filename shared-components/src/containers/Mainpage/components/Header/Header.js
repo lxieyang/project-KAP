@@ -212,7 +212,7 @@ class Header extends Component {
         <Aux>
           <header className={styles.Header}>
             <div style={{width: '100%', display: 'flex', justifyContent: 'space-around', alignItems: 'center'}}>
-              <AppHeader logoSize='38px' hover={false}/>
+              <AppHeader logoSize='38px' hover={false} shouldDisplayHeaderButtons={false}/>
             </div>
           </header>
         </Aux>

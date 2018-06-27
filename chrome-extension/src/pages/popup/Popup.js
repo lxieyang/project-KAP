@@ -1,7 +1,7 @@
 /* global chrome */
 import React, { Component } from "react";
 import FontAwesomeIcon from '@fortawesome/react-fontawesome';
-import fasExternalLinkAlt from '@fortawesome/fontawesome-free-solid/faExternalLinkAlt';
+import fasExternalLinkSquareAlt from '@fortawesome/fontawesome-free-solid/faExternalLinkSquareAlt';
 import Aux from '../../../../shared-components/src/hoc/Aux/Aux';
 import AppHeader from '../../../../shared-components/src/components/UI/AppHeader/AppHeader';
 import HorizontalDivider from '../../../../shared-components/src/components/UI/Divider/HorizontalDivider/HorizontalDivider';
@@ -200,36 +200,44 @@ class Popup extends Component {
     });
   }
 
-  openNewTabClickedHandler = () => {
+  openInNewTabClickedHandler = () => {
     console.log('open new tab');
     chrome.runtime.sendMessage({
-      msg: 'OPEN_NEW_TAB'
+      msg: 'OPEN_IN_NEW_TAB'
+    });
+  }
+
+  openSettingsPageClickedHandler = () => {
+    console.log('open settings tab');
+    chrome.runtime.sendMessage({
+      msg: 'OPEN_SETTINGS_PAGE'
     });
   }
 
   render () {
 
-    let appTitle = (<AppHeader logoSize='38px' hover={false}/>);
+    let isLoggedIn = !(this.state.userId === null || this.state.userId === 'invalid');
 
-    // if (this.state.loading) {
-    //   return (
-    //     <div>
-    //       {appTitle}
-    //     </div>
-    //   );
-    // }
+    let appTitle = (
+      <AppHeader 
+        logoSize='38px' 
+        hover={false}
+        shouldDisplayHeaderButtons={isLoggedIn}
+        openInNewTabClickedHandler={this.openInNewTabClickedHandler}
+        openSettingsPageClickedHandler={this.openSettingsPageClickedHandler}/>
+    );
 
     let toRender;
 
-    if (this.state.userId === null || this.state.userId === 'invalid') {
+    if (!isLoggedIn) {
       toRender = (
         <Aux>
           {appTitle}
           <HorizontalDivider margin={dividerOptions.margin.short}/>
           <div style={{width: '100%', height: '240px', display: 'flex', justifyContent: 'space-around', alignItems: 'center'}}>
-            <div className={styles.GoToNewTabBtn} onClick={(event) => this.openNewTabClickedHandler()}>
+            <div className={styles.GoToNewTabBtn} onClick={(event) => this.openInNewTabClickedHandler()}>
               Please sign in from a new tab! &nbsp;
-              <FontAwesomeIcon icon={fasExternalLinkAlt} />
+              <FontAwesomeIcon icon={fasExternalLinkSquareAlt} />
             </div>
           </div>
         </Aux>

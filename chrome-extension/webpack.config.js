@@ -26,7 +26,7 @@ var options = {
   mode: process.env.NODE_ENV,
   entry: {
     popup: path.join(__dirname, "src", "pages", "popup", "index.js"),
-    options: path.join(__dirname, "src", "pages", "options","options.js"),
+    options: path.join(__dirname, "src", "pages", "options","index.js"),
     background: path.join(__dirname, "src", "pages", "background","background.js"),
     newtab: path.join(__dirname, "src", "pages", "newtab","index.js"),
     contentAnnotation: path.join(__dirname, "src", "pages", "content", "content.annotation.js")
@@ -146,7 +146,7 @@ var options = {
       chunks: ["popup"]
     }),
     new HtmlWebpackPlugin({
-      template: path.join(__dirname, "src", "pages", "options", "options.html"),
+      template: path.join(__dirname, "src", "pages", "options", "index.html"),
       filename: "options.html",
       chunks: ["options"]
     }),

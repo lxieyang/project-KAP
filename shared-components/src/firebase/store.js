@@ -6,7 +6,8 @@ import {
   lastTaskIdRef,
   editorIntegrationRef,
   userId,
-  isDisabledRef
+  isDisabledRef,
+  userPathInFirestore
 } from './index';
 
 
@@ -35,7 +36,16 @@ export const switchWorkingStatus = () => {
 }
 
 
-
+/* SHOULD OVERRIDE NEW TAB */
+export const switchShouldOverrideNewtab = (shouldOverrideNewtab) => {
+  userPathInFirestore.set({
+    shouldOverrideNewtab
+  }, {
+    merge: true
+  })
+  .then(() => console.log("Successful"))
+  .catch((error) => console.log(error));
+}
 
 
 

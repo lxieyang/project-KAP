@@ -33,3 +33,23 @@
 .LetterE {
   color: #ea4335;
 }
+
+.HeaderIconContainer {
+  margin-left: 10px;
+  display: flex;
+}
+
+.IconInHeader {
+  margin-left: 15px;
+  font-size: 1.3rem;
+  color: inherit;
+  opacity: 0.8;
+  padding: 0;
+  cursor: pointer;
+  transition: 0.1s all ease-in;
+}
+
+.IconInHeader:hover {
+  transform: scale(1.15);
+  opacity: 0.75;
+}
