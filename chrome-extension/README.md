@@ -1,4 +1,4 @@
-# Project KAP - UNAKITE Chrome Extension
+# Project KAP - Chrome Extension
 
 # Chrome Extension Webpack Boilerplate (with React 16+)
 

@@ -18,8 +18,8 @@ const settings = (props) => {
           /> &nbsp;
           {
             props.enabled === true
-            ? <span>UNAKITE Enabled</span>
-            : <span>UNAKITE Disabled</span>
+            ? <span>KAP Enabled</span>
+            : <span>KAP Disabled</span>
           } 
         </div>
         <div className={styles.Slider}>

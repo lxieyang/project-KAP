@@ -48,10 +48,10 @@ class LoginPage extends Component {
           <div className={styles.WelcomeCardContainer}>
             <div className={styles.WelcomeCard}>
               <div style={{textAlign: 'center', fontSize: '1.3rem', fontWeight: '600'}}>
-                Welcome to UNAKITE!
+                Welcome to KAP!
               </div>
               <div>
-                <strong>UNAKITE</strong> helps you collect, organize, and use online resources while coding. 
+                <strong>KAP</strong> helps you collect, organize, and use online resources while coding. 
                 <br />
                 Please Sign in with your Google account.
               </div>
