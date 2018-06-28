@@ -36,6 +36,7 @@ if (userIdCached !== null && userIdCached !== 'invalid') {
 }
 
 let popPort;
+let optionsPort;
 let contentPort;
 
 chrome.runtime.onMessage.addListener(
@@ -61,6 +62,19 @@ chrome.runtime.onMessage.addListener(
       // console.log(tasksRef.path.pieces_);
       try {
         popPort.postMessage({
+          msg: 'USER_INFO',
+          payload: {
+            userId,
+            userName,
+            userProfilePhotoURL
+          }
+        });
+      } catch (error) {
+        // console.log(error);
+      }
+
+      try {
+        optionsPort.postMessage({
           msg: 'USER_INFO',
           payload: {
             userId,
@@ -146,6 +160,22 @@ chrome.runtime.onConnect.addListener(function(port) {
       if (request.msg === 'GET_USER_INFO') {
         console.log('send back to popup');
         popPort.postMessage({
+          msg: 'USER_INFO',
+          payload: {
+            userId,
+            userName,
+            userProfilePhotoURL
+          }
+        });
+      }
+    });
+  } 
+  if (port.name === 'FROM_OPTIONS') {
+    optionsPort = port;
+    optionsPort.onMessage.addListener((request) => {
+      if (request.msg === 'GET_USER_INFO') {
+        console.log('send back to options');
+        optionsPort.postMessage({
           msg: 'USER_INFO',
           payload: {
             userId,

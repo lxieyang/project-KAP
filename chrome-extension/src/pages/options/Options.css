@@ -1,0 +1,14 @@
+.GoToNewTabBtn {
+  font-weight: 600;
+  font-size: 1.3rem;
+  cursor: pointer;
+}
+
+.GoToNewTabBtn:hover {
+  text-decoration: underline;
+} 
+
+.Content {
+  margin-top: 72px;
+  overflow: auto;
+}

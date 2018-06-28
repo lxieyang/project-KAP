@@ -8,8 +8,6 @@ import HorizontalDivider from '../../../../shared-components/src/components/UI/D
 import CurrentTask from './components/CurrentTask/CurrentTask';
 import Options from './components/Options/Options';
 import Requirements from './components/Requirements/Requirements';
-import Settings from './components/Settings/Settings';
-import Spinner from '../../../../shared-components/src/components/UI/Spinner/Spinner';
 import { DragDropContext } from 'react-dnd';
 import HTML5Backend from 'react-dnd-html5-backend';
 import { 
@@ -38,7 +36,6 @@ class Popup extends Component {
     isEditingOption: true,
     currentTaskIdIsLoading: true,
     tasksIsLoading: true,
-    enabled: true,
     loading: true,
     userId: null,
     userName: null,
@@ -47,22 +44,6 @@ class Popup extends Component {
   }
 
   componentDidMount() {
-    chrome.runtime.sendMessage({
-      msg: 'GET_WORKING_STATUS'
-    }, (data) => {
-      console.log('WORKING STATUS: ' + data.status);
-      this.setState({enabled: data.status});
-    });
-
-    chrome.runtime.onMessage.addListener(
-      (request, sender, sendResponse) => {
-        if (request.msg === 'CURRENT_WORKING_STATUS') {
-          console.log('WORKING STATUS: ' + request.payload.status);      
-          this.setState({enabled: request.payload.status});
-        }
-      }
-    )
-
     let port = chrome.runtime.connect({name: 'FROM_POPUP'});
     port.postMessage({msg: 'GET_USER_INFO'});
     port.onMessage.addListener((response) => {
@@ -255,23 +236,37 @@ class Popup extends Component {
     let toRender;
 
     if (!isLoggedIn) {
-      toRender = (
+      return (
         <Aux>
-          {appTitle}
+          <div 
+            style={{
+              display: 'flex', 
+              justifyContent: 'space-around', 
+              alignItems: 'center'
+            }}>
+            {appTitle}
+          </div>
           <HorizontalDivider margin={dividerOptions.margin.short}/>
-          <div style={{width: '100%', height: '240px', display: 'flex', justifyContent: 'space-around', alignItems: 'center'}}>
-            <div className={styles.GoToNewTabBtn} onClick={(event) => this.openInNewTabClickedHandler()}>
-              Please sign in from a new tab! &nbsp;
+          <div 
+            style={{
+              width: '100%', 
+              height: '200px', 
+              display: 'flex', 
+              justifyContent: 'space-around', 
+              alignItems: 'center'
+            }}>
+            <div 
+              className={styles.GoToNewTabBtn} 
+              onClick={(event) => this.openInNewTabClickedHandler()}>
+              Please first sign in from a new tab! &nbsp;
               <FontAwesomeIcon icon={fasExternalLinkSquareAlt} />
             </div>
           </div>
         </Aux>
       );
-
-      return (<div>{toRender}</div>);
     }
 
-    const { currentTaskIdIsLoading, tasksIsLoading, enabled } = this.state;
+    const { currentTaskIdIsLoading, tasksIsLoading } = this.state;
 
     if ((!currentTaskIdIsLoading) && (!tasksIsLoading)) {
       const { currentTaskId, tasks, newOptionInput, newRequirementInput } = this.state;
@@ -342,12 +337,6 @@ class Popup extends Component {
               switchStarStatusOfRequirement={this.switchStarStatusOfRequirement}
               updateRequirementName={this.updateRequirementName}/>
           </div>
-          
-          {/*
-          <HorizontalDivider margin={dividerOptions.margin.long}/>
-
-          <Settings enabled={enabled} disableHandler={this.disablePluginHandler}/>
-          */}
         </Aux>
       );
     }

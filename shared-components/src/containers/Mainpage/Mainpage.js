@@ -26,6 +26,7 @@ import {
 } from '../../firebase/index';
 import firebase from '../../firebase/firebase';
 import * as FirebaseStore from '../../firebase/store';
+import { APP_NAME_SHORT } from '../../shared/constants';
 import styles from './Mainpage.css';
 
 @DragDropContext(HTML5Backend)
@@ -40,13 +41,7 @@ class Mainpage extends Component {
     loading: true
   }
 
-  constructor() {
-    super();
-    console.log('construct');
-  }
-
   UNSAFE_componentWillMount() {
-    console.log('will mount');
     this.removeAuthListerner = firebase.auth().onAuthStateChanged((user) => {
       if (user !== null) {
         setUserIdAndName(user.uid, user.displayName, user.photoURL);
@@ -85,8 +80,9 @@ class Mainpage extends Component {
   }
 
   componentDidMount () {  
-    console.log('did mount');  
     window.isInKAP = true;
+
+    document.title = APP_NAME_SHORT;
 
     // deal with logout from pop up
     let query = qs.parse(window.location.search);

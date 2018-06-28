@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import firebase from '../../../../../firebase/firebase';
 import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth';
+import { APP_NAME_SHORT } from '../../../../../shared/constants';
 import styles from './LoginPage.css';
 
 class LoginPage extends Component {
@@ -48,10 +49,10 @@ class LoginPage extends Component {
           <div className={styles.WelcomeCardContainer}>
             <div className={styles.WelcomeCard}>
               <div style={{textAlign: 'center', fontSize: '1.3rem', fontWeight: '600'}}>
-                Welcome to KAP!
+                Welcome to {APP_NAME_SHORT}!
               </div>
               <div>
-                <strong>KAP</strong> helps you collect, organize, and use online resources while coding. 
+                <strong>{APP_NAME_SHORT}</strong> helps you collect, organize, and use online resources while coding. 
                 <br />
                 Please Sign in with your Google account.
               </div>

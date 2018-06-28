@@ -5,6 +5,7 @@ import fasExternalLinkSquareAlt from '@fortawesome/fontawesome-free-solid/faExte
 import fasSignOutAlt from '@fortawesome/fontawesome-free-solid/faSignOutAlt';
 import Popover from 'react-tiny-popover';
 import ProfileImg from '../../../assets/images/profile-img.png';
+import { APP_NAME_LONG, APP_NAME_SHORT } from '../../../shared/constants';
 import Spinner from '../../UI/Spinner/Spinner';
 import Aux from '../../../hoc/Aux/Aux';
 import Logo from '../Logo/Logo';
@@ -40,7 +41,7 @@ class AppHeader extends Component {
         <div className={styles.AppHeader}>
           <div className={styles.HeaderText}>
             <Logo size={props.logoSize} hover={props.hover} /> &nbsp;&nbsp;
-            <strong>Knowledge Acclerator for Programming</strong>
+            <strong>{APP_NAME_LONG}</strong>
             &nbsp;
             in &nbsp;
             <span className={styles.LetterC}>C</span>
@@ -54,7 +55,7 @@ class AppHeader extends Component {
             className={styles.HeaderIconContainer} 
             style={{display: props.shouldDisplayHeaderButtons === false ? 'none' : null}} >
             <div 
-              title={'Open a KAP tab'}
+              title={`Open a ${APP_NAME_SHORT} tab`}
               onClick={(event) => props.openInNewTabClickedHandler()}>
               <FontAwesomeIcon icon={fasExternalLinkSquareAlt} className={styles.IconInHeader} />
             </div>

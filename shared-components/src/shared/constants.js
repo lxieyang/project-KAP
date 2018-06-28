@@ -1,3 +1,6 @@
+export const APP_NAME_LONG = 'Knowledge Acclerator for Programming';
+export const APP_NAME_SHORT = 'KAP';
+
 // https://stackoverflow.com/questions/10282939/how-to-get-favicons-url-from-a-generic-webpage-in-javascript
 export const GET_FAVICON_URL_PREFIX = 'https://plus.google.com/_/favicon?domain_url=';
 export const SNIPPET_TYPE = {
