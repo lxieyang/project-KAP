@@ -10,7 +10,7 @@ const toggleSwitch = (props) => {
   return (
     <Toggle
       icons={props.icons}
-      defaultChecked={props.checked}
+      checked={props.checked}
       onChange={props.statusChanged} />
   );
 }

@@ -43,7 +43,7 @@ export const switchShouldOverrideNewtab = (shouldOverrideNewtab) => {
   }, {
     merge: true
   })
-  .then(() => console.log("Successful"))
+  .then(() => {})
   .catch((error) => console.log(error));
 }
 

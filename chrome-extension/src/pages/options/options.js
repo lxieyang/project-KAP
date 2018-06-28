@@ -3,14 +3,13 @@ import React, { Component } from "react";
 import FontAwesomeIcon from '@fortawesome/react-fontawesome';
 import fasExternalLinkSquareAlt from '@fortawesome/fontawesome-free-solid/faExternalLinkSquareAlt';
 import Header from './components/Header/Header';
+import Settings from './components/Settings/Settings';
 import Aux from '../../../../shared-components/src/hoc/Aux/Aux';
 import AppHeader from '../../../../shared-components/src/components/UI/AppHeader/AppHeader';
 import HorizontalDivider from '../../../../shared-components/src/components/UI/Divider/HorizontalDivider/HorizontalDivider';
 import { 
-  setUserIdAndName,
-  userPathInFirestore
+  setUserIdAndName
 } from '../../../../shared-components/src/firebase/index';
-import * as FirebaseStore from '../../../../shared-components/src/firebase/store';
 import styles from './Options.css';
 
 const dividerOptions = {
@@ -99,8 +98,10 @@ class Options extends Component {
         <Header 
           userName={this.state.userName}
           userProfilePhotoURL={this.state.userProfilePhotoURL}/>
-        <main className={styles.Content}>
-          
+        <main className={styles.Main}>
+          <div className={styles.Content}>
+            <Settings />
+          </div>
         </main>
       </Aux>
     );

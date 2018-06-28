@@ -11,7 +11,8 @@ import {
   userId,
   userName,
   userProfilePhotoURL,
-  setUserIdAndName
+  setUserIdAndName,
+  userPathInFirestore
 } from '../../../../shared-components/src/firebase/index';
 // import * as FirebaseStore from '../../../../shared-components/src/firebase/store';
 
@@ -59,7 +60,6 @@ chrome.runtime.onMessage.addListener(
       localStorage.setItem('userProfilePhotoURL', userProfilePhotoURL);
       
       console.log("USERID: " + request.payload.userId);
-      // console.log(tasksRef.path.pieces_);
       try {
         popPort.postMessage({
           msg: 'USER_INFO',
@@ -138,10 +138,15 @@ chrome.tabs.onActivated.addListener((activeInfo) => {
 
 // conditionally replace newtab
 // https://kushagragour.in/blog/2017/07/conditional-newtab-override-chrome-extension/
-let shouldReplaceNewTabSetting = true;
+let shouldOverrideNewtab = true;
+userPathInFirestore.onSnapshot((doc) => {
+  if (doc.exists) {
+    shouldOverrideNewtab = doc.data().shouldOverrideNewtab;
+  }
+});
 chrome.tabs.onCreated.addListener((tab) => {
   if (tab.url === 'chrome://newtab/') {
-    if (shouldReplaceNewTabSetting === true) {
+    if (shouldOverrideNewtab === true) {
       chrome.tabs.update(
         tab.id, {
           url: chrome.extension.getURL('newtab.html')

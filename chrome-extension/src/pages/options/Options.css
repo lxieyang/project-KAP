@@ -8,7 +8,22 @@
   text-decoration: underline;
 } 
 
-.Content {
-  margin-top: 72px;
+.Main {
+  margin-top: 60px;
   overflow: auto;
+  display: flex;
+  justify-content: space-around;
+}
+
+.Content {
+  background-color: transparent;
+  min-height: 300px;
+  max-width: 80%;
+  min-width: 70%;
+}
+
+@media (max-width: 700px) {
+  .Content {
+    max-width: 100%;
+  }
 }

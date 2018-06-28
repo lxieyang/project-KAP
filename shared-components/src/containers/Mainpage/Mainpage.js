@@ -22,7 +22,8 @@ import {
   userName,
   userProfilePhotoURL,
   database,
-  setUserIdAndName
+  setUserIdAndName,
+  userPathInFirestore
 } from '../../firebase/index';
 import firebase from '../../firebase/firebase';
 import * as FirebaseStore from '../../firebase/store';
@@ -45,6 +46,14 @@ class Mainpage extends Component {
     this.removeAuthListerner = firebase.auth().onAuthStateChanged((user) => {
       if (user !== null) {
         setUserIdAndName(user.uid, user.displayName, user.photoURL);
+        
+        // inialize settings
+        userPathInFirestore.get().then((doc) => {
+          if (!doc.exists) {
+            FirebaseStore.switchShouldOverrideNewtab(true);
+          }
+        });
+
         this.syncWithEditorAndWindow(userId);
         this.loadTasks();
         this.updateInbackground();

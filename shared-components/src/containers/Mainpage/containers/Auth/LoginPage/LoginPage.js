@@ -21,7 +21,7 @@ class LoginPage extends Component {
     ],
     callbacks: {
       // Avoid redirects after sign-in.
-      signInSuccessWithAuthResult: () => false
+      signInSuccessWithAuthResult: () => false,
     }
   };
 
