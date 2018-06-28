@@ -27,7 +27,7 @@ import {
 } from '../../firebase/index';
 import firebase from '../../firebase/firebase';
 import * as FirebaseStore from '../../firebase/store';
-import { APP_NAME_SHORT } from '../../shared/constants';
+import { APP_NAME_SHORT, DEFAULT_SETTINGS } from '../../shared/constants';
 import styles from './Mainpage.css';
 
 @DragDropContext(HTML5Backend)
@@ -39,7 +39,8 @@ class Mainpage extends Component {
     tasks: [],
     tasksLoading: true,
     authenticated: false,
-    loading: true
+    loading: true,
+    shouldDisplayAllPages: DEFAULT_SETTINGS.shouldDisplayAllPages
   }
 
   UNSAFE_componentWillMount() {
@@ -48,6 +49,17 @@ class Mainpage extends Component {
         setUserIdAndName(user.uid, user.displayName, user.photoURL);
 
         FirebaseStore.updateUserProfile(user.uid, user.displayName, user.photoURL, user.email);
+
+        userPathInFirestore.onSnapshot((doc) => {
+          if (doc.exists) {
+            const { userSettings } = doc.data();
+            if (userSettings !== undefined && userSettings.shouldDisplayAllPages !== undefined) {
+              this.setState({
+                shouldDisplayAllPages: userSettings.shouldDisplayAllPages
+              });
+            }
+          }
+        });
 
         this.syncWithEditorAndWindow(userId);
         this.loadTasks();
@@ -307,7 +319,7 @@ class Mainpage extends Component {
           {
             tasks.length > 0 
             ? <Route path={appRoutes.CURRENT_TASK} render={
-                (routeProps) => (<CurrentTaskPage {...routeProps} task={currentTaskObject} specific={false}/>)
+                (routeProps) => (<CurrentTaskPage {...routeProps} task={currentTaskObject} specific={false} shouldDisplayAllPages={this.state.shouldDisplayAllPages}/>)
               } />
             : null 
           }

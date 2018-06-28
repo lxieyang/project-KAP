@@ -582,9 +582,14 @@ class CollectionView extends Component {
         <div className={styles.CollectionView}>
             <div className={styles.Main} id="scrollable-content-container">
               
-              <div className={styles.Section}>
-                {topPages}
-              </div>
+              {
+                this.props.shouldDisplayAllPages 
+                ? <div className={styles.Section}>
+                    {topPages}
+                  </div>
+                : null
+              }
+              
 
               <div className={styles.Section}>
                 <Aux>

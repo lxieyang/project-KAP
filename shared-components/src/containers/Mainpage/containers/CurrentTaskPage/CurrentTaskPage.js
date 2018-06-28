@@ -209,7 +209,9 @@ class CurrentTaskPage extends Component {
       }
     } else {
       content = !isTable 
-        ? <CollectionView task={this.props.task}/> 
+        ? <CollectionView 
+          task={this.props.task} 
+          shouldDisplayAllPages={this.props.shouldDisplayAllPages} /> 
         : <TableView task={this.props.task}/>
     }
 
