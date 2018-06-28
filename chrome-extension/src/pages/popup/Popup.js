@@ -183,14 +183,6 @@ class Popup extends Component {
     FirebaseStore.updateTaskName(id, taskName);
   }
 
-  disablePluginHandler = () => {
-    // FirebaseStore.switchWorkingStatus();
-    console.log('changed status');
-    chrome.runtime.sendMessage({
-      msg: 'SWITCH_WORKING_STATUS'
-    });
-  }
-
   openInNewTabClickedHandler = () => {
     console.log('open new tab');
     chrome.runtime.sendMessage({

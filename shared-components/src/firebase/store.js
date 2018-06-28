@@ -26,26 +26,43 @@ isDisabledRef.on('value', (snapshot) => {
 
 
 
-/* WORKING STATUS */
-export const switchWorkingStatus = () => {
-  isDisabledRef.once('value', (snapshot) => {
-    if (snapshot.val() !== null) {
-      isDisabledRef.set(!snapshot.val());
+/* USER SETTINGS */
+export const updateUserProfile = (userId, userName, userProfilePhotoURL, userEmail) => {
+  userPathInFirestore.set({
+    userProfile: {
+      userId, userName, userProfilePhotoURL, userEmail
     }
-  })
+  }, {
+    merge: true
+  });
 }
 
-
-/* SHOULD OVERRIDE NEW TAB */
+// SHOULD OVERRIDE NEW TAB
 export const switchShouldOverrideNewtab = (shouldOverrideNewtab) => {
   userPathInFirestore.set({
-    shouldOverrideNewtab
+    userSettings: {
+      shouldOverrideNewtab
+    }
   }, {
     merge: true
   })
   .then(() => {})
   .catch((error) => console.log(error));
 }
+
+// SHOULD DISPLAY ALL PAGES
+export const switchShouldDisplayAllPages = (shouldDisplayAllPages) => {
+  userPathInFirestore.set({
+    userSettings: {
+      shouldDisplayAllPages
+    }
+  }, {
+    merge: true
+  })
+  .then(() => {})
+  .catch((error) => console.log(error));
+}
+
 
 
 

@@ -46,13 +46,8 @@ class Mainpage extends Component {
     this.removeAuthListerner = firebase.auth().onAuthStateChanged((user) => {
       if (user !== null) {
         setUserIdAndName(user.uid, user.displayName, user.photoURL);
-        
-        // inialize settings
-        userPathInFirestore.get().then((doc) => {
-          if (!doc.exists) {
-            FirebaseStore.switchShouldOverrideNewtab(true);
-          }
-        });
+
+        FirebaseStore.updateUserProfile(user.uid, user.displayName, user.photoURL, user.email);
 
         this.syncWithEditorAndWindow(userId);
         this.loadTasks();

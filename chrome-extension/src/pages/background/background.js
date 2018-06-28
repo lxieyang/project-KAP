@@ -2,6 +2,7 @@
 import '../../../../shared-components/src/assets/images/icon-128.png';
 import '../../../../shared-components/src/assets/images/icon-34.png';
 import * as actionTypes from '../../../../shared-components/src/shared/actionTypes';
+import { DEFAULT_SETTINGS } from '../../../../shared-components/src/shared/constants';
 
 import { 
   // database,
@@ -138,12 +139,16 @@ chrome.tabs.onActivated.addListener((activeInfo) => {
 
 // conditionally replace newtab
 // https://kushagragour.in/blog/2017/07/conditional-newtab-override-chrome-extension/
-let shouldOverrideNewtab = true;
+let shouldOverrideNewtab = DEFAULT_SETTINGS.shouldOverrideNewtab;
 userPathInFirestore.onSnapshot((doc) => {
   if (doc.exists) {
-    shouldOverrideNewtab = doc.data().shouldOverrideNewtab;
+    const { userSettings } = doc.data();
+    if (userSettings !== undefined && userSettings.shouldOverrideNewtab !== undefined) {
+      shouldOverrideNewtab = userSettings.shouldOverrideNewtab;
+    }
   }
 });
+
 chrome.tabs.onCreated.addListener((tab) => {
   if (tab.url === 'chrome://newtab/') {
     if (shouldOverrideNewtab === true) {
@@ -209,26 +214,6 @@ chrome.runtime.onConnect.addListener(function(port) {
   }
 });
 
-
-/* Enable / Disable plugin */
-let enabled = true;
-chrome.runtime.onMessage.addListener(
-  function(request, sender, sendResponse) {
-    if (request.msg === 'SWITCH_WORKING_STATUS') {
-      enabled = !enabled;
-      chrome.runtime.sendMessage({
-        msg: 'CURRENT_WORKING_STATUS',
-        payload: {
-          status: enabled
-        }
-      });
-    } else if (request.msg === 'GET_WORKING_STATUS') {
-      sendResponse({
-        status: enabled
-      })
-    }
-  }
-)
 
 
 /* create context menu items */
