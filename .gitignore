@@ -1,6 +1,4 @@
 # secrets
 secrets.*.js
 
-# misc
-Icon*
 .DS_Store
