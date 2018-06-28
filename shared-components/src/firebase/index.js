@@ -29,6 +29,8 @@ export const setUserIdAndName = (
 /* database & firestore ref */
 export let database = firebase.database();
 export let firestore = firebase.firestore();
+const settings = {timestampsInSnapshots: true};
+firestore.settings(settings);
 
 /* database & firestore path ref */
 export let isDisabledRef = database.ref(userPrefix).child('isDisabled');

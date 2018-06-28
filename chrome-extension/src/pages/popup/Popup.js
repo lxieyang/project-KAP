@@ -40,7 +40,10 @@ class Popup extends Component {
     tasksIsLoading: true,
     enabled: true,
     loading: true,
-    userId: null
+    userId: null,
+    userName: null,
+    userProfilePhotoURL: null,
+    isSigningOut: null
   }
 
   componentDidMount() {
@@ -68,8 +71,15 @@ class Popup extends Component {
         setUserIdAndName(payload.userId);
         this.setState({
           loading: false,
-          userId: payload.userId
+          userId: payload.userId,
+          userName: payload.userName,
+          userProfilePhotoURL: payload.userProfilePhotoURL
         });
+        if (payload.userId === 'invalid') {
+          this.setState({
+            isSigningOut: false
+          });
+        }
         this.updateTask();
       }
     });
@@ -214,6 +224,16 @@ class Popup extends Component {
     });
   }
 
+  signOutClickedHandler = () => {
+    console.log('signing out');
+    chrome.runtime.sendMessage({
+      msg: 'SIGN_OUT'
+    });
+    this.setState({
+      isSigningOut: true
+    });
+  }
+
   render () {
 
     let isLoggedIn = !(this.state.userId === null || this.state.userId === 'invalid');
@@ -223,6 +243,11 @@ class Popup extends Component {
         logoSize='38px' 
         hover={false}
         shouldDisplayHeaderButtons={isLoggedIn}
+        userId={this.state.userId}
+        userName={this.state.userName}
+        userProfilePhotoURL={this.state.userProfilePhotoURL}
+        isSigningOut={this.state.isSigningOut}
+        signOutClickedHandler={this.signOutClickedHandler}
         openInNewTabClickedHandler={this.openInNewTabClickedHandler}
         openSettingsPageClickedHandler={this.openSettingsPageClickedHandler}/>
     );

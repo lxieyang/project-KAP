@@ -13,15 +13,26 @@ import {
   userProfilePhotoURL,
   setUserIdAndName
 } from '../../../../shared-components/src/firebase/index';
-import * as FirebaseStore from '../../../../shared-components/src/firebase/store';
+// import * as FirebaseStore from '../../../../shared-components/src/firebase/store';
 
 
 let userIdCached = localStorage.getItem('userId');
 let userNameCached = localStorage.getItem('userName');
 let userProfilePhotoURLCached = localStorage.getItem('userProfilePhotoURL');
+
+const updateBrowserIcon = (isLoggedIn) => {
+  if (isLoggedIn) {
+    chrome.browserAction.setIcon({path: 'icon-128.png'});
+  } else {
+    chrome.browserAction.setIcon({path: 'icon-inactive-128.png'});
+  }
+}
     
 if (userIdCached !== null && userIdCached !== 'invalid') {
   setUserIdAndName(userIdCached, userNameCached, userProfilePhotoURLCached);
+  updateBrowserIcon(true);
+} else {
+  updateBrowserIcon(false);
 }
 
 let popPort;
@@ -35,6 +46,13 @@ chrome.runtime.onMessage.addListener(
         request.payload.userName,
         request.payload.userProfilePhotoURL
       );
+
+      if (request.payload.userId !== null && request.payload.userId !== 'invalid') {
+        updateBrowserIcon(true);
+      } else {
+        updateBrowserIcon(false);
+      }
+
       localStorage.setItem('userId', userId);
       localStorage.setItem('userName', userName);
       localStorage.setItem('userProfilePhotoURL', userProfilePhotoURL);
@@ -45,7 +63,9 @@ chrome.runtime.onMessage.addListener(
         popPort.postMessage({
           msg: 'USER_INFO',
           payload: {
-            userId
+            userId,
+            userName,
+            userProfilePhotoURL
           }
         });
       } catch (error) {
@@ -56,7 +76,9 @@ chrome.runtime.onMessage.addListener(
         contentPort.postMessage({
           msg: 'USER_INFO',
           payload: {
-            userId
+            userId,
+            userName,
+            userProfilePhotoURL
           }
         });
       } catch (error) {
@@ -74,6 +96,14 @@ chrome.runtime.onMessage.addListener(
       }, (tab) => {
           // Tab opened.
       });
+    } else if (request.msg === 'SIGN_OUT') {
+      console.log('should sign out');
+      chrome.tabs.create({
+        url: chrome.extension.getURL('newtab.html') + '?shouldSignOut=true',
+        active: false
+      }, (tab) => {
+        // Tab opened.
+      });
     }
   }
 );
@@ -83,8 +113,12 @@ chrome.tabs.onActivated.addListener((activeInfo) => {
   console.log(activeInfo);
   chrome.tabs.sendMessage(activeInfo.tabId, {
     msg: 'USER_INFO',
-    payload : {userId}
-  })
+    payload : {
+      userId,
+      userName,
+      userProfilePhotoURL
+    }
+  });
 });
 
 
@@ -114,7 +148,9 @@ chrome.runtime.onConnect.addListener(function(port) {
         popPort.postMessage({
           msg: 'USER_INFO',
           payload: {
-            userId
+            userId,
+            userName,
+            userProfilePhotoURL
           }
         });
       }
@@ -128,7 +164,9 @@ chrome.runtime.onConnect.addListener(function(port) {
         contentPort.postMessage({
           msg: 'USER_INFO',
           payload: {
-            userId
+            userId,
+            userName,
+            userProfilePhotoURL
           }
         });
       }

@@ -1,13 +1,16 @@
 .AppHeader {
   margin: 10px;
   margin-left: 50px;
+  margin-right: 30px;
   display: flex;
   align-items: center;
+  justify-content: space-between;
 }
 
 .HeaderText {
-  margin-left: 15px;
   font-size: 1.15rem;
+  display: flex;
+  align-items: center;
 }
 
 .LetterC {
@@ -37,13 +40,14 @@
 .HeaderIconContainer {
   margin-left: 10px;
   display: flex;
+  align-items: center;
 }
 
 .IconInHeader {
-  margin-left: 15px;
-  font-size: 1.3rem;
+  margin-left: 20px;
+  font-size: 1.4rem;
   color: inherit;
-  opacity: 0.8;
+  opacity: 0.7;
   padding: 0;
   cursor: pointer;
   transition: 0.1s all ease-in;
@@ -51,5 +55,49 @@
 
 .IconInHeader:hover {
   transform: scale(1.15);
-  opacity: 0.75;
+  opacity: 0.8;
+}
+
+.Profile {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  margin-left: 30px;
+}
+
+.ProfileImg {
+  width: 30px;
+  height: 30px;
+  margin-right: 10px;
+  border: 1px solid grey;
+  border-radius: 50%;
+  box-shadow: 0 2px 5px 0 rgba(0,0,0,0.16), 0 2px 10px 0 rgba(0,0,0,0.12);
+}
+
+.LogoutPopover {
+  /* background-color: black;
+  color: white; */
+  background-color: white;
+  font-size: 1.3rem;
+  text-decoration: none;
+  padding: 10px;
+  box-shadow: 0 2px 5px 0 rgba(0,0,0,0.16), 0 2px 10px 0 rgba(0,0,0,0.12);
+  position: relative;
+  min-width: 30px;
+  min-height: 30px;
+}
+
+.SpinnerContainer {
+  position: absolute;
+  top: 7px;
+  left: 8px;
+}
+
+.MenuItem {
+  cursor: pointer;
+}
+
+.Label {
+  color: rgb(97, 96, 96);
+  transition: all 0.1s ease-in;
 }

@@ -1,6 +1,7 @@
 /* global chrome */
 import React, { Component } from "react";
 import { Route, Switch, withRouter, Redirect } from 'react-router-dom';
+import qs from 'query-string';
 import Spinner from '../../components/UI/Spinner/Spinner';
 import Layout from './containers/Layout/Layout';
 import AllTasksPage from './containers/AllTasksPage/AllTasksPage';
@@ -39,7 +40,13 @@ class Mainpage extends Component {
     loading: true
   }
 
+  constructor() {
+    super();
+    console.log('construct');
+  }
+
   UNSAFE_componentWillMount() {
+    console.log('will mount');
     this.removeAuthListerner = firebase.auth().onAuthStateChanged((user) => {
       if (user !== null) {
         setUserIdAndName(user.uid, user.displayName, user.photoURL);
@@ -77,8 +84,20 @@ class Mainpage extends Component {
     this.removeAuthListerner();
   }
 
-  componentDidMount () {    
+  componentDidMount () {  
+    console.log('did mount');  
     window.isInKAP = true;
+
+    // deal with logout from pop up
+    let query = qs.parse(window.location.search);
+    if (query.shouldSignOut) {
+      this.props.history.push(appRoutes.LOG_OUT);
+      window.history.replaceState(
+        {},
+        document.title,
+        '/newtab.html'
+      );
+    }
   }
 
   resetParameters = (userId) => {

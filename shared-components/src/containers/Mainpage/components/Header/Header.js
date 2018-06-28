@@ -284,6 +284,7 @@ class Header extends Component {
               )}
             >
               <div 
+                title={'Click to sign out'}
                 className={styles.Profile}
                 onClick={this.handleClick.bind(this)}>
                 <img src={userProfilePhotoURL !== null ? userProfilePhotoURL : ProfileImg} alt="" className={styles.ProfileImg}/> 
