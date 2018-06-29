@@ -13,6 +13,7 @@ import { PageCountHelper, dragElement } from './content.utility';
 import { getFirstSentence } from '../../../../shared-components/src/shared/utilities';
 import { SNIPPET_TYPE } from '../../../../shared-components/src/shared/constants';
 import { 
+  userId,
   setUserIdAndName 
 } from '../../../../shared-components/src/firebase/index';
 import * as FirebaseStore from '../../../../shared-components/src/firebase/store';
@@ -31,39 +32,50 @@ taskPromptAnchor.style.zIndex = '99999';
 const handleFromSearchToTask = () => {
   // check if new search is initiated,
   // if so, attempt to add a new task
-  if (getOrigin().indexOf('www.google.com') !== -1) {
-    // attempt to generate new task
-    let searchTerm = getSearchTerm(window.location);
-    if (searchTerm !== '') {
-      // google search results page
-      console.log('google search result page');
-      FirebaseStore.addTaskFromSearchTerm(searchTerm);
-
-      ReactDOM.render(
-        <div style={{
-          marginLeft: '150px',
-          marginTop: '6px',
-          marginBottom: '12px'
-        }}>
-          <GoogleInPageTaskPrompt />
-        </div>, 
-        document.querySelector('.mw'));
-
-    } else {
-      // google home page
-      console.log('google home page');
-      ReactDOM.render(
-        <div style={{
-          marginTop: '8px',
-          width: '100%',
-          display: 'flex',
-          justifyContent: 'space-around'
-        }}>
-          <GoogleInPageTaskPrompt />
-        </div>, 
-        taskPromptAnchor);
+  if (userId !== null && userId !== 'invalid') {
+    if (getOrigin().indexOf('www.google.com') !== -1) {
+      // attempt to generate new task
+      let searchTerm = getSearchTerm(window.location);
+      if (searchTerm !== '') {
+        // google search results page
+        console.log('google search result page');
+        FirebaseStore.addTaskFromSearchTerm(searchTerm);
+  
+        ReactDOM.render(
+          <div style={{
+            marginLeft: '150px',
+            marginTop: '6px',
+            marginBottom: '12px'
+          }}>
+            <GoogleInPageTaskPrompt />
+          </div>, 
+          document.querySelector('.mw'));
+  
+      } else {
+        // google home page
+        console.log('google home page');
+        ReactDOM.render(
+          <div style={{
+            marginTop: '8px',
+            width: '100%',
+            display: 'flex',
+            justifyContent: 'space-around'
+          }}>
+            <GoogleInPageTaskPrompt />
+          </div>, 
+          taskPromptAnchor);
+      }
+    } 
+  } else {
+    try {
+      ReactDOM.unmountComponentAtNode(taskPromptAnchor);
+      ReactDOM.unmountComponentAtNode(document.querySelector('.mw'));
+    } catch (err) {
+      console.log(err);
     }
-  } 
+    
+  }
+  
 }
 
 const shouldCount = (url) => {
@@ -371,6 +383,7 @@ window.addEventListener('mousemove', (event) => {
     mountCaptureWindow();
     styleSheet.insertRule('::selection { background-color: inherit  !important; color: inherit  !important;}');
     dragElement(document.getElementById("kap-selection-window"));
+
   }
 });
 
