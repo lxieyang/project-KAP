@@ -38,7 +38,7 @@ class CurrentTask extends Component {
         <div className={styles.CurrentTask}>
           <div className={styles.Label}>
             <FontAwesomeIcon icon={farClock} /> &nbsp;
-            Current Task:
+            Current Task
           </div>
           <div className={styles.TaskNameContainer}>
             <div 

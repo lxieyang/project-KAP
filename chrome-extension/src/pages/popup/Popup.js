@@ -19,6 +19,7 @@ import {
 import * as FirebaseStore from '../../../../shared-components/src/firebase/store';
 import styles from './Popup.css';
 
+
 const dividerOptions = {
   margin: {
     long: '10px',

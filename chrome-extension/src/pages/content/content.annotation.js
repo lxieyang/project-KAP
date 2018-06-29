@@ -5,6 +5,7 @@ import ReactDOM from 'react-dom';
 import KAPCaptureHelper from './captures/capture.helper';
 import InteractionBox from '../../../../shared-components/src/components/InteractionBox/InteractionBox';
 import HoverInteraction from '../../../../shared-components/src/components/InteractionBox/HoverInteraction/HoverInteraction';
+import GoogleInPageTaskPrompt from '../../components/InPageTaskPrompt/GoogleInPageTaskPrompt/GoogleInPageTaskPrompt';
 import { getSearchTerm, getOrigin } from '../../../../shared-components/src/shared/utilities';
 import * as actionTypes from '../../../../shared-components/src/shared/actionTypes';
 import classes from './content.annotation.css';
@@ -16,6 +17,12 @@ import { setUserIdAndName } from '../../../../shared-components/src/firebase/ind
 
 
 
+const taskPromptAnchor = document.body.appendChild(document.createElement('div'));
+taskPromptAnchor.style.position = 'fixed';
+taskPromptAnchor.style.top = '0px';
+taskPromptAnchor.style.left = '0px';
+taskPromptAnchor.style.width = '100%';
+
 
 
 /* UTILITY FUNCTIONS */
@@ -26,7 +33,33 @@ const handleFromSearchToTask = () => {
     // attempt to generate new task
     let searchTerm = getSearchTerm(window.location);
     if (searchTerm !== '') {
+      // google search results page
+      console.log('google search result page');
       FirebaseStore.addTaskFromSearchTerm(searchTerm);
+
+      ReactDOM.render(
+        <div style={{
+          marginLeft: '150px',
+          marginTop: '6px',
+          marginBottom: '12px'
+        }}>
+          <GoogleInPageTaskPrompt />
+        </div>, 
+        document.querySelector('.mw'));
+
+    } else {
+      // google home page
+      console.log('google home page');
+      ReactDOM.render(
+        <div style={{
+          marginTop: '8px',
+          width: '100%',
+          display: 'flex',
+          justifyContent: 'space-around'
+        }}>
+          <GoogleInPageTaskPrompt />
+        </div>, 
+        taskPromptAnchor);
     }
   } 
 }

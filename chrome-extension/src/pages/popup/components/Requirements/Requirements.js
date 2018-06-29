@@ -10,7 +10,7 @@ import RequirementPiece from './RequirementPiece/RequirementPiece';
 
 
 const inputConfig = {
-  placeholder: 'Add a requirement'
+  placeholder: 'Add a criterion / feature'
 }
 
 class Requirements extends Component {
@@ -61,7 +61,7 @@ class Requirements extends Component {
         <div className={styles.Requirements}>
           <div className={styles.Label}>
             <FontAwesomeIcon icon={fasFlagCheckered} /> &nbsp;
-            Criteria / Features:
+            Criteria / Features
           </div>
           <div className={styles.RequirementList}>
             <ul>

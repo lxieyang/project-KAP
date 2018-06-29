@@ -23,7 +23,7 @@ class Options extends Component {
     this.transformOptions(this.props.options);
   }
 
-  componentWillReceiveProps (nextProps) {
+  UNSAFE_componentWillReceiveProps (nextProps) {
     this.transformOptions(nextProps.options);
   }
 
@@ -62,7 +62,7 @@ class Options extends Component {
         <div className={styles.Options}>
           <div className={styles.Label}>
             <FontAwesomeIcon icon={fasListAlt} /> &nbsp;
-            Options:
+            Options
           </div>
           <div className={styles.OptionList}>
             <ul>
