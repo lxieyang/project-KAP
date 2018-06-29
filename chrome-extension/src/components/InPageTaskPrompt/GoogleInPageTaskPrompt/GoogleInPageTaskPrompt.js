@@ -10,6 +10,8 @@ const Wrapper = styled.div`
   padding: 4px 6px;
   box-shadow: 0 2px 2px 0 rgba(0,0,0,0.16), 0 0 0 1px rgba(0,0,0,0.08);
   border-radius: 2px;
+
+  z-index: 10000;
 `;
 
 const Container = styled.div`
@@ -19,8 +21,6 @@ const Container = styled.div`
   max-width: 440px;
   display: flex;
   align-items: center;
-
-  z-index: 10000;
 `;
 
 const ContentContainer = styled.div`

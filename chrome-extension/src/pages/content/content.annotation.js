@@ -17,11 +17,12 @@ import { setUserIdAndName } from '../../../../shared-components/src/firebase/ind
 
 
 
-const taskPromptAnchor = document.body.appendChild(document.createElement('div'));
+const taskPromptAnchor = document.body.insertBefore(document.createElement('div'), document.body.childNodes[0]);
 taskPromptAnchor.style.position = 'fixed';
 taskPromptAnchor.style.top = '0px';
 taskPromptAnchor.style.left = '0px';
 taskPromptAnchor.style.width = '100%';
+taskPromptAnchor.style.zIndex = '99999';
 
 
 
