@@ -181,6 +181,10 @@ class Mainpage extends Component {
             childSnapshot.val().taskOngoing === undefined
             ? true
             : childSnapshot.val().taskOngoing,
+          completionTimestamp: 
+            childSnapshot.val().taskOngoing === false 
+            ? childSnapshot.val().completionTimestamp 
+            : null,
           displayName: childSnapshot.val().name,
           time: childSnapshot.val().timestamp,
           searchQueries: childSnapshot.val().searchQueries,

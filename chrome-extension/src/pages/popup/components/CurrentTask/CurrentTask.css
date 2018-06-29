@@ -26,6 +26,7 @@
 .StatusButton {
   display: flex;
   align-items: center;
+  font-size: 0.95rem;
 
   padding: 3px 6px;
   border-radius: 4px;

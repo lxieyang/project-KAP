@@ -6,6 +6,7 @@ import KAPCaptureHelper from './captures/capture.helper';
 import InteractionBox from '../../../../shared-components/src/components/InteractionBox/InteractionBox';
 import HoverInteraction from '../../../../shared-components/src/components/InteractionBox/HoverInteraction/HoverInteraction';
 import GoogleInPageTaskPrompt from '../../components/InPageTaskPrompt/GoogleInPageTaskPrompt/GoogleInPageTaskPrompt';
+import SetAsNewTaskButton from '../../components/InPageTaskPrompt/GoogleInPageTaskPrompt/SetAsNewTaskButton';
 import { getSearchTerm, getOrigin } from '../../../../shared-components/src/shared/utilities';
 import * as actionTypes from '../../../../shared-components/src/shared/actionTypes';
 import classes from './content.annotation.css';
@@ -22,6 +23,10 @@ import * as FirebaseStore from '../../../../shared-components/src/firebase/store
 
 
 
+
+let currentTaskId = null;
+
+
 const taskPromptAnchor = document.body.insertBefore(document.createElement('div'), document.body.childNodes[0]);
 taskPromptAnchor.style.position = 'fixed';
 taskPromptAnchor.style.top = '0px';
@@ -29,8 +34,12 @@ taskPromptAnchor.style.left = '0px';
 taskPromptAnchor.style.width = '100%';
 taskPromptAnchor.style.zIndex = '99999';
 
+const setAsNewTaskBtnAnchor = document.body.insertBefore(document.createElement('div'), document.body.childNodes[0]);
+setAsNewTaskBtnAnchor.style.position = 'absolute';
+setAsNewTaskBtnAnchor.style.top = '28px';
+setAsNewTaskBtnAnchor.style.left = '790px';
+setAsNewTaskBtnAnchor.style.zIndex = '99999';
 
-let currentTaskId = null;
 
 /* UTILITY FUNCTIONS */
 const handleFromSearchToTask = () => {
@@ -52,28 +61,34 @@ const handleFromSearchToTask = () => {
             <GoogleInPageTaskPrompt />
           </div>, 
           document.querySelector('.mw'));
-          
-          // check if should create a new task or stay on the same one
-          currentTaskIdRef.once('value', (snapshot) => {
-            if (snapshot.exists()) {
-              currentTaskId = snapshot.val();
-              const currentTaskRef = tasksRef.child(currentTaskId);
-      
-              currentTaskRef.once('value', (snap) => {
-                if (snap.key === currentTaskId) {
-                  if (snap.val().taskOngoing === true) {
-                    FirebaseStore.addASearchQueryToCurrentTask(searchTerm);
-                  } else {
-                    FirebaseStore.addTaskFromSearchTerm(searchTerm);
-                  }
+        
+        ReactDOM.render(
+          <SetAsNewTaskButton searchTerm={searchTerm} setAsNewTaskHandler={FirebaseStore.addTaskFromSearchTerm}/>,
+          setAsNewTaskBtnAnchor
+        );
+        
+        // check if should create a new task or stay on the same one
+        currentTaskIdRef.once('value', (snapshot) => {
+          if (snapshot.exists()) {
+            currentTaskId = snapshot.val();
+            const currentTaskRef = tasksRef.child(currentTaskId);
+    
+            currentTaskRef.once('value', (snap) => {
+              if (snap.key === currentTaskId) {
+                if (snap.val().taskOngoing === true) {
+                  FirebaseStore.addASearchQueryToCurrentTask(searchTerm);
+                } else {
+                  FirebaseStore.addTaskFromSearchTerm(searchTerm);
                 }
-              });
-            }
-          });
+              }
+            });
+          }
+        });
   
       } else {
         // google home page
         console.log('google home page');
+        
         ReactDOM.render(
           <div style={{
             marginTop: '8px',
@@ -90,6 +105,7 @@ const handleFromSearchToTask = () => {
     try {
       ReactDOM.unmountComponentAtNode(taskPromptAnchor);
       ReactDOM.unmountComponentAtNode(document.querySelector('.mw'));
+      ReactDOM.unmountComponentAtNode(setAsNewTaskBtnAnchor);
     } catch (err) {
       console.log(err);
     }

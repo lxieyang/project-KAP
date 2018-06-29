@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import moment from 'moment';
 import FontAwesomeIcon from '@fortawesome/react-fontawesome';
 import farClock from '@fortawesome/fontawesome-free-regular/faClock';
 import fasDiagnoses from '@fortawesome/fontawesome-free-solid/faDiagnoses';
@@ -37,7 +38,7 @@ class CurrentTask extends Component {
 
 
   render () {
-    const { currentTaskId, taskOngoing, currentTaskName, onSwitch, switchTaskOngoinghandler } = this.props;
+    const { currentTaskId, currentTaskName, taskOngoing, completionTimestamp, onSwitch, switchTaskOngoinghandler } = this.props;
 
     let selectConfig = {
       options: this.props.tasks.length > 0
@@ -71,6 +72,9 @@ class CurrentTask extends Component {
                 onClick={(event) => switchTaskOngoinghandler(currentTaskId, false, taskOngoing)}>
                 <FontAwesomeIcon icon={fasCheck} style={{marginRight: '4px'}}/>
                 Completed!
+                {
+                  completionTimestamp !== null ? ` (${moment(completionTimestamp).fromNow()})` : null
+                }
               </div>
             </div>
           </div>

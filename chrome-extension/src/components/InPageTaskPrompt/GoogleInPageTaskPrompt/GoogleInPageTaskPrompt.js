@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { debounce } from 'lodash';
+import moment from 'moment';
 import FontAwesomeIcon from '@fortawesome/react-fontawesome';
 import fasDiagnoses from '@fortawesome/fontawesome-free-solid/faDiagnoses';
 import fasCheck from '@fortawesome/fontawesome-free-solid/faCheck';
@@ -24,7 +25,6 @@ const Container = styled.div`
   padding: 4px;
   font-family: sans-serif;
   font-size: 14px;
-  max-width: 440px;
   display: flex;
   align-items: center;
 `;
@@ -110,6 +110,7 @@ class GoogleInPageTaskPrompt extends Component {
     currentTaskId: null,
     currentTaskName: null,
     taskOngoing: true,
+    completionTimestamp: null
   }
 
   componentDidMount() {
@@ -123,6 +124,11 @@ class GoogleInPageTaskPrompt extends Component {
           if (snap.key === this.state.currentTaskId) {
             this.setState({currentTaskName: snap.val().name});
             this.setState({taskOngoing: snap.val().taskOngoing});
+            if (snap.val().taskOngoing === false) {
+              this.setState({completionTimestamp: snap.val().completionTimestamp});
+            } else {
+              this.setState({completionTimestamp: null});
+            }
           }
         });
       }
@@ -149,7 +155,7 @@ class GoogleInPageTaskPrompt extends Component {
   }
   
   render () {
-    const { currentTaskId, taskOngoing, currentTaskName } = this.state;
+    const { currentTaskId, taskOngoing, currentTaskName, completionTimestamp } = this.state;
 
     return (
       <Wrapper>
@@ -175,7 +181,10 @@ class GoogleInPageTaskPrompt extends Component {
                   }
                   onClick={(event) => this.switchTaskOngoinghandler(currentTaskId, false, taskOngoing)} >
                   <FontAwesomeIcon icon={fasCheck} style={{marginRight: '4px'}}/>
-                  Completed!
+                  Completed! 
+                  {
+                    completionTimestamp !== null ? ` (${moment(completionTimestamp).fromNow()})` : null
+                  }
                 </Button>
 
               </ButtonsContainer>

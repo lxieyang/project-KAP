@@ -9,6 +9,8 @@ import fasTrash from '@fortawesome/fontawesome-free-solid/faTrash';
 import fasListUl from '@fortawesome/fontawesome-free-solid/faListUl';
 import fasFlagCheckered from '@fortawesome/fontawesome-free-solid/faFlagCheckered';
 import fasPuzzlePiece from '@fortawesome/fontawesome-free-solid/faPuzzlePiece';
+import fasDiagnoses from '@fortawesome/fontawesome-free-solid/faDiagnoses';
+import fasCheck from '@fortawesome/fontawesome-free-solid/faCheck';
 import HorizontalDivider from '../../UI/Divider/HorizontalDivider/HorizontalDivider';
 import styles from './TaskCard.css';
 import moment from 'moment';
@@ -158,6 +160,24 @@ class TaskCard extends Component {
           className={styles.TaskName}
           onClick={(event) => this.titleClickedHandler(event, this.props.id)}>
           {this.props.taskName}
+        </div>
+
+        <div
+          className={styles.TaskOngoingStatusContainer}>
+          {
+            this.props.taskOngoing 
+            ? <div className={[styles.TaskOngoingBadge, styles.TaskOngoingTrue].join(' ')}>
+                <FontAwesomeIcon icon={fasDiagnoses} style={{marginRight: '4px'}}/>
+                In progress...
+              </div> 
+            : <div className={[styles.TaskOngoingBadge, styles.TaskOngoingFalse].join(' ')}>
+                <FontAwesomeIcon icon={fasCheck} style={{marginRight: '4px'}}/>    
+                Completed!
+                {
+                  this.props.completionTimestamp !== null ? ` (${moment(this.props.completionTimestamp).fromNow()})` : null
+                }
+              </div>
+          }
         </div>
 
         <HorizontalDivider margin="5px" />

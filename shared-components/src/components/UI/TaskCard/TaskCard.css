@@ -82,6 +82,29 @@
   cursor: pointer;
 }
 
+.TaskOngoingStatusContainer {
+  font-size: 0.7rem;
+  padding: 0px 10px;
+  text-align: right;
+}
+
+.TaskOngoingBadge {
+  display: inline-block;
+  padding: 2px 4px;
+  border-radius: 3px;
+  box-shadow: 0 2px 2px 0 rgba(0,0,0,0.08), 0 2px 2px 0 rgba(0,0,0,0.06);
+}
+
+.TaskOngoingTrue {
+  color: #fff;
+  background-color: #4CAF50;
+}
+
+.TaskOngoingFalse {
+  color: #fff;
+  background-color: rgb(236, 123, 2);
+}
+
 .Footer {
   font-size: 0.80rem;
   opacity: 0.8;

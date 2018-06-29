@@ -195,6 +195,9 @@ export const cloneATaskForCurrentUser = async (originalUserId, originalTaskId) =
 /* CURRENT TASK STATUS */
 export const switchTaskWorkingStatus = (taskId, shouldTaskBeOngoing, shouldUpdateLog) => {
   tasksRef.child(taskId).child('taskOngoing').set(shouldTaskBeOngoing).then(() => {}).catch((err) => {console.log(err)});
+  if (shouldTaskBeOngoing === false) {
+    tasksRef.child(taskId).child('completionTimestamp').set((new Date()).getTime());
+  }
   if (shouldUpdateLog) {
     let newLogEntryRef = tasksRef.child(taskId).child('workingStatusChangeLog').push();
     newLogEntryRef.set({

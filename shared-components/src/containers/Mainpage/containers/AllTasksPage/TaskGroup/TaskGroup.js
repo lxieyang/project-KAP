@@ -40,6 +40,8 @@ class TaskGroup extends Component {
                 currentTaskId={this.props.currentTaskId}
                 combineSourceTaskWithTargetTask={this.props.combineSourceTaskWithTargetTask}
                 id={task.id}
+                taskOngoing={task.taskOngoing}
+                completionTimestamp={task.completionTimestamp}
                 isStarred={task.isStarred}
                 key={task.id}
                 taskName={task.displayName}

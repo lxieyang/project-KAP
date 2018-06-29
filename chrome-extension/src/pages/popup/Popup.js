@@ -95,6 +95,7 @@ class Popup extends Component {
             childSnapshot.val().taskOngoing === undefined
             ? true
             : childSnapshot.val().taskOngoing,
+          completionTimestamp: childSnapshot.val().completionTimestamp,
           displayName: childSnapshot.val().name,
           options: childSnapshot.val().options,
           requirements: childSnapshot.val().requirements,
@@ -272,6 +273,7 @@ class Popup extends Component {
       const { currentTaskId, tasks, newOptionInput, newRequirementInput } = this.state;
 
       let currentTaskOngoing = null;
+      let completionTimestamp = null;
       let currentTaskName = null;
       let currentTaskOptionNames = [];
       let currentTaskRequirementNames = [];
@@ -280,6 +282,9 @@ class Popup extends Component {
         let filteredTasks = tasks.filter(t => t.id === currentTaskId);
         if (filteredTasks.length > 0) {
           currentTaskOngoing = filteredTasks[0].taskOngoing;
+          if (currentTaskOngoing === false) {
+            completionTimestamp = filteredTasks[0].completionTimestamp;
+          }
           currentTaskName = filteredTasks[0].displayName;
           currentTaskCurrentOptionId = filteredTasks[0].currentOptionId;
           // options
@@ -314,6 +319,7 @@ class Popup extends Component {
             currentTaskName={currentTaskName}
             currentTaskId={currentTaskId} 
             taskOngoing={currentTaskOngoing}
+            completionTimestamp={completionTimestamp}
             switchTaskOngoinghandler={this.switchTaskOngoinghandler}
             onSwitch={this.switchCurrentTaskHandler}
             updateTaskName={this.updateTaskName}/>
