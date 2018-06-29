@@ -12,8 +12,10 @@ import classes from './content.annotation.css';
 import { PageCountHelper, dragElement } from './content.utility';
 import { getFirstSentence } from '../../../../shared-components/src/shared/utilities';
 import { SNIPPET_TYPE } from '../../../../shared-components/src/shared/constants';
+import { 
+  setUserIdAndName 
+} from '../../../../shared-components/src/firebase/index';
 import * as FirebaseStore from '../../../../shared-components/src/firebase/store';
-import { setUserIdAndName } from '../../../../shared-components/src/firebase/index';
 
 
 
@@ -23,7 +25,6 @@ taskPromptAnchor.style.top = '0px';
 taskPromptAnchor.style.left = '0px';
 taskPromptAnchor.style.width = '100%';
 taskPromptAnchor.style.zIndex = '99999';
-
 
 
 /* UTILITY FUNCTIONS */

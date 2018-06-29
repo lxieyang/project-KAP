@@ -7,9 +7,40 @@
   width: 100%;
 }
 
+.Title {
+  display: flex;
+  align-items: center;
+}
+
 .Label {
   font-weight: 800;
   margin: 10px 0px;
+}
+
+.StatusButtonsContainer {
+  margin-left: 20px;
+  display: flex;
+  align-items: center;
+}
+
+.StatusButton {
+  display: flex;
+  align-items: center;
+
+  padding: 3px 6px;
+  border-radius: 4px;
+  margin: 0px 10px;
+  box-shadow: 0 2px 2px 0 rgba(0,0,0,0.08), 0 2px 2px 0 rgba(0,0,0,0.06);
+
+  color: rgb(210, 210, 210);
+  background-color: rgb(254, 254, 254);
+
+  cursor: pointer;
+  transition: 0.1s all ease-in;
+}
+
+.StatusButton:hover {
+  transform: scale(1.05);
 }
 
 .TaskNameContainer {

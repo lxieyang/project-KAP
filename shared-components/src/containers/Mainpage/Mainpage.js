@@ -171,8 +171,16 @@ class Mainpage extends Component {
     tasksRef.on('value', (snapshot) => {
       let transformedTasks = [];
       snapshot.forEach((childSnapshot) => {
+        // ask users to log out and re-login to patch these new fields
+        if (childSnapshot.val().taskOngoing === undefined) {
+          FirebaseStore.switchTaskWorkingStatus(childSnapshot.key, true, false);
+        }
         transformedTasks.push({
           id: childSnapshot.key,
+          taskOngoing: 
+            childSnapshot.val().taskOngoing === undefined
+            ? true
+            : childSnapshot.val().taskOngoing,
           displayName: childSnapshot.val().name,
           time: childSnapshot.val().timestamp,
           searchQueries: childSnapshot.val().searchQueries,

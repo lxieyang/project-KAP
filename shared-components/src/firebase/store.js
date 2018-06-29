@@ -94,7 +94,8 @@ export const addTaskFromSearchTerm = async (searchTerm, tabId) => {
     searchQueries: [searchTerm.toLowerCase()],
     options: [],
     currentOptionId: 'invalid',
-    pieces: []
+    pieces: [],
+    taskOngoing: true
   }
 
   // push to firebase
@@ -124,7 +125,7 @@ export const updateTaskName = async (id, taksName) => {
 
 export const deleteTaskWithId = async (id) => {
   await tasksRef.child(id).set(null);
-  let tasks = await tasksRef.once('value');
+  let tasks = await tasksRef.orderByKey().limitToLast(1).once('value');
   tasks.forEach((snap) => {
     currentTaskIdRef.set(snap.key);
   });
@@ -190,6 +191,18 @@ export const cloneATaskForCurrentUser = async (originalUserId, originalTaskId) =
   });
 }
 
+
+/* CURRENT TASK STATUS */
+export const switchTaskWorkingStatus = (taskId, shouldTaskBeOngoing, shouldUpdateLog) => {
+  tasksRef.child(taskId).child('taskOngoing').set(shouldTaskBeOngoing).then(() => {}).catch((err) => {console.log(err)});
+  if (shouldUpdateLog) {
+    let newLogEntryRef = tasksRef.child(taskId).child('workingStatusChangeLog').push();
+    newLogEntryRef.set({
+      taskOngoing: shouldTaskBeOngoing,
+      timestamp: (new Date()).getTime()
+    });
+  }
+}
 
 
 

@@ -13,7 +13,6 @@ import HTML5Backend from 'react-dnd-html5-backend';
 import { 
   tasksRef,
   currentTaskIdRef,
-  isDisabledRef,
   setUserIdAndName
 } from '../../../../shared-components/src/firebase/index';
 import * as FirebaseStore from '../../../../shared-components/src/firebase/store';
@@ -92,6 +91,10 @@ class Popup extends Component {
       snapshot.forEach((childSnapshot) => {
         transformedTasks.push({
           id: childSnapshot.key,
+          taskOngoing: 
+            childSnapshot.val().taskOngoing === undefined
+            ? true
+            : childSnapshot.val().taskOngoing,
           displayName: childSnapshot.val().name,
           options: childSnapshot.val().options,
           requirements: childSnapshot.val().requirements,
@@ -102,10 +105,6 @@ class Popup extends Component {
       if (this.state.tasksIsLoading) {
         this.setState({tasksIsLoading: false});
       }
-    });
-
-    isDisabledRef.on('value', (snapshot) => {
-      this.setState({disabled: snapshot.val() !== null ? snapshot.val() : false})
     });
   }
 
@@ -208,6 +207,14 @@ class Popup extends Component {
     });
   }
 
+  switchTaskOngoinghandler = (taskId, shouldTaskBeOngoing, originalShouldTaskBeOngoing) => {
+    FirebaseStore.switchTaskWorkingStatus(
+      taskId, 
+      shouldTaskBeOngoing, 
+      shouldTaskBeOngoing !== originalShouldTaskBeOngoing
+    );
+  }
+
   render () {
 
     let isLoggedIn = !(this.state.userId === null || this.state.userId === 'invalid');
@@ -264,6 +271,7 @@ class Popup extends Component {
     if ((!currentTaskIdIsLoading) && (!tasksIsLoading)) {
       const { currentTaskId, tasks, newOptionInput, newRequirementInput } = this.state;
 
+      let currentTaskOngoing = null;
       let currentTaskName = null;
       let currentTaskOptionNames = [];
       let currentTaskRequirementNames = [];
@@ -271,6 +279,7 @@ class Popup extends Component {
       if (currentTaskId && tasks.length > 0) {
         let filteredTasks = tasks.filter(t => t.id === currentTaskId);
         if (filteredTasks.length > 0) {
+          currentTaskOngoing = filteredTasks[0].taskOngoing;
           currentTaskName = filteredTasks[0].displayName;
           currentTaskCurrentOptionId = filteredTasks[0].currentOptionId;
           // options
@@ -304,6 +313,8 @@ class Popup extends Component {
             tasks={tasks} 
             currentTaskName={currentTaskName}
             currentTaskId={currentTaskId} 
+            taskOngoing={currentTaskOngoing}
+            switchTaskOngoinghandler={this.switchTaskOngoinghandler}
             onSwitch={this.switchCurrentTaskHandler}
             updateTaskName={this.updateTaskName}/>
 

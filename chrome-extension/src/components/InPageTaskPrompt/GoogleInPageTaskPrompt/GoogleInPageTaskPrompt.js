@@ -3,6 +3,11 @@ import FontAwesomeIcon from '@fortawesome/react-fontawesome';
 import fasDiagnoses from '@fortawesome/fontawesome-free-solid/faDiagnoses';
 import fasCheck from '@fortawesome/fontawesome-free-solid/faCheck';
 import Logo from '../../../../../shared-components/src/components/UI/Logo/Logo';
+import { 
+  tasksRef,
+  currentTaskIdRef
+} from '../../../../../shared-components/src/firebase/index';
+import * as FirebaseStore from '../../../../../shared-components/src/firebase/store';
 import styled from 'styled-components';
 
 const Wrapper = styled.div`
@@ -95,11 +100,41 @@ const activeFinishButtonStyle = {
 
 
 class GoogleInPageTaskPrompt extends Component {
+
   state = {
-    taskOngoing: false
+    currentTaskId: null,
+    currentTaskName: null,
+    taskOngoing: true,
   }
 
+  componentDidMount() {
+    currentTaskIdRef.on('value', (snapshot) => {
+      if (snapshot.exists()) {
+        const currentTaskId = snapshot.val();
+        this.setState({currentTaskId});
+        const currentTaskRef = tasksRef.child(currentTaskId);
+
+        currentTaskRef.on('value', (snap) => {
+          if (snap.key === this.state.currentTaskId) {
+            this.setState({currentTaskName: snap.val().name});
+            this.setState({taskOngoing: snap.val().taskOngoing});
+          }
+        });
+      }
+    });
+  }
+
+  switchTaskOngoinghandler = (taskId, shouldTaskBeOngoing, originalShouldTaskBeOngoing) => {
+    FirebaseStore.switchTaskWorkingStatus(
+      taskId, 
+      shouldTaskBeOngoing, 
+      shouldTaskBeOngoing !== originalShouldTaskBeOngoing
+    );
+  }
+  
   render () {
+    const { currentTaskId, taskOngoing, currentTaskName } = this.state;
+
     return (
       <Wrapper>
         <Container>
@@ -111,16 +146,18 @@ class GoogleInPageTaskPrompt extends Component {
               <ButtonsContainer>
                 <Button
                   style={
-                    this.state.taskOngoing ? activeWorkingButtonStyle : null
-                  } >
+                    taskOngoing === true ? activeWorkingButtonStyle : null
+                  }
+                  onClick={(event) => this.switchTaskOngoinghandler(currentTaskId, true, taskOngoing)} >
                   <FontAwesomeIcon icon={fasDiagnoses} style={{marginRight: '4px'}}/>
                   Still working on it...
                 </Button>
 
                 <Button
                   style={
-                    !this.state.taskOngoing ? activeFinishButtonStyle : null
-                  } >
+                    taskOngoing === false ? activeFinishButtonStyle : null
+                  }
+                  onClick={(event) => this.switchTaskOngoinghandler(currentTaskId, false, taskOngoing)} >
                   <FontAwesomeIcon icon={fasCheck} style={{marginRight: '4px'}}/>
                   Completed!
                 </Button>
@@ -129,17 +166,17 @@ class GoogleInPageTaskPrompt extends Component {
             </TitleContainer>
 
             <TaskNameContainer>
-              Name of the task that you are currently working on 
+              {currentTaskName} 
             </TaskNameContainer>
 
-            <StatsContainer>
+            {/*<StatsContainer>
               <div>1 options</div>
               <div>2 criteria</div>
               <div>
                 Search queries
               </div>
 
-            </StatsContainer>
+            </StatsContainer>*/}
           </ContentContainer>
 
           <LogoContainer>
