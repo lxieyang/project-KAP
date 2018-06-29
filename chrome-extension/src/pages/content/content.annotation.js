@@ -14,7 +14,9 @@ import { getFirstSentence } from '../../../../shared-components/src/shared/utili
 import { SNIPPET_TYPE } from '../../../../shared-components/src/shared/constants';
 import { 
   userId,
-  setUserIdAndName 
+  setUserIdAndName,
+  tasksRef,
+  currentTaskIdRef
 } from '../../../../shared-components/src/firebase/index';
 import * as FirebaseStore from '../../../../shared-components/src/firebase/store';
 
@@ -28,6 +30,8 @@ taskPromptAnchor.style.width = '100%';
 taskPromptAnchor.style.zIndex = '99999';
 
 
+let currentTaskId = null;
+
 /* UTILITY FUNCTIONS */
 const handleFromSearchToTask = () => {
   // check if new search is initiated,
@@ -39,8 +43,6 @@ const handleFromSearchToTask = () => {
       if (searchTerm !== '') {
         // google search results page
         console.log('google search result page');
-        FirebaseStore.addTaskFromSearchTerm(searchTerm);
-  
         ReactDOM.render(
           <div style={{
             marginLeft: '150px',
@@ -50,6 +52,24 @@ const handleFromSearchToTask = () => {
             <GoogleInPageTaskPrompt />
           </div>, 
           document.querySelector('.mw'));
+          
+          // check if should create a new task or stay on the same one
+          currentTaskIdRef.once('value', (snapshot) => {
+            if (snapshot.exists()) {
+              currentTaskId = snapshot.val();
+              const currentTaskRef = tasksRef.child(currentTaskId);
+      
+              currentTaskRef.once('value', (snap) => {
+                if (snap.key === currentTaskId) {
+                  if (snap.val().taskOngoing === true) {
+                    FirebaseStore.addASearchQueryToCurrentTask(searchTerm);
+                  } else {
+                    FirebaseStore.addTaskFromSearchTerm(searchTerm);
+                  }
+                }
+              });
+            }
+          });
   
       } else {
         // google home page

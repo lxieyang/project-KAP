@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { debounce } from 'lodash';
 import FontAwesomeIcon from '@fortawesome/react-fontawesome';
 import fasDiagnoses from '@fortawesome/fontawesome-free-solid/faDiagnoses';
 import fasCheck from '@fortawesome/fontawesome-free-solid/faCheck';
@@ -79,6 +80,10 @@ const TaskNameContainer = styled.div`
   margin-top: 8px;
   font-size: 1.1em;
   text-decoration: underline;
+
+  &:focus {
+    outline: none;
+  }
 `;
 
 const StatsContainer = styled.div`
@@ -122,6 +127,17 @@ class GoogleInPageTaskPrompt extends Component {
         });
       }
     });
+
+    this.inputCallback = debounce((event, id) => {
+      FirebaseStore.updateTaskName(id, event.target.innerText.trim());
+      event.target.innerText = event.target.innerText.trim();
+      event.target.blur();
+    }, 2000);
+  }
+
+  inputChangedHandler = (event, id) => {
+    event.persist();
+    this.inputCallback(event, id);
   }
 
   switchTaskOngoinghandler = (taskId, shouldTaskBeOngoing, originalShouldTaskBeOngoing) => {
@@ -165,7 +181,10 @@ class GoogleInPageTaskPrompt extends Component {
               </ButtonsContainer>
             </TitleContainer>
 
-            <TaskNameContainer>
+            <TaskNameContainer
+              contentEditable={true}
+              suppressContentEditableWarning={true}
+              onInput={(event) => this.inputChangedHandler(event, currentTaskId)}>
               {currentTaskName} 
             </TaskNameContainer>
 

@@ -641,6 +641,15 @@ export const deleteAPieceGroup = async (groupId) => {
 
 
 
+/* SEARCH QUERIES */
+export const addASearchQueryToCurrentTask = async (searchQuery) => {
+  currentTaskId = (await currentTaskIdRef.once('value')).val();
+  let SQs = (await tasksRef.child(currentTaskId).child('searchQueries').once('value')).val();
+  SQs = SQs !== undefined ? SQs : [];
+  SQs.push(searchQuery);
+  tasksRef.child(currentTaskId).child('searchQueries').set(uniq(SQs.concat([searchQuery])));
+}
+
 
 
 /* COPY PASTE SUPPORT */
