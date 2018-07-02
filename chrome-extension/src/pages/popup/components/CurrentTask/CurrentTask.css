@@ -48,11 +48,19 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  margin: 0;
+  height:38%;
+  padding-left: 10px;
+  padding-right: 0px;
+  border: 1px solid rgba(34,36,38,.15);
+  color: rgba(0,0,0,.87);
+  border-radius: 10px;
 }
 
 .TaskName {
   /* text-transform: capitalize; */
   width: 85%;
+
 }
 
 .TaskName:focus {

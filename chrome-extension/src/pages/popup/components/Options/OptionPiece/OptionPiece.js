@@ -3,12 +3,11 @@ import PropTypes from 'prop-types';
 import { findDOMNode } from 'react-dom';
 import { DragSource, DropTarget } from 'react-dnd';
 import FontAwesomeIcon from '@fortawesome/react-fontawesome';
-import fasTrash from '@fortawesome/fontawesome-free-solid/faTrash';
+import fasDelete from '@fortawesome/fontawesome-free-solid/faTimes';
 import fasStar from '@fortawesome/fontawesome-free-solid/faStar';
 import { debounce } from 'lodash';
 import ordinal from 'ordinal';
 import styles from './OptionPiece.css';
-
 
 const pieceSource = {
   beginDrag(props) {
@@ -91,6 +90,7 @@ class OptionPiece extends Component {
     this.inputCallback(event, id);
   }
 
+
   render () {
     const { op, activeId, index, isDragging, connectDragSource, connectDropTarget } = this.props;
     const opacity = isDragging ? 0 : 1;
@@ -100,15 +100,21 @@ class OptionPiece extends Component {
       <li style={{ opacity, cursor }}>
         <div style={{display: 'flex', alignItems: 'center'}}>
           <span className={styles.Ordinal}>{ordinal(index + 1)}</span>
-          <div 
+          <div
             className={styles.Option}>
-            <div 
+            <div
               className={[styles.OptionStar, (
                 op.starred === true ? styles.ActiveStar : null
               )].join(' ')}
               onClick={(event) => this.props.switchStarStatusOfOption(op.id)}>
               <FontAwesomeIcon icon={fasStar} />
             </div>
+            <span
+              onClick={(event) => this.props.deleteOptionWithId(op.id)}>
+              <FontAwesomeIcon
+                icon={fasDelete}
+                className={styles.DeleteIcon}/>
+            </span>
             <span
               className={styles.OptionText}
               contentEditable={true}
@@ -118,12 +124,6 @@ class OptionPiece extends Component {
             </span>
           </div>
         </div>
-        <span  
-          onClick={(event) => this.props.deleteOptionWithId(op.id)}>
-          <FontAwesomeIcon 
-            icon={fasTrash}
-            className={styles.TrashIcon}/>
-        </span>
       </li>
     ));
   }
