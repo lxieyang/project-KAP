@@ -8,6 +8,16 @@
     "default_popup": "popup.html",
     "default_icon": "icon-34.png"
   },
+  "commands": {
+    "_execute_browser_action": {
+      "suggested_key": {
+        "windows": "Ctrl+Shift+K",
+        "mac": "Command+Shift+K",
+        "chromeos": "Ctrl+Shift+U",
+        "linux": "Ctrl+Shift+J"
+      }
+    }
+  },
   "options_page": "options.html",
   "content_scripts": [
     {
