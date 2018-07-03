@@ -3,7 +3,7 @@ import FontAwesomeIcon from '@fortawesome/react-fontawesome';
 import fasShareSquare from '@fortawesome/fontawesome-free-solid/faShareSquare';
 // import fasLink from '@fortawesome/fontawesome-free-solid/faLink';
 import fasSave from '@fortawesome/fontawesome-free-solid/faSave';
-import hamburger from '@fortawesome/fontawesome-free-solid/faBars';
+// import hamburger from '@fortawesome/fontawesome-free-solid/faBars';
 // import fasTrash from '@fortawesome/fontawesome-free-solid/faTrash';
 import fasStar from '@fortawesome/fontawesome-free-solid/faStar';
 import fasListAlt from '@fortawesome/fontawesome-free-solid/faListAlt';
@@ -428,11 +428,7 @@ class interactionBox extends Component {
       id="add-option-in-piece-input"
       placeholder={'Add an Option'}
       onInput={(event) => this.switchInputSourceHandler(event, 'OP')}/> &nbsp;
-      <div
-      className={styles.AddSomethingButton}
-      onClick={(event) => this.addButtonClicked(event, 'OP')}>
-      <FontAwesomeIcon icon={fasPaperPlane}/> &nbsp; Add
-      </div>
+
       </div>
       <div
       className={styles.AddSomthingInputContainer}
@@ -443,9 +439,6 @@ class interactionBox extends Component {
       placeholder={'Add a Criterion'}
       onInput={(event) => this.switchInputSourceHandler(event, 'RQ')}
       /> &nbsp;
-      <div className={styles.AddSomethingButton}>
-      <FontAwesomeIcon icon={fasPaperPlane}/> &nbsp; Add
-      </div>
       </div>
 
       </div>
