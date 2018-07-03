@@ -15,7 +15,7 @@ import classes from './content.annotation.css';
 import { PageCountHelper, dragElement } from './content.utility';
 import { getFirstSentence } from '../../../../shared-components/src/shared/utilities';
 import { SNIPPET_TYPE } from '../../../../shared-components/src/shared/constants';
-import { 
+import {
   userId,
   setUserIdAndName,
   tasksRef,
@@ -76,20 +76,20 @@ const handleFromSearchToTask = () => {
             marginBottom: '12px'
           }}>
             <GoogleInPageTaskPrompt />
-          </div>, 
+          </div>,
           document.querySelector('.mw'));
-        
+
         ReactDOM.render(
           <SetAsNewTaskButton searchTerm={searchTerm} setAsNewTaskHandler={FirebaseStore.addTaskFromSearchTerm}/>,
           setAsNewTaskBtnAnchor
         );
-        
+
         // check if should create a new task or stay on the same one
         currentTaskIdRef.once('value', (snapshot) => {
           if (snapshot.exists()) {
             currentTaskId = snapshot.val();
             const currentTaskRef = tasksRef.child(currentTaskId);
-    
+
             currentTaskRef.once('value', (snap) => {
               if (snap.key === currentTaskId) {
                 if (snap.val().taskOngoing === true) {
@@ -101,11 +101,11 @@ const handleFromSearchToTask = () => {
             });
           }
         });
-  
+
       } else {
         // google home page
         console.log('google home page');
-        
+
         ReactDOM.render(
           <div style={{
             marginTop: '8px',
@@ -114,10 +114,10 @@ const handleFromSearchToTask = () => {
             justifyContent: 'space-around'
           }}>
             <GoogleInPageTaskPrompt />
-          </div>, 
+          </div>,
           taskPromptAnchor);
       }
-    } 
+    }
   } else {
     try {
       ReactDOM.unmountComponentAtNode(taskPromptAnchor);
@@ -126,9 +126,9 @@ const handleFromSearchToTask = () => {
     } catch (err) {
       console.log(err);
     }
-    
+
   }
-  
+
 }
 
 const shouldCount = (url) => {
@@ -292,13 +292,13 @@ const getDocumentSelection = () => {
   // console.log(selection);
   // console.log(selection.getRangeAt(0).getBoundingClientRect());
   if (selection !== null && selection.type.toLowerCase() === 'range') {
-    console.log('HAVE SELECTED');
+    console.log('HAVE SELECTED ' + selection.toString());
     return {
       text: selection.toString(),
       range: selection.getRangeAt(0),
       rect: selection.getRangeAt(0).getBoundingClientRect()
     };
-    
+
   }
   return {
     text: '',
@@ -326,9 +326,9 @@ chrome.runtime.onMessage.addListener(
       //   rect.top += document.documentElement.scrollTop;
       //   hoverAnchor.style.left = `${Math.floor(rect.left) + 25}px`;
       //   hoverAnchor.style.top = `${Math.floor(rect.top) + 25}px`;
-      // }      
+      // }
       ReactDOM.render(
-        <HoverInteraction content={selection.text} clip={clipClicked}/>, 
+        <HoverInteraction content={selection.text} clip={clipClicked}/>,
         hoverAnchor
       );
       hoverBoxIsMounted = true;
@@ -345,9 +345,9 @@ chrome.runtime.onMessage.addListener(
       //   rect.top += document.documentElement.scrollTop;
       //   hoverAnchor.style.left = `${Math.floor(rect.left) + 25}px`;
       //   hoverAnchor.style.top = `${Math.floor(rect.top) + 25}px`;
-      // }      
+      // }
       ReactDOM.render(
-        <HoverInteraction type={'RQ'} content={selection.text} clip={clipClicked}/>, 
+        <HoverInteraction type={'RQ'} content={selection.text} clip={clipClicked}/>,
         hoverAnchor
       );
       hoverBoxIsMounted = true;
@@ -365,7 +365,7 @@ chrome.runtime.onMessage.addListener(
       //   rect.top += document.documentElement.scrollTop;
       //   interactionBoxAnchor.style.left = `${Math.floor(rect.left) - 25}px`;
         // interactionBoxAnchor.style.top = `${Math.floor(rect.top) - 25}px`;
-      // }      
+      // }
       let postTags = [];
       if(window.location.hostname === "stackoverflow.com") {
         $(document.body).find('.post-taglist .post-tag').each((idx, tagNode) => {
@@ -373,14 +373,14 @@ chrome.runtime.onMessage.addListener(
         });
       }
       ReactDOM.render(
-        <InteractionBox 
+        <InteractionBox
           type={SNIPPET_TYPE.SELECTION}
           url={window.location.href}
           selectedText={selection.text}
           postTags={postTags}
           originalDimensions={rect !== null ? rect : null}
           clip={clipClicked}
-        />, 
+        />,
       interactionBoxAnchor);
       interactionBoxIsMounted = true
       dragElement(document.getElementById("interaction-box"));
@@ -427,7 +427,7 @@ window.addEventListener('mousemove', (event) => {
   if (event.altKey && captureWindow.parentElement != null) {
     captureWindow.style.width = `${Math.abs(mouseStart.pageX - event.pageX)}px`;
     captureWindow.style.height = `${Math.abs(mouseStart.pageY - event.pageY)}px`;
-    
+
     captureWindow.style.top = (event.pageY >= mouseStart.pageY)? `${mouseStart.pageY}px` : `${event.pageY}px`;
     captureWindow.style.left = (event.pageX >= mouseStart.pageX)? `${mouseStart.pageX}px` : `${event.pageX}px`;
   }
@@ -466,7 +466,7 @@ window.addEventListener('mouseup', (event) => {
 
   if (!mouseStart)
     return;
-  
+
   mouseStart = null;
   document.body.style.cursor = 'auto';
 
@@ -500,7 +500,7 @@ window.addEventListener('mouseup', (event) => {
   //     //TODO take care of capturing the elements?
 
   // //    chrome.runtime.sendMessage({msg: 'takeScreenshot'}, (dataURI) => {
-  // //                               
+  // //
   // //    });
   //     toolbar.style.left = `${parseInt(captureWindow.style.left) - toolbarWidth}px`;
   //     toolbar.style.top = captureWindow.style.top;
@@ -514,7 +514,7 @@ window.addEventListener('mouseup', (event) => {
       // if (selection.rect !== null) {
       //   interactionBoxAnchor.style.left = `${Math.floor(snapshotDimension.left) + 0}px`;
       //   interactionBoxAnchor.style.top = `${Math.floor(snapshotDimension.top) + 0}px`;
-      // }      
+      // }
       // prepare for data transfer
       let postTags = [];
       if(window.location.hostname === "stackoverflow.com") {
@@ -526,7 +526,7 @@ window.addEventListener('mouseup', (event) => {
       lassoSnapshot.htmls = lassoSnapshot.htmls.filter(html => html.indexOf('kap-clip') === -1 && html.indexOf('kap-button') === -1);
 
       ReactDOM.render(
-        <InteractionBox 
+        <InteractionBox
           type={SNIPPET_TYPE.LASSO}
           url={window.location.href}
           htmls={lassoSnapshot.htmls}
@@ -534,7 +534,7 @@ window.addEventListener('mouseup', (event) => {
           postTags={postTags}
           originalDimensions={lassoSnapshot.initialDimensions}
           clip={clipClicked}
-        />, 
+        />,
       interactionBoxAnchor);
       interactionBoxIsMounted = true;
       dragElement(document.getElementById("interaction-box"));
@@ -599,7 +599,7 @@ window.addEventListener('copy', function (event) {
       originalDimensions: parentPiece.initialDimensions,
       texts: parentPiece.text,
       codeSnippetHTMLs: [],
-      codeSnippetTexts: [] 
+      codeSnippetTexts: []
     }
     FirebaseStore.addAPieceToCurrentTask(piece, true);
   }
@@ -638,20 +638,20 @@ if(window.location.hostname === "stackoverflow.com") {
       $(checkmark).removeClass('kap-checkmark-spin');
       $(buttonText).removeClass('kap-button-text-disappear');
       // unsave the clip
-      console.log('Discard this snippet');
+      console.log('Discard this Snippet');
       // chrome.runtime.sendMessage({
       //   msg: actionTypes.DELETE_A_PIECE_WITH_ID,
       //   payload: {id: collectedPostKey}
       // });
       FirebaseStore.deleteAPieceWithId(collectedPostKey);
-      
+
     } else {
       $(this).addClass('active');
       $(checkmark).addClass('kap-checkmark-spin');
       $(buttonText).addClass('kap-button-text-disappear');
       // save the clip -> try not to block the UI
       setTimeout(() => {
-        console.log('Save this snippet');
+        console.log('Save this Snippet');
         let postTextNode = $(this).parents('.post-layout').find('.post-text')[0];
         let postTextSnippet = KAPCaptureHelper.createCodeSnippetsFromNode(postTextNode);
         console.log(postTextSnippet);
@@ -681,7 +681,7 @@ if(window.location.hostname === "stackoverflow.com") {
           originalDimensions: postTextSnippet.initialDimensions,
           texts: postTextSnippet.text,
           codeSnippetHTMLs: codeSnippets.map(snp => snp.htmls),
-          codeSnippetTexts: codeSnippets.map(snp => snp.text) 
+          codeSnippetTexts: codeSnippets.map(snp => snp.text)
         }
         FirebaseStore.addAPieceToCurrentTask(piece).then((data) => {
           collectedPostKey = data;
@@ -689,6 +689,6 @@ if(window.location.hostname === "stackoverflow.com") {
       }, 5);
     }
     $(this).blur();
-  }); 
+  });
 
 }

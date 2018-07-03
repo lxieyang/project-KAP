@@ -51,16 +51,21 @@
   background-color: rgba(111, 192, 70, 1);
 } */
 
-.TrashIcon {
-  font-size: 0.9rem;
-  margin-left: 30px;
-  opacity: 0.5;
+.DeleteIcon {
+  position: absolute;
+  top: -2px;
+  right: 2px;
   transition: all 0.1s ease-in;
+  font-size: 0.7rem;
+  color: black;
+  /* margin-left: 3px; */
+  opacity: 0.25;
 }
 
-.TrashIcon:hover {
+.DeleteIcon:hover {
   cursor: pointer;
   opacity: 1;
+  transform: scale(2.5);
 }
 
 .Ordinal {

@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { findDOMNode } from 'react-dom';
 import { DragSource, DropTarget } from 'react-dnd';
 import FontAwesomeIcon from '@fortawesome/react-fontawesome';
-import fasTrash from '@fortawesome/fontawesome-free-solid/faTrash';
+import fasDelte from '@fortawesome/fontawesome-free-solid/faTimes';
 import fasStar from '@fortawesome/fontawesome-free-solid/faStar';
 import ordinal from 'ordinal';
 import { debounce } from 'lodash';
@@ -102,13 +102,19 @@ class RequirementPiece extends Component {
         <div style={{display: 'flex', alignItems: 'center'}}>
           <span className={styles.Ordinal}>{ordinal(index + 1)}</span>
           <div className={styles.Requirement}>
-            <div 
+            <div
               className={[styles.RequirementStar, (
                 rq.starred === true ? styles.ActiveStar : null
               )].join(' ')}
               onClick={(event) => this.props.switchStarStatusOfRequirement(rq.id)}>
               <FontAwesomeIcon icon={fasStar} />
             </div>
+            <span
+              onClick={(event) => this.props.deleteRequirementWithId(rq.id)}>
+              <FontAwesomeIcon
+                icon={fasDelte}
+                className={styles.DeleteIcon}/>
+            </span>
             <span
               className={styles.RequirementText}
               contentEditable={true}
@@ -118,13 +124,8 @@ class RequirementPiece extends Component {
             </span>
           </div>
         </div>
-        
-        <span  
-          onClick={(event) => this.props.deleteRequirementWithId(rq.id)}>
-          <FontAwesomeIcon 
-            icon={fasTrash}
-            className={styles.TrashIcon}/>
-        </span>
+
+
       </li>
     ));
   }

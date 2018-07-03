@@ -9,7 +9,7 @@ import fasArrowsAlt from '@fortawesome/fontawesome-free-solid/faArrowsAlt';
 import fasFlagCheckered from '@fortawesome/fontawesome-free-solid/faFlagCheckered';
 import Input from '../../UI/Input/Input';
 import styles from './HoverInteraction.css';
-import { 
+import {
   tasksRef,
   currentTaskIdRef
 } from '../../../firebase/index';
@@ -71,7 +71,7 @@ class HoverInteraction extends Component {
   submitHandler = (event) => {
     event.preventDefault();
     const { newOptionInput } = this.state;
-    
+
     if (newOptionInput !== '') {
       // chrome.runtime.sendMessage({
       //   msg: actionTypes.ADD_AN_OPTION_TO_CURRENT_TASK,
@@ -84,7 +84,7 @@ class HoverInteraction extends Component {
       } else {
         FirebaseStore.addARequirementForCurrentTask(this.state.newOptionInput);
       }
-      
+
     }
 
     this.setState({newOptionInput: ''});
@@ -109,17 +109,17 @@ class HoverInteraction extends Component {
 
     return (
       <div className={styles.HoverInteraction}>
-        <div 
-          id="hover-box-header" 
-          className={styles.InteractionBoxDragHandle}> 
+        <div
+          id="hover-box-header"
+          className={styles.InteractionBoxDragHandle}>
           <FontAwesomeIcon icon={fasArrowsAlt}/>
         </div>
-        <div 
+        <div
           className={styles.CloseBoxContainer}
           onClick={(event) => this.closeBoxHandler(event)}>
           &#10005;
         </div>
-        
+
         <div className={styles.AddPane}>
           {/*<span style={{marginBottom: '10px'}}>Add this option: </span>*/}
           <div className={styles.CurrentTaskNContainer}>
@@ -130,24 +130,24 @@ class HoverInteraction extends Component {
             <div className={styles.CurrentTaskName}>{this.state.currentTaskName}</div>
           </div>
           <div style={{margin: '10px'}}>
-            <Input 
+            <Input
               id="kap-add-option-input-box"
-              elementType='input' 
-              elementConfig={{placeholder: type === 'OP' ? 'Add an option' : 'Add a requirement'}} 
+              elementType='input'
+              elementConfig={{placeholder: type === 'OP' ? 'Add an Option' : 'Add a Criterion'}}
               value={newOptionInput}
               changed={this.inputChangedHandler}
               />
             <br />
             <div className={styles.ClipButtonContainer}>
               <button
-                title={type === 'OP' ? 'Save this option' : 'Save this requirement'}
+                title={type === 'OP' ? 'Save this Option' : 'Save this Criterion'}
                 className={styles.ClipButton}
                 onClick={(event) => this.submitHandler(event)}
                 >
                 <div className={styles.CheckmarkContainer}>
                   <div className={[styles.Checkmark,
                   (
-                    this.state.canSubmit 
+                    this.state.canSubmit
                     ? styles.CheckmarkSpin
                     : null)].join(' ')}></div>
                 </div>
@@ -158,7 +158,7 @@ class HoverInteraction extends Component {
                       ? styles.ButtonTextDisappear
                       : null
                     )].join(' ')}>
-                    <FontAwesomeIcon icon={fasSave} className={styles.ClipButtonIcon}/> Save as an {type === 'OP' ? 'Option' : 'Requirement'}
+                    <FontAwesomeIcon icon={fasSave} className={styles.ClipButtonIcon}/> Save as {type === 'OP' ? 'an Option' : 'a Criterion'}
                   </span>
                 </div>
               </button>
@@ -169,7 +169,7 @@ class HoverInteraction extends Component {
         <div className={styles.showPane}>
           <div className={styles.CurrentTaskLabel}>
             <FontAwesomeIcon icon={type === 'OP' ? fasListAlt : fasFlagCheckered} /> &nbsp;
-            Existing {type === 'OP' ? 'Options' : 'Requirements'}:
+            Existing {type === 'OP' ? 'Options' : 'Criteria'}:
           </div>
           <div className={styles.OptionList}>
             <ul>
@@ -184,7 +184,7 @@ class HoverInteraction extends Component {
                     <li key={rq.id}>
                       <span className={styles.Ordinal}>{ordinal(idx + 1)}</span>
                       <div className={styles.Requirement}>
-                        <div 
+                        <div
                           className={[styles.RequirementStar, (
                             rq.starred === true ? styles.ActiveStar : null
                           )].join(' ')}
@@ -202,7 +202,7 @@ class HoverInteraction extends Component {
       </div>
     );
   }
-  
+
 }
 
 export default HoverInteraction;
