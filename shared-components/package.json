@@ -54,6 +54,7 @@
     "sass-loader": "^6.0.7",
     "semantic-ui-css": "^2.3.2",
     "semantic-ui-react": "^0.78.3",
+    "styled-components": "^3.3.3",
     "uniqid": "^4.1.1",
     "url-loader": "^1.0.1",
     "w3-css": "^4.1.0",

@@ -28,7 +28,8 @@
     "thumb-up-100.jpg",
     "question-mark-100.jpg",
     "icon-128.png",
-    "icon-inactive-128.png"
+    "icon-inactive-128.png",
+    "googlesans-regular.ttf"
   ],
   "icons": {
     "128": "icon-128.png"

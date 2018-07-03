@@ -137,6 +137,9 @@ var options = {
     new CopyWebpackPlugin([
       { from: '../shared-components/src/assets/images' },
     ]),
+    new CopyWebpackPlugin([
+      { from: '../shared-components/src/assets/fonts' },
+    ]),
     new CopyWebpackPlugin([{
       from: "src/pages/content/content.styles.css"
     }]),

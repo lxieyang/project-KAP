@@ -2,9 +2,11 @@
 import $ from 'jquery';
 import React from 'react';
 import ReactDOM from 'react-dom';
+import styled from 'styled-components';
 import KAPCaptureHelper from './captures/capture.helper';
 import InteractionBox from '../../../../shared-components/src/components/InteractionBox/InteractionBox';
 import HoverInteraction from '../../../../shared-components/src/components/InteractionBox/HoverInteraction/HoverInteraction';
+import SelectInteraction from '../../../../shared-components/src/components/InteractionBox/SelectInteraction/SelectInteraction';
 import GoogleInPageTaskPrompt from '../../components/InPageTaskPrompt/GoogleInPageTaskPrompt/GoogleInPageTaskPrompt';
 import SetAsNewTaskButton from '../../components/InPageTaskPrompt/GoogleInPageTaskPrompt/SetAsNewTaskButton';
 import { getSearchTerm, getOrigin } from '../../../../shared-components/src/shared/utilities';
@@ -20,6 +22,21 @@ import {
   currentTaskIdRef
 } from '../../../../shared-components/src/firebase/index';
 import * as FirebaseStore from '../../../../shared-components/src/firebase/store';
+
+/* Set up interaction box and hover box */
+const popOverAnchor = document.body.appendChild(document.createElement('div'));
+popOverAnchor.style.zIndex = '33333';
+popOverAnchor.style.position = 'absolute';
+popOverAnchor.setAttribute('id', 'popover-box');
+
+
+
+
+
+
+
+
+
 
 
 
@@ -436,15 +453,49 @@ let takeSnapshot = (rect=null) => {
 }
 
 
+let justSelectedRange;
+
+
 window.addEventListener('mouseup', (event) => {
+  if (popOverAnchor.contains(event.target)) {
+    console.log('click inside popover');
+    window.getSelection().removeAllRanges();
+    window.getSelection().addRange(justSelectedRange);
+    return false;
+  } 
+
   if (!mouseStart)
     return;
   
   mouseStart = null;
   document.body.style.cursor = 'auto';
 
-  setTimeout(() => {
+  setTimeout(() => {  // trick when dealing with window selection on moune up
     let selection = document.getSelection();
+    if (selection.type === 'Range' && selection.toString().trim() !== '') {
+      let rect = selection.getRangeAt(0).getBoundingClientRect();
+      // popOverAnchor.style.width = '100px';
+      popOverAnchor.top = '0px';
+      popOverAnchor.style.left = `0px`;
+      ReactDOM.render(
+          <SelectInteraction 
+            selectedText={selection.toString()}
+            clip={() => ReactDOM.unmountComponentAtNode(popOverAnchor)}/>, 
+          popOverAnchor);
+      // adjusting position of popover box after mounting
+      popOverAnchor.style.top = `${rect.top - 5 + window.scrollY - popOverAnchor.clientHeight}px`;
+      let leftPosition = Math.floor(rect.left + rect.width/2 - popOverAnchor.clientWidth/2);
+      leftPosition = leftPosition >= 10 ? leftPosition : 10;
+      popOverAnchor.style.left = `${leftPosition}px`;
+
+      // store range
+      justSelectedRange = selection.getRangeAt(0);
+    } else {
+      ReactDOM.unmountComponentAtNode(popOverAnchor);
+    }
+
+
+    
     if (captureWindow.parentElement) {
   //     //TODO take care of capturing the elements?
 
