@@ -2,7 +2,6 @@
 import $ from 'jquery';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import styled from 'styled-components';
 import KAPCaptureHelper from './captures/capture.helper';
 import InteractionBox from '../../../../shared-components/src/components/InteractionBox/InteractionBox';
 import HoverInteraction from '../../../../shared-components/src/components/InteractionBox/HoverInteraction/HoverInteraction';
@@ -23,7 +22,7 @@ import {
 } from '../../../../shared-components/src/firebase/index';
 import * as FirebaseStore from '../../../../shared-components/src/firebase/store';
 
-/* Set up interaction box and hover box */
+/* Set up popover box anchor */
 const popOverAnchor = document.body.appendChild(document.createElement('div'));
 popOverAnchor.style.zIndex = '33333';
 popOverAnchor.style.position = 'absolute';
@@ -32,17 +31,7 @@ popOverAnchor.setAttribute('id', 'popover-box');
 
 
 
-
-
-
-
-
-
-
-
-
 let currentTaskId = null;
-
 
 const taskPromptAnchor = document.body.insertBefore(document.createElement('div'), document.body.childNodes[0]);
 taskPromptAnchor.style.position = 'fixed';
@@ -227,7 +216,7 @@ let mouseStart = null;
 
 
 
-/* Set up interaction box and hover box */
+/* Set up interaction box and hover box anchor */
 const interactionBoxAnchor = document.body.appendChild(document.createElement('div'));
 interactionBoxAnchor.className = classes.InteractionBoxAnchor;
 interactionBoxAnchor.setAttribute('id', 'interaction-box');
