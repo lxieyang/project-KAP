@@ -48,7 +48,7 @@
 .DeleteIcon:hover {
   cursor: pointer;
   opacity: 1;
-  transform: scale(2.0);
+  transform: scale(2.5);
 }
 
 .Ordinal {

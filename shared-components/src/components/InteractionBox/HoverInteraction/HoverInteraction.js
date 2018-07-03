@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-
 import FontAwesomeIcon from '@fortawesome/react-fontawesome';
 import farClock from '@fortawesome/fontawesome-free-regular/faClock';
 import fasStar from '@fortawesome/fontawesome-free-solid/faStar';
