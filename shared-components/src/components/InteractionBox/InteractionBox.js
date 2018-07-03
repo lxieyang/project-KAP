@@ -4,7 +4,7 @@ import FontAwesomeIcon from '@fortawesome/react-fontawesome';
 import fasShareSquare from '@fortawesome/fontawesome-free-solid/faShareSquare';
 // import fasLink from '@fortawesome/fontawesome-free-solid/faLink';
 import fasSave from '@fortawesome/fontawesome-free-solid/faSave';
-import fasArrowsAlt from '@fortawesome/fontawesome-free-solid/faArrowsAlt';
+import hamburger from '@fortawesome/fontawesome-free-solid/faBars';
 // import fasTrash from '@fortawesome/fontawesome-free-solid/faTrash';
 import fasStar from '@fortawesome/fontawesome-free-solid/faStar';
 import fasListAlt from '@fortawesome/fontawesome-free-solid/faListAlt';
@@ -269,28 +269,28 @@ class interactionBox extends Component {
     let attitudeRequirementPairs = targetOption.attitudeRequirementPairs;
     switch (intendedFor) {
       case 'good':
-        if (attitudeRequirementPairs[requirementId] === 'good') {
-          delete attitudeRequirementPairs[requirementId];
-        } else {
-          attitudeRequirementPairs[requirementId] = 'good';
-        }
-        break;
+      if (attitudeRequirementPairs[requirementId] === 'good') {
+        delete attitudeRequirementPairs[requirementId];
+      } else {
+        attitudeRequirementPairs[requirementId] = 'good';
+      }
+      break;
       case 'bad':
-        if (attitudeRequirementPairs[requirementId] === 'bad') {
-          delete attitudeRequirementPairs[requirementId];
-        } else {
-          attitudeRequirementPairs[requirementId] = 'bad';
-        }
-        break;
+      if (attitudeRequirementPairs[requirementId] === 'bad') {
+        delete attitudeRequirementPairs[requirementId];
+      } else {
+        attitudeRequirementPairs[requirementId] = 'bad';
+      }
+      break;
       case 'idk':
-        if (attitudeRequirementPairs[requirementId] === 'idk') {
-          delete attitudeRequirementPairs[requirementId];
-        } else {
-          attitudeRequirementPairs[requirementId] = 'idk';
-        }
-        break;
+      if (attitudeRequirementPairs[requirementId] === 'idk') {
+        delete attitudeRequirementPairs[requirementId];
+      } else {
+        attitudeRequirementPairs[requirementId] = 'idk';
+      }
+      break;
       default:
-        break;
+      break;
     }
 
     // update state
@@ -423,193 +423,193 @@ class interactionBox extends Component {
 
     let addOptionRequirement = (
       <div className={styles.AddOptionRowContainer}>
-        <div className={styles.AddSomthingInputContainer}>
-          <FontAwesomeIcon icon={fasListAlt}/> &nbsp;
-          <input
-            id="add-option-in-piece-input"
-            placeholder={'Add an Option'}
-            onInput={(event) => this.switchInputSourceHandler(event, 'OP')}/> &nbsp;
-          <div
-            className={styles.AddSomethingButton}
-            onClick={(event) => this.addButtonClicked(event, 'OP')}>
-            <FontAwesomeIcon icon={fasPaperPlane}/> &nbsp; Add
-          </div>
-        </div>
-        <div
-          className={styles.AddSomthingInputContainer}
-          onClick={(event) => this.addButtonClicked(event, 'RQ')}>
-          <FontAwesomeIcon icon={fasFlagCheckered}/> &nbsp;
-          <input
-            id="add-requirement-in-piece-input"
-            placeholder={'Add a Criterion'}
-            onInput={(event) => this.switchInputSourceHandler(event, 'RQ')}
-            /> &nbsp;
-          <div className={styles.AddSomethingButton}>
-            <FontAwesomeIcon icon={fasPaperPlane}/> &nbsp; Add
-          </div>
-        </div>
+      <div className={styles.AddSomthingInputContainer}>
+      <FontAwesomeIcon icon={fasListAlt}/> &nbsp;
+      <input
+      id="add-option-in-piece-input"
+      placeholder={'Add an Option'}
+      onInput={(event) => this.switchInputSourceHandler(event, 'OP')}/> &nbsp;
+      <div
+      className={styles.AddSomethingButton}
+      onClick={(event) => this.addButtonClicked(event, 'OP')}>
+      <FontAwesomeIcon icon={fasPaperPlane}/> &nbsp; Add
+      </div>
+      </div>
+      <div
+      className={styles.AddSomthingInputContainer}
+      onClick={(event) => this.addButtonClicked(event, 'RQ')}>
+      <FontAwesomeIcon icon={fasFlagCheckered}/> &nbsp;
+      <input
+      id="add-requirement-in-piece-input"
+      placeholder={'Add a Criterion'}
+      onInput={(event) => this.switchInputSourceHandler(event, 'RQ')}
+      /> &nbsp;
+      <div className={styles.AddSomethingButton}>
+      <FontAwesomeIcon icon={fasPaperPlane}/> &nbsp; Add
+      </div>
+      </div>
 
       </div>
     );
 
     let experimentalOptionList = (
       <div className={styles.OptionList}>
-        <table className={styles.Table}>
-        <tbody>
-          <tr>
-            <td></td>
-            <td>
-              <div className={styles.TableTitle}>
-                <FontAwesomeIcon icon={fasListAlt}/> &nbsp;Options
-              </div>
+      <table className={styles.Table}>
+      <tbody>
+      <tr>
+      <td></td>
+      <td>
+      <div className={styles.TableTitle}>
+      <FontAwesomeIcon icon={fasListAlt}/> &nbsp;Options
+      </div>
+      </td>
+      <td>
+      </td>
+      <td>
+      <div className={styles.TableTitle}>
+      <FontAwesomeIcon icon={fasFlagCheckered}/> &nbsp;
+      Criteria / Features
+      </div>
+      </td>
+      </tr>
+      {existingOptions.map((op, idx) => {
+        return (
+          <tr key={op.id} className={styles.OptionTableRow}>
+          <td>
+          {/*
+            <div
+            title="Delete this option"
+            className={styles.DeleteOptionIconContainer}
+            onClick={(event) => this.deleteOption(event, op.id)}>
+            <FontAwesomeIcon icon={fasTrash} />
+            </div>
+            */}
             </td>
             <td>
+            <div
+            className={styles.OptionRowContainer}>
+            <span
+            className={[styles.Option]}>
+            {op.name}
+            </span>
+            </div>
+            </td>
+            {/*
+              <td>
+              <div
+              className={[styles.AttitudeThumbContainer, (
+              op.attitude === true
+              ? styles.Active
+              : styles.Inactive
+            )].join(' ')}
+            onClick={(event) => this.attitudeSwitchHandler(event, idx, 'good')}>
+            <ThumbV1 type={'up'}/>
+            </div>
             </td>
             <td>
-              <div className={styles.TableTitle}>
-                <FontAwesomeIcon icon={fasFlagCheckered}/> &nbsp;
-                Criteria / Features
-              </div>
-            </td>
-          </tr>
-          {existingOptions.map((op, idx) => {
+            <div
+            className={[styles.AttitudeThumbContainer, (
+            op.attitude === false
+            ? styles.Active
+            : styles.Inactive
+          )].join(' ')}
+          onClick={(event) => this.attitudeSwitchHandler(event, idx, 'bad')}>
+          <ThumbV1 type={'down'}/>
+          </div>
+          </td>
+          <td>
+          <div
+          className={[styles.AttitudeThumbContainer, (
+          op.active && op.attitude === null
+          ? styles.Active
+          : styles.Inactive
+        )].join(' ')}
+        onClick={(event) => this.attitudeSwitchHandler(event, idx, null)}>
+        <QuestionMark />
+        </div>
+        </td>
+        */}
+        <td>
+        {/*
+          <div className={styles.InTermsOf}>
+          is
+          </div>
+          */}
+          </td>
+          <td>
+          <div className={styles.RequirementsContainer}>
+          {existingRequirements.map((rq, idx) => {
+            let attitude = op.attitudeRequirementPairs[rq.id];
+            let attitudeDisplay = null;
+            switch (attitude) {
+              case 'good':
+              attitudeDisplay = (<ThumbV1 type={'up'} />);
+              break;
+              case 'bad':
+              attitudeDisplay = (<ThumbV1 type={'down'} />);
+              break;
+              case 'idk':
+              attitudeDisplay = (<QuestionMark />);
+              break;
+              default:
+              break;
+            }
             return (
-              <tr key={op.id} className={styles.OptionTableRow}>
-                <td>
-                  {/*
-                  <div
-                    title="Delete this option"
-                    className={styles.DeleteOptionIconContainer}
-                    onClick={(event) => this.deleteOption(event, op.id)}>
-                    <FontAwesomeIcon icon={fasTrash} />
-                  </div>
-                  */}
-                </td>
-                <td>
-                  <div
-                    className={styles.OptionRowContainer}>
-                    <span
-                      className={[styles.Option]}>
-                      {op.name}
-                    </span>
-                  </div>
-                </td>
-                {/*
-                <td>
-                  <div
-                    className={[styles.AttitudeThumbContainer, (
-                    op.attitude === true
-                        ? styles.Active
-                        : styles.Inactive
-                    )].join(' ')}
-                    onClick={(event) => this.attitudeSwitchHandler(event, idx, 'good')}>
-                    <ThumbV1 type={'up'}/>
-                  </div>
-                </td>
-                <td>
-                  <div
-                    className={[styles.AttitudeThumbContainer, (
-                    op.attitude === false
-                        ? styles.Active
-                        : styles.Inactive
-                    )].join(' ')}
-                    onClick={(event) => this.attitudeSwitchHandler(event, idx, 'bad')}>
-                    <ThumbV1 type={'down'}/>
-                  </div>
-                </td>
-                <td>
-                  <div
-                    className={[styles.AttitudeThumbContainer, (
-                    op.active && op.attitude === null
-                        ? styles.Active
-                        : styles.Inactive
-                    )].join(' ')}
-                    onClick={(event) => this.attitudeSwitchHandler(event, idx, null)}>
-                    <QuestionMark />
-                  </div>
-                </td>
-                */}
-                <td>
-                  {/*
-                  <div className={styles.InTermsOf}>
-                    is
-                  </div>
-                  */}
-                </td>
-                <td>
-                  <div className={styles.RequirementsContainer}>
-                    {existingRequirements.map((rq, idx) => {
-                      let attitude = op.attitudeRequirementPairs[rq.id];
-                      let attitudeDisplay = null;
-                      switch (attitude) {
-                        case 'good':
-                          attitudeDisplay = (<ThumbV1 type={'up'} />);
-                          break;
-                        case 'bad':
-                          attitudeDisplay = (<ThumbV1 type={'down'} />);
-                          break;
-                        case 'idk':
-                          attitudeDisplay = (<QuestionMark />);
-                          break;
-                        default:
-                          break;
-                      }
-                      return (
-                        <div
-                          key={idx}
-                          title={rq.name}
-                          className={[styles.Requirement, (
-                            attitude === undefined
-                            ? styles.InactiveRequirement
-                            : null
-                          )].join(' ')}>
-                          <div
-                            className={[styles.RequirementStar, (
-                              rq.starred === true ? styles.ActiveStar : null
-                            )].join(' ')}>
-                            {/* onClick={(event) => this.switchStarStatusOfRequirement(rq.id)} */}
-                            <FontAwesomeIcon icon={fasStar}/>
-                          </div>
-                          <div
-                            className={styles.RequirementAttitude}
-                            onClick={(event) => this.attitudeChangeHandler(event, op.id, rq.id, attitude)}>
-                            {attitudeDisplay}
-                          </div>
-                          <div
-                            title={rq.name}
-                            className={styles.RequirementName}>
-                            {getFirstNWords(4, rq.name)}
-                          </div>
+              <div
+              key={idx}
+              title={rq.name}
+              className={[styles.Requirement, (
+                attitude === undefined
+                ? styles.InactiveRequirement
+                : null
+              )].join(' ')}>
+              <div
+              className={[styles.RequirementStar, (
+                rq.starred === true ? styles.ActiveStar : null
+              )].join(' ')}>
+              {/* onClick={(event) => this.switchStarStatusOfRequirement(rq.id)} */}
+              <FontAwesomeIcon icon={fasStar}/>
+              </div>
+              <div
+              className={styles.RequirementAttitude}
+              onClick={(event) => this.attitudeChangeHandler(event, op.id, rq.id, attitude)}>
+              {attitudeDisplay}
+              </div>
+              <div
+              title={rq.name}
+              className={styles.RequirementName}>
+              {getFirstNWords(4, rq.name)}
+              </div>
 
-                          <div className={styles.RequirementAttitudeContainer}>
-                            <div
-                              className={[styles.RequirementAttitudeThumbContainer].join(' ')}
-                              onClick={(event) => this.attitudeChangeHandler(event, op.id, rq.id, 'good')}>
-                              <ThumbV1 type={'up'}/>
-                            </div>
+              <div className={styles.RequirementAttitudeContainer}>
+              <div
+              className={[styles.RequirementAttitudeThumbContainer].join(' ')}
+              onClick={(event) => this.attitudeChangeHandler(event, op.id, rq.id, 'good')}>
+              <ThumbV1 type={'up'}/>
+              </div>
 
-                            <div
-                              className={[styles.RequirementAttitudeThumbContainer].join(' ')}
-                              onClick={(event) => this.attitudeChangeHandler(event, op.id, rq.id, 'bad')}>
-                              <ThumbV1 type={'down'}/>
-                            </div>
+              <div
+              className={[styles.RequirementAttitudeThumbContainer].join(' ')}
+              onClick={(event) => this.attitudeChangeHandler(event, op.id, rq.id, 'bad')}>
+              <ThumbV1 type={'down'}/>
+              </div>
 
-                            <div
-                              className={[styles.RequirementAttitudeThumbContainer].join(' ')}
-                              onClick={(event) => this.attitudeChangeHandler(event, op.id, rq.id, 'idk')}>
-                              <QuestionMark />
-                            </div>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </td>
-              </tr>
+              <div
+              className={[styles.RequirementAttitudeThumbContainer].join(' ')}
+              onClick={(event) => this.attitudeChangeHandler(event, op.id, rq.id, 'idk')}>
+              <QuestionMark />
+              </div>
+              </div>
+              </div>
             );
           })}
-        </tbody>
-        </table>
+          </div>
+          </td>
+          </tr>
+        );
+      })}
+      </tbody>
+      </table>
       </div>
     );
 
@@ -617,20 +617,20 @@ class interactionBox extends Component {
     if (this.state.type === SNIPPET_TYPE.SELECTION) {
       snippet = (
         <div
-          id="interaction-box-editable-selected-text"
-          contentEditable={true}
-          suppressContentEditableWarning={true}
-          className={styles.selectedText}
-          style={{width:
-            this.state.snippetDimension !== null
-            ? this.state.snippetDimension.width+'px'
-            : '600px'}}>
-            {this.state.selectedText}
-        </div>
-      );
-    } else if (this.state.type === SNIPPET_TYPE.LASSO || this.state.type === SNIPPET_TYPE.POST_SNAPSHOT  || this.state.type === SNIPPET_TYPE.COPIED_PIECE) {
-      snippet = (
-        <div
+        id="interaction-box-editable-selected-text"
+        contentEditable={true}
+        suppressContentEditableWarning={true}
+        className={styles.selectedText}
+        style={{width:
+          this.state.snippetDimension !== null
+          ? this.state.snippetDimension.width+'px'
+          : '600px'}}>
+          {this.state.selectedText}
+          </div>
+        );
+      } else if (this.state.type === SNIPPET_TYPE.LASSO || this.state.type === SNIPPET_TYPE.POST_SNAPSHOT  || this.state.type === SNIPPET_TYPE.COPIED_PIECE) {
+        snippet = (
+          <div
           id="interaction-box-editable-selected-text"
           contentEditable={true}
           suppressContentEditableWarning={true}
@@ -639,57 +639,56 @@ class interactionBox extends Component {
             this.state.snippetDimension !== null
             ? this.state.snippetDimension.width+'px'
             : '600px'}}
-          dangerouslySetInnerHTML={this.getHTML()}>
-        </div>
-      );
-    }
-
-    return (
-      <div
-        id="interaction-box-content"
-        className={styles.InteractionBox}>
-        {this.state.mode === 'NEW'
-          ? <div
-                id="interaction-box-header"
-                className={styles.InteractionBoxDragHandle}>
-                <FontAwesomeIcon icon={fasArrowsAlt}/>
-              </div>
-          : null
+            dangerouslySetInnerHTML={this.getHTML()}>
+            </div>
+          );
         }
-        <div
+
+        return (
+          <div
+          id="interaction-box-content"
+          className={styles.InteractionBox}>
+          {this.state.mode === 'NEW'
+          ? <div
+          id="interaction-box-header"
+          className={styles.InteractionBoxDragHandle}>
+          Some space
+          <div
           className={styles.CloseBoxContainer}
           onClick={(event) => this.closeBoxHandler(event)}>
           &#10005;
-        </div>
-        <div style={{display: 'flex', width: '100%', justifyContent: 'space-between', alignItems: 'center'}}>
-          <div style={{display: 'flex', width: '80%', marginTop: '6px',marginBottom: '16px', alignItems: 'center'}}>
-            <span style={{fontSize: '16px', fontWeight: '600'}}>Title: &nbsp;</span>
-            <input
-              type="text"
-              value={this.state.title}
-              placeholder={'Please select to add a title'}
-              className={styles.TitleInput}
-              onChange={(event) => this.titleInputChangeHandler(event)}/> &nbsp;
-              {
-                // this.state.mode === 'NEW' &&
-                this.state.autoSuggestedTitle === true
-                ? <span className={styles.AutoSuggestedBadge}>Auto Suggested</span>
-                : null
-              }
-
+          </div>
+          <div style={{display: 'flex', width: '100%', justifyContent: 'space-between'}}>
+          <div style={{display: 'flex', width: '80%', alignItems: 'center'}}>
+          <span style={{display: 'flex', fontSize: '16px', fontWeight: '600', margin:'20px 10px 10px 20px', color: 'rgba(0,0,0,1)'}}>Title: &nbsp;</span>
+          <input
+          type="text"
+          value={this.state.title}
+          placeholder={'Please select to add a title'}
+          className={styles.TitleInput}
+          onChange={(event) => this.titleInputChangeHandler(event)}/> &nbsp;
+          {
+            // // this.state.mode === 'NEW' &&
+            // this.state.autoSuggestedTitle === true
+            // ? <span className={styles.AutoSuggestedBadge}>Auto Suggested</span>
+            // : null
+          }
           </div>
           {
             this.state.mode !== 'NEW'
             ? <div style={{marginRight: '20px', fontSize: '16px', opacity: '0.6'}}>
-                <a target="_blank" href={this.state.url} style={{color: 'black', textDecoration: 'none', fontSize: '13px'}} onClick={(event) => openLinkInTextEditorExtension(event, this.state.url)} title="Open the original page in a new tab"><FontAwesomeIcon icon={fasShareSquare}/> Open in new tab</a>
-              </div>
+            <a target="_blank" href={this.state.url} style={{color: 'black', textDecoration: 'none', fontSize: '13px'}} onClick={(event) => openLinkInTextEditorExtension(event, this.state.url)} title="Open the original page in a new tab"><FontAwesomeIcon icon={fasShareSquare}/> Open in new tab</a>
+            </div>
             : null
           }
+          </div>
 
-        </div>
+          </div>
+          : null
+        }
 
-        <div style={{display: 'flex', width: '100%', marginBottom: '10px', alignItems: 'flex-end'}}>
-          {snippet}
+        <div style={{display: 'flex', width: '100%', justifyContent:'space-between', marginTop:'60px', marginBottom: '10px', alignItems: 'flex-end'}}>
+        {snippet}
         </div>
 
         {experimentalOptionList}
@@ -698,45 +697,45 @@ class interactionBox extends Component {
 
 
         <div className={styles.FooterContainer}>
-          <div className={styles.NoteContainer}>
-            <Input
-              elementType='textarea'
-              elementConfig={{placeholder: 'Type some notes'}}
-              value={this.state.notes}
-              changed={this.inputChangedHandler}/>
-          </div>
-          <div className={styles.ClipButtonContainer}>
-            <button
-              title="Save this Snippet"
-              className={styles.ClipButton}
-              onClick={(event) => this.submitPieceHandler(event)}
-              >
-              <div className={styles.CheckmarkContainer}>
-                <div className={[styles.Checkmark,
-                (
-                  this.state.canSubmit
-                  ? styles.CheckmarkSpin
-                  : null)].join(' ')}></div>
-              </div>
-              <div className={styles.ButtonTextContainer}>
-                <span className={[styles.ButtonText,
-                  (
-                    this.state.canSubmit
-                    ? styles.ButtonTextDisappear
-                    : null
-                  )].join(' ')}>
-                  <FontAwesomeIcon icon={fasSave} className={styles.ClipButtonIcon}/>
-                </span>
-              </div>
-
-            </button>
-          </div>
+        <div className={styles.NoteContainer}>
+        <Input
+        elementType='textarea'
+        elementConfig={{placeholder: 'Type some notes'}}
+        value={this.state.notes}
+        changed={this.inputChangedHandler}/>
         </div>
+        <div className={styles.ClipButtonContainer}>
+        <button
+        title="Save this Snippet"
+        className={styles.ClipButton}
+        onClick={(event) => this.submitPieceHandler(event)}
+        >
+        <div className={styles.CheckmarkContainer}>
+        <div className={[styles.Checkmark,
+          (
+            this.state.canSubmit
+            ? styles.CheckmarkSpin
+            : null)].join(' ')}></div>
+            </div>
+            <div className={styles.ButtonTextContainer}>
+            <span className={[styles.ButtonText,
+              (
+                this.state.canSubmit
+                ? styles.ButtonTextDisappear
+                : null
+              )].join(' ')}>
+              <FontAwesomeIcon icon={fasSave} className={styles.ClipButtonIcon}/>
+              </span>
+              </div>
 
-      </div>
-    );
-  }
+              </button>
+              </div>
+              </div>
 
-}
+              </div>
+            );
+          }
 
-export default interactionBox;
+        }
+
+        export default interactionBox;

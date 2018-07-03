@@ -14,37 +14,54 @@
   box-sizing: border-box;
   position: relative;
   opacity: 1;
-  position: relative;
+  text-align: center;
+  /* margin:0 auto; */
 }
 
 .InteractionBoxDragHandle {
+   -moz-user-select: -moz-none;
+   -khtml-user-select: none;
+   -webkit-user-select: none;
   position: absolute;
+  display: inline-block;
+  background-color: rgba(211, 211, 211, 0.25);
+  color: rgba(0,0,0,0);
   top: 1px;
-  left: 4px;
-  font-size: 10px;
-  cursor: move;
+  left: 1px;
+  font-size: 20px;
+  width: 100%;
+  /* opacity: 0; */
+  cursor: move
 }
 
 .CloseBoxContainer {
   position: absolute;
   top: 2px;
-  right: 5px;
-  font-size: 12px;
+  right: 8px;
+  font-size: 15px;
+  color: rgba(0,0,0,1);
+  background-color: rgba(0, 0, 0, 0);
   cursor: pointer;
 }
 
+.CloseBoxContainer:hover {
+  cursor: pointer;
+  opacity: 1;
+  transform: scale(2);
+}
+
 .TitleInput {
-  border: 0px solid transparent !important;
-  width: 70%;
+  border: 1px dashed lightgray !important;
+  width: 95%  !important;
   text-overflow: ellipsis;
   font-size: 16px;
   background-color: transparent !important;
   box-shadow: none !important;
   text-align: left;
   padding: 2px 2px;
-  border-bottom: 1px dashed lightgray !important;
+  /* border-bottom: 1px dashed lightgray !important; */
   color: rgba(0,0,0,.87);
-  
+
 }
 
 .TitleInput:focus {
@@ -52,6 +69,10 @@
 }
 
 .AutoSuggestedBadge {
+  /* opacity: 0; */
+   -moz-user-select: -moz-none;
+   -khtml-user-select: none;
+   -webkit-user-select: none;
   background-color: #f0ad4e;
   display: inline;
   padding: 1px 6px;
@@ -114,7 +135,7 @@
 button:hover {
   cursor: pointer;
 }
-/* 
+/*
 .OptionList ul li {
   margin: 10px 0px;
 } */
@@ -202,9 +223,9 @@ button:hover {
   border: none;
 }
 
-.Table td, 
+.Table td,
 .Table th {
-  
+
   padding: 0px 4px;
   vertical-align: middle;
 }
@@ -241,7 +262,7 @@ button:hover {
   height: 100%;
   min-width: 150px;
   max-width: 250px;
-  
+
 }
 
 .Option {
@@ -301,7 +322,7 @@ button:hover {
   border-radius: 4px;
   box-sizing: border-box;
   box-shadow: 0 1px 1px 0 rgba(0,0,0,0.16), 0 1px 5px 0 rgba(0,0,0,0.12);
-  
+
   position: relative;
   /* transition: all 0.05s ease-in; */
 }
@@ -309,11 +330,11 @@ button:hover {
 .InactiveRequirement {
   color: rgb(121, 121, 121);
   background-color: rgb(223, 221, 221);
-  
+
 }
 
 .RequirementName {
-  
+
 }
 
 .RequirementAttitudeContainer {

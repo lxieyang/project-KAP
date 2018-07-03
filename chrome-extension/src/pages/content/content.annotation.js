@@ -451,7 +451,7 @@ window.addEventListener('mouseup', (event) => {
     window.getSelection().removeAllRanges();
     window.getSelection().addRange(justSelectedRange);
     return false;
-  } 
+  }
 
   if (!mouseStart)
     return;
@@ -467,9 +467,9 @@ window.addEventListener('mouseup', (event) => {
       popOverAnchor.top = '0px';
       popOverAnchor.style.left = `0px`;
       ReactDOM.render(
-          <SelectInteraction 
+          <SelectInteraction
             selectedText={selection.toString()}
-            clip={() => ReactDOM.unmountComponentAtNode(popOverAnchor)}/>, 
+            clip={() => ReactDOM.unmountComponentAtNode(popOverAnchor)}/>,
           popOverAnchor);
       // adjusting position of popover box after mounting
       popOverAnchor.style.top = `${rect.top - 5 + window.scrollY - popOverAnchor.clientHeight}px`;
@@ -484,7 +484,7 @@ window.addEventListener('mouseup', (event) => {
     }
 
 
-    
+
     if (captureWindow.parentElement) {
   //     //TODO take care of capturing the elements?
 
@@ -562,7 +562,6 @@ window.addEventListener('keydown', (event) => {
 //     lastKeypressTime = thisKeypressTime;
 //   }
 // });
-
 
 
 window.addEventListener('copy', function (event) {
