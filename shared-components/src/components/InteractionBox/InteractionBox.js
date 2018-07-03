@@ -1,5 +1,4 @@
 import React, { Component }from 'react';
-
 import FontAwesomeIcon from '@fortawesome/react-fontawesome';
 import fasShareSquare from '@fortawesome/fontawesome-free-solid/faShareSquare';
 // import fasLink from '@fortawesome/fontawesome-free-solid/faLink';

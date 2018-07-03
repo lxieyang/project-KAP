@@ -1,5 +1,5 @@
 import { uniq, isEqual } from 'lodash';
-import { 
+import {
   database,
   tasksRef,
   currentTaskIdRef,
@@ -159,7 +159,7 @@ export const combineTasks = (sourceTaskId, targetTaskId, newTaskName) => {
       // pieces (did not remove dups)
       let pieces = targetTask.pieces !== undefined ? targetTask.pieces : {}
       tasksRef.child(targetTaskId).child('pieces').set(Object.assign(pieces, sourceTask.pieces));
-      
+
       // page count list (remove dups)
       let pageCountList = targetTask.pageCountList !== undefined ? targetTask.pageCountList : {}
       for (let spKey in sourceTask.pageCountList) {
@@ -448,11 +448,6 @@ export const updateOptionsOrdering = async (ordering) => {
   });
 }
 
-
-
-
-
-
 /* REQUIREMENTS / CRITERIA */
 export const addARequirementForCurrentTask = async (requirementName) => {
   currentTaskId = (await currentTaskIdRef.once('value')).val();
@@ -566,10 +561,6 @@ export const updateRequirementOrdering = async (ordering) => {
     });
   });
 }
-
-
-
-
 
 /* PIECES */
 export const addAPieceToCurrentTask = async (piece, alsoSetCopyData = false) => {
