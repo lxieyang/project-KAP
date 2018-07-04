@@ -28,19 +28,19 @@ const getNumColInResponsiveGridLayout = (windowSize) => {
 
   // if (windowSize > 1730) {
   //   maxNumCol = 5;
-  // } 
+  // }
   // else if (windowSize <= 1730 && windowSize > 1220) {
   //   maxNumCol = 5;
-  // } 
+  // }
   // else if (windowSize <= 1220 && windowSize > 900) {
   //   maxNumCol = 4;
-  // } 
+  // }
   // else if (windowSize <= 900 && windowSize > 630) {
   //   maxNumCol = 3;
-  // } 
+  // }
   // else if (windowSize <= 900 && windowSize > 630) {
   //   maxNumCol = 2;
-  // } 
+  // }
   // else {
   //   maxNumCol = 1;
   // }
@@ -124,11 +124,11 @@ const TopPages = (props) => {
           </div>
           {
             props.pages.length > 0
-            ? <div 
+            ? <div
                 className={styles.HeaderCollapseButton}
                 onClick={(event) => props.switchDisplayStatus(event)}>
                 {
-                  props.isOpen 
+                  props.isOpen
                   ? <FontAwesomeIcon icon={fasChevronUp} />
                   : <FontAwesomeIcon icon={fasChevronDown} />
                 }
@@ -158,14 +158,14 @@ const TopPages = (props) => {
       <Collapse isOpened={props.isOpen} springConfig={{stiffness: 700, damping: 50}}>
         {content}
       </Collapse>
-      
+
     </Aux>
   );
 }
 
 
 const SnippetsGroup = (props) => {
-  
+
   const { piecesList, options } = props;
 
   /* Experimental responsive grid */
@@ -190,14 +190,14 @@ const SnippetsGroup = (props) => {
                   optionId: pair.optionId,
                   optionName: options[pair.optionId].name,
                   attitude: pair.attitude !== undefined ? pair.attitude : null
-                }); 
+                });
               });
             }
             attitudeOptionPairsList = sortBy(attitudeOptionPairsList, ['attitude']);
             return (
               <SnippetCard
                 key={idx}
-                id={p.id} 
+                id={p.id}
                 type={p.type}
                 allPieces={props.pieces}
                 options={props.options}
@@ -279,7 +279,7 @@ class CollectionView extends Component {
       const search = qs.parse(location.search);
       if (search.pieceId !== null && search.pieceId !== undefined) {
         this.setState({modalPieceId: search.pieceId, showModal: true});
-        
+
       } else {
         this.setState({showModal: false});
       }
@@ -369,7 +369,7 @@ class CollectionView extends Component {
     } else {
       FirebaseStore.deleteAPieceWithId(id);
     }
-    
+
   }
 
   dismissModal = () => {
@@ -439,26 +439,26 @@ class CollectionView extends Component {
       });
     }
 
-    const { codeFilterOn, notesFilterOn, unCategorizedFilterOn } = this.state;  
+    const { codeFilterOn, notesFilterOn, unCategorizedFilterOn } = this.state;
     let filteredPiecesAccordingToFilterStatus = piecesList.filter(p => {
       let codeQualified = true;
       let notesQualified = true;
       let uncategorizedQualified = true;
 
       if (codeFilterOn) {   // filtering code
-        
+
         if (p.codeSnippetHTMLs !== undefined) {
           codeQualified = true;
         } else {
           codeQualified = false;
           let htmls = p.htmls;
           for (let html of htmls) {
-            if (html.indexOf('prettyprint') !== -1 
+            if (html.indexOf('prettyprint') !== -1
             || ((html.indexOf('<code') !== -1 && html.indexOf('</code>') !== -1))) {
               codeQualified = true;
               break;
-            } 
-          }   
+            }
+          }
         }
       }
 
@@ -530,7 +530,7 @@ class CollectionView extends Component {
         piecesList={piecesListClone}
         specificPieceId={this.state.specificPieceId}
         makeInteractionBox={this.makeInteractionbox}
-        deleteSnippet={this.deletePieceHandler} 
+        deleteSnippet={this.deletePieceHandler}
         createAPieceGroup={this.createAPieceGroup}
         addAPieceToGroup={this.addAPieceToGroup}/>
     );
@@ -547,9 +547,9 @@ class CollectionView extends Component {
           <Aux>
             <div className={styles.BackDrop}>
             </div>
-            <div 
+            <div
               className={styles.ModalContentBackground}>
-              <InteractionBox 
+              <InteractionBox
                 mode={'UPDATE'}
                 clip={this.dismissModal}
                 id={this.state.modalPieceId}
@@ -581,26 +581,26 @@ class CollectionView extends Component {
       <Aux>
         <div className={styles.CollectionView}>
             <div className={styles.Main} id="scrollable-content-container">
-              
+
               {
-                this.props.shouldDisplayAllPages 
+                this.props.shouldDisplayAllPages
                 ? <div className={styles.Section}>
                     {topPages}
                   </div>
                 : null
               }
-              
+
 
               <div className={styles.Section}>
                 <Aux>
                   <div className={styles.Header}>
                     <div className={styles.HeaderNameContainer}>
                       <div className={styles.HeaderName}>
-                        <span>All Snippets</span>
+                        <span>Snippets</span>
                       </div>
                       {
                         piecesList.length > 0
-                        ? <div 
+                        ? <div
                             className={styles.HeaderCollapseButton}
                             onClick={(event) => this.switchAllSnippetsOpenStatus(event)}>
                             {
@@ -643,11 +643,11 @@ class CollectionView extends Component {
                           With Notes <FontAwesomeIcon icon={fasStickyNote} />
                         </div>
                       </div>
-                      
+
                       <div className={styles.SectionFilterContainer}>
                         {
-                          unCategorizedCount !== 0 
-                          ? <div 
+                          unCategorizedCount !== 0
+                          ? <div
                               className={[styles.SectionFilterBadge, styles.SectionFilterBadgeDanger].join(' ')}>
                               {unCategorizedCount}
                             </div>
@@ -665,8 +665,8 @@ class CollectionView extends Component {
                           Uncategorized <FontAwesomeIcon icon={farQuestionCircle} />
                         </div>
                       </div>
-                      
-                      
+
+
                     </div>
                   </div>
                 </Aux>

@@ -28,9 +28,6 @@ popOverAnchor.style.zIndex = '33333';
 popOverAnchor.style.position = 'absolute';
 popOverAnchor.setAttribute('id', 'popover-box');
 
-
-
-
 let currentTaskId = null;
 
 const taskPromptAnchor = document.body.insertBefore(document.createElement('div'), document.body.childNodes[0]);
@@ -141,12 +138,6 @@ const handlePageCount = () => {
   }
 }
 
-
-
-
-
-
-
 /** Set up connection between background and content scripts */
 let port = chrome.runtime.connect({name: 'FROM_CONTENT'});
 port.postMessage({msg: 'GET_USER_INFO'});
@@ -236,6 +227,7 @@ let hoverBoxIsMounted = false;
 let customRemoveInteractionEvent = new CustomEvent('removeInteractionBoxes', {});
 
 const clean = () => {
+  // console.log('annotation cleaning');
   try {
     ReactDOM.unmountComponentAtNode(interactionBoxAnchor);
     ReactDOM.unmountComponentAtNode(hoverAnchor);
@@ -590,6 +582,7 @@ window.addEventListener('copy', function (event) {
       codeSnippetTexts: []
     }
     FirebaseStore.addAPieceToCurrentTask(piece, true);
+    console.log('just  added a piece');
   }
 });
 

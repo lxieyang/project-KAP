@@ -10,7 +10,7 @@
 
 .SearchBar input[type=text] {
   padding: 6px;
-  
+
   font-size: 17px;
   border: none;
   border-top-left-radius: 3px;
@@ -25,9 +25,9 @@
 .SearchBar .SearchButton {
   float: right;
   padding: 6px 10px;
-  margin-right: 16px;
+  margin-right: 0px;
   background: #ddd;
-  font-size: 17px;
+  font-size: 19px;
   border: none;
   /* cursor: pointer; */
   border-top-right-radius: 3px;
@@ -67,7 +67,7 @@
   /* border: 1px solid black; */
   background-color: white;
   box-shadow: 0 2px 5px 0 rgba(0,0,0,0.16), 0 2px 10px 0 rgba(0,0,0,0.12);
-  
+
   word-break: break-all;
   /* font-size: 1.1rem; */
 }
