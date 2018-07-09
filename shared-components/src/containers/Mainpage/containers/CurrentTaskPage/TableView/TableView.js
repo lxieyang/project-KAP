@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { findDOMNode } from 'react-dom';
 import { withRouter } from 'react-router-dom';
 import qs from 'query-string';
-
+import {Collapse} from 'react-collapse';
 import Aux from '../../../../../hoc/Aux/Aux';
 
 import FontAwesomeIcon from '@fortawesome/react-fontawesome';
@@ -14,6 +14,8 @@ import fasMinusCircle from '@fortawesome/fontawesome-free-solid/faMinusCircle';
 import fasCheckCircle from '@fortawesome/fontawesome-free-solid/faCheckCircle';
 import fasToggleOn from '@fortawesome/fontawesome-free-solid/faToggleOn';
 import fasToggleOff from '@fortawesome/fontawesome-free-solid/faToggleOff';
+import fasChevronDown from '@fortawesome/fontawesome-free-solid/faChevronDown';
+import fasChevronUp from '@fortawesome/fontawesome-free-solid/faChevronUp';
 
 import TableRow from './TableRow/TableRow';
 import ToggleSwitch from '../../../../../components/UI/ToggleSwitch/ToggleSwitch';
@@ -49,7 +51,8 @@ class TableView extends Component {
     isDetailed: true,
     shouldShowNotes: this.props.task.showOptionNotes !== undefined ? this.props.task.showOptionNotes : false,
     showModal: false,
-    modalPieceId: ''
+    modalPieceId: '',
+    tableviewisOpen: true
   }
 
   UNSAFE_componentWillReceiveProps (nextProps) {
@@ -78,7 +81,7 @@ class TableView extends Component {
       const search = qs.parse(location.search);
       if (search.pieceId !== null && search.pieceId !== undefined) {
         this.setState({modalPieceId: search.pieceId, showModal: true});
-        
+
       } else {
         this.setState({showModal: false});
       }
@@ -86,7 +89,7 @@ class TableView extends Component {
   }
 
   componentWillUnmount() {
-    this.unlisten();  
+    this.unlisten();
     document.body.removeEventListener('keydown', this.keyDownHandler);
   }
 
@@ -112,7 +115,7 @@ class TableView extends Component {
       });
     }
     requirementsList = sortBy(requirementsList, ['order']);
-    
+
     // extract pieces
     let piecesList = [];
     for (let pKey in task.pieces) {
@@ -127,6 +130,12 @@ class TableView extends Component {
     let shouldShowNotes = task.showOptionNotes;
 
     this.setState({optionsList, requirementsList, piecesList, shouldShowNotes});
+  }
+
+  switchTableIsOpenStatus = (event) => {
+    this.setState(prevState => {
+      return {tableviewisOpen: !prevState.tableviewisOpen};
+    });
   }
 
   getOrderedRequirementListFromState () {
@@ -170,7 +179,7 @@ class TableView extends Component {
     updatedOption.active = !updatedOption.active;
     let updatedOptionsList = [...this.state.optionsList];
     updatedOptionsList[idx] = updatedOption;
-    this.setState({optionsList: updatedOptionsList});    
+    this.setState({optionsList: updatedOptionsList});
   }
 
   switchRequirementStatus = (event, requirementId) => {
@@ -241,7 +250,7 @@ class TableView extends Component {
     for (let html of htmls) {
       if (html.indexOf('pre') !== -1 && html.indexOf('prettyprint') !== -1) {
         return (
-          <FontAwesomeIcon icon={fasCode} className={styles.BadgeIcon}/>          
+          <FontAwesomeIcon icon={fasCode} className={styles.BadgeIcon}/>
         );
       }
     }
@@ -281,7 +290,7 @@ class TableView extends Component {
           pieceClone.attitudeOptionPairs = pieceClone.attitudeOptionPairs.map((pair) => {
             if (pair.optionId === optionId) {
               shouldPushNew = false;
-              return changedAttitude === null 
+              return changedAttitude === null
                       ? {optionId: optionId}
                       : {attitude: changedAttitude, optionId: optionId}
             }
@@ -290,14 +299,14 @@ class TableView extends Component {
           if(shouldPushNew) {
             // console.log('should push new pair');
             pieceClone.attitudeOptionPairs.push(
-              changedAttitude === null 
+              changedAttitude === null
               ? {optionId: optionId}
               : {attitude: changedAttitude, optionId: optionId}
             );
           }
         } else {
           pieceClone.attitudeOptionPairs = [
-            changedAttitude === null 
+            changedAttitude === null
             ? {optionId: optionId}
             : {attitude: changedAttitude, optionId: optionId}];
         }
@@ -325,7 +334,7 @@ class TableView extends Component {
           pieceClone.attitudeOptionPairs = pieceClone.attitudeOptionPairs.map((pair) => {
             if (pair.optionId === optionId) {
               shouldPushNew = false;
-              return changedAttitude === null 
+              return changedAttitude === null
                       ? {optionId: optionId}
                       : {attitude: changedAttitude, optionId: optionId}
             }
@@ -334,14 +343,14 @@ class TableView extends Component {
           if(shouldPushNew) {
             // console.log('should push new pair');
             pieceClone.attitudeOptionPairs.push(
-              changedAttitude === null 
+              changedAttitude === null
               ? {optionId: optionId}
               : {attitude: changedAttitude, optionId: optionId}
             );
           }
         } else {
           pieceClone.attitudeOptionPairs = [
-            changedAttitude === null 
+            changedAttitude === null
             ? {optionId: optionId}
             : {attitude: changedAttitude, optionId: optionId}];
         }
@@ -434,7 +443,7 @@ class TableView extends Component {
   }
 
   switchHideStatusOfAnOption = (toHideIndex, optionId, hide) => {
-    
+
     const { optionsList } = this.state;
     const fromRow = optionsList[toHideIndex];
     let toIndex = optionsList.length - 1;
@@ -480,8 +489,8 @@ class TableView extends Component {
     //       <span>View Detailed Pieces</span>
     //     </div>
     //     <div className={styles.Slider}>
-    //       <ToggleSwitch 
-    //         checked={this.state.isDetailed} 
+    //       <ToggleSwitch
+    //         checked={this.state.isDetailed}
     //         statusChanged={this.detailedViewChangeHandler}/>
     //     </div>
     //   </Aux>
@@ -498,11 +507,11 @@ class TableView extends Component {
             <div className={styles.Label}>
               <span>Show Notes</span>
             </div>
-            <div 
+            <div
               className={styles.Slider}
               onClick={(event) => this.showNotesChangedHandler(event)}>
               {
-                this.state.shouldShowNotes 
+                this.state.shouldShowNotes
                 ? <FontAwesomeIcon icon={fasToggleOn} className={[styles.SliderIcon, styles.SliderOn].join(' ')}/>
                 : <FontAwesomeIcon icon={fasToggleOff} className={[styles.SliderIcon, styles.SliderOff].join(' ')}/>
               }
@@ -512,10 +521,10 @@ class TableView extends Component {
         {
           newRequirementsList.map((rq, idx) => {
             return (
-              <TableHeader 
+              <TableHeader
                 key={rq.id}
-                rq={rq} 
-                index={idx} 
+                rq={rq}
+                index={idx}
                 moveHeader={this.moveHeader}
                 inactiveOpacity={inactiveOpacity}
                 switchStarStatusOfRequirement={this.switchStarStatusOfRequirement}
@@ -529,9 +538,9 @@ class TableView extends Component {
 
     let newTableBody = newOptionsList.map((op, idx) => {
       return (
-        <tr 
+        <tr
           key={op.id}>
-          <TableRow 
+          <TableRow
             op={op}
             index={idx}
             moveRow={this.moveRow}
@@ -570,7 +579,7 @@ class TableView extends Component {
                   }
                 }
                 piecesInThisCell = reverse(sortBy(piecesInThisCell, ['attitude']));
-                
+
                 return (
                   <td key={rq.id} style={{opacity: rq.hide === true || op.hide === true ? `${inactiveOpacity}` : '1'}}>
                     <div className={styles.AttitudeThumbInTableCellContainer}>
@@ -583,25 +592,25 @@ class TableView extends Component {
                           case 'idk':   thumb = (<QuestionMark />); break;
                           default: break;
                         }
-    
+
                         return (
                           <Aux key={`${p.id}${op.id}${rq.id}`}>
-                            <div 
+                            <div
                               className={[styles.AttitudeInTableCell].join(' ')}
                               data-tip
                               data-for={`${p.id}${op.id}${rq.id}`}>
                               {thumb}
                             </div>
                             <ReactTooltip
-                              place="right" 
-                              type="light" 
+                              place="right"
+                              type="light"
                               effect="solid"
                               id={`${p.id}${op.id}${rq.id}`}
                               className={styles.TooltipOverAttitude}
                               getContent={() => {
                                 return (
                                   <SnippetCard
-                                    id={p.id} 
+                                    id={p.id}
                                     type={p.type}
                                     isInTableView={true}
                                     allPieces={this.state.pieces}
@@ -623,11 +632,11 @@ class TableView extends Component {
                                     makeInteractionBox={(event, id) => this.makeInteractionbox(event, id)}/>
                                 );
                               }}>
-                              
+
                             </ReactTooltip>
                           </Aux>
                         );
-                        
+
                       }): null}
                     </div>
                   </td>
@@ -647,9 +656,9 @@ class TableView extends Component {
           <Aux>
             <div className={styles.BackDrop}>
             </div>
-            <div 
+            <div
               className={styles.ModalContentBackground}>
-              <InteractionBox 
+              <InteractionBox
                 mode={'UPDATE'}
                 clip={this.dismissModal}
                 id={this.state.modalPieceId}
@@ -675,12 +684,15 @@ class TableView extends Component {
 
     }
 
-    
 
-    
+
+
 
     return (
       <Aux>
+      <div className={styles.Section}>
+
+
         <div className={styles.TableView}>
           <div className={styles.ConfigureRow}>
 
@@ -690,9 +702,29 @@ class TableView extends Component {
             </div>
             */}
           </div>
-          
 
           <div className={styles.Content}>
+
+          <Aux>
+            <div className={styles.Header}>
+            <div className={styles.HeaderNameContainer}>
+              <div className={styles.HeaderName}>
+                 <span> Comparison Table</span>
+              </div>
+
+              <div
+                  className={styles.HeaderCollapseButton}
+                  onClick={(event) => this.switchTableIsOpenStatus(event)}>
+                  {
+                    this.state.tableviewisOpen
+                    ? <FontAwesomeIcon icon={fasChevronUp} />
+                    : <FontAwesomeIcon icon={fasChevronDown} />
+                  }
+                </div>
+              </div>
+              </div>
+            </Aux>
+
             <table className={styles.ComparisonTable}>
               <thead>
                 {newTableHeader}
@@ -701,12 +733,12 @@ class TableView extends Component {
                 {newTableBody}
               </tbody>
             </table>
-          </div>
+
+            {modal}
+
+            </div>
+            </div>
         </div>
-        
-        {modal}
-
-
       </Aux>
     );
   }

@@ -50,6 +50,37 @@
   align-items: center;
 }
 
+.Section {
+  width: 100%;
+  /* background-color: rgba(0,0,0,0.1); */
+  margin: 40px 0px;
+  padding: 0px;
+}
+
+.Section .Header {
+  font-size: 1.5rem;
+  display: flex;
+  align-items: center;
+  padding-left: 5px;
+}
+
+span {
+  white-space: pre-wrap;
+}
+
+.HeaderCollapseButton {
+  margin-left: 15px;
+  cursor: pointer;
+}
+
+.HeaderNameContainer {
+  display: flex;
+  align-items: center;
+}
+
+.HeaderName {
+  font-weight: 600;
+}
 
 
 .Active {
@@ -61,14 +92,14 @@
 }
 
 .Content {
-  margin: 20px 0px;
+  margin: 20px 50px;
   max-height: 90%;
 }
 
 table.ComparisonTable {
   border-collapse: collapse;
 }
-/* 
+/*
 tr:nth-child(even) {background-color: #f2f2f2;} */
 
 .ComparisonTable th {
@@ -79,7 +110,7 @@ tr:nth-child(even) {background-color: #f2f2f2;} */
   border-bottom: 1px solid #ddd;
 }
 
-.ComparisonTable th, 
+.ComparisonTable th,
 .ComparisonTable td {
   padding: 8px;
   text-align: left;
