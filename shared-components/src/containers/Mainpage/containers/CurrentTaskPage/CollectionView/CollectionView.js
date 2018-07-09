@@ -22,7 +22,6 @@ import { SNIPPET_TYPE } from '../../../../../shared/constants';
 import * as FirebaseStore from '../../../../../firebase/store';
 import { sortBy, reverse, slice } from 'lodash';
 
-
 const getNumColInResponsiveGridLayout = (windowSize) => {
   let maxNumCol = 99;  // make it so big that this is useless
 
@@ -582,13 +581,7 @@ class CollectionView extends Component {
         <div className={styles.CollectionView}>
             <div className={styles.Main} id="scrollable-content-container">
 
-              {
-                this.props.shouldDisplayAllPages
-                ? <div className={styles.Section}>
-                    {topPages}
-                  </div>
-                : null
-              }
+
 
 
               <div className={styles.Section}>
@@ -676,7 +669,13 @@ class CollectionView extends Component {
                   : allPieces
                 }
               </div>
-
+              {
+                this.props.shouldDisplayAllPages
+                ? <div className={styles.Section}>
+                    {topPages}
+                  </div>
+                : null
+              }
             </div>
         </div>
 

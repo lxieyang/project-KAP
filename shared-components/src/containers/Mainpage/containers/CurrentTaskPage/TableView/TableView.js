@@ -52,7 +52,7 @@ class TableView extends Component {
     shouldShowNotes: this.props.task.showOptionNotes !== undefined ? this.props.task.showOptionNotes : false,
     showModal: false,
     modalPieceId: '',
-    tableviewisOpen: true
+    tableviewisOpen: false
   }
 
   UNSAFE_componentWillReceiveProps (nextProps) {
@@ -685,8 +685,16 @@ class TableView extends Component {
     }
 
 
-
-
+    let content = (
+    <table className={styles.ComparisonTable}>
+      <thead>
+        {newTableHeader}
+      </thead>
+      <tbody>
+        {newTableBody}
+      </tbody>
+    </table>
+);
 
     return (
       <Aux>
@@ -723,20 +731,15 @@ class TableView extends Component {
                 </div>
               </div>
               </div>
+              <Collapse isOpened={this.state.tableviewisOpen} springConfig={{stiffness: 700, damping: 50}}>
+                {content}
+              </Collapse>
             </Aux>
-
-            <table className={styles.ComparisonTable}>
-              <thead>
-                {newTableHeader}
-              </thead>
-              <tbody>
-                {newTableBody}
-              </tbody>
-            </table>
 
             {modal}
 
             </div>
+
             </div>
         </div>
       </Aux>
