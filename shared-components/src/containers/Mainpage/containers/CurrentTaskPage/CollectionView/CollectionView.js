@@ -583,8 +583,6 @@ class CollectionView extends Component {
             <div className={styles.Main} id="scrollable-content-container">
 
 
-
-
               <div className={styles.Section}>
                 <Aux>
                   <div className={styles.Header}

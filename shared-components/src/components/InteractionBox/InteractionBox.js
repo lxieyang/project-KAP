@@ -330,7 +330,7 @@ class interactionBox extends Component {
     if (this.state.htmls.length === 0 || this.state.selectedText === '') {
       alert('Please make sure you clipped something before submiting.');
       return;
-    }
+    } 
 
     event.preventDefault();
     let piece = {
