@@ -436,6 +436,79 @@ let takeSnapshot = (rect=null) => {
 
 let justSelectedRange;
 
+function selectionTimeout() {
+  let selection = document.getSelection();
+  // console.log('selected text:', selection.toString());
+  if (selection.type === 'Range' && selection.toString().trim() !== '') {
+    let rect = selection.getRangeAt(0).getBoundingClientRect();
+    // popOverAnchor.style.width = '100px';
+    popOverAnchor.top = '0px';
+    popOverAnchor.style.left = `0px`;
+    ReactDOM.render(
+        <SelectInteraction
+          selectedText={selection.toString()}
+          clip={() => ReactDOM.unmountComponentAtNode(popOverAnchor)}/>,
+        popOverAnchor);
+    // adjusting position of popover box after mounting
+    popOverAnchor.style.top = `${rect.top - 5 + window.scrollY - popOverAnchor.clientHeight}px`;
+    let leftPosition = Math.floor(rect.left + rect.width/2 - popOverAnchor.clientWidth/2);
+    leftPosition = leftPosition >= 10 ? leftPosition : 10;
+    popOverAnchor.style.left = `${leftPosition}px`;
+
+    // store range
+    justSelectedRange = selection.getRangeAt(0);
+  } else {
+    ReactDOM.unmountComponentAtNode(popOverAnchor);
+  }
+
+
+
+  if (captureWindow.parentElement) {
+    let rect = captureWindow.getBoundingClientRect();
+    let lassoSnapshot = takeSnapshot(rect);
+    let snapshotDimension = lassoSnapshot.initialDimensions;
+    interactionBoxAnchor.style.left = `100px`;
+    interactionBoxAnchor.style.top = `${Math.floor(window.innerHeight / 5) + window.scrollY}px`;
+    // if (selection.rect !== null) {
+    //   interactionBoxAnchor.style.left = `${Math.floor(snapshotDimension.left) + 0}px`;
+    //   interactionBoxAnchor.style.top = `${Math.floor(snapshotDimension.top) + 0}px`;
+    // }
+    // prepare for data transfer
+    let postTags = [];
+    if(window.location.hostname === "stackoverflow.com") {
+      $(document.body).find('.post-taglist .post-tag').each((idx, tagNode) => {
+        postTags.push($(tagNode).text().toLowerCase());
+      });
+    }
+
+    lassoSnapshot.htmls = lassoSnapshot.htmls.filter(html => html.indexOf('kap-clip') === -1 && html.indexOf('kap-button') === -1);
+
+    ReactDOM.render(
+      <InteractionBox
+        type={SNIPPET_TYPE.LASSO}
+        url={window.location.href}
+        htmls={lassoSnapshot.htmls}
+        selectedText={lassoSnapshot.text}
+        postTags={postTags}
+        originalDimensions={lassoSnapshot.initialDimensions}
+        clip={clipClicked}
+      />,
+    interactionBoxAnchor);
+    interactionBoxIsMounted = true;
+    dragElement(document.getElementById("interaction-box"));
+
+    if (!movingCaptureWindow) {
+      styleSheet.removeRule(0);
+    }
+    movingCaptureWindow = false;
+    selection.empty();
+  }
+}
+
+// listening to text selection using keyboard (cmd + shift + arrow etc)
+window.addEventListener('keyup', (event) => {
+  setTimeout(selectionTimeout(),10); // trick when dealing with window selection on mouse up
+});
 
 window.addEventListener('mouseup', (event) => {
   if (popOverAnchor.contains(event.target)) {
@@ -451,82 +524,7 @@ window.addEventListener('mouseup', (event) => {
   mouseStart = null;
   document.body.style.cursor = 'auto';
 
-  setTimeout(() => {  // trick when dealing with window selection on moune up
-    let selection = document.getSelection();
-    if (selection.type === 'Range' && selection.toString().trim() !== '') {
-      let rect = selection.getRangeAt(0).getBoundingClientRect();
-      // popOverAnchor.style.width = '100px';
-      popOverAnchor.top = '0px';
-      popOverAnchor.style.left = `0px`;
-      ReactDOM.render(
-          <SelectInteraction
-            selectedText={selection.toString()}
-            clip={() => ReactDOM.unmountComponentAtNode(popOverAnchor)}/>,
-          popOverAnchor);
-      // adjusting position of popover box after mounting
-      popOverAnchor.style.top = `${rect.top - 5 + window.scrollY - popOverAnchor.clientHeight}px`;
-      let leftPosition = Math.floor(rect.left + rect.width/2 - popOverAnchor.clientWidth/2);
-      leftPosition = leftPosition >= 10 ? leftPosition : 10;
-      popOverAnchor.style.left = `${leftPosition}px`;
-
-      // store range
-      justSelectedRange = selection.getRangeAt(0);
-    } else {
-      ReactDOM.unmountComponentAtNode(popOverAnchor);
-    }
-
-
-
-    if (captureWindow.parentElement) {
-  //     //TODO take care of capturing the elements?
-
-  // //    chrome.runtime.sendMessage({msg: 'takeScreenshot'}, (dataURI) => {
-  // //
-  // //    });
-  //     toolbar.style.left = `${parseInt(captureWindow.style.left) - toolbarWidth}px`;
-  //     toolbar.style.top = captureWindow.style.top;
-  //     ReactDOM.render(<AnnotationToolbar store={store} snippetWindow={captureWindow}/>, toolbar)
-
-      let rect = captureWindow.getBoundingClientRect();
-      let lassoSnapshot = takeSnapshot(rect);
-      let snapshotDimension = lassoSnapshot.initialDimensions;
-      interactionBoxAnchor.style.left = `100px`;
-      interactionBoxAnchor.style.top = `${Math.floor(window.innerHeight / 5) + window.scrollY}px`;
-      // if (selection.rect !== null) {
-      //   interactionBoxAnchor.style.left = `${Math.floor(snapshotDimension.left) + 0}px`;
-      //   interactionBoxAnchor.style.top = `${Math.floor(snapshotDimension.top) + 0}px`;
-      // }
-      // prepare for data transfer
-      let postTags = [];
-      if(window.location.hostname === "stackoverflow.com") {
-        $(document.body).find('.post-taglist .post-tag').each((idx, tagNode) => {
-          postTags.push($(tagNode).text().toLowerCase());
-        });
-      }
-
-      lassoSnapshot.htmls = lassoSnapshot.htmls.filter(html => html.indexOf('kap-clip') === -1 && html.indexOf('kap-button') === -1);
-
-      ReactDOM.render(
-        <InteractionBox
-          type={SNIPPET_TYPE.LASSO}
-          url={window.location.href}
-          htmls={lassoSnapshot.htmls}
-          selectedText={lassoSnapshot.text}
-          postTags={postTags}
-          originalDimensions={lassoSnapshot.initialDimensions}
-          clip={clipClicked}
-        />,
-      interactionBoxAnchor);
-      interactionBoxIsMounted = true;
-      dragElement(document.getElementById("interaction-box"));
-
-      if (!movingCaptureWindow) {
-        styleSheet.removeRule(0);
-      }
-      movingCaptureWindow = false;
-      selection.empty();
-    }
-  }, 10);
+  setTimeout(selectionTimeout(),10); // trick when dealing with window selection on mouse up
 });
 
 

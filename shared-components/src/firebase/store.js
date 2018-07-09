@@ -23,9 +23,6 @@ isDisabledRef.on('value', (snapshot) => {
 });
 
 
-
-
-
 /* USER SETTINGS */
 export const updateUserProfile = (userId, userName, userProfilePhotoURL, userEmail) => {
   userPathInFirestore.set({
@@ -74,19 +71,24 @@ export const addTaskFromSearchTerm = async (searchTerm, tabId) => {
   tasks.forEach((childSnapshot) => {
     taskList.push({...childSnapshot.val(), id: childSnapshot.key});
   });
+
+  // loop through current tasks to not create a duplicate task
   if (taskList) {
     for (let task of taskList) {
+      // console.log(task.name.toLowerCase());
       if (task.name.toLowerCase() === searchTerm.toLowerCase()) {
         console.log("same");
         // set current task
         switchCurrentTask(task.id);
+        // deleteTaskWithId(newtask.id);
+        // combineTasks(task.id, newtask.id, task.name.toLowerCase);
         return;
       }
     }
   }
 
   /* create a new task */
-  let task = {
+  let newtask = {
     id: (new Date()).getTime(),
     timestamp: (new Date()).getTime(),
     name: searchTerm.toLowerCase(),
@@ -100,8 +102,10 @@ export const addTaskFromSearchTerm = async (searchTerm, tabId) => {
 
   // push to firebase
   let newTaskRef = tasksRef.push();
-  newTaskRef.set(task);
+  newTaskRef.set(newtask);
   switchCurrentTask(newTaskRef.key);
+
+
 }
 
 export const switchCurrentTask = async (id) => {
@@ -562,7 +566,7 @@ export const updateRequirementOrdering = async (ordering) => {
   });
 }
 
-/* PIECES */
+/* PIECES aka Snippets */
 export const addAPieceToCurrentTask = async (piece, alsoSetCopyData = false) => {
   currentTaskId = (await currentTaskIdRef.once('value')).val();
   let newPieceRef = tasksRef.child(currentTaskId + '/pieces').push();

@@ -10,7 +10,7 @@ import Options from './components/Options/Options';
 import Requirements from './components/Requirements/Requirements';
 import { DragDropContext } from 'react-dnd';
 import HTML5Backend from 'react-dnd-html5-backend';
-import { 
+import {
   tasksRef,
   currentTaskIdRef,
   setUserIdAndName
@@ -91,7 +91,7 @@ class Popup extends Component {
       snapshot.forEach((childSnapshot) => {
         transformedTasks.push({
           id: childSnapshot.key,
-          taskOngoing: 
+          taskOngoing:
             childSnapshot.val().taskOngoing === undefined
             ? true
             : childSnapshot.val().taskOngoing,
@@ -109,7 +109,7 @@ class Popup extends Component {
     });
   }
 
-  switchCurrentTaskHandler = (event) => {    
+  switchCurrentTaskHandler = (event) => {
     FirebaseStore.switchCurrentTask(event.target.value);
   }
 
@@ -145,7 +145,7 @@ class Popup extends Component {
   updateOptionName = (id, name) => {
     FirebaseStore.updateOptionName(id, name);
   }
-  
+
 
   /* Deal with Requirements */
   inputChangedHandlerForRequirement = (event) => {
@@ -210,8 +210,8 @@ class Popup extends Component {
 
   switchTaskOngoinghandler = (taskId, shouldTaskBeOngoing, originalShouldTaskBeOngoing) => {
     FirebaseStore.switchTaskWorkingStatus(
-      taskId, 
-      shouldTaskBeOngoing, 
+      taskId,
+      shouldTaskBeOngoing,
       shouldTaskBeOngoing !== originalShouldTaskBeOngoing
     );
   }
@@ -221,8 +221,8 @@ class Popup extends Component {
     let isLoggedIn = !(this.state.userId === null || this.state.userId === 'invalid');
 
     let appTitle = (
-      <AppHeader 
-        logoSize='38px' 
+      <AppHeader
+        logoSize='38px'
         hover={false}
         shouldDisplayHeaderButtons={isLoggedIn}
         userId={this.state.userId}
@@ -239,27 +239,27 @@ class Popup extends Component {
     if (!isLoggedIn) {
       return (
         <Aux>
-          <div 
+          <div
             style={{
-              display: 'flex', 
-              justifyContent: 'space-around', 
+              display: 'flex',
+              justifyContent: 'space-around',
               alignItems: 'center'
             }}>
             {appTitle}
           </div>
           <HorizontalDivider margin={dividerOptions.margin.short}/>
-          <div 
+          <div
             style={{
-              width: '100%', 
-              height: '200px', 
-              display: 'flex', 
-              justifyContent: 'space-around', 
+              width: '100%',
+              height: '200px',
+              display: 'flex',
+              justifyContent: 'space-around',
               alignItems: 'center'
             }}>
-            <div 
-              className={styles.GoToNewTabBtn} 
+            <div
+              className={styles.GoToNewTabBtn}
               onClick={(event) => this.openInNewTabClickedHandler()}>
-              Please first sign in from a new tab! &nbsp;
+              Sign in &nbsp;
               <FontAwesomeIcon icon={fasExternalLinkSquareAlt} />
             </div>
           </div>
@@ -314,10 +314,10 @@ class Popup extends Component {
 
           <HorizontalDivider margin={dividerOptions.margin.long}/>
 
-          <CurrentTask 
-            tasks={tasks} 
+          <CurrentTask
+            tasks={tasks}
             currentTaskName={currentTaskName}
-            currentTaskId={currentTaskId} 
+            currentTaskId={currentTaskId}
             taskOngoing={currentTaskOngoing}
             completionTimestamp={completionTimestamp}
             switchTaskOngoinghandler={this.switchTaskOngoinghandler}
@@ -327,8 +327,8 @@ class Popup extends Component {
           <HorizontalDivider margin={dividerOptions.margin.short}/>
 
           <div className={styles.OptionsRequiementsContainer}>
-            <Options 
-              options={currentTaskOptionNames} 
+            <Options
+              options={currentTaskOptionNames}
               activeId={currentTaskCurrentOptionId}
               newOptionValue={newOptionInput}
               changed={this.inputChangedHandlerForOption}
@@ -337,8 +337,8 @@ class Popup extends Component {
               updateOptionName={this.updateOptionName}
               switchStarStatusOfOption={this.switchStarStatusOfOption}
               updateOptionsOrdering={this.updateOptionsOrdering}/>
-            <Requirements 
-              requirements={currentTaskRequirementNames} 
+            <Requirements
+              requirements={currentTaskRequirementNames}
               newRequirementValue={newRequirementInput}
               changed={this.inputChangedHandlerForRequirement}
               addRequirement={this.submitHandlerForRequirement}

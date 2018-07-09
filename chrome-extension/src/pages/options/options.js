@@ -7,7 +7,7 @@ import Settings from './components/Settings/Settings';
 import Aux from '../../../../shared-components/src/hoc/Aux/Aux';
 import AppHeader from '../../../../shared-components/src/components/UI/AppHeader/AppHeader';
 import HorizontalDivider from '../../../../shared-components/src/components/UI/Divider/HorizontalDivider/HorizontalDivider';
-import { 
+import {
   setUserIdAndName
 } from '../../../../shared-components/src/firebase/index';
 import styles from './Options.css';
@@ -58,31 +58,31 @@ class Options extends Component {
       if (!this.state.loading) {
         return (
           <Aux>
-            <div 
+            <div
               style={{
-                display: 'flex', 
-                justifyContent: 'space-around', 
+                display: 'flex',
+                justifyContent: 'space-around',
                 alignItems: 'center'
               }}>
-              <AppHeader 
-                logoSize='38px' 
+              <AppHeader
+                logoSize='38px'
                 hover={false}
                 shouldDisplayHeaderButtons={false} />
             </div>
-            
+
             <HorizontalDivider margin={dividerOptions.margin.short}/>
-            <div 
+            <div
               style={{
-                width: '100%', 
-                height: '80px', 
-                display: 'flex', 
-                justifyContent: 'space-around', 
+                width: '100%',
+                height: '80px',
+                display: 'flex',
+                justifyContent: 'space-around',
                 alignItems: 'center'
               }}>
-              <div 
-                className={styles.GoToNewTabBtn} 
+              <div
+                className={styles.GoToNewTabBtn}
                 onClick={(event) => this.openInNewTabClickedHandler()}>
-                Please first sign in from a new tab! &nbsp;
+                Sign in &nbsp;
                 <FontAwesomeIcon icon={fasExternalLinkSquareAlt} />
               </div>
             </div>
@@ -95,7 +95,7 @@ class Options extends Component {
 
     return (
       <Aux>
-        <Header 
+        <Header
           userName={this.state.userName}
           userProfilePhotoURL={this.state.userProfilePhotoURL}/>
         <main className={styles.Main}>

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 import qs from 'query-string';
-
+import Aux from '../../../../hoc/Aux/Aux';
 import FontAwesomeIcon from '@fortawesome/react-fontawesome';
 import fasCopy from '@fortawesome/fontawesome-free-solid/faCopy';
 import CollectionView from './CollectionView/CollectionView';
@@ -83,7 +83,7 @@ class CurrentTaskPage extends Component {
       const search = qs.parse(location.search);
       if (search.view === 'collection') {
         this.setState({isTable: false});
-        
+
       } else {
         this.setState({isTable: true});
       }
@@ -106,8 +106,8 @@ class CurrentTaskPage extends Component {
           searchQueries: childSnapshot.val().searchQueries,
           showOptionNotes: childSnapshot.val().showOptionNotes,
           options: (
-            childSnapshot.val().options === undefined 
-            ? {} 
+            childSnapshot.val().options === undefined
+            ? {}
             : childSnapshot.val().options
           ),
           pieces: (
@@ -176,7 +176,7 @@ class CurrentTaskPage extends Component {
           });
           // console.log(thisTask);
           this.setState({specificTask: thisTask});
-        });       
+        });
 
 
       } else {
@@ -193,7 +193,7 @@ class CurrentTaskPage extends Component {
     }
     this.props.history.push('/currtask');
   }
-  
+
 
   render () {
     const { isTable } = this.state;
@@ -201,18 +201,32 @@ class CurrentTaskPage extends Component {
     let content = null;
     if (this.state.specific === true) {
       if (this.state.specificTask !== null) {
-        content = !isTable 
-          ? <CollectionView task={this.state.specificTask} specificPieceId={this.state.specificPieceId}/> 
-          : <TableView task={this.state.specificTask} specificPieceId={this.state.specificPieceId}/>
+
+        content =
+        <Aux>
+        <TableView task={this.state.specificTask} specificPieceId={this.state.specificPieceId}/>
+        <CollectionView task={this.state.specificTask} specificPieceId={this.state.specificPieceId}/>
+        </Aux>
+      //
+      //   content = !isTable
+      //     ? <CollectionView task={this.state.specificTask} specificPieceId={this.state.specificPieceId}/>
+      //     : <TableView task={this.state.specificTask} specificPieceId={this.state.specificPieceId}/>
       } else {
         content = this.state.errorMsg !== null ? <div style={{marginTop: '40px'}}>{this.state.errorMsg}</div> : null;
       }
     } else {
-      content = !isTable 
-        ? <CollectionView 
-          task={this.props.task} 
-          shouldDisplayAllPages={this.props.shouldDisplayAllPages} /> 
-        : <TableView task={this.props.task}/>
+      content =
+      <Aux>
+      <TableView task={this.props.task}/>
+      <CollectionView
+        task={this.props.task}
+        shouldDisplayAllPages={this.props.shouldDisplayAllPages} />
+      </Aux>
+      // content = !isTable
+      //   ? <CollectionView
+      //     task={this.props.task}
+      //     shouldDisplayAllPages={this.props.shouldDisplayAllPages} />
+      //   : <TableView task={this.props.task}/>
     }
 
     return (
@@ -220,36 +234,23 @@ class CurrentTaskPage extends Component {
         <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
           <div>
             {
-              this.state.specific === true && this.state.specificTask !== null 
+              this.state.specific === true && this.state.specificTask !== null
               ? <div className={styles.SpecificTaskNameContainer}>
-                  Reviewing task:  
+                  Reviewing task:
                   <span className={styles.SpecificTaskName}>
                     {this.state.specificTask.displayName}
                   </span>
-                  <span  
+                  <span
                     className={styles.CopyButton}
                     onClick={(event) => this.copyButtonClicked(event)}>
                     <FontAwesomeIcon icon={fasCopy}/>
                   </span>
-                </div> 
+                </div>
               : null
             }
           </div>
-          <div className={styles.Switcher}>
-            <button
-              onClick={(event) => this.switchView(event, false)}
-              className={[isTable ? null : styles.Active]}>
-              Collections
-            </button>
-
-            <button
-              onClick={(event) => this.switchView(event, true)}
-              className={[isTable ? styles.Active : null]}>
-              Comparison Table
-            </button>
-          </div>
         </div>
-        
+
 
         <div className={styles.Content}>
           {content}
@@ -258,5 +259,18 @@ class CurrentTaskPage extends Component {
     );
   }
 }
-
+// previous toggle button between collection view and comparison table
+// <div className={styles.Switcher}>
+  // <button
+  //   onClick={(event) => this.switchView(event, false)}
+  //   className={[isTable ? null : styles.Active]}>
+  //   Collections
+  // </button>
+  //
+  // <button
+  //   onClick={(event) => this.switchView(event, true)}
+  //   className={[isTable ? styles.Active : null]}>
+  //   Comparison Table
+  // </button>
+// </div>
 export default withRouter(CurrentTaskPage);

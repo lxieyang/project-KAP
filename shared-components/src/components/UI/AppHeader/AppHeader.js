@@ -38,8 +38,8 @@ class AppHeader extends Component {
     const props = this.props;
     return (
       <Aux>
-        <div className={styles.AppHeader}>
-          <div className={styles.HeaderText}>
+        <div className={styles.AppHeader} >
+          <div className={styles.HeaderText} onClick={(event) => props.openInNewTabClickedHandler()}>
             <Logo size={props.logoSize} hover={props.hover} /> &nbsp;&nbsp;
             <strong>{APP_NAME_LONG}</strong>
             &nbsp;
@@ -51,15 +51,15 @@ class AppHeader extends Component {
             <span className={styles.LetterM}>m</span>
             <span className={styles.LetterE}>e</span>
           </div>
-          <div 
-            className={styles.HeaderIconContainer} 
+          <div
+            className={styles.HeaderIconContainer}
             style={{display: props.shouldDisplayHeaderButtons === false ? 'none' : null}} >
-            <div 
+            <div
               title={`Open a ${APP_NAME_SHORT} tab`}
               onClick={(event) => props.openInNewTabClickedHandler()}>
               <FontAwesomeIcon icon={fasExternalLinkSquareAlt} className={styles.IconInHeader} />
             </div>
-            <div 
+            <div
               title={'Open settings tab'}
               onClick={(event) => props.openSettingsPageClickedHandler()}>
               <FontAwesomeIcon icon={fasCog} className={styles.IconInHeader} />
@@ -69,7 +69,7 @@ class AppHeader extends Component {
               containerStyle={{zIndex: '100000'}}
               containerClassName={styles.LogoutPopover}
               isOpen={this.state.popoverOpen}
-              position={'bottom'} 
+              position={'bottom'}
               align={'end'}
               onClickOutside={this.handleClose.bind(this)}
               content={(
@@ -77,8 +77,8 @@ class AppHeader extends Component {
                 ? <div className={styles.SpinnerContainer}>
                     <Spinner size='25px' />
                   </div>
-                : <div 
-                    className={styles.MenuItem} 
+                : <div
+                    className={styles.MenuItem}
                     onClick={(event) => this.handleSignOut()}>
                     <div className={styles.Label}>
                       &nbsp;
@@ -88,17 +88,17 @@ class AppHeader extends Component {
                   </div>
               )}
             >
-              <div 
+              <div
                 className={styles.Profile}
                 title={'Click to sign out'}
                 onClick={this.handleClick.bind(this)}>
-                <img 
+                <img
                   src={props.userProfilePhotoURL !== null ? props.userProfilePhotoURL : ProfileImg}
-                  alt="" 
+                  alt=""
                   className={styles.ProfileImg}/>
               </div>
             </Popover>
-            
+
           </div>
         </div>
       </Aux>
