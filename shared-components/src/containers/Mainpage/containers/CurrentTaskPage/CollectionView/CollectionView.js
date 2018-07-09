@@ -117,15 +117,16 @@ const TopPages = (props) => {
   return (
     <Aux>
       <div className={styles.Header}>
-        <div className={styles.HeaderNameContainer}>
+        <div className={styles.HeaderNameContainer}
+        onClick={(event) => props.switchDisplayStatus(event)}
+        >
           <div className={styles.HeaderName}>
             Pages
           </div>
           {
             props.pages.length > 0
             ? <div
-                className={styles.HeaderCollapseButton}
-                onClick={(event) => props.switchDisplayStatus(event)}>
+                className={styles.HeaderCollapseButton}>
                 {
                   props.isOpen
                   ? <FontAwesomeIcon icon={fasChevronUp} />
@@ -586,16 +587,18 @@ class CollectionView extends Component {
 
               <div className={styles.Section}>
                 <Aux>
-                  <div className={styles.Header}>
+                  <div className={styles.Header}
+                       onClick={(event) => this.switchAllSnippetsOpenStatus(event)}
+                  >
                     <div className={styles.HeaderNameContainer}>
-                      <div className={styles.HeaderName}>
+                      <div className={styles.HeaderName}
+                      >
                         <span>Snippets</span>
                       </div>
                       {
                         piecesList.length > 0
                         ? <div
-                            className={styles.HeaderCollapseButton}
-                            onClick={(event) => this.switchAllSnippetsOpenStatus(event)}>
+                            className={styles.HeaderCollapseButton}>
                             {
                               this.state.allSnippetSIsOpen
                               ? <FontAwesomeIcon icon={fasChevronUp} />

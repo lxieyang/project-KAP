@@ -1,5 +1,5 @@
 .TableView {
-  margin: 10px 0px;
+  margin: 0px 0px;
   width: 95%;
 }
 
@@ -53,7 +53,7 @@
 .Section {
   width: 100%;
   /* background-color: rgba(0,0,0,0.1); */
-  margin: 20px 0px;
+  margin: 0px 0px;
   padding: 0px;
 }
 
@@ -61,7 +61,7 @@
   font-size: 1.5rem;
   display: flex;
   align-items: center;
-  padding-left: 5px;
+  padding-left: 7px;
 }
 
 span {
@@ -80,6 +80,7 @@ span {
 
 .HeaderName {
   font-weight: 600;
+  cursor: pointer;
 }
 
 .Active {

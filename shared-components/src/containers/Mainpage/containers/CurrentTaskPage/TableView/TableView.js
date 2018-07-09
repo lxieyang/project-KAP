@@ -713,14 +713,14 @@ class TableView extends Component {
 
           <Aux>
             <div className={styles.Header}>
-            <div className={styles.HeaderNameContainer}>
+            <div className={styles.HeaderNameContainer}
+            onClick={(event) => this.switchTableIsOpenStatus(event)}>
               <div className={styles.HeaderName}>
                  <span>Comparison Table</span>
               </div>
 
               <div
-                  className={styles.HeaderCollapseButton}
-                  onClick={(event) => this.switchTableIsOpenStatus(event)}>
+                  className={styles.HeaderCollapseButton}>
                   {
                     this.state.tableviewisOpen
                     ? <FontAwesomeIcon icon={fasChevronUp} />
