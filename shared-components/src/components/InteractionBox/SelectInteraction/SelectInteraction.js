@@ -33,27 +33,37 @@ class SelectInteraction extends Component {
     let hoverBoxIsMounted = false;
 
     // let customRemoveInteractionEvent = new CustomEvent('removeInteractionBoxes', {});
+    // document.addEventListener('removeInteractionBoxes', () =>	clean());
     // const clean = () => {
-    //   console.log('selection cleaning');
+    //   // console.log('annotation cleaning');
     //   try {
     //     ReactDOM.unmountComponentAtNode(interactionBoxAnchor);
     //     ReactDOM.unmountComponentAtNode(hoverAnchor);
+    //     // document.getSelection().empty();
     //     interactionBoxIsMounted = false;
     //     hoverBoxIsMounted = false;
     //   } catch (err) {
     //     console.log(err);
     //   }
     // }
-    // const clean = () => { console.log('what is this custom event');}
-    // document.addEventListener('removeInteractionBoxes', clean);
-    // document.addEventListener('mouseup', (event) => {
-    //   document.body.style.cursor = 'auto';
-    //   if (interactionBoxAnchor.contains(event.target) || hoverAnchor.contains(event.target)) {
-        // console.log("Interation",  interactionBoxAnchor.contains(event.target));
-        // console.log("hover",  hoverAnchor.contains(event.target));
-//         return false;
-//       }
-// });
+
+    document.addEventListener('mouseup', (event) => {
+
+      if (interactionBoxAnchor.contains(event.target) || hoverAnchor.contains(event.target)) {
+        console.log("mouse up within the interaction box / hover box");
+        return false;
+      }
+      if (interactionBoxAnchor.parentElement !== null || hoverAnchor.parentElement !== null) {
+        console.log("mouse up elsewhere");
+        // document.dispatchEvent(customRemoveInteractionEvent);
+        ReactDOM.unmountComponentAtNode(interactionBoxAnchor);
+        ReactDOM.unmountComponentAtNode(hoverAnchor);
+        interactionBoxIsMounted = false;
+        hoverBoxIsMounted = false;
+
+      }
+    });
+
     if (btnType === 'option') {
       // console.log('add option clicked');
       FirebaseStore.addAnOptionForCurrentTask(selectedText);

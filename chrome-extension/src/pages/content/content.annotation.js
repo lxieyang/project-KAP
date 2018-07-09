@@ -584,9 +584,6 @@ window.addEventListener('copy', function (event) {
   }
 });
 
-
-
-
 let collectedPostKey = '';
 
 /* optimized for stack overflow */
