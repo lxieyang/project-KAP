@@ -699,8 +699,6 @@ class TableView extends Component {
     return (
       <Aux>
       <div className={styles.Section}>
-
-
         <div className={styles.TableView}>
           <div className={styles.ConfigureRow}>
 
@@ -717,7 +715,7 @@ class TableView extends Component {
             <div className={styles.Header}>
             <div className={styles.HeaderNameContainer}>
               <div className={styles.HeaderName}>
-                 <span> Comparison Table</span>
+                 <span>Comparison Table</span>
               </div>
 
               <div
