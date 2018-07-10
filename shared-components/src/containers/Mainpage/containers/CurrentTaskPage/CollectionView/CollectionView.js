@@ -585,10 +585,10 @@ class CollectionView extends Component {
 
               <div className={styles.Section}>
                 <Aux>
-                  <div className={styles.Header}
-                       onClick={(event) => this.switchAllSnippetsOpenStatus(event)}
-                  >
-                    <div className={styles.HeaderNameContainer}>
+                  <div className={styles.Header}>
+                    <div className={styles.HeaderNameContainer}
+                         onClick={(event) => this.switchAllSnippetsOpenStatus(event)}
+                    >
                       <div className={styles.HeaderName}
                       >
                         <span>Snippets</span>

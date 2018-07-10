@@ -208,7 +208,7 @@ let mouseStart = null;
 
 
 /* Set up interaction box and hover box anchor */
-const interactionBoxAnchor = document.body.appendChild(document.createElement('div'));
+export const interactionBoxAnchor = document.body.appendChild(document.createElement('div'));
 interactionBoxAnchor.className = classes.InteractionBoxAnchor;
 interactionBoxAnchor.setAttribute('id', 'interaction-box');
 
@@ -288,7 +288,7 @@ const getDocumentSelection = () => {
   };
 }
 
-const clipClicked = () => {
+export const clipClicked = () => {
   console.log('clicked');
   document.dispatchEvent(customRemoveInteractionEvent);
 }

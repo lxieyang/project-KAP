@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import FontAwesomeIcon from '@fortawesome/react-fontawesome';
+import faPlus from '@fortawesome/fontawesome-free-solid/faPlus';
 import fasListUl from '@fortawesome/fontawesome-free-solid/faListUl';
 import fasFlagCheckered from '@fortawesome/fontawesome-free-solid/faFlagCheckered';
 import fasPuzzlePiece from '@fortawesome/fontawesome-free-solid/faPuzzlePiece';
@@ -11,70 +12,50 @@ import { SNIPPET_TYPE } from '../../../shared/constants';
 import styles from './SelectInteraction.css';
 import { PageCountHelper, dragElement } from '../../../../../chrome-extension/src/pages/content/content.utility.js';
 import classes from '../../../../../chrome-extension/src/pages/content/content.annotation.css';
+import * as annotation from '../../../../../chrome-extension/src/pages/content/content.annotation.js';
+
 class SelectInteraction extends Component {
 
   state = {
+    canSubmitTask: false,
     canSubmitOption: false,
     canSubmitRequirement: false
   }
 
+
   collectButtonClickHandler = (btnType) => {
     const { selectedText, clip } = this.props;
+    if (btnType === 'task') {
+      // console.log('task option clicked');
+      FirebaseStore.addTaskFromSearchTerm(selectedText);
+      this.setState({canSubmitTask: true});
+      if (clip !== undefined) {setTimeout(() => {clip();}, 800);}
+    }
 
-    const interactionBoxAnchor = document.body.appendChild(document.createElement('div'));
-    interactionBoxAnchor.className = classes.InteractionBoxAnchor;
-    interactionBoxAnchor.setAttribute('id', 'interaction-box');
-
-    const hoverAnchor = document.body.appendChild(document.createElement('div'));
-    hoverAnchor.className = classes.InteractionBoxAnchor;
-    hoverAnchor.setAttribute('id', 'hover-box');
-
-    let interactionBoxIsMounted = false;
-    let hoverBoxIsMounted = false;
-
-    // let customRemoveInteractionEvent = new CustomEvent('removeInteractionBoxes', {});
-    // const clean = () => {
-    //   console.log('selection cleaning');
-    //   try {
-    //     ReactDOM.unmountComponentAtNode(interactionBoxAnchor);
-    //     ReactDOM.unmountComponentAtNode(hoverAnchor);
-    //     interactionBoxIsMounted = false;
-    //     hoverBoxIsMounted = false;
-    //   } catch (err) {
-    //     console.log(err);
-    //   }
-    // }
-    // const clean = () => { console.log('what is this custom event');}
-    // document.addEventListener('removeInteractionBoxes', clean);
-    // document.addEventListener('mouseup', (event) => {
-    //   document.body.style.cursor = 'auto';
-    //   if (interactionBoxAnchor.contains(event.target) || hoverAnchor.contains(event.target)) {
-        // console.log("Interation",  interactionBoxAnchor.contains(event.target));
-        // console.log("hover",  hoverAnchor.contains(event.target));
-//         return false;
-//       }
-// });
-    if (btnType === 'option') {
+    else if (btnType === 'option') {
       // console.log('add option clicked');
       FirebaseStore.addAnOptionForCurrentTask(selectedText);
       this.setState({canSubmitOption: true});
       if (clip !== undefined) {setTimeout(() => {clip();}, 800);}
-
     }
+
     else if (btnType === 'requirement') {
-      // console.log('add criterion/feature clicked');
       FirebaseStore.addARequirementForCurrentTask(selectedText);
       this.setState({canSubmitRequirement: true});
       if (clip !== undefined) {setTimeout(() => {clip();}, 800);}
     }
 
     else if (btnType === 'snippet') {
-      console.log('add snippet clicked');
-      interactionBoxAnchor.style.left = `100px`;
-      interactionBoxAnchor.style.top = `${Math.floor(window.innerHeight / 5) + window.scrollY}px`;
-
-
+      // console.log('add snippet clicked');
+      let interactionBoxAnchor = annotation.interactionBoxAnchor;
+      // let interactionBoxIsMounted =  annotation.interactionBoxIsMounted;
       let postTags = [];
+      // if(window.location.hostname === "stackoverflow.com") {
+      //   $(document.body).find('.post-taglist .post-tag').each((idx, tagNode) => {
+      //     postTags.push($(tagNode).text().toLowerCase());
+      //   });
+      // }
+
       ReactDOM.render(
         <InteractionBox
         type={SNIPPET_TYPE.SELECTION}
@@ -82,29 +63,64 @@ class SelectInteraction extends Component {
         selectedText={selectedText}
         postTags={postTags}
         originalDimensions={null}
-        clip={clip}
+        clip={annotation.clipClicked}
         />,
         interactionBoxAnchor);
-        interactionBoxIsMounted  = true;
+        // interactionBoxIsMounted  = true;
         dragElement(document.getElementById("interaction-box"));
-        // TODO: bring up interaction box
         if (clip !== undefined) {setTimeout(() => {clip();}, 800);}
-
+        // console.log('set up interactionbox, is mounted? ', interactionBoxIsMounted);
+        // TODO: bring down interaction box with close button
       }
 
     }
 
-
     render () {
+
       return (
         <div className={styles.SelectInteractionContainer}>
         <div className={styles.Title}>
         Collect as:
         </div>
         <div className={styles.ButtonContainer}>
+
+        {/*
+          Task Button begins
+          */}
         <div
         className={styles.Button}
-        style={{width: '36px'}}
+        style={{width: '42px'}}
+        onClick={(event) => this.collectButtonClickHandler('task')}>
+        <div>
+        <div className={[styles.ButtonContentWrapper, (
+          this.state.canSubmitTask
+          ? styles.ButtonTextDisappear
+          : null
+        )].join(' ')}>
+        <div className={styles.ButtonIconWrapper}>
+        <FontAwesomeIcon
+        icon={faPlus}
+        className={styles.ButtonIcon} />
+        </div>
+        <div className={styles.ButtonText}>
+        New Task
+        </div>
+        </div>
+        </div>
+        <div className={styles.CheckmarkContainer}>
+        <div className={[styles.Checkmark,
+          (this.state.canSubmitTask
+            ? styles.CheckmarkSpin
+            : null)].join(' ')}></div>
+        </div>
+        </div>
+
+        {/*
+          Option Button begins
+          */}
+        <div
+        className={styles.Button}
+        style={{width: '42px'}}
         onClick={(event) => this.collectButtonClickHandler('option')}>
         <div>
         <div className={[styles.ButtonContentWrapper, (
@@ -124,67 +140,71 @@ class SelectInteraction extends Component {
         </div>
         <div className={styles.CheckmarkContainer}>
         <div className={[styles.Checkmark,
-          (
-            this.state.canSubmitOption
+          (this.state.canSubmitOption
             ? styles.CheckmarkSpin
             : null)].join(' ')}></div>
-            </div>
-            </div>
+        </div>
+        </div>
 
+        {/*
+          Criterion Button begins
+          */}
+        <div
+        className={styles.Button}
+        style={{width: '42px'}}
+        onClick={(event) => this.collectButtonClickHandler('requirement')}>
+        <div>
+        <div className={[styles.ButtonContentWrapper, (
+          this.state.canSubmitRequirement
+          ? styles.ButtonTextDisappear
+          : null
+        )].join(' ')}>
+        <div className={styles.ButtonIconWrapper}>
+        <FontAwesomeIcon
+        icon={fasFlagCheckered}
+        className={styles.ButtonIcon} />
+        </div>
+        <div className={styles.ButtonText}>
+        Criterion /Feature
+        </div>
+        </div>
+        </div>
+        <div className={styles.CheckmarkContainer}>
+        <div className={[styles.Checkmark,
+          (this.state.canSubmitRequirement
+            ? styles.CheckmarkSpin
+            : null)].join(' ')}></div>
+        </div>
+        </div>
 
-            <div
-            className={styles.Button}
-            style={{width: '89px'}}
-            onClick={(event) => this.collectButtonClickHandler('requirement')}>
-            <div>
-            <div className={[styles.ButtonContentWrapper, (
-              this.state.canSubmitRequirement
-              ? styles.ButtonTextDisappear
-              : null
-            )].join(' ')}>
-            <div className={styles.ButtonIconWrapper}>
-            <FontAwesomeIcon
-            icon={fasFlagCheckered}
-            className={styles.ButtonIcon} />
-            </div>
-            <div className={styles.ButtonText}>
-            Criterion/Feature
-            </div>
-            </div>
-            </div>
-            <div className={styles.CheckmarkContainer}>
-            <div className={[styles.Checkmark,
-              (
-                this.state.canSubmitRequirement
-                ? styles.CheckmarkSpin
-                : null)].join(' ')}></div>
-                </div>
-                </div>
+        {/*
+          Snippet Button begins
+          */}
+        <div
+        className={styles.Button}
+        style={{width: '42px'}}
+        onClick={(event) => this.collectButtonClickHandler('snippet')}>
+        <div>
+        <div className={[styles.ButtonContentWrapper].join(' ')}>
+        <div className={styles.ButtonIconWrapper}>
+        <FontAwesomeIcon
+        icon={fasPuzzlePiece}
+        className={styles.ButtonIcon} />
+        </div>
+        <div className={styles.ButtonText}>
+        Snippet
+        </div>
+        </div>
+        </div>
+        </div>
+        {/*
+          End of snippet button
+          */}
 
+        </div>
+        </div>
+    );
+  }
+}
 
-                <div
-                className={styles.Button}
-                style={{width: '41px'}}
-                onClick={(event) => this.collectButtonClickHandler('snippet')}>
-                <div>
-                <div className={[styles.ButtonContentWrapper].join(' ')}>
-                <div className={styles.ButtonIconWrapper}>
-                <FontAwesomeIcon
-                icon={fasPuzzlePiece}
-                className={styles.ButtonIcon} />
-                </div>
-                <div className={styles.ButtonText}>
-                Snippet
-                </div>
-                </div>
-                </div>
-
-                </div>
-
-                </div>
-                </div>
-              );
-            }
-          }
-
-          export default SelectInteraction;
+export default SelectInteraction;
