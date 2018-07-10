@@ -152,7 +152,7 @@ export const combineTasks = (sourceTaskId, targetTaskId, newTaskName) => {
       let targetTask = snapshot.val();
       tasksRef.child(targetTaskId).child('id').set((new Date()).getTime());
       tasksRef.child(targetTaskId).child('timestamp').set((new Date()).getTime());
-      // search queries (remove dups)
+      // search queries (removed dups)
       let SQs = targetTask.searchQueries !== undefined ? targetTask.searchQueries : []
       tasksRef.child(targetTaskId).child('searchQueries').set(uniq(SQs.concat(sourceTask.searchQueries)));
 

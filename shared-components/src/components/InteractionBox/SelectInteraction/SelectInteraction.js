@@ -11,6 +11,8 @@ import { SNIPPET_TYPE } from '../../../shared/constants';
 import styles from './SelectInteraction.css';
 import { PageCountHelper, dragElement } from '../../../../../chrome-extension/src/pages/content/content.utility.js';
 import classes from '../../../../../chrome-extension/src/pages/content/content.annotation.css';
+import * as annotation from '../../../../../chrome-extension/src/pages/content/content.annotation.js';
+
 class SelectInteraction extends Component {
 
   state = {
@@ -18,51 +20,9 @@ class SelectInteraction extends Component {
     canSubmitRequirement: false
   }
 
+
   collectButtonClickHandler = (btnType) => {
     const { selectedText, clip } = this.props;
-
-    const interactionBoxAnchor = document.body.appendChild(document.createElement('div'));
-    interactionBoxAnchor.className = classes.InteractionBoxAnchor;
-    interactionBoxAnchor.setAttribute('id', 'interaction-box');
-
-    const hoverAnchor = document.body.appendChild(document.createElement('div'));
-    hoverAnchor.className = classes.InteractionBoxAnchor;
-    hoverAnchor.setAttribute('id', 'hover-box');
-
-    let interactionBoxIsMounted = false;
-    let hoverBoxIsMounted = false;
-
-    // let customRemoveInteractionEvent = new CustomEvent('removeInteractionBoxes', {});
-    // document.addEventListener('removeInteractionBoxes', () =>	clean());
-    // const clean = () => {
-    //   // console.log('annotation cleaning');
-    //   try {
-    //     ReactDOM.unmountComponentAtNode(interactionBoxAnchor);
-    //     ReactDOM.unmountComponentAtNode(hoverAnchor);
-    //     // document.getSelection().empty();
-    //     interactionBoxIsMounted = false;
-    //     hoverBoxIsMounted = false;
-    //   } catch (err) {
-    //     console.log(err);
-    //   }
-    // }
-
-    document.addEventListener('mouseup', (event) => {
-
-      if (interactionBoxAnchor.contains(event.target) || hoverAnchor.contains(event.target)) {
-        console.log("mouse up within the interaction box / hover box");
-        return false;
-      }
-      if (interactionBoxAnchor.parentElement !== null || hoverAnchor.parentElement !== null) {
-        console.log("mouse up elsewhere");
-        // document.dispatchEvent(customRemoveInteractionEvent);
-        ReactDOM.unmountComponentAtNode(interactionBoxAnchor);
-        ReactDOM.unmountComponentAtNode(hoverAnchor);
-        interactionBoxIsMounted = false;
-        hoverBoxIsMounted = false;
-
-      }
-    });
 
     if (btnType === 'option') {
       // console.log('add option clicked');
@@ -79,12 +39,11 @@ class SelectInteraction extends Component {
     }
 
     else if (btnType === 'snippet') {
-      console.log('add snippet clicked');
-      interactionBoxAnchor.style.left = `100px`;
-      interactionBoxAnchor.style.top = `${Math.floor(window.innerHeight / 5) + window.scrollY}px`;
-
-
+      // console.log('add snippet clicked');
+      let interactionBoxAnchor = annotation.interactionBoxAnchor;
       let postTags = [];
+
+      // let interactionBoxIsMounted =  annotation.interactionBoxIsMounted;
       ReactDOM.render(
         <InteractionBox
         type={SNIPPET_TYPE.SELECTION}
@@ -92,20 +51,20 @@ class SelectInteraction extends Component {
         selectedText={selectedText}
         postTags={postTags}
         originalDimensions={null}
-        clip={clip}
+        clip={annotation.clipClicked}
         />,
         interactionBoxAnchor);
-        interactionBoxIsMounted  = true;
+        // interactionBoxIsMounted  = true;
         dragElement(document.getElementById("interaction-box"));
-        // TODO: bring up interaction box
         if (clip !== undefined) {setTimeout(() => {clip();}, 800);}
-
+        // console.log('set up interactionbox, is mounted? ', interactionBoxIsMounted);
+        // TODO: bring down interaction box with close button
       }
 
     }
 
-
     render () {
+
       return (
         <div className={styles.SelectInteractionContainer}>
         <div className={styles.Title}>
@@ -197,4 +156,4 @@ class SelectInteraction extends Component {
             }
           }
 
-          export default SelectInteraction;
+export default SelectInteraction;
