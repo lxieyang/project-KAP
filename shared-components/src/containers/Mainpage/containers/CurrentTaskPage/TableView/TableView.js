@@ -52,7 +52,7 @@ class TableView extends Component {
     shouldShowNotes: this.props.task.showOptionNotes !== undefined ? this.props.task.showOptionNotes : false,
     showModal: false,
     modalPieceId: '',
-    tableviewisOpen: false
+    tableviewisOpen: true
   }
 
   UNSAFE_componentWillReceiveProps (nextProps) {

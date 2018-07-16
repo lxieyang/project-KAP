@@ -325,8 +325,8 @@ class interactionBox extends Component {
   }
 
   submitPieceHandler = (event) => {
-    console.log(this.state.htmls);
-    console.log(this.state.selectedText);
+    console.log('below are htmls', this.state.htmls);
+    console.log('the following are the selected snippet text', this.state.selectedText);
     if (this.state.htmls.length === 0 || this.state.selectedText === '') {
       alert('Please make sure you clipped something before submiting.');
       return;

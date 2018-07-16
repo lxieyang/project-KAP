@@ -602,7 +602,7 @@ if(window.location.hostname === "stackoverflow.com") {
         </div>
         <div class="kap-button-text-container">
           <span class="kap-button-text">
-            <i class="fas fa-save"></i>
+            <i class="fas fa-puzzle-piece"></i>
           </span>
         </div>
       </button>`
