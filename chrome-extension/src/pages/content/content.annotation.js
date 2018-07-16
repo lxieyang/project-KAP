@@ -363,7 +363,8 @@ chrome.runtime.onMessage.addListener(
           clip={clipClicked}
         />,
       interactionBoxAnchor);
-      interactionBoxIsMounted = true
+      interactionBoxIsMounted = true;
+      // console.log('annotation interaction box');
       dragElement(document.getElementById("interaction-box"));
     }
   }
@@ -602,7 +603,7 @@ if(window.location.hostname === "stackoverflow.com") {
         </div>
         <div class="kap-button-text-container">
           <span class="kap-button-text">
-            <i class="fas fa-save"></i>
+            <i class="fas fa-puzzle-piece"></i>
           </span>
         </div>
       </button>`

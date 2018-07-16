@@ -640,11 +640,14 @@ class interactionBox extends Component {
           <div
           id="interaction-box-content"
           className={styles.InteractionBox}>
-          {this.state.mode === 'NEW'
-          ? <div
+          {this.state.mode !== 'NOTHING' ?
+          <div
           id="interaction-box-header"
-          className={styles.InteractionBoxDragHandle}>
-          Some space
+          className={this.state.mode === 'NEW' ?
+            styles.InteractionBoxDragHandle
+            : styles.InteractionBoxTopBar}
+            >
+          Placeholder title bar text
           <div
           className={styles.CloseBoxContainer}
           onClick={(event) => this.closeBoxHandler(event)}>
@@ -659,23 +662,22 @@ class interactionBox extends Component {
           placeholder={'Please select to add a title'}
           className={styles.TitleInput}
           onChange={(event) => this.titleInputChangeHandler(event)}/> &nbsp;
-          {
+          { // commented out block to hide AutoSuggestedBadge
             // // this.state.mode === 'NEW' &&
             // this.state.autoSuggestedTitle === true
             // ? <span className={styles.AutoSuggestedBadge}>Auto Suggested</span>
             // : null
           }
           </div>
-          {
-            this.state.mode !== 'NEW'
-            ? <div style={{marginRight: '20px', fontSize: '16px', opacity: '0.6'}}>
-            <a target="_blank" href={this.state.url} style={{color: 'black', textDecoration: 'none', fontSize: '13px'}} onClick={(event) => openLinkInTextEditorExtension(event, this.state.url)} title="Open the original page in a new tab"><FontAwesomeIcon icon={fasShareSquare}/> Open in new tab</a>
-            </div>
-            : null
-          }
           </div>
-
           </div>
+          // { commmented out to bring back close interaction box handler
+          //   this.state.mode !== 'NEW'
+          //   ? <div style={{marginRight: '20px', fontSize: '16px', opacity: '0.6'}}>
+          //   <a target="_blank" href={this.state.url} style={{color: 'black', textDecoration: 'none', fontSize: '13px'}} onClick={(event) => openLinkInTextEditorExtension(event, this.state.url)} title="Open the original page in a new tab"><FontAwesomeIcon icon={fasShareSquare}/> Open in new tab</a>
+          //   </div>
+          //   : null
+          // }
           : null
         }
 

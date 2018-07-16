@@ -57,6 +57,7 @@ class SelectInteraction extends Component {
       // }
 
       ReactDOM.render(
+
         <InteractionBox
         type={SNIPPET_TYPE.SELECTION}
         url={window.location.href}
@@ -68,6 +69,7 @@ class SelectInteraction extends Component {
         interactionBoxAnchor);
         // interactionBoxIsMounted  = true;
         dragElement(document.getElementById("interaction-box"));
+        // console.log('rendering selection interaction box');
         if (clip !== undefined) {setTimeout(() => {clip();}, 800);}
         // console.log('set up interactionbox, is mounted? ', interactionBoxIsMounted);
         // TODO: bring down interaction box with close button

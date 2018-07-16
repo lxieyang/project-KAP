@@ -15,7 +15,7 @@ import fasCode from '@fortawesome/fontawesome-free-solid/faCode';
 import fasFileCode from '@fortawesome/fontawesome-free-solid/faFileCode';
 import fasCodeBranch from '@fortawesome/fontawesome-free-solid/faCodeBranch';
 import fasCheck from '@fortawesome/fontawesome-free-solid/faCheck';
-import fasTimes from '@fortawesome/fontawesome-free-solid/faTimes';
+// import fasTimes from '@fortawesome/fontawesome-free-solid/faTimes';
 import { GET_FAVICON_URL_PREFIX } from '../../../../shared/constants';
 import HorizontalDivider from '../../../UI/Divider/HorizontalDivider/HorizontalDivider';
 import styles from './SnippetCard.css';
@@ -146,7 +146,7 @@ class SnippetCard extends Component {
 
   render () {
     const props = this.props;
-    
+
     const { connectDragSource, isDragging, connectDropTarget, canDrop, isOver } = props;
     const isActive = canDrop && isOver;
 
@@ -155,7 +155,7 @@ class SnippetCard extends Component {
     let content = null;
     if (props.type === SNIPPET_TYPE.SELECTION) {
       content = (
-        <div 
+        <div
           className={styles.ContentContainer}
           style={{maxHeight: props.isInTableView === true ? '350px' : '200px'}}>
           {getFirstNWords(10, props.texts)}
@@ -163,11 +163,11 @@ class SnippetCard extends Component {
       );
     } else if (props.type === SNIPPET_TYPE.LASSO || props.type === SNIPPET_TYPE.POST_SNAPSHOT || props.type === SNIPPET_TYPE.COPIED_PIECE) {
       content = (
-        <div 
+        <div
           className={styles.ContentContainer}
           style={{maxHeight: props.isInTableView === true ? '350px' : '200px'}}>
-          <div 
-            className={styles.HTMLPreview} 
+          <div
+            className={styles.HTMLPreview}
             // contentEditable="true"
             // suppressContentEditableWarning="true"
             dangerouslySetInnerHTML={getHTML(props.htmls)}>
@@ -176,14 +176,14 @@ class SnippetCard extends Component {
       );
     } else if (props.type === SNIPPET_TYPE.PIECE_GROUP) {
       content = (
-        <div 
+        <div
           className={styles.ContentContainer}
           style={{maxHeight: props.isInTableView === true ? '350px' : '200px'}}>
           <div className={styles.PieceGroupNameContainer}>
             <textarea
-              rows={'2'} 
-              ref={(input) => { this.nameInput = input; }} 
-              type='text' 
+              rows={'2'}
+              ref={(input) => { this.nameInput = input; }}
+              type='text'
               placeholder='Name of this group'
               defaultValue={props.title}
               onChange={(event) => this.inputChangedHandler(event)}/>
@@ -199,7 +199,7 @@ class SnippetCard extends Component {
                       optionId: pair.optionId,
                       optionName: props.options[pair.optionId].name,
                       attitude: pair.attitude !== undefined ? pair.attitude : null
-                    }); 
+                    });
                   });
                 }
                 attitudeOptionPairsList = sortBy(attitudeOptionPairsList, ['attitude']);
@@ -208,20 +208,20 @@ class SnippetCard extends Component {
                     <div className={styles.Bullet}>• </div>
                     <div className={styles.PieceContainerInPieceGroup}>
                       <div className={styles.PieceTitle} data-tip data-for={pid}>
-                        { 
-                          piece.title === undefined 
+                        {
+                          piece.title === undefined
                           ? getFirstNWords(5, piece.texts)
                           : getFirstNWords(5, piece.title)
                         }
                       </div>
                     </div>
-                    
-                    <ReactTooltip 
-                      id={pid} 
-                      delayHide={100} 
-                      place="right" 
-                      type="light" 
-                      effect="solid" 
+
+                    <ReactTooltip
+                      id={pid}
+                      delayHide={100}
+                      place="right"
+                      type="light"
+                      effect="solid"
                       class={styles.Tooltip}>
                       {piece.type === SNIPPET_TYPE.SELECTION
                         ? <div className={styles.ContentContainer}>
@@ -229,8 +229,8 @@ class SnippetCard extends Component {
                           </div>
                         : piece.type === SNIPPET_TYPE.LASSO || piece.type === SNIPPET_TYPE.POST_SNAPSHOT
                           ? <div className={styles.ContentContainer}>
-                              <div 
-                                className={styles.HTMLPreview} 
+                              <div
+                                className={styles.HTMLPreview}
                                 // contentEditable="true"
                                 // suppressContentEditableWarning="true"
                                 dangerouslySetInnerHTML={getHTML(piece.htmls)}>
@@ -276,8 +276,8 @@ class SnippetCard extends Component {
                               </Aux>
                           : null
                         }
-                        <div 
-                          title="View this piece"
+                        <div
+                          title="View this snippet"
                           className={styles.ViewIconInTooltip}
                           onClick={(event) => props.makeInteractionBox(event, pid)}>
                           <FontAwesomeIcon icon={fasEye} />
@@ -291,7 +291,7 @@ class SnippetCard extends Component {
                         </div>
                       </div>
                     </ReactTooltip>
-                    
+
                   </li>
                 );
               })}
@@ -310,23 +310,23 @@ class SnippetCard extends Component {
               <div className={styles.Title}>
                 {props.title}
               </div>
-              { 
+              {
                 props.codeUseInfo !== undefined && props.codeUseInfo !== null
                 ? <div className={styles.CodeUsedContainer}>
-                    <div 
+                    <div
                       className={styles.CodeUsedTooltipHandle}
-                      data-tip 
+                      data-tip
                       data-for={`${props.id}-tooltip`}>
                       <span>
                         <FontAwesomeIcon icon={fasCode} /> &nbsp;
-                        {props.codeUseInfo.length} usage(s) 
+                        {props.codeUseInfo.length} usage(s)
                       </span>
                     </div>
                     {/*
-                    <FontAwesomeIcon 
-                      icon={fasCheckCircle} 
+                    <FontAwesomeIcon
+                      icon={fasCheckCircle}
                       className={styles.CodeBadge}
-                      data-tip 
+                      data-tip
                       data-for={`${props.id}-tooltip`}/>
                     */}
                     <ReactTooltip
@@ -337,19 +337,19 @@ class SnippetCard extends Component {
                       <div className={styles.CodeBadgeTooltipStats}>
                         Used in {props.codeUseInfo.length} codebase(s):
                       </div>
-                      
+
                       { props.codeUseInfo !== undefined && props.codeUseInfo !== null ?
                         props.codeUseInfo.map((cb, idx) => {
                         return (
-                          <div 
+                          <div
                             key={idx}
                             className={styles.CodebaseContainer}>
                             <div className={styles.CodebaseNameContainer}>
                               <FontAwesomeIcon icon={fasCode} className={styles.CodebaseIcon}/>
-                              <span className={styles.CodebaseName}>{cb.codebase}</span> 
+                              <span className={styles.CodebaseName}>{cb.codebase}</span>
                               <span className={styles.CodebaseStats}>({cb.useInfo.length} occasions)</span>
                             </div>
-                            
+
                             <ul style={{listStyleType: 'none', margin: '0', padding: '0'}}>
                               { cb.useInfo !== undefined && cb.useInfo !== null ?
                                 cb.useInfo.map((use, idx1) => {
@@ -373,28 +373,28 @@ class SnippetCard extends Component {
                                                   {record.filePath}
                                                 </span>
                                                 {
-                                                  record.isUsing 
+                                                  record.isUsing
                                                   ? <span style={{marginLeft: '4px'}}>
                                                       <span className={styles.InUseBadge}>In Use</span>
                                                       &nbsp;(line <span> </span>
                                                         {
                                                           last(record.useHistory).lineIndices.map(l => l + 1).map((l, idxxx) => (
-                                                            <span 
+                                                            <span
                                                               key={idxxx}>
                                                               <span
                                                                 title={`Go to line ${l} of this file`}
                                                                 className={styles.LineNumber}
                                                                 onClick={(event) => this.goToThisLine(l, cb.codebaseId, record.filePath)}>
-                                                                {l} 
+                                                                {l}
                                                               </span>
                                                               {idxxx !== last(record.useHistory).lineIndices.length - 1
-                                                              ? <span>, </span> : null} 
+                                                              ? <span>, </span> : null}
                                                             </span>
                                                           ))
-                                                        }) 
+                                                        })
                                                     </span>
                                                   : <span style={{marginLeft: '4px'}}
-                                                    className={styles.DeletedBadge}> 
+                                                    className={styles.DeletedBadge}>
                                                       Deleted
                                                     </span>
                                                 }
@@ -404,7 +404,7 @@ class SnippetCard extends Component {
                                                   first(record.useHistory).gitInfo.branch !== undefined && last(record.useHistory).gitInfo.branch !== undefined ?
                                                   record.isUsing
                                                   ? <div>
-                                                      Introduced in 
+                                                      Introduced in
                                                       <span className={styles.Branch}>
                                                         <FontAwesomeIcon icon={fasCodeBranch}/>
                                                         {first(record.useHistory).gitInfo.branch}
@@ -418,7 +418,7 @@ class SnippetCard extends Component {
                                                         })
                                                       </span>
                                                       <br />
-                                                      Last edit in 
+                                                      Last edit in
                                                       <span className={styles.Branch}>
                                                         <FontAwesomeIcon icon={fasCodeBranch}/>
                                                         {last(record.useHistory).gitInfo.branch}
@@ -433,7 +433,7 @@ class SnippetCard extends Component {
                                                       </span>
                                                     </div>
                                                   : <div>
-                                                      Last appeared in 
+                                                      Last appeared in
                                                       <span className={styles.Branch}>
                                                         <FontAwesomeIcon icon={fasCodeBranch}/>
                                                         {last(record.useHistory).gitInfo.branch}
@@ -466,7 +466,7 @@ class SnippetCard extends Component {
                 : null
               }
             </div>
-            
+
         }
         {
           props.title === undefined || props.type === SNIPPET_TYPE.PIECE_GROUP ? null : <HorizontalDivider margin="5px" />
@@ -491,36 +491,36 @@ class SnippetCard extends Component {
               <div className={styles.SiteDomainName}>
                 {props.name}
               </div>
-              <a 
+              <a
                 title={'Open in new tab'}
                 className={styles.ExternalLink}
                 href={props.link}
                 target='_blank'>
                 <FontAwesomeIcon icon={fasShareSquare} className={styles.IconInside}/>
               </a>
-              <div 
+              <div
                 title={'View in detail'}
                 className={styles.ViewIcon}
                 onClick={(event) => props.makeInteractionBox(event, props.id)}>
                 <FontAwesomeIcon icon={fasEye}/>
               </div>
-              
+
             </div>
         }
         {
-          props.isInTableView === true 
+          props.isInTableView === true
           ? null
           : <div
               title={props.type === SNIPPET_TYPE.PIECE_GROUP ? 'Discard this group\n(snippets will be preserved)' : 'Delete this snippet'}
               className={styles.DeleteContainer}
               onClick={(event) => props.deleteThisSnippet(event, props.id, props.type)}>
-              <FontAwesomeIcon 
+              <FontAwesomeIcon
                 icon={fasTrash}
                 className={styles.Icon}
                 />
             </div>
         }
-        
+
       </div>
     );
 
@@ -551,16 +551,16 @@ class SnippetCard extends Component {
       <div className={styles.AttitudeContainer}>
         <ul>
           {transformedAttitudeList.map((op, idx) => {
-            
+
             return (
               <li key={idx}>
                 <div style={{display: 'flex', alignItems: 'center', width: '70%'}}>
                   <span className={styles.Ordinal}>
                     {(op.order + 1)}
                   </span>
-                  <div 
+                  <div
                     className={styles.OptionName}>
-                    <div 
+                    <div
                       className={[styles.OptionStar, (
                         op.starred === true ? styles.ActiveStar : null
                       )].join(' ')}>
@@ -581,7 +581,7 @@ class SnippetCard extends Component {
                     let identifier = uniqid();
                     return (
                       <Aux key={pair.requirementId}>
-                        <div 
+                        <div
                           data-tip
                           data-for={identifier}
                           className={styles.Attitude}>
@@ -592,9 +592,9 @@ class SnippetCard extends Component {
                           id={identifier}
                           place="right" type="dark" effect="float">
                           <div>
-                            {pair.starred === true 
+                            {pair.starred === true
                               ? <span><FontAwesomeIcon icon={fasStar} /> &nbsp;</span>
-                              : null} 
+                              : null}
                             {ordinal(pair.order+1)}
                           </div>
                           <div>
@@ -615,7 +615,7 @@ class SnippetCard extends Component {
     const notes = (
       <div className={styles.NotesContainer}>
         <div className={styles.MetaInfo}>
-          <FontAwesomeIcon 
+          <FontAwesomeIcon
             icon={fasStickyNote}
             className={styles.Icon}
             />
@@ -630,7 +630,7 @@ class SnippetCard extends Component {
     const footer = (
       <div className={styles.Footer}>
         <div className={styles.MetaInfo}>
-          <FontAwesomeIcon 
+          <FontAwesomeIcon
             icon={farClock}
             className={styles.Icon}
             />
@@ -642,7 +642,7 @@ class SnippetCard extends Component {
     // disable Drag and Drop so that the content are selectable
     // return connectDropTarget(connectDragSource(
     return (
-      <div 
+      <div
         className={[styles.SnippetCard, props.status ? null : styles.Hide, props.specificPieceId === props.id ? styles.FamousCard : null].join(' ')}
         style={{
           transform: isActive ? 'scale(1.2)' : 'scale(1.0)',
@@ -654,7 +654,7 @@ class SnippetCard extends Component {
         {attitudes}
         <HorizontalDivider margin="5px" />
         {
-          props.notesFilterOn === true 
+          props.notesFilterOn === true
           ? <Aux>
               {notes}
               <HorizontalDivider margin="5px" />
