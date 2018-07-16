@@ -629,7 +629,8 @@ class TableView extends Component {
                                     notes={p.notes}
                                     codeUseInfo={p.codeUseInfo}
                                     attitudeList={p.attitudeList}
-                                    makeInteractionBox={(event, id) => this.makeInteractionbox(event, id)}/>
+                                    makeInteractionBox={(event, id) => this.makeInteractionbox(event, id)
+                                    }/>
                                 );
                               }}>
 
@@ -651,7 +652,9 @@ class TableView extends Component {
     if (this.state.showModal) {
       let piece = this.props.task.pieces[this.state.modalPieceId];
       // console.log(piece);
+
       if (piece !== undefined) {
+      // console.log('tableview interaction box');
         modal = (
           <Aux>
             <div className={styles.BackDrop}>

@@ -540,9 +540,11 @@ class CollectionView extends Component {
     /* Interaction box */
     let modal = null;
     if (this.state.showModal) {
+      // console.log('bringing up interactionbox in collection view');
       let piece = this.props.task.pieces[this.state.modalPieceId];
       // console.log(piece);
       if (piece !== undefined) {
+        // console.log('collectionview interaction box');
         modal = (
           <Aux>
             <div className={styles.BackDrop}>

@@ -363,7 +363,8 @@ chrome.runtime.onMessage.addListener(
           clip={clipClicked}
         />,
       interactionBoxAnchor);
-      interactionBoxIsMounted = true
+      interactionBoxIsMounted = true;
+      // console.log('annotation interaction box');
       dragElement(document.getElementById("interaction-box"));
     }
   }

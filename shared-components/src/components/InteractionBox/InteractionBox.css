@@ -34,6 +34,22 @@
   cursor: move
 }
 
+.InteractionBoxTopBar {
+  -moz-user-select: -moz-none;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+ position: absolute;
+ display: inline-block;
+ background-color: rgba(211, 211, 211, 0.25);
+ color: rgba(0,0,0,0);
+ top: 1px;
+ left: 1px;
+ font-size: 20px;
+ width: 100%;
+ /* opacity: 0; */
+ /* cursor:pointer */
+}
+
 .CloseBoxContainer {
   position: absolute;
   top: 2px;
