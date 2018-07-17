@@ -5,6 +5,7 @@ import fasShareSquare from '@fortawesome/fontawesome-free-solid/faShareSquare';
 import fasSave from '@fortawesome/fontawesome-free-solid/faSave';
 // import hamburger from '@fortawesome/fontawesome-free-solid/faBars';
 // import fasTrash from '@fortawesome/fontawesome-free-solid/faTrash';
+import fasDelete from '@fortawesome/fontawesome-free-solid/faTimes';
 import fasStar from '@fortawesome/fontawesome-free-solid/faStar';
 import fasListAlt from '@fortawesome/fontawesome-free-solid/faListAlt';
 import fasPaperPlane from '@fortawesome/fontawesome-free-solid/faPaperPlane';
@@ -13,10 +14,7 @@ import ThumbV1 from '../../components/UI/Thumbs/ThumbV1/ThumbV1';
 import QuestionMark from '../../components/UI/Thumbs/QuestionMark/QuestionMark';
 import Input from '../../components/UI/Input/Input';
 import styles from './InteractionBox.css';
-import {
-  tasksRef,
-  currentTaskIdRef
-} from '../../firebase/index';
+import { tasksRef, currentTaskIdRef} from '../../firebase/index';
 import { SNIPPET_TYPE } from '../../shared/constants';
 import { sortBy, reverse } from 'lodash';
 import * as FirebaseStore from '../../firebase/store';
@@ -77,7 +75,7 @@ class interactionBox extends Component {
 
       for (let opKey in this.props.options) {
         let attitudeList = this.props.attitudeList;
-        if(attitudeList !== undefined) {
+        if (attitudeList !== undefined) {
           let attitudeRequirementPairs = attitudeList[opKey] !== undefined ? attitudeList[opKey] : {};
           transformedOptions.push({
             id: opKey,
@@ -385,6 +383,10 @@ class interactionBox extends Component {
     });
   }
 
+  submitNewlyDroppedText(data, type) {
+    (type === 'OP') ? FirebaseStore.addAnOptionForCurrentTask(data) : FirebaseStore.addARequirementForCurrentTask(data);
+  }
+
   submitNewlyAddedItem(type) {
     if (type === 'OP') {
       FirebaseStore.addAnOptionForCurrentTask(document.querySelector('#add-option-in-piece-input').value.trim());
@@ -416,6 +418,10 @@ class interactionBox extends Component {
     FirebaseStore.deleteOptionWithId(optionId);
   }
 
+  allowDrop = (event) => {
+    event.preventDefault();
+  }
+
   render () {
 
     const { existingOptions, existingRequirements } = this.state;
@@ -427,7 +433,8 @@ class interactionBox extends Component {
       <input
       id="add-option-in-piece-input"
       placeholder={'Add an Option'}
-      onInput={(event) => this.switchInputSourceHandler(event, 'OP')}/> &nbsp;
+      onInput={(event) => this.switchInputSourceHandler(event, 'OP')}
+      /> &nbsp;
 
       </div>
       <div
@@ -438,6 +445,7 @@ class interactionBox extends Component {
       id="add-requirement-in-piece-input"
       placeholder={'Add a Criterion'}
       onInput={(event) => this.switchInputSourceHandler(event, 'RQ')}
+
       /> &nbsp;
       </div>
 
@@ -451,14 +459,20 @@ class interactionBox extends Component {
       <tr>
       <td></td>
       <td>
-      <div className={styles.TableTitle}>
+      <div className={styles.TableTitle}
+      onDrop={(event) => this.submitNewlyDroppedText(event.dataTransfer.getData("text"),'OP')}
+      onDragOver={(event) => this.allowDrop(event)}
+      >
       <FontAwesomeIcon icon={fasListAlt}/> &nbsp;Options
       </div>
       </td>
       <td>
       </td>
       <td>
-      <div className={styles.TableTitle}>
+      <div className={styles.TableTitle}
+      onDrop={(event) => this.submitNewlyDroppedText(event.dataTransfer.getData("text"),'RQ')}
+      onDragOver={(event) => this.allowDrop(event)}
+      >
       <FontAwesomeIcon icon={fasFlagCheckered}/> &nbsp;
       Criteria / Features
       </div>
@@ -468,22 +482,33 @@ class interactionBox extends Component {
         return (
           <tr key={op.id} className={styles.OptionTableRow}>
           <td>
-          {/*
-            <div
-            title="Delete this option"
-            className={styles.DeleteOptionIconContainer}
-            onClick={(event) => this.deleteOption(event, op.id)}>
-            <FontAwesomeIcon icon={fasTrash} />
-            </div>
-            */}
+          {
+            // /*
+
+            // */
+          }
             </td>
             <td>
             <div
             className={styles.OptionRowContainer}>
-            <span
-            className={[styles.Option]}>
+
+            <div
+            className={styles.Option}
+            // contentEditable={true}
+            // suppressContentEditableWarning={true}
+            // onInput={(event) => this.inputChangedHandler(event, op.id)}
+            >
+            <span>
             {op.name}
             </span>
+            <span
+            title="Delete this option"
+            className={styles.DeleteOptionIconContainer}
+            onClick={(event) => this.deleteOption(event, op.id)}>
+            <FontAwesomeIcon icon={fasDelete} />
+            </span>
+            </div>
+
             </div>
             </td>
             {/*
@@ -610,7 +635,7 @@ class interactionBox extends Component {
       snippet = (
         <div
         id="interaction-box-editable-selected-text"
-        contentEditable={true}
+        contentEditable={false}
         suppressContentEditableWarning={true}
         className={styles.selectedText}
         style={{width:
@@ -624,7 +649,7 @@ class interactionBox extends Component {
         snippet = (
           <div
           id="interaction-box-editable-selected-text"
-          contentEditable={true}
+          contentEditable={false}
           suppressContentEditableWarning={true}
           className={styles.snappedText}
           style={{width:
@@ -640,11 +665,14 @@ class interactionBox extends Component {
           <div
           id="interaction-box-content"
           className={styles.InteractionBox}>
-          {this.state.mode !== 'NOTHING' ?
+          {
+          // this.state.mode !== 'NOTHING' ? //
+          // Trailing ternary condition from removing the distinction between NEW and other snippets,
+          // since title bar is needed for closing the box everywhere.
           <div
           id="interaction-box-header"
           className={this.state.mode === 'NEW' ?
-            styles.InteractionBoxDragHandle
+            styles.InteractionBoxDragHandle // may want to enable auto-scroll on this draggable element
             : styles.InteractionBoxTopBar}
             >
           Placeholder title bar text
@@ -678,7 +706,7 @@ class interactionBox extends Component {
           //   </div>
           //   : null
           // }
-          : null
+          // : null
         }
 
         <div style={{display: 'flex', width: '100%', justifyContent:'space-between', marginTop:'60px', marginBottom: '10px', alignItems: 'flex-end'}}>
