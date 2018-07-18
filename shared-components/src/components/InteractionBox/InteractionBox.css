@@ -259,16 +259,26 @@ button:hover {
 }
 
 .DeleteOptionIconContainer {
-  font-size: 14px;
+  position: absolute;
+  top: -0.2rem;
+  right: 0.2rem;
+  transition: all 0./1s ease-in;
+  font-size: 0.7rem;
+  color: black;
+  /* margin-left: 3px; */
+  opacity: 0.25;
+  /* font-size: 0.7rem;
+  top: -2px;
+  right: 5px;
   height: 100%;
-  cursor: pointer;
+  /* cursor: pointer;//
   opacity: 0.3;
   margin-right: 5px;
-  transition: all 0.1s ease-in;
+  transition: all 0.1s ease-in; */
 }
 
 .DeleteOptionIconContainer:hover {
-  transform: scale(1.05);
+  transform: scale(2.05);
   opacity: 1;
 }
 
@@ -282,6 +292,7 @@ button:hover {
 }
 
 .Option {
+  position: relative;
   color: white;
   font-size: 16px;
   font-weight: 300;
