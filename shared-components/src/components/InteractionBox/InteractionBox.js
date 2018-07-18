@@ -1,4 +1,5 @@
 import React, { Component }from 'react';
+import ReactDOM from 'react-dom'
 import FontAwesomeIcon from '@fortawesome/react-fontawesome';
 import fasShareSquare from '@fortawesome/fontawesome-free-solid/faShareSquare';
 // import fasLink from '@fortawesome/fontawesome-free-solid/faLink';
@@ -323,8 +324,8 @@ class interactionBox extends Component {
   }
 
   submitPieceHandler = (event) => {
-    console.log(this.state.htmls);
-    console.log(this.state.selectedText);
+    // console.log(this.state.htmls);
+    // console.log(this.state.selectedText);
     if (this.state.htmls.length === 0 || this.state.selectedText === '') {
       alert('Please make sure you clipped something before submiting.');
       return;
@@ -389,11 +390,17 @@ class interactionBox extends Component {
 
   submitNewlyAddedItem(type) {
     if (type === 'OP') {
-      FirebaseStore.addAnOptionForCurrentTask(document.querySelector('#add-option-in-piece-input').value.trim());
-      document.querySelector('#add-option-in-piece-input').value = "";
+      // FirebaseStore.addAnOptionForCurrentTask(document.querySelector('#add-option-in-piece-input').value.trim());
+      // querySelector fails to find input source content in main page snippets, so we used ReactDOM instead
+      // console.log(this.optionInput.value);
+      FirebaseStore.addAnOptionForCurrentTask(this.optionInput.value);
+      // console.log('submitted',this.optionInput.value);
+      this.optionInput.value = '';
+
+      // document.querySelector('#add-option-in-piece-input').value = "";
     } else {
-      FirebaseStore.addARequirementForCurrentTask(document.querySelector('#add-requirement-in-piece-input').value.trim());
-      document.querySelector('#add-requirement-in-piece-input').value = "";
+      FirebaseStore.addARequirementForCurrentTask(this.CriterionInput.value);
+      this.CriterionInput.value = '';
     }
   }
 
@@ -422,39 +429,44 @@ class interactionBox extends Component {
     event.preventDefault();
   }
 
-  render () {
 
+  render () {
     const { existingOptions, existingRequirements } = this.state;
 
     let addOptionRequirement = (
       <div className={styles.AddOptionRowContainer}>
-      <div className={styles.AddSomthingInputContainer}>
+      <div className={styles.AddSomthingInputContainer} >
       <FontAwesomeIcon icon={fasListAlt}/> &nbsp;
-      <input
+      <input ref={(input) => { this.optionInput = input; }}
       id="add-option-in-piece-input"
       placeholder={'Add an Option'}
       onInput={(event) => this.switchInputSourceHandler(event, 'OP')}
-      /> &nbsp;
+      />
+      &nbsp;
+      {
+        // <div
+        // className={styles.AddSomethingButton}
+        // onClick={(event) => this.addButtonClicked(event, 'OP')}>
+        // <FontAwesomeIcon icon={fasPaperPlane}/> &nbsp; Add
+        // </div>
+        // onClick={(event) => this.addButtonClicked(event, 'RQ')}
+      }
 
-      <div
-      className={styles.AddSomethingButton}
-      onClick={(event) => this.addButtonClicked(event, 'OP')}>
-      <FontAwesomeIcon icon={fasPaperPlane}/> &nbsp; Add
-      </div>
       </div>
       <div
       className={styles.AddSomthingInputContainer}
-      onClick={(event) => this.addButtonClicked(event, 'RQ')}>
+      >
       <FontAwesomeIcon icon={fasFlagCheckered}/> &nbsp;
-      <input
+      <input ref={(input) => { this.CriterionInput = input; }}
       id="add-requirement-in-piece-input"
       placeholder={'Add a Criterion'}
       onInput={(event) => this.switchInputSourceHandler(event, 'RQ')}
-
       /> &nbsp;
-      <div className={styles.AddSomethingButton}>
-      <FontAwesomeIcon icon={fasPaperPlane}/> &nbsp; Add
-      </div>
+      {
+      // <div className={styles.AddSomethingButton}>
+      // <FontAwesomeIcon icon={fasPaperPlane}/> &nbsp; Add
+      // </div>
+      }
       </div>
 
       </div>
@@ -728,7 +740,7 @@ class interactionBox extends Component {
 
 
         <div className={styles.FooterContainer}>
-        <div className={styles.NoteContainer}>
+        <div className={styles.NoteContainer} >
         <Input
         elementType='textarea'
         elementConfig={{placeholder: 'Type some notes'}}
