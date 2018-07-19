@@ -1,6 +1,6 @@
 # Project KAP
 
-### Chrome extension users: help page now available here --> https://github.com/janeon/janeon.github.io
+#### Chrome extension users: help page now available here --> https://github.com/janeon/janeon.github.io https://janeon.github.io/help/
 
 ## To build the app locally for development and debugging:
 
