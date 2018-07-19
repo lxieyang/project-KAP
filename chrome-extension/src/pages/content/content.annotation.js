@@ -54,7 +54,7 @@ const handleFromSearchToTask = () => {
       let searchTerm = getSearchTerm(window.location);
       if (searchTerm !== '') {
         // google search results page
-        console.log('google search result page');
+        // console.log('google search result page');
         ReactDOM.render(
           <div style={{
             marginLeft: '150px',
@@ -90,7 +90,7 @@ const handleFromSearchToTask = () => {
 
       } else {
         // google home page
-        console.log('google home page');
+        // console.log('google home page');
 
         ReactDOM.render(
           <div style={{
@@ -125,7 +125,7 @@ const shouldCount = (url) => {
       break;
     }
   }
-  console.log("[PAGE COUNT HELPER (shouldCount)]: " + should_count);
+  // console.log("[PAGE COUNT HELPER (shouldCount)]: " + should_count);
   return should_count;
 }
 
@@ -289,7 +289,6 @@ const getDocumentSelection = () => {
 }
 
 export const clipClicked = () => {
-  console.log('clicked');
   document.dispatchEvent(customRemoveInteractionEvent);
 }
 
@@ -338,7 +337,7 @@ chrome.runtime.onMessage.addListener(
       // console.log('should put up interaction box');
       let selection = getDocumentSelection();
       let rect = null;
-      console.log(selection.rect);
+      // console.log(selection.rect);
       interactionBoxAnchor.style.left = `100px`;
       interactionBoxAnchor.style.top = `${Math.floor(window.innerHeight / 5) + window.scrollY}px`;
       // if (selection.rect !== null) {
@@ -376,7 +375,7 @@ chrome.runtime.onMessage.addListener(
 
 window.addEventListener('mousedown', (event) => {
   if (captureWindow.contains(event.target)) {
-    console.log('click inside window');
+    // console.log('click inside window');
     movingCaptureWindow = true;
     mouseStart = event;
     return false;
@@ -513,7 +512,7 @@ window.addEventListener('keyup', (event) => {
 
 window.addEventListener('mouseup', (event) => {
   if (popOverAnchor.contains(event.target)) {
-    console.log('click inside popover');
+    // console.log('click inside popover');
     window.getSelection().removeAllRanges();
     window.getSelection().addRange(justSelectedRange);
     return false;
@@ -581,7 +580,7 @@ window.addEventListener('copy', function (event) {
       codeSnippetTexts: []
     }
     FirebaseStore.addAPieceToCurrentTask(piece, true);
-    console.log('just  added a piece');
+    // console.log('just  added a piece');
   }
 });
 
@@ -618,7 +617,7 @@ if(window.location.hostname === "stackoverflow.com") {
       $(checkmark).removeClass('kap-checkmark-spin');
       $(buttonText).removeClass('kap-button-text-disappear');
       // unsave the clip
-      console.log('Discard this Snippet');
+      // console.log('Discard this Snippet');
       // chrome.runtime.sendMessage({
       //   msg: actionTypes.DELETE_A_PIECE_WITH_ID,
       //   payload: {id: collectedPostKey}
@@ -631,10 +630,10 @@ if(window.location.hostname === "stackoverflow.com") {
       $(buttonText).addClass('kap-button-text-disappear');
       // save the clip -> try not to block the UI
       setTimeout(() => {
-        console.log('Save this Snippet');
+        // console.log('Save this Snippet');
         let postTextNode = $(this).parents('.post-layout').find('.post-text')[0];
         let postTextSnippet = KAPCaptureHelper.createCodeSnippetsFromNode(postTextNode);
-        console.log(postTextSnippet);
+        // console.log(postTextSnippet);
         let codeSnippetInPostText = $(this).parents('.post-layout').find('pre.prettyprint');
         let codeSnippets = [];
         if (codeSnippetInPostText.length > 0) {

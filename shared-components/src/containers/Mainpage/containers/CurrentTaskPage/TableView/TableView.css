@@ -64,6 +64,13 @@
   padding-left: 7px;
 }
 
+.addOption {
+  color: orange;
+}
+
+.addCriterion {
+  color: #4E8EF9;
+}
 span {
   white-space: pre-wrap;
 }

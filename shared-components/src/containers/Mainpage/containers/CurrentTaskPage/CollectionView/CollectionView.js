@@ -269,6 +269,9 @@ class CollectionView extends Component {
     if (event.key === 'Escape') {
       this.dismissModal();
     }
+    // if (event.key === 'Enter' && this.state.showModal) {
+      // console.log('enter pressed when interaction box is up');
+    // }
   }
 
   componentDidMount() {

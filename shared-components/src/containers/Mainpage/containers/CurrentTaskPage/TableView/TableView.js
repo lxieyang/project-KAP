@@ -5,6 +5,7 @@ import qs from 'query-string';
 import {Collapse} from 'react-collapse';
 import Aux from '../../../../../hoc/Aux/Aux';
 
+import faPlus from '@fortawesome/fontawesome-free-solid/faPlus';
 import FontAwesomeIcon from '@fortawesome/react-fontawesome';
 import farSquare from '@fortawesome/fontawesome-free-regular/faSquare';
 import farWindowMaximize from '@fortawesome/fontawesome-free-regular/faWindowMaximize';
@@ -505,17 +506,23 @@ class TableView extends Component {
         <th style={{verticalAlign: 'bottom'}}>
           <div className={styles.ConfigurationLine}>
             <div className={styles.Label}>
-              <span>Show Notes</span>
+            <span className={styles.notes}>Show Notes</span>
             </div>
-            <div
-              className={styles.Slider}
-              onClick={(event) => this.showNotesChangedHandler(event)}>
+            <div className={styles.Slider}>
               {
                 this.state.shouldShowNotes
                 ? <FontAwesomeIcon icon={fasToggleOn} className={[styles.SliderIcon, styles.SliderOn].join(' ')}/>
                 : <FontAwesomeIcon icon={fasToggleOff} className={[styles.SliderIcon, styles.SliderOff].join(' ')}/>
               }
             </div>
+              <div className={styles.addCriterion}
+              onMouseUp={(event) => this.submitNewlyDroppedText(event,'RQ')}
+              onDragOver={(event) => this.allowDrop(event)}>
+              <FontAwesomeIcon icon={faPlus}/>
+              </div>
+              </div>
+              <div className={styles.addOption}>
+              <FontAwesomeIcon icon={faPlus}/>
           </div>
         </th>
         {

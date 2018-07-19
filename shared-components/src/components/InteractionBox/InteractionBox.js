@@ -1,22 +1,21 @@
 import React, { Component }from 'react';
+import ReactDOM from 'react-dom'
 import FontAwesomeIcon from '@fortawesome/react-fontawesome';
 import fasShareSquare from '@fortawesome/fontawesome-free-solid/faShareSquare';
 // import fasLink from '@fortawesome/fontawesome-free-solid/faLink';
 import fasSave from '@fortawesome/fontawesome-free-solid/faSave';
 // import hamburger from '@fortawesome/fontawesome-free-solid/faBars';
 // import fasTrash from '@fortawesome/fontawesome-free-solid/faTrash';
+import fasDelete from '@fortawesome/fontawesome-free-solid/faTimes';
 import fasStar from '@fortawesome/fontawesome-free-solid/faStar';
 import fasListAlt from '@fortawesome/fontawesome-free-solid/faListAlt';
-import fasPaperPlane from '@fortawesome/fontawesome-free-solid/faPaperPlane';
+// import fasPaperPlane from '@fortawesome/fontawesome-free-solid/faPaperPlane';
 import fasFlagCheckered from '@fortawesome/fontawesome-free-solid/faFlagCheckered';
 import ThumbV1 from '../../components/UI/Thumbs/ThumbV1/ThumbV1';
 import QuestionMark from '../../components/UI/Thumbs/QuestionMark/QuestionMark';
 import Input from '../../components/UI/Input/Input';
 import styles from './InteractionBox.css';
-import {
-  tasksRef,
-  currentTaskIdRef
-} from '../../firebase/index';
+import { tasksRef, currentTaskIdRef} from '../../firebase/index';
 import { SNIPPET_TYPE } from '../../shared/constants';
 import { sortBy, reverse } from 'lodash';
 import * as FirebaseStore from '../../firebase/store';
@@ -77,7 +76,7 @@ class interactionBox extends Component {
 
       for (let opKey in this.props.options) {
         let attitudeList = this.props.attitudeList;
-        if(attitudeList !== undefined) {
+        if (attitudeList !== undefined) {
           let attitudeRequirementPairs = attitudeList[opKey] !== undefined ? attitudeList[opKey] : {};
           transformedOptions.push({
             id: opKey,
@@ -325,8 +324,8 @@ class interactionBox extends Component {
   }
 
   submitPieceHandler = (event) => {
-    console.log(this.state.htmls);
-    console.log(this.state.selectedText);
+    // console.log(this.state.htmls);
+    // console.log(this.state.selectedText);
     if (this.state.htmls.length === 0 || this.state.selectedText === '') {
       alert('Please make sure you clipped something before submiting.');
       return;
@@ -385,13 +384,23 @@ class interactionBox extends Component {
     });
   }
 
+  submitNewlyDroppedText(data, type) {
+    (type === 'OP') ? FirebaseStore.addAnOptionForCurrentTask(data) : FirebaseStore.addARequirementForCurrentTask(data);
+  }
+
   submitNewlyAddedItem(type) {
     if (type === 'OP') {
-      FirebaseStore.addAnOptionForCurrentTask(document.querySelector('#add-option-in-piece-input').value.trim());
-      document.querySelector('#add-option-in-piece-input').value = "";
+      // FirebaseStore.addAnOptionForCurrentTask(document.querySelector('#add-option-in-piece-input').value.trim());
+      // querySelector fails to find input source content in main page snippets, so we used ReactDOM instead
+      // console.log(this.optionInput.value);
+      FirebaseStore.addAnOptionForCurrentTask(this.optionInput.value);
+      // console.log('submitted',this.optionInput.value);
+      this.optionInput.value = '';
+
+      // document.querySelector('#add-option-in-piece-input').value = "";
     } else {
-      FirebaseStore.addARequirementForCurrentTask(document.querySelector('#add-requirement-in-piece-input').value.trim());
-      document.querySelector('#add-requirement-in-piece-input').value = "";
+      FirebaseStore.addARequirementForCurrentTask(this.CriterionInput.value);
+      this.CriterionInput.value = '';
     }
   }
 
@@ -416,29 +425,48 @@ class interactionBox extends Component {
     FirebaseStore.deleteOptionWithId(optionId);
   }
 
-  render () {
+  allowDrop = (event) => {
+    event.preventDefault();
+  }
 
+
+  render () {
     const { existingOptions, existingRequirements } = this.state;
 
     let addOptionRequirement = (
       <div className={styles.AddOptionRowContainer}>
-      <div className={styles.AddSomthingInputContainer}>
+      <div className={styles.AddSomthingInputContainer} >
       <FontAwesomeIcon icon={fasListAlt}/> &nbsp;
-      <input
+      <input ref={(input) => { this.optionInput = input; }}
       id="add-option-in-piece-input"
       placeholder={'Add an Option'}
-      onInput={(event) => this.switchInputSourceHandler(event, 'OP')}/> &nbsp;
+      onInput={(event) => this.switchInputSourceHandler(event, 'OP')}
+      />
+      &nbsp;
+      {
+        // <div
+        // className={styles.AddSomethingButton}
+        // onClick={(event) => this.addButtonClicked(event, 'OP')}>
+        // <FontAwesomeIcon icon={fasPaperPlane}/> &nbsp; Add
+        // </div>
+        // onClick={(event) => this.addButtonClicked(event, 'RQ')}
+      }
 
       </div>
       <div
       className={styles.AddSomthingInputContainer}
-      onClick={(event) => this.addButtonClicked(event, 'RQ')}>
+      >
       <FontAwesomeIcon icon={fasFlagCheckered}/> &nbsp;
-      <input
+      <input ref={(input) => { this.CriterionInput = input; }}
       id="add-requirement-in-piece-input"
       placeholder={'Add a Criterion'}
       onInput={(event) => this.switchInputSourceHandler(event, 'RQ')}
       /> &nbsp;
+      {
+      // <div className={styles.AddSomethingButton}>
+      // <FontAwesomeIcon icon={fasPaperPlane}/> &nbsp; Add
+      // </div>
+      }
       </div>
 
       </div>
@@ -451,14 +479,20 @@ class interactionBox extends Component {
       <tr>
       <td></td>
       <td>
-      <div className={styles.TableTitle}>
+      <div className={styles.TableTitle}
+      onDrop={(event) => this.submitNewlyDroppedText(event.dataTransfer.getData("text"),'OP')}
+      onDragOver={(event) => this.allowDrop(event)}
+      >
       <FontAwesomeIcon icon={fasListAlt}/> &nbsp;Options
       </div>
       </td>
       <td>
       </td>
       <td>
-      <div className={styles.TableTitle}>
+      <div className={styles.TableTitle}
+      onDrop={(event) => this.submitNewlyDroppedText(event.dataTransfer.getData("text"),'RQ')}
+      onDragOver={(event) => this.allowDrop(event)}
+      >
       <FontAwesomeIcon icon={fasFlagCheckered}/> &nbsp;
       Criteria / Features
       </div>
@@ -468,22 +502,33 @@ class interactionBox extends Component {
         return (
           <tr key={op.id} className={styles.OptionTableRow}>
           <td>
-          {/*
-            <div
-            title="Delete this option"
-            className={styles.DeleteOptionIconContainer}
-            onClick={(event) => this.deleteOption(event, op.id)}>
-            <FontAwesomeIcon icon={fasTrash} />
-            </div>
-            */}
+          {
+            // /*
+
+            // */
+          }
             </td>
             <td>
             <div
             className={styles.OptionRowContainer}>
-            <span
-            className={[styles.Option]}>
+
+            <div
+            className={styles.Option}
+            // contentEditable={true}
+            // suppressContentEditableWarning={true}
+            // onInput={(event) => this.inputChangedHandler(event, op.id)}
+            >
+            <span>
             {op.name}
             </span>
+            <span
+            title="Delete this option"
+            className={styles.DeleteOptionIconContainer}
+            onClick={(event) => this.deleteOption(event, op.id)}>
+            <FontAwesomeIcon icon={fasDelete} />
+            </span>
+            </div>
+
             </div>
             </td>
             {/*
@@ -610,7 +655,7 @@ class interactionBox extends Component {
       snippet = (
         <div
         id="interaction-box-editable-selected-text"
-        contentEditable={true}
+        contentEditable={false}
         suppressContentEditableWarning={true}
         className={styles.selectedText}
         style={{width:
@@ -624,7 +669,7 @@ class interactionBox extends Component {
         snippet = (
           <div
           id="interaction-box-editable-selected-text"
-          contentEditable={true}
+          contentEditable={false}
           suppressContentEditableWarning={true}
           className={styles.snappedText}
           style={{width:
@@ -637,14 +682,18 @@ class interactionBox extends Component {
         }
 
         return (
+          // console.log(this.state);
           <div
           id="interaction-box-content"
           className={styles.InteractionBox}>
-          {this.state.mode !== 'NOTHING' ?
+          {
+          // this.state.mode !== 'NOTHING' ? //
+          // Trailing ternary condition from removing the distinction between NEW and other snippets,
+          // since title bar is needed for closing the box everywhere.
           <div
           id="interaction-box-header"
           className={this.state.mode === 'NEW' ?
-            styles.InteractionBoxDragHandle
+            styles.InteractionBoxDragHandle // may want to enable auto-scroll on this draggable element
             : styles.InteractionBoxTopBar}
             >
           Placeholder title bar text
@@ -659,7 +708,7 @@ class interactionBox extends Component {
           <input
           type="text"
           value={this.state.title}
-          placeholder={'Please select to add a title'}
+          placeholder={'Click to add a title'}
           className={styles.TitleInput}
           onChange={(event) => this.titleInputChangeHandler(event)}/> &nbsp;
           { // commented out block to hide AutoSuggestedBadge
@@ -678,7 +727,7 @@ class interactionBox extends Component {
           //   </div>
           //   : null
           // }
-          : null
+          // : null
         }
 
         <div style={{display: 'flex', width: '100%', justifyContent:'space-between', marginTop:'60px', marginBottom: '10px', alignItems: 'flex-end'}}>
@@ -691,7 +740,7 @@ class interactionBox extends Component {
 
 
         <div className={styles.FooterContainer}>
-        <div className={styles.NoteContainer}>
+        <div className={styles.NoteContainer} >
         <Input
         elementType='textarea'
         elementConfig={{placeholder: 'Type some notes'}}
