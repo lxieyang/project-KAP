@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
+import { StickyTable, Row, Cell } from 'react-sticky-table';
 import { findDOMNode } from 'react-dom';
 import { withRouter } from 'react-router-dom';
 import qs from 'query-string';
 import {Collapse} from 'react-collapse';
 import Aux from '../../../../../hoc/Aux/Aux';
-
 import faPlus from '@fortawesome/fontawesome-free-solid/faPlus';
 import FontAwesomeIcon from '@fortawesome/react-fontawesome';
 import farSquare from '@fortawesome/fontawesome-free-regular/faSquare';
@@ -698,6 +698,7 @@ class TableView extends Component {
 
     let content = (
     <table className={styles.ComparisonTable}>
+      
       <thead>
         {newTableHeader}
       </thead>
@@ -711,25 +712,23 @@ class TableView extends Component {
       <Aux>
       <div className={styles.Section}>
         <div className={styles.TableView}>
-          <div className={styles.ConfigureRow}>
-
-            {/*
+          {/* <
+            div className={styles.ConfigureRow}>
             <div className={styles.PieceConfigure}>
               {pieceViewOption}
             </div>
-            */}
           </div>
-
-
-
-            <div className={styles.Header}>
-            <div className={styles.HeaderNameContainer}
-            onClick={(event) => this.switchTableIsOpenStatus(event)}>
-              <div className={styles.HeaderName}>
+          */}
+            <div
+             className={styles.Header}>
+             <div className={styles.HeaderNameContainer}
+                onClick={(event) => this.switchTableIsOpenStatus(event)}>
+                <div
+                className={styles.HeaderName}>
                  <span>Comparison Table</span>
-              </div>
+                </div>
 
-              <div
+                <div
                   className={styles.HeaderCollapseButton}>
                   {
                     this.state.tableviewisOpen
@@ -741,16 +740,7 @@ class TableView extends Component {
               </div>
               <Collapse isOpened={this.state.tableviewisOpen} springConfig={{stiffness: 700, damping: 50}}>
               <div className={styles.Content}>
-                { // equivalent to content
-                  <table className={styles.ComparisonTable}>
-                    <thead>
-                      {newTableHeader}
-                    </thead>
-                    <tbody>
-                      {newTableBody}
-                    </tbody>
-                  </table>
-                }
+                {content}
               </div>
               </Collapse>
 

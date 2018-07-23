@@ -14,6 +14,7 @@ import { findDOMNode } from 'react-dom';
 import { DragSource, DropTarget } from 'react-dnd';
 import Input from '../../../../../../components/UI/Input/Input';
 import styles from './TableRow.css';
+import Styles from '../TableView.css';
 
 
 const rowSource = {
@@ -134,7 +135,7 @@ class TableRow extends Component {
     const { op, index, inactiveOpacity, isDragging, connectDragSource, connectDropTarget } = this.props;
     const opacity = isDragging ? 0 : 1;
     return connectDragSource(connectDropTarget(
-        <td style={{ opacity, position: 'sticky'}}>
+        <td className={Styles.stickyCol}>
           <div
             className={styles.ShowHideOption}
             onClick={(event) => this.props.switchHideStatusOfAnOption(index, op.id, op.hide)}>

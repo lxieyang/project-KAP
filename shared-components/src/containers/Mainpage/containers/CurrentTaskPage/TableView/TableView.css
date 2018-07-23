@@ -61,7 +61,6 @@
   font-size: 1.5rem;
   display: flex;
   align-items: center;
-  position: sticky;
   padding-left: 2.5rem;
   /* position: fixed; */
 }
@@ -103,14 +102,13 @@ span {
 .Content {
   margin: 0px 50px;
   max-height: 40rem;
-  max-width: 100%;
-  overflow-y:scroll;
-  overflow-x:scroll;
+  max-width: 120rem;
+  overflow-y:auto;
+  overflow-x:auto;
 }
 
 table.ComparisonTable {
   border-collapse: collapse;
-
 }
 /*
 tr:nth-child(even) {background-color: #f2f2f2;} */
@@ -121,7 +119,7 @@ tr:nth-child(even) {background-color: #f2f2f2;} */
   position: sticky;
   top: 0;
   background-color: rgba(255,255,255,1);
-  z-index: 5;
+  z-index: 6;
 }
 
 .ComparisonTable tr {
@@ -132,8 +130,16 @@ tr:nth-child(even) {background-color: #f2f2f2;} */
 .ComparisonTable td {
   padding: 8px;
   text-align: left;
-  position: relative;
+}
 
+.ComparisonTable .stickyCol {
+  padding: 8px;
+  text-align: left;
+  position: sticky; 
+  position: -webkit-sticky;
+  float:left;
+  top: 0;
+  z-index: 5;
 }
 
 .PieceNameContainer {
