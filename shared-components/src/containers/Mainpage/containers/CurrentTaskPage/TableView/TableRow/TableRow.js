@@ -134,7 +134,7 @@ class TableRow extends Component {
     const { op, index, inactiveOpacity, isDragging, connectDragSource, connectDropTarget } = this.props;
     const opacity = isDragging ? 0 : 1;
     return connectDragSource(connectDropTarget(
-        <td style={{ opacity, position: 'relative'}}>
+        <td style={{ opacity, position: 'sticky'}}>
           <div
             className={styles.ShowHideOption}
             onClick={(event) => this.props.switchHideStatusOfAnOption(index, op.id, op.hide)}>
@@ -220,7 +220,6 @@ class TableRow extends Component {
               </UnmountClosed>
             </div>
           </div>
-
         </td>
     ));
   }

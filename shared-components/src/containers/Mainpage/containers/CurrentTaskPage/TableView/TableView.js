@@ -520,11 +520,12 @@ class TableView extends Component {
               onDragOver={(event) => this.allowDrop(event)}>
               <FontAwesomeIcon icon={faPlus}/>
               </div>
-              </div>
-              <div className={styles.addOption}>
-              <FontAwesomeIcon icon={faPlus}/>
-          </div>
+            </div>
+            <div className={styles.addOption}>
+            <FontAwesomeIcon icon={faPlus}/>
+            </div>
         </th>
+
         {
           newRequirementsList.map((rq, idx) => {
             return (
@@ -719,9 +720,8 @@ class TableView extends Component {
             */}
           </div>
 
-          <div className={styles.Content}>
 
-          <Aux>
+
             <div className={styles.Header}>
             <div className={styles.HeaderNameContainer}
             onClick={(event) => this.switchTableIsOpenStatus(event)}>
@@ -740,16 +740,26 @@ class TableView extends Component {
               </div>
               </div>
               <Collapse isOpened={this.state.tableviewisOpen} springConfig={{stiffness: 700, damping: 50}}>
-                {content}
+              <div className={styles.Content}>
+                { // equivalent to content
+                  <table className={styles.ComparisonTable}>
+                    <thead>
+                      {newTableHeader}
+                    </thead>
+                    <tbody>
+                      {newTableBody}
+                    </tbody>
+                  </table>
+                }
+              </div>
               </Collapse>
-            </Aux>
 
             {modal}
+            </div>
+
 
             </div>
 
-            </div>
-        </div>
       </Aux>
     );
   }

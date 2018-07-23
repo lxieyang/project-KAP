@@ -65,6 +65,11 @@
   opacity: 1;
 }
 
+thead th {
+  position: sticky;
+  position: -webkit-sticky;
+}
+
 .Ordinal {
   cursor: move;
   margin-right: 6px;
