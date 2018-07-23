@@ -46,7 +46,7 @@ const headerTarget = {
     // Only perform the move when the mouse has corssed half of the items width
     // When dragging leftwards, only move when the cursor is above 50%
     // When dragging rightwards, only move when the cursor is below 50%
-    
+
     // dragging rightwards
     if (dragIndex < hoverIndex && hoverClientX < hoverMiddleX) {
       return;
@@ -108,11 +108,11 @@ class TableHeader extends Component {
               : <FontAwesomeIcon icon={fasToggleOn} className={styles.ShowHideRequirementIcon}/>
             }
           </div>
-        <div 
+        <div
           style={{opacity: rq.hide === true ? `${inactiveOpacity}` : '1'}}
           className={styles.RequirementInTableHeaderContainer}>
           <div style={{height: '100%'}}>
-            <div 
+            <div
               className={[styles.RequirementStar, (
                 rq.starred === true ? styles.ActiveStar : null
               )].join(' ')}
@@ -128,14 +128,14 @@ class TableHeader extends Component {
                 className={styles.RequirementText}
                 contentEditable={true}
                 suppressContentEditableWarning={true}
-                onInput={(event) => this.requirementNameChangedHandler(event, rq.id)}>
+                onSubmit={(event) => this.requirementNameChangedHandler(event, rq.id)}>
                 {rq.name}
               </span>
           </div>
         </div>
-        
+
       </th>
-      
+
     ));
   }
 }

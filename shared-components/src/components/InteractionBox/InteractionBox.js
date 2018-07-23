@@ -396,7 +396,6 @@ class interactionBox extends Component {
       FirebaseStore.addAnOptionForCurrentTask(this.optionInput.value);
       // console.log('submitted',this.optionInput.value);
       this.optionInput.value = '';
-
       // document.querySelector('#add-option-in-piece-input').value = "";
     } else {
       FirebaseStore.addARequirementForCurrentTask(this.CriterionInput.value);
@@ -422,7 +421,8 @@ class interactionBox extends Component {
   }
 
   deleteOption = (event, optionId) => {
-    FirebaseStore.deleteOptionWithId(optionId);
+    var surety = confirm('Are you sure you want to delete this option?');
+    (surety) ? FirebaseStore.deleteOptionWithId(optionId) : null;
   }
 
   allowDrop = (event) => {
@@ -440,7 +440,7 @@ class interactionBox extends Component {
       <input ref={(input) => { this.optionInput = input; }}
       id="add-option-in-piece-input"
       placeholder={'Add an Option'}
-      onInput={(event) => this.switchInputSourceHandler(event, 'OP')}
+      onSubmit={(event) => this.switchInputSourceHandler(event, 'OP')}
       />
       &nbsp;
       {
