@@ -135,24 +135,24 @@ class TableRow extends Component {
     const opacity = isDragging ? 0 : 1;
     return connectDragSource(connectDropTarget(
         <td style={{ opacity, position: 'relative'}}>
-          <div 
+          <div
             className={styles.ShowHideOption}
             onClick={(event) => this.props.switchHideStatusOfAnOption(index, op.id, op.hide)}>
             {
-              op.hide !== true 
+              op.hide !== true
               ? <FontAwesomeIcon icon={fasToggleOff} className={styles.ShowHidePieceIcon}/>
               : <FontAwesomeIcon icon={fasToggleOn} className={styles.ShowHidePieceIcon}/>
             }
           </div>
           <div style={{
-              display: 'flex', 
-              alignItems: 'center', 
+              display: 'flex',
+              alignItems: 'center',
               padding: '5px',
               borderRadius: '3px',
               opacity: op.hide === true ? `${inactiveOpacity}` : '1',
               backgroundColor: op.used === true ? 'rgba(82, 184, 101, 0.3)' : 'transparent' }}>
             <div style={{height: '100%'}}>
-              <div 
+              <div
                 className={[styles.OptionStar, (
                   op.starred === true ? styles.ActiveStar : null
                 )].join(' ')}
@@ -160,7 +160,7 @@ class TableRow extends Component {
                 <FontAwesomeIcon icon={fasStar} />
               </div>
               <span className={styles.Ordinal}>{ordinal(index + 1)}</span>
-              <div 
+              <div
                 className={[styles.OptionUseStatus, (
                   op.used === true ? styles.UsedOption : null
                 )].join(' ')}
@@ -169,36 +169,36 @@ class TableRow extends Component {
               </div>
             </div>
             <div className={[styles.OptionNameContainer, !op.active ? styles.InactiveOption : null].join(' ')}>
-              <span 
+              <span
                 contentEditable={true}
                 suppressContentEditableWarning={true}
-                onInput={(event) => this.optionNameChangedHandler(event, op.id)}
+                onSubmit={(event) => this.optionNameChangedHandler(event, op.id)}
                 className={styles.OptionText}>
                 {op.name}
               </span>
-              <span 
+              <span
                 className={[styles.ShowHideNotes, this.state.noteIsOpen ? styles.OpenNotes : styles.CloseNotes].join(' ')}
                 onClick={(event) => this.switchNoteShowStatus()}>
                 <FontAwesomeIcon icon={faEdit} className={styles.NotesIcon}/>
               </span>
-              <UnmountClosed 
-                className={styles.CollapsedNotes} 
-                isOpened={this.state.noteIsOpen} 
+              <UnmountClosed
+                className={styles.CollapsedNotes}
+                isOpened={this.state.noteIsOpen}
                 springConfig={{stiffness: 1000, damping: 40}}>
                 <div className={styles.NotesBox}>
                   <div className={styles.NotesContainer}>
                     <strong>Notes:</strong>
                     <ul>
                       {
-                        op.notes !== undefined && op.notes !== null 
+                        op.notes !== undefined && op.notes !== null
                         ? op.notes.map((note, idx) => {
                           return (
                             <li key={idx}>
                               <div className={styles.NotesContent}>
                                 {note}
                               </div>
-                              <FontAwesomeIcon 
-                                icon={fasTrash} 
+                              <FontAwesomeIcon
+                                icon={fasTrash}
                                 className={styles.TrashNoteIcon}
                                 onClick={(event) => this.deleteNoteHandler(event, note)}/>
                             </li>
@@ -209,9 +209,9 @@ class TableRow extends Component {
                     </ul>
                   </div>
                   <div className={styles.InputContainer}>
-                    <Input 
+                    <Input
                       className={styles.Input}
-                      elementType='textarea' 
+                      elementType='textarea'
                       elementConfig={{placeholder: 'Add a note'}}
                       value={this.state.newNote}
                       changed={this.inputChangedHandler}/>
@@ -220,7 +220,7 @@ class TableRow extends Component {
               </UnmountClosed>
             </div>
           </div>
-          
+
         </td>
     ));
   }

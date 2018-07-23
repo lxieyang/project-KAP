@@ -440,7 +440,7 @@ class interactionBox extends Component {
       <input ref={(input) => { this.optionInput = input; }}
       id="add-option-in-piece-input"
       placeholder={'Add an Option'}
-      onSubmit={(event) => this.switchInputSourceHandler(event, 'OP')}
+      onInput={(event) => this.switchInputSourceHandler(event, 'OP')}
       />
       &nbsp;
       {
