@@ -4,7 +4,7 @@
   ],
   "plugins": [
     "transform-decorators-legacy",
-    "transform-async-to-generator",
+    /* "transform-async-to-generator", */
     "syntax-async-functions"
   ],
   "env": {
