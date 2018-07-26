@@ -544,6 +544,7 @@ class TableView extends Component {
       </tr>
     );
     let newTableBody = newOptionsList.map((op, idx) => {
+      let optionVisibility = false;
       return (
         <tr key={op.id}>
           <TableRow
@@ -563,6 +564,7 @@ class TableView extends Component {
             deleteANoteFromOption={FirebaseStore.deleteANoteFromAnOption}
             shouldShowNotes={this.state.shouldShowNotes}
             makeInteractionbox={this.makeInteractionbox}
+            invisible={optionVisibility}
             />
             {
               newRequirementsList.map((rq, index) => {
@@ -657,6 +659,7 @@ class TableView extends Component {
       );
     });
     let TableBodyOverlay = newOptionsList.map((op,idx) => {
+      let optionVisibility = true;
       return (
         <tr
         key={op.id}
@@ -679,6 +682,7 @@ class TableView extends Component {
           deleteANoteFromOption={FirebaseStore.deleteANoteFromAnOption}
           shouldShowNotes={this.state.shouldShowNotes}
           makeInteractionbox={this.makeInteractionbox}
+          invisible={optionVisibility}
           />
         </tr>
       )});
@@ -708,6 +712,121 @@ class TableView extends Component {
         }
       </tr>
     );
+    let invisibleIconOverlay = newOptionsList.map((op, idx) => {
+      let optionVisibility = false;
+      return (
+        <tr key={op.id}>
+          <TableRow
+            op={op}
+            index={idx}
+            moveRow={this.moveRow}
+            inactiveOpacity={inactiveOpacity}
+            switchStarStatusOfOption={this.switchStarStatusOfOption}
+            switchHideStatusOfAnOption={this.switchHideStatusOfAnOption}
+            switchUsedStatusOfOption={this.switchUsedStatusOfOption}
+            newRequirementsList={newRequirementsList}
+            pieces={this.state.pieces}
+            options={this.state.options}
+            requirements={this.state.requirements}
+            updateOptionName={FirebaseStore.updateOptionName}
+            addANoteToOption={FirebaseStore.addANoteToAnOption}
+            deleteANoteFromOption={FirebaseStore.deleteANoteFromAnOption}
+            shouldShowNotes={this.state.shouldShowNotes}
+            makeInteractionbox={this.makeInteractionbox}
+            invisible={optionVisibility}
+            />
+            {
+              newRequirementsList.map((rq, index) => {
+                // find all pieces in the piecesList that has option id = op.id and requirement id = rq.id
+                let piecesInThisCell = [];
+                for (let pKey in this.state.pieces) {
+                  let piece = this.state.pieces[pKey];
+                  let attitudeList = piece.attitudeList;
+                  if (attitudeList !== undefined) {
+                    let attitudeRequirementPairs = attitudeList[op.id];
+                    if (attitudeRequirementPairs !== undefined) {
+                      let attitude = attitudeRequirementPairs[rq.id];
+                      if (attitude !== undefined) {
+                        piecesInThisCell.push({
+                          ...piece,
+                          id: pKey,
+                          attitude: attitude
+                        })
+                      }
+                    }
+                  }
+                }
+                piecesInThisCell = reverse(sortBy(piecesInThisCell, ['attitude']));
+
+                return (
+                  <td key={rq.id} style={{
+                    opacity: rq.hide === true || op.hide === true ? `${inactiveOpacity}` : '1',
+                  }}>
+                    <div style={{display:'flex', flexWrap:'wrap', opacity:'0'}}>
+                      { piecesInThisCell.length > 0 ?
+                        piecesInThisCell.map((p, idx) => {
+                        let thumb = null;
+                        switch (p.attitude) {
+                          case 'good':  thumb = (<ThumbV1 type='up' />); break;
+                          case 'bad':   thumb = (<ThumbV1 type='down' />); break;
+                          case 'idk':   thumb = (<QuestionMark />); break;
+                          default: break;
+                        }
+
+                        return (
+                          <Aux key={`${p.id}${op.id}${rq.id}`}>
+                            <div
+                              className={[styles.AttitudeInTableCell].join(' ')}
+                              data-tip
+                              data-for={`${p.id}${op.id}${rq.id}`}>
+                              {thumb}
+                            </div>
+                            <ReactTooltip
+                              place="right"
+                              type="light"
+                              effect="solid"
+                              id={`${p.id}${op.id}${rq.id}`}
+                              className={styles.TooltipOverAttitude}
+                              getContent={() => {
+                                return (
+                                  <SnippetCard
+                                    id={p.id}
+                                    type={p.type}
+                                    isInTableView={true}
+                                    allPieces={this.state.pieces}
+                                    options={this.state.options}
+                                    requirements={this.state.requirements}
+                                    status={true}
+                                    pieceIds={p.type === SNIPPET_TYPE.PIECE_GROUP ? p.pieceIds : []}
+                                    title={p.type === SNIPPET_TYPE.PIECE_GROUP ? p.name : p.title}
+                                    texts={p.type === SNIPPET_TYPE.PIECE_GROUP ? p.name : p.texts}
+                                    name={p.type === SNIPPET_TYPE.PIECE_GROUP ? null : (new URL(p.url)).hostname}
+                                    link={p.url}
+                                    icon={p.url}
+                                    htmls={p.htmls}
+                                    timestamp={p.timestamp}
+                                    postTags={p.postTags}
+                                    notes={p.notes}
+                                    codeUseInfo={p.codeUseInfo}
+                                    attitudeList={p.attitudeList}
+                                    makeInteractionBox={(event, id) => this.makeInteractionbox(event, id)
+                                    }/>
+                                );
+                              }}>
+
+                            </ReactTooltip>
+                          </Aux>
+                        );
+
+                      }): null}
+                    </div>
+                  </td>
+                );
+              })
+            }
+        </tr>
+      );
+    });
 
     let modal = null;
     if (this.state.showModal) {
@@ -786,16 +905,16 @@ class TableView extends Component {
                     onScroll={(event) => this.scrollTable(event)}>
       <table className={[styles.Overlay, styles.ComparisonTable].join(' ')}>
       <thead style={{ opacity: '0'}}>{emptyHeader}</thead>
-      <tbody style={{ opacity: '0'}}>{TableBodyOverlay}</tbody>
+      <tbody style={{ opacity: '1'}}>{invisibleIconOverlay}</tbody>
       </table>
       </div>
 
       <div style={{opacity: '1', zIndex: '44', position: 'absolute', top: '0', left: '0',
                     maxWidth: '90vw', maxHeight: '50vw',
                     overflowY:'hidden', overflowX:'hidden'}}>
-      <table className={[styles.Overlay, styles.ComparisonTable].join(' ')}>
+      <table className={[styles.Overlay].join(' ')}>
       <thead style={{ opacity: '1'}}>{emptyHeader}</thead>
-      <tbody style={{ opacity: '0'}}>{newTableBody}</tbody>
+      <tbody style={{ visibility: 'hidden'}}>{newTableBody}</tbody>
       </table>
       </div>
       </div>

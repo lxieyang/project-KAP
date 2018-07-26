@@ -371,16 +371,29 @@
 }
 
 .Overlay {
+  border-collapse: collapse;
   border-spacing: 0px;
-  /* opacity: 1; */
-  /* position: absolute; */
-  /* top: 0; */
-  /* z-index: 200; */
-  /* width: 95vw;
-  height: 50vw;
-  overflow: scroll; */
+  margin: 0px;
+
+}
+.Overlay th {
+  font-weight: 500;
+  position: sticky;
+  top: 0;
+  background-color: rgba(255,255,255,1);
+  vertical-align: bottom;
+  z-index: 32;
 }
 
+.Overlay tr {
+  border-bottom: 1px transparent #ddd;
+}
+
+/* .ComparisonTable th, */
+.Overlay td {
+  padding: 8px;
+  text-align: left;
+}
 
 .PieceGroupNameContainer {
   text-shadow: 1px 1px 1px rgba(0,0,0,0.15);
@@ -502,6 +515,7 @@ table.ComparisonTable {
   padding: 8px;
   text-align: left;
 }
+
 
 
 /*
