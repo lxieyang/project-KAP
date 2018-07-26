@@ -5,6 +5,9 @@ import { withRouter } from 'react-router-dom';
 import qs from 'query-string';
 import {Collapse} from 'react-collapse';
 import Aux from '../../../../../hoc/Aux/Aux';
+
+import fasListAlt from '@fortawesome/fontawesome-free-solid/faListAlt';
+import fasFlagCheckered from '@fortawesome/fontawesome-free-solid/faFlagCheckered';
 import faPlus from '@fortawesome/fontawesome-free-solid/faPlus';
 import FontAwesomeIcon from '@fortawesome/react-fontawesome';
 import farSquare from '@fortawesome/fontawesome-free-regular/faSquare';
@@ -54,7 +57,8 @@ class TableView extends Component {
     showModal: false,
     modalPieceId: '',
     tableviewisOpen: true,
-    readModeisOn: true
+    readModeisOn: true,
+
   }
 
   UNSAFE_componentWillReceiveProps (nextProps) {
@@ -71,6 +75,7 @@ class TableView extends Component {
     if (event.key === 'Escape') {
       this.dismissModal();
     }
+
   }
 
   componentDidMount () {
@@ -86,6 +91,19 @@ class TableView extends Component {
 
       } else {
         this.setState({showModal: false});
+      }
+    });
+
+    document.body.addEventListener('keyup', (event) => {
+      if(document.getElementById('addInput') === document.activeElement && event.keyCode === 13) {
+        // console.log('enter on option');
+        this.submitOption(event);
+        document.getElementById('addInput').value='';
+      }
+      if(document.getElementById('addCriterion') === document.activeElement && event.keyCode === 13) {
+        // console.log('enter on criterion');
+        this.submitCriterion(event);
+        document.getElementById('addCriterion').value='';
       }
     });
   }
@@ -490,6 +508,14 @@ class TableView extends Component {
     }
   }
 
+  submitOption (event) {
+    // console.log('option Heard',event.target.value);
+    FirebaseStore.addAnOptionForCurrentTask(event.target.value);
+  }
+  submitCriterion (event) {
+    // console.log('option Heard',event.target.value);
+    FirebaseStore.addARequirementForCurrentTask(event.target.value);
+  }
   render () {
 
     // let pieceViewOption = (
@@ -510,18 +536,48 @@ class TableView extends Component {
     let newOptionsList = this.state.optionsList; // this.getOrderedOptionListFromState();
     let newTableHeader = (
       <tr>
-        <th>
-          <div className={styles.ConfigurationLine}>
-              <div className={styles.addCriterion}
-              onMouseUp={(event) => this.submitNewlyDroppedText(event,'RQ')}
-              onDragOver={(event) => this.allowDrop(event)}>
-              <FontAwesomeIcon icon={faPlus}/>
-              </div>
-            </div>
-            <div className={styles.addOption}>
-            <FontAwesomeIcon icon={faPlus}/>
-            </div>
-        </th>
+        <td className={styles.addButtons}>
+        <FontAwesomeIcon icon={faPlus} style={{visibility:'hidden'}}/>
+        <br></br>
+        <br></br>
+        <FontAwesomeIcon icon={fasFlagCheckered} className={styles.addCriterion}/>  &nbsp;
+        <input id='addCriterion' type="text" name="firstname" placeholder={'Add a Criterion'}
+        className={styles.Input}
+
+        />
+        <br></br>
+        <br></br>
+        <FontAwesomeIcon icon={fasListAlt} className={styles.addOption}/> &nbsp;
+        <input id='addInput' type="text" name="option" placeholder={'Add an Option'}
+        className={styles.Input} ref={(input) => { this.OptionInput = input; }}
+        onSubmit={(event) => this.submitOption(event)}/>
+
+        </td>
+
+        {
+          newRequirementsList.map((rq, idx) => {
+            let isVisible = true;
+            return (
+              <TableHeader
+                key={rq.id}
+                rq={rq}
+                index={idx}
+                moveHeader={this.moveHeader}
+                inactiveOpacity={inactiveOpacity}
+                switchStarStatusOfRequirement={this.switchStarStatusOfRequirement}
+                switchHideStatusOfARequirement={this.switchHideStatusOfARequirement}
+                updateRequirementName={FirebaseStore.updateRequirementName}
+                isVisible={isVisible}
+                />
+            );
+          })
+        }
+      </tr>
+    );
+    let viewTableHeader = (
+      <tr>
+        <td className={styles.addButtons}>
+      </td>
 
         {
           newRequirementsList.map((rq, idx) => {
@@ -544,7 +600,7 @@ class TableView extends Component {
       </tr>
     );
     let newTableBody = newOptionsList.map((op, idx) => {
-      let optionVisibility = false;
+      let optionVisibility = true;
       return (
         <tr key={op.id}>
           <TableRow
@@ -659,8 +715,8 @@ class TableView extends Component {
       );
     });
     let TableBodyOverlay = newOptionsList.map((op,idx) => {
-      let optionVisibility = true;
-      return (
+    let optionVisibility = true;
+    return (
         <tr
         key={op.id}
         style={{position:'relative',backgroundColor:'rgba(255,255,255,1)'}}
@@ -827,7 +883,121 @@ class TableView extends Component {
         </tr>
       );
     });
+    let invisibleOptionsOverlay = newOptionsList.map((op, idx) => {
+      let optionVisibility = false;
+      return (
+        <tr key={op.id}>
+          <TableRow
+            op={op}
+            index={idx}
+            moveRow={this.moveRow}
+            inactiveOpacity={inactiveOpacity}
+            switchStarStatusOfOption={this.switchStarStatusOfOption}
+            switchHideStatusOfAnOption={this.switchHideStatusOfAnOption}
+            switchUsedStatusOfOption={this.switchUsedStatusOfOption}
+            newRequirementsList={newRequirementsList}
+            pieces={this.state.pieces}
+            options={this.state.options}
+            requirements={this.state.requirements}
+            updateOptionName={FirebaseStore.updateOptionName}
+            addANoteToOption={FirebaseStore.addANoteToAnOption}
+            deleteANoteFromOption={FirebaseStore.deleteANoteFromAnOption}
+            shouldShowNotes={this.state.shouldShowNotes}
+            makeInteractionbox={this.makeInteractionbox}
+            invisible={optionVisibility}
+            />
+            {
+              newRequirementsList.map((rq, index) => {
+                // find all pieces in the piecesList that has option id = op.id and requirement id = rq.id
+                let piecesInThisCell = [];
+                for (let pKey in this.state.pieces) {
+                  let piece = this.state.pieces[pKey];
+                  let attitudeList = piece.attitudeList;
+                  if (attitudeList !== undefined) {
+                    let attitudeRequirementPairs = attitudeList[op.id];
+                    if (attitudeRequirementPairs !== undefined) {
+                      let attitude = attitudeRequirementPairs[rq.id];
+                      if (attitude !== undefined) {
+                        piecesInThisCell.push({
+                          ...piece,
+                          id: pKey,
+                          attitude: attitude
+                        })
+                      }
+                    }
+                  }
+                }
+                piecesInThisCell = reverse(sortBy(piecesInThisCell, ['attitude']));
 
+                return (
+                  <td key={rq.id} style={{
+                    opacity: rq.hide === true || op.hide === true ? `${inactiveOpacity}` : '1',
+                  }}>
+                    <div className={styles.AttitudeThumbInTableCellContainer}>
+                      { piecesInThisCell.length > 0 ?
+                        piecesInThisCell.map((p, idx) => {
+                        let thumb = null;
+                        switch (p.attitude) {
+                          case 'good':  thumb = (<ThumbV1 type='up' />); break;
+                          case 'bad':   thumb = (<ThumbV1 type='down' />); break;
+                          case 'idk':   thumb = (<QuestionMark />); break;
+                          default: break;
+                        }
+
+                        return (
+                          <Aux key={`${p.id}${op.id}${rq.id}`}>
+                            <div
+                              className={[styles.AttitudeInTableCell].join(' ')}
+                              data-tip
+                              data-for={`${p.id}${op.id}${rq.id}`}>
+                              {thumb}
+                            </div>
+                            <ReactTooltip
+                              place="right"
+                              type="light"
+                              effect="solid"
+                              id={`${p.id}${op.id}${rq.id}`}
+                              className={styles.TooltipOverAttitude}
+                              getContent={() => {
+                                return (
+                                  <SnippetCard
+                                    id={p.id}
+                                    type={p.type}
+                                    isInTableView={true}
+                                    allPieces={this.state.pieces}
+                                    options={this.state.options}
+                                    requirements={this.state.requirements}
+                                    status={true}
+                                    pieceIds={p.type === SNIPPET_TYPE.PIECE_GROUP ? p.pieceIds : []}
+                                    title={p.type === SNIPPET_TYPE.PIECE_GROUP ? p.name : p.title}
+                                    texts={p.type === SNIPPET_TYPE.PIECE_GROUP ? p.name : p.texts}
+                                    name={p.type === SNIPPET_TYPE.PIECE_GROUP ? null : (new URL(p.url)).hostname}
+                                    link={p.url}
+                                    icon={p.url}
+                                    htmls={p.htmls}
+                                    timestamp={p.timestamp}
+                                    postTags={p.postTags}
+                                    notes={p.notes}
+                                    codeUseInfo={p.codeUseInfo}
+                                    attitudeList={p.attitudeList}
+                                    makeInteractionBox={(event, id) => this.makeInteractionbox(event, id)
+                                    }/>
+                                );
+                              }}>
+
+                            </ReactTooltip>
+                          </Aux>
+                        );
+
+                      }): null}
+                    </div>
+                  </td>
+                );
+              })
+            }
+        </tr>
+      );
+    });
     let modal = null;
     if (this.state.showModal) {
       let piece = this.props.task.pieces[this.state.modalPieceId];
@@ -885,8 +1055,8 @@ class TableView extends Component {
                             maxWidth: '90vw', maxHeight: '50vw',
                             overflowY:'scroll', overflowX:'scroll'}}>
       <table className={styles.ComparisonTable}>
-      <thead style={{ opacity: '1'}}>{newTableHeader}</thead>
-      <tbody style={{ opacity: '1'}}>{newTableBody}</tbody>
+      <thead style={{ opacity: '1'}}>{viewTableHeader}</thead>
+      <tbody style={{ opacity: '1'}}>{invisibleOptionsOverlay}</tbody>
       </table>
       </div>
 
@@ -894,7 +1064,7 @@ class TableView extends Component {
                     maxWidth: '90vw', maxHeight: '50vw',
                     overflowY:'scroll', overflowX:'scroll'}}>
       <table className={[styles.Overlay, styles.ComparisonTable].join(' ')}>
-        <thead style={{opacity:'0'}}>{newTableHeader}</thead>
+        <thead style={{opacity:'0'}}>{viewTableHeader}</thead>
         <tbody style={{opacity:'1'}}>{TableBodyOverlay}</tbody>
       </table>
       </div>
@@ -914,7 +1084,7 @@ class TableView extends Component {
                     overflowY:'hidden', overflowX:'hidden'}}>
       <table className={[styles.Overlay].join(' ')}>
       <thead style={{ opacity: '1'}}>{emptyHeader}</thead>
-      <tbody style={{ visibility: 'hidden'}}>{newTableBody}</tbody>
+      <tbody style={{ visibility: 'hidden'}}>{invisibleOptionsOverlay}</tbody>
       </table>
       </div>
       </div>
@@ -960,13 +1130,13 @@ class TableView extends Component {
                 </div>
                 <div style={{margin:'0px 0px 0px 20px', textDecoration: this.state.readModeisOn ? 'underline' : 'none'}}
                   onClick={(event) => this.switchTableMode(event)}>
-                  Read
+                  View
                 </div>
                 <div>|
                 </div>
                 <div style={{margin:'0px 20px 0px 0px', textDecoration: this.state.readModeisOn ? 'none' : 'underline'}}
                 onClick={(event) => this.switchTableMode(event)}>
-                  Write
+                  Edit
                 </div>
               </div>
               <Collapse isOpened={this.state.tableviewisOpen} springConfig={{stiffness: 700, damping: 50}}>

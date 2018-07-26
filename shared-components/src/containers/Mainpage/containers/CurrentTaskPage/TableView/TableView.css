@@ -3,12 +3,21 @@
   /* width: 95%; */
 }
 
-.addOption {
-  color: orange;
+.addButtons {
+  padding-left: 1rem;
+  vertical-align: middle;
+  align: left;
 }
 
 .addCriterion {
   color: #4E8EF9;
+  /* position: absolute;
+  left: 0;
+  top: 0; */
+}
+
+.addOption {
+  color: orange;
 }
 
 .Active {
@@ -287,7 +296,11 @@
   left: 4px;
 }
 
+.Input {
+  font-size: 1rem;
+  border: 1px transparent #ddd;
 
+}
 
 .PieceNameBadgeContainer {
   margin-right: 8px;
@@ -389,7 +402,6 @@
   border-bottom: 1px transparent #ddd;
 }
 
-/* .ComparisonTable th, */
 .Overlay td {
   padding: 8px;
   text-align: left;
@@ -503,7 +515,7 @@ table.ComparisonTable {
   top: 0;
   background-color: rgba(255,255,255,1);
   vertical-align: bottom;
-  z-index: 32;
+  z-index: 44;
 }
 
 .ComparisonTable tr {

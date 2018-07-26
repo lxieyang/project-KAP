@@ -133,7 +133,6 @@ class TableRow extends Component {
   render () {
     const { op, index, inactiveOpacity, isDragging, connectDragSource, connectDropTarget } = this.props;
     const opacity = isDragging ? 0 : 1;
-    console.log('visibility', this.props.invisible)
     return connectDragSource(connectDropTarget(
         <td>
           <div
