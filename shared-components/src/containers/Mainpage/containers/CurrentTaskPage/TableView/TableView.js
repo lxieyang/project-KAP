@@ -512,6 +512,7 @@ class TableView extends Component {
     // console.log('option Heard',event.target.value);
     FirebaseStore.addAnOptionForCurrentTask(event.target.value);
   }
+
   submitCriterion (event) {
     // console.log('option Heard',event.target.value);
     FirebaseStore.addARequirementForCurrentTask(event.target.value);
@@ -1073,7 +1074,7 @@ class TableView extends Component {
                     maxWidth: '90vw', maxHeight: '50vw',
                     overflowY:'scroll', overflowX:'scroll'}}
                     onScroll={(event) => this.scrollTable(event)}>
-      <table className={[styles.Overlay, styles.ComparisonTable].join(' ')}>
+      <table className={[styles.Overlay].join(' ')}>
       <thead style={{ opacity: '0'}}>{emptyHeader}</thead>
       <tbody style={{ opacity: '1'}}>{invisibleIconOverlay}</tbody>
       </table>
@@ -1089,7 +1090,6 @@ class TableView extends Component {
       </div>
       </div>
   );
-
 
     return (
       <Aux>

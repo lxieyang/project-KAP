@@ -6,7 +6,7 @@
 .addButtons {
   padding-left: 1rem;
   vertical-align: middle;
-  align: left;
+  align: right;
 }
 
 .addCriterion {
@@ -85,7 +85,7 @@
 }
 
 .BackDrop {
-  z-index: 9999;
+  z-index: 10;
   position: fixed;
   top: 0;
   left: 0;
@@ -398,10 +398,6 @@
   z-index: 32;
 }
 
-.Overlay tr {
-  border-bottom: 1px transparent #ddd;
-}
-
 .Overlay td {
   padding: 8px;
   text-align: left;
@@ -526,6 +522,7 @@ table.ComparisonTable {
 .ComparisonTable td {
   padding: 8px;
   text-align: left;
+
 }
 
 
