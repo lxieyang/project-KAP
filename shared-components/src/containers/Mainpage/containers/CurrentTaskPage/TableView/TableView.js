@@ -156,6 +156,7 @@ class TableView extends Component {
       return {tableviewisOpen: !prevState.tableviewisOpen};
     });
   }
+  // syncing scrolling for the two tables https://jsfiddle.net/1tv8bkyc/8/
   scrollTable = (event) => {
     $('#top').on('scroll', function () {
           $('#middle').scrollTop($(this).scrollTop());
@@ -542,7 +543,7 @@ class TableView extends Component {
         <br></br>
         <br></br>
         <FontAwesomeIcon icon={fasFlagCheckered} className={styles.addCriterion}/>  &nbsp;
-        <input id='addCriterion' type="text" name="firstname" placeholder={'Add a Criterion'}
+        <input id='addCriterion' type="text" placeholder={'Add a Criterion'}
         className={styles.Input}
 
         />
@@ -1039,7 +1040,7 @@ class TableView extends Component {
     }
 
     let writeContent = (
-      <div style={{zIndex: (this.state.readContent) ? '10000' : '-10000'}}>
+      <div style={{}}>
       <table className={styles.ComparisonTable}>
         <thead>
           {newTableHeader}
