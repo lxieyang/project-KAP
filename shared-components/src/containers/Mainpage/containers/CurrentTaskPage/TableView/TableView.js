@@ -53,12 +53,11 @@ class TableView extends Component {
     requirementsList: [],
     piecesList: [],
     isDetailed: true,
-    shouldShowNotes: this.props.task.showOptionNotes !== undefined ? this.props.task.showOptionNotes : false,
+    shouldShowNotes: true,
     showModal: false,
     modalPieceId: '',
     tableviewisOpen: true,
     readModeisOn: true,
-
   }
 
   UNSAFE_componentWillReceiveProps (nextProps) {
@@ -295,10 +294,11 @@ class TableView extends Component {
   }
 
   showNotesChangedHandler = (event) => {
-    // this.setState(prevState => {
-    //   return {shouldShowNotes: !prevState.shouldShowNotes};
-    // });
+    this.setState(prevState => {
+      return {shouldShowNotes: !prevState.shouldShowNotes};
+    });
 
+    // this.setState({shouldShowNotes:!shouldShowNotes});
     FirebaseStore.switchShowOptionNotesStatus();
   }
 
@@ -1117,27 +1117,28 @@ class TableView extends Component {
                     : <FontAwesomeIcon icon={fasChevronDown} />
                   }
                 </div>
-                  <div className={styles.Label}>
-                  <span className={styles.notes}>Show Notes</span>
-                  </div>
-                  <div className={styles.Slider}>
-                    {
-                      this.state.shouldShowNotes
-                      ? <FontAwesomeIcon icon={fasToggleOn} className={[styles.SliderIcon, styles.SliderOn].join(' ')}/>
-                      : <FontAwesomeIcon icon={fasToggleOff} className={[styles.SliderIcon, styles.SliderOff].join(' ')}/>
-                    }
-                  </div>
+                { /* The show notes handler was not really working so it is temp. commented out
+                <div onClick={(event) => this.showNotesChangedHandler(event)}>
+                  {
+                    this.state.shouldShowNotes
+                    ? <span>Hide Notes</span>
+                    : <span>Show Notes</span>
+                  }
                 </div>
-                <div style={{margin:'0px 0px 0px 20px', textDecoration: this.state.readModeisOn ? 'underline' : 'none'}}
-                  onClick={(event) => this.switchTableMode(event)}>
-                  View
-                </div>
-                <div>|
-                </div>
-                <div style={{margin:'0px 20px 0px 0px', textDecoration: this.state.readModeisOn ? 'none' : 'underline'}}
+                */}
+              </div>
+
+              <div style={{margin:'0px 0px 0px 20px', textDecoration: this.state.readModeisOn ? 'underline' : 'none'}}
                 onClick={(event) => this.switchTableMode(event)}>
-                  Edit
-                </div>
+                View
+              </div>
+
+              <div>&nbsp;|&nbsp;
+              </div>
+              <div style={{margin:'0px 20px 0px 0px', textDecoration: this.state.readModeisOn ? 'none' : 'underline'}}
+              onClick={(event) => this.switchTableMode(event)}>
+                Edit
+              </div>
               </div>
               <Collapse isOpened={this.state.tableviewisOpen} springConfig={{stiffness: 700, damping: 50}}>
               <div className={styles.Content}>
