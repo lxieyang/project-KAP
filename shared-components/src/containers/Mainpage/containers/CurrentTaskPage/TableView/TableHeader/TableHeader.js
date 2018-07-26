@@ -10,7 +10,7 @@ import { DragSource, DropTarget } from 'react-dnd';
 import ordinal from 'ordinal';
 import { debounce } from 'lodash';
 import styles from './TableHeader.css';
-
+import Styles from '../TableView.css';
 
 const headerSource = {
   beginDrag(props) {
@@ -95,10 +95,10 @@ class TableHeader extends Component {
   }
 
   render () {
-    const { rq, index, inactiveOpacity, isDragging, connectDragSource, connectDropTarget } = this.props;
-    const opacity = isDragging ? 0 : 1;
+    const { rq, index, inactiveOpacity, isDragging, connectDragSource, connectDropTarget, isVisible } = this.props;
+    const opacity = (isDragging) ? 0 : 1;
     return connectDragSource(connectDropTarget(
-      <th style={{ opacity }}>
+      <th style={{ opacity, visibility : isVisible ? 'visible' : 'hidden'}}>
         <div
             className={styles.ShowHideRequirement}
             onClick={(event) => this.props.switchHideStatusOfARequirement(index, rq.id, rq.hide)}>

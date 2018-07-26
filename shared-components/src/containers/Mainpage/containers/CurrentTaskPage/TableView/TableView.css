@@ -3,6 +3,88 @@
   /* width: 95%; */
 }
 
+.addOption {
+  color: orange;
+}
+
+.addCriterion {
+  color: #4E8EF9;
+}
+
+.Active {
+  opacity: 1;
+}
+
+
+.Attitude {
+  font-size: 1.8rem;
+  margin-right: 5px;
+  width: 40px;
+  height: 40px;
+  transition: all 0.1s ease-in;
+}
+
+.Attitude:hover {
+  z-index: 300;
+  transform: scale(1.05);
+}
+
+
+.AttitudeSwitchContainer {
+  opacity: 1 !important;
+  background-color: white !important;
+  pointer-events: auto !important;
+}
+
+/* .AttitudeSwitchContainer:hover {
+  visibility: visible !important;
+  opacity: 1 !important;
+} */
+
+.AttitudeSwitcher {
+  cursor: pointer;
+  font-size: 1.8rem;
+  width: 40px;
+  height: 40px;
+  margin: 8px 0px;
+  transition: all 0.1s ease-in;
+}
+
+.InactiveAttitude {
+  filter: grayscale(100%);
+  opacity: 0.5;
+}
+
+.ActiveAttitude {
+  filter: grayscale(0%) !important;
+  opacity: 1 !important;
+}
+
+.AttitudeSwitcher:hover {
+  filter: grayscale(0%);
+  opacity: 1;
+}
+
+.Inactive {
+  opacity: 0.3;
+}
+
+
+.Bullet {
+  margin-right: 4px;
+  opacity:0.5;
+}
+
+.BackDrop {
+  z-index: 9999;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: black;
+  opacity: 0.8;
+}
 .ConfigureRow {
   display: flex;
   align-items: center;
@@ -17,15 +99,31 @@
   justify-content: space-between;
 }
 
-.SliderIcon {
-  font-size: 1.1rem;
+.Content {
+  display: table;
+  margin: 0px 50px;
+}
+
+.HeaderCollapseButton {
+  margin-left: 15px;
   cursor: pointer;
 }
 
-.SliderOn {
-  color: #5cb85c;
+.HeaderNameContainer {
+  display: flex;
+  align-items: center;
+}
+.Label {
+  margin: 0px 20px;
 }
 
+.HeaderName {
+  font-weight: 600;
+  cursor: pointer;
+}
+.Label {
+
+}
 .OptionList {
   margin-top: 10px;
   display: flex;
@@ -48,98 +146,6 @@
 .PieceConfigure {
   display: flex;
   align-items: center;
-}
-
-.Section {
-  width: 100%;
-  /* background-color: rgba(0,0,0,0.1); */
-  margin: 0px 0px;
-  padding: 0px;
-}
-
-.Section .Header {
-  font-size: 1.5rem;
-  display: flex;
-  align-items: center;
-  padding-left: 2.5rem;
-  /* position: fixed; */
-}
-
-.addOption {
-  color: orange;
-}
-
-.addCriterion {
-  color: #4E8EF9;
-}
-span {
-  white-space: pre-wrap;
-}
-
-.HeaderCollapseButton {
-  margin-left: 15px;
-  cursor: pointer;
-}
-
-.HeaderNameContainer {
-  display: flex;
-  align-items: center;
-}
-
-.HeaderName {
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.Active {
-  opacity: 1;
-}
-
-.Inactive {
-  opacity: 0.3;
-}
-
-.Content {
-  margin: 0px 50px;
-  max-height: 40rem;
-  max-width: 120rem;
-  overflow-y:auto;
-  overflow-x:auto;
-}
-
-table.ComparisonTable {
-  border-collapse: collapse;
-}
-/*
-tr:nth-child(even) {background-color: #f2f2f2;} */
-
-
-.ComparisonTable th {
-  font-weight: 500;
-  position: sticky;
-  top: 0;
-  background-color: rgba(255,255,255,1);
-  z-index: 6;
-}
-
-.ComparisonTable tr {
-  border-bottom: 1px solid #ddd;
-}
-
-/* .ComparisonTable th, */
-.ComparisonTable td {
-  padding: 8px;
-  text-align: left;
-}
-
-.ComparisonTable .stickyCol {
-  padding: 8px;
-  text-align: left;
-  position: sticky; 
-  position: -webkit-sticky;
-  float:left;
-  top: 0;
-  z-index: 5;
 }
 
 .PieceNameContainer {
@@ -189,14 +195,6 @@ tr:nth-child(even) {background-color: #f2f2f2;} */
 .ShowHidePieceIcon:hover {
   opacity: 0.8;
 }
-
-
-
-
-
-
-
-
 
 .ShowHideRequirementContainer {
   color: inherit;
@@ -283,15 +281,6 @@ tr:nth-child(even) {background-color: #f2f2f2;} */
 }
 
 
-
-
-
-
-
-
-
-
-
 .showHideOption {
   position: absolute;
   top: 4px;
@@ -353,55 +342,19 @@ tr:nth-child(even) {background-color: #f2f2f2;} */
   outline: none;
 }
 
-.Attitude {
-  font-size: 1.8rem;
-  margin-right: 5px;
-  width: 40px;
-  height: 40px;
-  transition: all 0.1s ease-in;
+.ModalContentBackground {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 10000;
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  color: inherit;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
 }
-
-.Attitude:hover {
-  z-index: 300;
-  transform: scale(1.05);
-}
-
-
-.AttitudeSwitchContainer {
-  opacity: 1 !important;
-  background-color: white !important;
-  pointer-events: auto !important;
-}
-
-/* .AttitudeSwitchContainer:hover {
-  visibility: visible !important;
-  opacity: 1 !important;
-} */
-
-.AttitudeSwitcher {
-  cursor: pointer;
-  font-size: 1.8rem;
-  width: 40px;
-  height: 40px;
-  margin: 8px 0px;
-  transition: all 0.1s ease-in;
-}
-
-.InactiveAttitude {
-  filter: grayscale(100%);
-  opacity: 0.5;
-}
-
-.ActiveAttitude {
-  filter: grayscale(0%) !important;
-  opacity: 1 !important;
-}
-
-.AttitudeSwitcher:hover {
-  filter: grayscale(0%);
-  opacity: 1;
-}
-
 
 .NotMarkedRelated {
   background-color: rgb(242,242,242);
@@ -417,35 +370,16 @@ tr:nth-child(even) {background-color: #f2f2f2;} */
   max-width: 130px;
 }
 
-.BackDrop {
-  z-index: 9999;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: black;
-  opacity: 0.8;
+.Overlay {
+  border-spacing: 0px;
+  /* opacity: 1; */
+  /* position: absolute; */
+  /* top: 0; */
+  /* z-index: 200; */
+  /* width: 95vw;
+  height: 50vw;
+  overflow: scroll; */
 }
-
-.ModalContentBackground {
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 10000;
-  width: 100%;
-  height: 100%;
-  background: transparent;
-  color: inherit;
-  display: flex;
-  align-items: center;
-  justify-content: space-around;
-}
-
-
-
-
-
 
 
 .PieceGroupNameContainer {
@@ -484,11 +418,6 @@ tr:nth-child(even) {background-color: #f2f2f2;} */
   width: 95%;
 }
 
-.Bullet {
-  margin-right: 4px;
-  opacity:0.5;
-}
-
 .PieceContainerInPieceGroup {
 
 }
@@ -500,6 +429,31 @@ tr:nth-child(even) {background-color: #f2f2f2;} */
   padding: 0px 5px;
   border: 1px solid lightgray;
   word-wrap: break-word;
+}
+
+
+.Section {
+  width: 100%;
+  /* background-color: rgba(0,0,0,0.1); */
+  margin: 0px 0px;
+  padding: 0px;
+}
+
+.Section .Header {
+  font-size: 1.5rem;
+  display: flex;
+  align-items: center;
+  padding-left: 2.5rem;
+  /* position: fixed; */
+}
+
+.SliderIcon {
+  font-size: 1.1rem;
+  cursor: pointer;
+}
+
+.SliderOn {
+  color: #5cb85c;
 }
 
 .Tooltip {
@@ -517,4 +471,46 @@ tr:nth-child(even) {background-color: #f2f2f2;} */
 .Tooltip:hover {
   visibility: visible !important;
   opacity: 1 !important;
+}
+
+span {
+  white-space: pre-wrap;
+}
+
+table.ComparisonTable {
+  border-collapse: collapse;
+  margin: 0px 0px;
+
+}
+
+
+.ComparisonTable th {
+  font-weight: 500;
+  position: sticky;
+  top: 0;
+  background-color: rgba(255,255,255,1);
+  vertical-align: bottom;
+  z-index: 32;
+}
+
+.ComparisonTable tr {
+  border-bottom: 1px solid #ddd;
+}
+
+/* .ComparisonTable th, */
+.ComparisonTable td {
+  padding: 8px;
+  text-align: left;
+}
+
+
+/*
+tr:nth-child(even) {background-color: #f2f2f2;} */
+
+.stickyCol {
+  padding: 8px;
+  text-align: left;
+  display: table-column-group;
+  float:left;
+  z-index: 5;
 }

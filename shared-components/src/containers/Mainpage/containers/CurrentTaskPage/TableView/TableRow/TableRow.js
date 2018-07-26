@@ -14,8 +14,6 @@ import { findDOMNode } from 'react-dom';
 import { DragSource, DropTarget } from 'react-dnd';
 import Input from '../../../../../../components/UI/Input/Input';
 import styles from './TableRow.css';
-import Styles from '../TableView.css';
-
 
 const rowSource = {
   beginDrag(props) {
@@ -68,6 +66,7 @@ const rowTarget = {
     monitor.getItem().index = hoverIndex;
   },
 }
+// syncing scrolling for the two tables https://jsfiddle.net/1tv8bkyc/8/
 
 @DropTarget('TABLE_ROW', rowTarget, (connect, monitor) => ({
   connectDropTarget: connect.dropTarget(),
@@ -135,7 +134,7 @@ class TableRow extends Component {
     const { op, index, inactiveOpacity, isDragging, connectDragSource, connectDropTarget } = this.props;
     const opacity = isDragging ? 0 : 1;
     return connectDragSource(connectDropTarget(
-        <td className={Styles.stickyCol}>
+        <td>
           <div
             className={styles.ShowHideOption}
             onClick={(event) => this.props.switchHideStatusOfAnOption(index, op.id, op.hide)}>
@@ -146,6 +145,7 @@ class TableRow extends Component {
             }
           </div>
           <div style={{
+              visibility: this.props.invisible,
               display: 'flex',
               alignItems: 'center',
               padding: '5px',
@@ -221,6 +221,7 @@ class TableRow extends Component {
               </UnmountClosed>
             </div>
           </div>
+
         </td>
     ));
   }

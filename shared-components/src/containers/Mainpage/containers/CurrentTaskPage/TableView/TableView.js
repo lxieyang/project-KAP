@@ -1,5 +1,5 @@
+import $ from 'jquery';
 import React, { Component } from 'react';
-import { StickyTable, Row, Cell } from 'react-sticky-table';
 import { findDOMNode } from 'react-dom';
 import { withRouter } from 'react-router-dom';
 import qs from 'query-string';
@@ -53,7 +53,8 @@ class TableView extends Component {
     shouldShowNotes: this.props.task.showOptionNotes !== undefined ? this.props.task.showOptionNotes : false,
     showModal: false,
     modalPieceId: '',
-    tableviewisOpen: true
+    tableviewisOpen: true,
+    readModeisOn: true
   }
 
   UNSAFE_componentWillReceiveProps (nextProps) {
@@ -138,6 +139,16 @@ class TableView extends Component {
       return {tableviewisOpen: !prevState.tableviewisOpen};
     });
   }
+  scrollTable = (event) => {
+    $('#top').on('scroll', function () {
+          $('#middle').scrollTop($(this).scrollTop());
+          $('#bottom').scrollTop($(this).scrollTop());
+          $('#bottom').scrollLeft($(this).scrollLeft());
+        });
+  }
+  switchTableMode = (event) => {
+    this.setState({readModeisOn:!this.state.readModeisOn});
+  }
 
   getOrderedRequirementListFromState () {
     let { requirementsList } = this.state;
@@ -197,6 +208,7 @@ class TableView extends Component {
     updatedRequirementList[idx] = updatedRequirement;
     this.setState({requirementsList: updatedRequirementList});
   }
+
 
   // dismissModal = () => {
   //   this.setState({showModal: false});
@@ -371,11 +383,6 @@ class TableView extends Component {
     return {__html: htmlString};
   }
 
-
-
-
-
-
   /* For Dnd */
   moveHeader = (dragIndex, hoverIndex) => {
     const { requirementsList } = this.state;
@@ -484,6 +491,7 @@ class TableView extends Component {
   }
 
   render () {
+
     // let pieceViewOption = (
     //   <Aux>
     //     <div className={styles.Label}>
@@ -500,21 +508,10 @@ class TableView extends Component {
 
     let newRequirementsList = this.state.requirementsList; // this.getOrderedRequirementListFromState();
     let newOptionsList = this.state.optionsList; // this.getOrderedOptionListFromState();
-
     let newTableHeader = (
       <tr>
-        <th style={{verticalAlign: 'bottom'}}>
+        <th>
           <div className={styles.ConfigurationLine}>
-            <div className={styles.Label}>
-            <span className={styles.notes}>Show Notes</span>
-            </div>
-            <div className={styles.Slider}>
-              {
-                this.state.shouldShowNotes
-                ? <FontAwesomeIcon icon={fasToggleOn} className={[styles.SliderIcon, styles.SliderOn].join(' ')}/>
-                : <FontAwesomeIcon icon={fasToggleOff} className={[styles.SliderIcon, styles.SliderOff].join(' ')}/>
-              }
-            </div>
               <div className={styles.addCriterion}
               onMouseUp={(event) => this.submitNewlyDroppedText(event,'RQ')}
               onDragOver={(event) => this.allowDrop(event)}>
@@ -528,6 +525,7 @@ class TableView extends Component {
 
         {
           newRequirementsList.map((rq, idx) => {
+            let isVisible = true;
             return (
               <TableHeader
                 key={rq.id}
@@ -537,17 +535,17 @@ class TableView extends Component {
                 inactiveOpacity={inactiveOpacity}
                 switchStarStatusOfRequirement={this.switchStarStatusOfRequirement}
                 switchHideStatusOfARequirement={this.switchHideStatusOfARequirement}
-                updateRequirementName={FirebaseStore.updateRequirementName}/>
+                updateRequirementName={FirebaseStore.updateRequirementName}
+                isVisible={isVisible}
+                />
             );
           })
         }
       </tr>
     );
-
     let newTableBody = newOptionsList.map((op, idx) => {
       return (
-        <tr
-          key={op.id}>
+        <tr key={op.id}>
           <TableRow
             op={op}
             index={idx}
@@ -564,7 +562,8 @@ class TableView extends Component {
             addANoteToOption={FirebaseStore.addANoteToAnOption}
             deleteANoteFromOption={FirebaseStore.deleteANoteFromAnOption}
             shouldShowNotes={this.state.shouldShowNotes}
-            makeInteractionbox={this.makeInteractionbox}/>
+            makeInteractionbox={this.makeInteractionbox}
+            />
             {
               newRequirementsList.map((rq, index) => {
                 // find all pieces in the piecesList that has option id = op.id and requirement id = rq.id
@@ -589,7 +588,9 @@ class TableView extends Component {
                 piecesInThisCell = reverse(sortBy(piecesInThisCell, ['attitude']));
 
                 return (
-                  <td key={rq.id} style={{opacity: rq.hide === true || op.hide === true ? `${inactiveOpacity}` : '1'}}>
+                  <td key={rq.id} style={{
+                    opacity: rq.hide === true || op.hide === true ? `${inactiveOpacity}` : '1',
+                  }}>
                     <div className={styles.AttitudeThumbInTableCellContainer}>
                       { piecesInThisCell.length > 0 ?
                         piecesInThisCell.map((p, idx) => {
@@ -655,6 +656,58 @@ class TableView extends Component {
         </tr>
       );
     });
+    let TableBodyOverlay = newOptionsList.map((op,idx) => {
+      return (
+        <tr
+        key={op.id}
+        style={{position:'relative',backgroundColor:'rgba(255,255,255,1)'}}
+        >
+        <TableRow
+          op={op}
+          index={idx}
+          moveRow={this.moveRow}
+          inactiveOpacity={inactiveOpacity}
+          switchStarStatusOfOption={this.switchStarStatusOfOption}
+          switchHideStatusOfAnOption={this.switchHideStatusOfAnOption}
+          switchUsedStatusOfOption={this.switchUsedStatusOfOption}
+          newRequirementsList={newRequirementsList}
+          pieces={this.state.pieces}
+          options={this.state.options}
+          requirements={this.state.requirements}
+          updateOptionName={FirebaseStore.updateOptionName}
+          addANoteToOption={FirebaseStore.addANoteToAnOption}
+          deleteANoteFromOption={FirebaseStore.deleteANoteFromAnOption}
+          shouldShowNotes={this.state.shouldShowNotes}
+          makeInteractionbox={this.makeInteractionbox}
+          />
+        </tr>
+      )});
+    let emptyHeader = (
+      <tr>
+          <th>
+            <div className={styles.ConfigurationLine}>
+            </div>
+            </th>
+
+        {   newRequirementsList.map((rq, idx) => {
+            let isVisible = false;
+            return (
+              <TableHeader
+                key={rq.id}
+                rq={rq}
+                index={idx}
+                moveHeader={this.moveHeader}
+                inactiveOpacity={inactiveOpacity}
+                switchStarStatusOfRequirement={this.switchStarStatusOfRequirement}
+                switchHideStatusOfARequirement={this.switchHideStatusOfARequirement}
+                updateRequirementName={FirebaseStore.updateRequirementName}
+                isVisible={isVisible}
+                />
+            );
+          })
+        }
+      </tr>
+    );
 
     let modal = null;
     if (this.state.showModal) {
@@ -695,18 +748,59 @@ class TableView extends Component {
 
     }
 
+    let writeContent = (
+      <div style={{zIndex: (this.state.readContent) ? '10000' : '-10000'}}>
+      <table className={styles.ComparisonTable}>
+        <thead>
+          {newTableHeader}
+        </thead>
+        <tbody>
+          {newTableBody}
+        </tbody>
+      </table>
+      </div>
+    );
+    let readContent = (
+      <div style={{position: 'relative'}}>
+      <div id='bottom' style={{opacity:'1', zIndex: '15',borderSpacing: '0px',
+                            maxWidth: '90vw', maxHeight: '50vw',
+                            overflowY:'scroll', overflowX:'scroll'}}>
+      <table className={styles.ComparisonTable}>
+      <thead style={{ opacity: '1'}}>{newTableHeader}</thead>
+      <tbody style={{ opacity: '1'}}>{newTableBody}</tbody>
+      </table>
+      </div>
 
-    let content = (
-    <table className={styles.ComparisonTable}>
-      
-      <thead>
-        {newTableHeader}
-      </thead>
-      <tbody>
-        {newTableBody}
-      </tbody>
-    </table>
-);
+      <div id='middle' style={{zIndex: '30', position: 'absolute', top: '0',
+                    maxWidth: '90vw', maxHeight: '50vw',
+                    overflowY:'scroll', overflowX:'scroll'}}>
+      <table className={[styles.Overlay, styles.ComparisonTable].join(' ')}>
+        <thead style={{opacity:'0'}}>{newTableHeader}</thead>
+        <tbody style={{opacity:'1'}}>{TableBodyOverlay}</tbody>
+      </table>
+      </div>
+
+      <div id='top' style={{opacity: '1', zIndex: '45', position: 'absolute', top: '0', left: '0',
+                    maxWidth: '90vw', maxHeight: '50vw',
+                    overflowY:'scroll', overflowX:'scroll'}}
+                    onScroll={(event) => this.scrollTable(event)}>
+      <table className={[styles.Overlay, styles.ComparisonTable].join(' ')}>
+      <thead style={{ opacity: '0'}}>{emptyHeader}</thead>
+      <tbody style={{ opacity: '0'}}>{TableBodyOverlay}</tbody>
+      </table>
+      </div>
+
+      <div style={{opacity: '1', zIndex: '44', position: 'absolute', top: '0', left: '0',
+                    maxWidth: '90vw', maxHeight: '50vw',
+                    overflowY:'hidden', overflowX:'hidden'}}>
+      <table className={[styles.Overlay, styles.ComparisonTable].join(' ')}>
+      <thead style={{ opacity: '1'}}>{emptyHeader}</thead>
+      <tbody style={{ opacity: '0'}}>{newTableBody}</tbody>
+      </table>
+      </div>
+      </div>
+  );
+
 
     return (
       <Aux>
@@ -721,29 +815,49 @@ class TableView extends Component {
           */}
             <div
              className={styles.Header}>
-             <div className={styles.HeaderNameContainer}
+             <div className={styles.HeaderNameContainer}>
+                <div className={styles.HeaderName}
                 onClick={(event) => this.switchTableIsOpenStatus(event)}>
-                <div
-                className={styles.HeaderName}>
                  <span>Comparison Table</span>
                 </div>
-
-                <div
-                  className={styles.HeaderCollapseButton}>
+                <div className={styles.HeaderCollapseButton}
+                  onClick={(event) => this.switchTableIsOpenStatus(event)}>
                   {
                     this.state.tableviewisOpen
                     ? <FontAwesomeIcon icon={fasChevronUp} />
                     : <FontAwesomeIcon icon={fasChevronDown} />
                   }
                 </div>
-              </div>
+                  <div className={styles.Label}>
+                  <span className={styles.notes}>Show Notes</span>
+                  </div>
+                  <div className={styles.Slider}>
+                    {
+                      this.state.shouldShowNotes
+                      ? <FontAwesomeIcon icon={fasToggleOn} className={[styles.SliderIcon, styles.SliderOn].join(' ')}/>
+                      : <FontAwesomeIcon icon={fasToggleOff} className={[styles.SliderIcon, styles.SliderOff].join(' ')}/>
+                    }
+                  </div>
+                </div>
+                <div style={{margin:'0px 0px 0px 20px', textDecoration: this.state.readModeisOn ? 'underline' : 'none'}}
+                  onClick={(event) => this.switchTableMode(event)}>
+                  Read
+                </div>
+                <div>|
+                </div>
+                <div style={{margin:'0px 20px 0px 0px', textDecoration: this.state.readModeisOn ? 'none' : 'underline'}}
+                onClick={(event) => this.switchTableMode(event)}>
+                  Write
+                </div>
               </div>
               <Collapse isOpened={this.state.tableviewisOpen} springConfig={{stiffness: 700, damping: 50}}>
               <div className={styles.Content}>
-                {content}
+              {
+                this.state.readModeisOn? readContent: writeContent
+              }
+
               </div>
               </Collapse>
-
             {modal}
             </div>
 
