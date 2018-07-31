@@ -78,7 +78,7 @@ class SelectInteraction extends Component {
     }
 
     render () {
-
+      let optionText = this.state.canSubmitTask ? 'Added Option' : 'Option';
       return (
         <div className={styles.SelectInteractionContainer}>
         <div className={styles.Title}>
@@ -86,9 +86,7 @@ class SelectInteraction extends Component {
         </div>
         <div className={styles.ButtonContainer}>
 
-        {/*
-          Task Button begins
-          */}
+        {/* Task Button begins */}
         <div
         className={styles.Button}
         style={{width: '42px'}}
@@ -110,33 +108,25 @@ class SelectInteraction extends Component {
         </div>
         </div>
         <div className={styles.CheckmarkContainer}>
-        <div className={[styles.Checkmark,
-          (this.state.canSubmitTask
-            ? styles.CheckmarkSpin
-            : null)].join(' ')}></div>
+        <div className={[styles.Checkmark, (this.state.canSubmitTask ? styles.CheckmarkSpin: null)].join(' ')}>
+        </div>
         </div>
         </div>
 
-        {/*
-          Option Button begins
-          */}
+        {/* Option Button begins */}
         <div
         className={styles.Button}
         style={{width: '42px'}}
         onClick={(event) => this.collectButtonClickHandler('option')}>
         <div>
-        <div className={[styles.ButtonContentWrapper, (
-          this.state.canSubmitOption
-          ? styles.ButtonTextDisappear
-          : null
-        )].join(' ')}>
-        <div className={styles.ButtonIconWrapper}>
+        <div className={styles.ButtonContentWrapper}>
+        <div className={[styles.ButtonIconWrapper, (this.state.canSubmitOption ? styles.ButtonTextDisappear : null)].join(' ')}>
         <FontAwesomeIcon
         icon={fasListUl}
         className={styles.ButtonIcon} />
         </div>
         <div className={styles.ButtonText}>
-        Option
+        {optionText}
         </div>
         </div>
         </div>

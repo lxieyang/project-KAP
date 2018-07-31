@@ -1,5 +1,9 @@
+div {
+  font-size: inherit;
+}
+
 .SelectInteractionContainer {
-  font-size: 24px !important;
+  font-size: 24px;
   font-family: sans-serif;
   font-weight: 300;
   max-width: 300px;
@@ -32,6 +36,7 @@
 }
 
 .ButtonContainer {
+  font-size: 24px;
   display: flex;
   align-items: center;
   justify-content: space-around;
@@ -69,7 +74,7 @@
 
 .ButtonText {
   display: none;
-  font-size: 9px !important;
+  font-size: 9px;
   color: #fff;
   text-align: center;
 }
