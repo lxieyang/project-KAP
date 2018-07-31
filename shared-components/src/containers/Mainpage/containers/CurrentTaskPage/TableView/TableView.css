@@ -343,7 +343,8 @@
 .OptionNameContainer {
   display: block;
   overflow: hidden;
-  font-weight: 600;
+  /* font-weight: 600; */
+  font-weight: 300;
   text-overflow: ellipsis;
   max-width: 250px;
   max-height: 150px;

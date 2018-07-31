@@ -77,11 +77,12 @@ export const addTaskFromSearchTerm = async (searchTerm, tabId) => {
     for (let task of taskList) {
       // console.log(task.name.toLowerCase());
       if (task.name.toLowerCase() === searchTerm.toLowerCase()) {
-        console.log("same");
-        // set current task
-        switchCurrentTask(task.id);
-        // deleteTaskWithId(newtask.id);
-        // combineTasks(task.id, newtask.id, task.name.toLowerCase);
+        console.log("same task found");
+        // set current task to previous task with same search term
+        if (!(confirm('You have started a task with the same name before' + '\n' + 'To merge: select cancel' + '/n'+'To create new task: select OK '))) {
+          switchCurrentTask(task.id);
+        }
+
         return;
       }
     }

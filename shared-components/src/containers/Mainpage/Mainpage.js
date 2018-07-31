@@ -13,7 +13,7 @@ import fasArrowCircleRight from '@fortawesome/fontawesome-free-solid/faArrowCirc
 import * as appRoutes from '../../shared/routes';
 import HTML5Backend from 'react-dnd-html5-backend';
 import { DragDropContext } from 'react-dnd';
-import { 
+import {
   tasksRef,
   currentTaskIdRef,
   lastTaskIdRef,
@@ -44,6 +44,8 @@ class Mainpage extends Component {
   }
 
   UNSAFE_componentWillMount() {
+    // document.body.style.zoom = 0.67;
+
     this.removeAuthListerner = firebase.auth().onAuthStateChanged((user) => {
       if (user !== null) {
         setUserIdAndName(user.uid, user.displayName, user.photoURL);
@@ -95,7 +97,7 @@ class Mainpage extends Component {
     this.removeAuthListerner();
   }
 
-  componentDidMount () {  
+  componentDidMount () {
     window.isInKAP = true;
 
     document.title = APP_NAME_SHORT;
@@ -131,7 +133,7 @@ class Mainpage extends Component {
       }
     };
     window.parent.postMessage(JSON.stringify(msg), '*');
-    
+
     window.userId = userId;
     currentTaskIdRef.on('value', (snap) => {
       window.currentTaskId = snap.val();
@@ -177,21 +179,21 @@ class Mainpage extends Component {
         }
         transformedTasks.push({
           id: childSnapshot.key,
-          taskOngoing: 
+          taskOngoing:
             childSnapshot.val().taskOngoing === undefined
             ? true
             : childSnapshot.val().taskOngoing,
-          completionTimestamp: 
-            childSnapshot.val().taskOngoing === false 
-            ? childSnapshot.val().completionTimestamp 
+          completionTimestamp:
+            childSnapshot.val().taskOngoing === false
+            ? childSnapshot.val().completionTimestamp
             : null,
           displayName: childSnapshot.val().name,
           time: childSnapshot.val().timestamp,
           searchQueries: childSnapshot.val().searchQueries,
           showOptionNotes: childSnapshot.val().showOptionNotes,
           options: (
-            childSnapshot.val().options === undefined 
-            ? {} 
+            childSnapshot.val().options === undefined
+            ? {}
             : childSnapshot.val().options
           ),
           pieces: (
@@ -227,7 +229,7 @@ class Mainpage extends Component {
       let taskIds = transformedTasks.map((t) => {
         return t.id;
       });
-      
+
       codebasesRef.on('value', (snapshot) => {
         let transformedTasksClone = JSON.parse(JSON.stringify(transformedTasks));
         snapshot.forEach((snap) => {
@@ -321,7 +323,7 @@ class Mainpage extends Component {
       <Switch>
         <Route exact path={appRoutes.LOG_IN} component={LoginPage}/>
         <Redirect to={appRoutes.LOG_IN} />
-      </Switch> 
+      </Switch>
     );
 
     if (this.state.authenticated) {
@@ -329,50 +331,53 @@ class Mainpage extends Component {
         <Switch>
           <Route exact path={appRoutes.LOG_OUT} component={LogoutPage} />
           {
-            tasks.length > 0 
+            tasks.length > 0
             ? <Route path={appRoutes.CURRENT_TASK} render={
                 (routeProps) => (<CurrentTaskPage {...routeProps} task={currentTaskObject} specific={false} shouldDisplayAllPages={this.state.shouldDisplayAllPages}/>)
               } />
-            : null 
+            : null
           }
           <Route path={appRoutes.ALL_TASKS} render={
             (routeProps) => (<AllTasksPage {...routeProps} tasks={tasks} currentTaskId={currentTaskId}/>)
           }/>
           {
-            tasks.length > 0 
+            tasks.length > 0
             ? <Route path={appRoutes.TASK_WITH_ID} render={
                 (routeProps) => (<CurrentTaskPage {...routeProps} specific={true} database={database}/>)
               } />
-            : null 
+            : null
           }
           {
-            tasks.length > 0 
+            tasks.length > 0
             ? <Redirect to={this.state.homepage} />
-            : null 
+            : null
           }
         </Switch>
       );
     }
 
-    
+
 
     return (
       <div>
-        <Layout 
+        <Layout
           authenticated={this.state.authenticated}
-          currentTaskName={currentTaskName} 
+          currentTaskName={currentTaskName}
           currentTaskId={currentTaskId}
           tasksLoading={this.state.tasksLoading}
           thereIsTask={tasks.length > 0}
           userName={userName}
           userProfilePhotoURL={userProfilePhotoURL}
           userId={userId}
-          resetParameters={this.resetParameters}>
+          resetParameters={this.resetParameters}
+          
+          >
           {routes}
+
         </Layout>
         {
-          lastTaskId 
-          ? <div 
+          lastTaskId
+          ? <div
               onClick={(event) => this.navigateToLastTask(event, lastTaskId)}
               className={styles.LastTaskNavigationContainer}>
               Last task: &nbsp;
