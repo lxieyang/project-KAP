@@ -1,7 +1,6 @@
 div {
   font-size: inherit;
 }
-
 .SelectInteractionContainer {
   font-size: 24px;
   font-family: sans-serif;
@@ -33,6 +32,15 @@ div {
   padding-left: 6px;
   font-size: 12px;
   text-align: center;
+}
+
+.AddedSomething {
+  display: flex;
+  font-size: 12px;
+  color: #fff;
+  text-align: center;
+  margin-top: 4px;
+  opacity: 1;
 }
 
 .ButtonContainer {
@@ -78,7 +86,6 @@ div {
   color: #fff;
   text-align: center;
 }
-
 
 .CheckmarkContainer {
   position: absolute;
@@ -148,7 +155,7 @@ div {
 
 .ButtonTextDisappear {
   animation-name: DisappearOneRound;
-  animation-duration: 0.3s;
+  animation-duration: 0.5s;
   animation-iteration-count: 1;
   animation-timing-function: linear;
   animation-fill-mode: forwards;
@@ -170,4 +177,11 @@ div {
   100% {
     opacity: 0;
   }
+}
+.TextAppear {
+  animation-name: DisappearOneRound;
+  animation-duration: 0s;
+  animation-iteration-count: 1;
+  animation-timing-function: linear;
+  animation-fill-mode: forwards;
 }

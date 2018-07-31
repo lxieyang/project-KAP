@@ -71,23 +71,6 @@ export const addTaskFromSearchTerm = async (searchTerm, tabId) => {
   tasks.forEach((childSnapshot) => {
     taskList.push({...childSnapshot.val(), id: childSnapshot.key});
   });
-
-  // loop through current tasks to not create a duplicate task
-  if (taskList) {
-    for (let task of taskList) {
-      // console.log(task.name.toLowerCase());
-      if (task.name.toLowerCase() === searchTerm.toLowerCase()) {
-        console.log("same task found");
-        // set current task to previous task with same search term
-        if (!(confirm('You have started a task with the same name before' + '\n' + 'To merge: select cancel' + '/n'+'To create new task: select OK '))) {
-          switchCurrentTask(task.id);
-        }
-
-        return;
-      }
-    }
-  }
-
   /* create a new task */
   let newtask = {
     id: (new Date()).getTime(),
@@ -100,6 +83,26 @@ export const addTaskFromSearchTerm = async (searchTerm, tabId) => {
     pieces: [],
     taskOngoing: true
   }
+  // loop through current tasks to not create a duplicate task
+  if (taskList) {
+    for (let task of taskList) {
+      // console.log(task.name.toLowerCase());
+      if (task.name.toLowerCase() === searchTerm.toLowerCase()) {
+        console.log("same task found");
+        // set current task to previous task with same search term
+        if ((confirm('You have started a task with the same name before' + '\n' + 'To merge: select cancel' + '\n'+'To create a new task: select OK '))) {
+          console.log("should start new task now");
+        }
+        else {
+          switchCurrentTask(task.id);
+          console.log("should merge task now");
+          return;
+        }
+      }
+    }
+  }
+
+
 
   // push to firebase
   let newTaskRef = tasksRef.push();

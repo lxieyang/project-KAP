@@ -78,7 +78,7 @@ class SelectInteraction extends Component {
     }
 
     render () {
-      let optionText = this.state.canSubmitTask ? 'Added Option' : 'Option';
+
       return (
         <div className={styles.SelectInteractionContainer}>
         <div className={styles.Title}>
@@ -108,7 +108,8 @@ class SelectInteraction extends Component {
         </div>
         </div>
         <div className={styles.CheckmarkContainer}>
-        <div className={[styles.Checkmark, (this.state.canSubmitTask ? styles.CheckmarkSpin: null)].join(' ')}>
+        <div className={[styles.AddedSomething, (this.state.canSubmitTask ? null : styles.TextAppear)].join(' ')}>
+          Started New Task
         </div>
         </div>
         </div>
@@ -119,22 +120,21 @@ class SelectInteraction extends Component {
         style={{width: '42px'}}
         onClick={(event) => this.collectButtonClickHandler('option')}>
         <div>
-        <div className={styles.ButtonContentWrapper}>
-        <div className={[styles.ButtonIconWrapper, (this.state.canSubmitOption ? styles.ButtonTextDisappear : null)].join(' ')}>
+        <div className={[styles.ButtonContentWrapper, (this.state.canSubmitOption ? styles.ButtonTextDisappear : null)].join(' ')}>
+        <div className={styles.ButtonIconWrapper}>
         <FontAwesomeIcon
         icon={fasListUl}
         className={styles.ButtonIcon} />
         </div>
         <div className={styles.ButtonText}>
-        {optionText}
-        </div>
+        <span>Option</span>
         </div>
         </div>
         <div className={styles.CheckmarkContainer}>
-        <div className={[styles.Checkmark,
-          (this.state.canSubmitOption
-            ? styles.CheckmarkSpin
-            : null)].join(' ')}></div>
+        <div className={[styles.AddedSomething, (this.state.canSubmitOption ? null : styles.TextAppear)].join(' ')}>
+          Added Option
+        </div>
+        </div>
         </div>
         </div>
 
@@ -162,10 +162,9 @@ class SelectInteraction extends Component {
         </div>
         </div>
         <div className={styles.CheckmarkContainer}>
-        <div className={[styles.Checkmark,
-          (this.state.canSubmitRequirement
-            ? styles.CheckmarkSpin
-            : null)].join(' ')}></div>
+        <div className={[styles.AddedSomething, (this.state.canSubmitRequirement ? null : styles.TextAppear)].join(' ')}>
+          Added Criterion
+        </div>
         </div>
         </div>
 
