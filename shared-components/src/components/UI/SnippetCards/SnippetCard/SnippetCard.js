@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
-
+import * as $ from 'jquery'
 import Aux from '../../../../hoc/Aux/Aux';
+
 import ThumbV1 from '../../../UI/Thumbs/ThumbV1/ThumbV1';
 import QuestionMark from '../../../UI/Thumbs/QuestionMark/QuestionMark';
 import FontAwesomeIcon from '@fortawesome/react-fontawesome';
@@ -15,6 +16,7 @@ import fasCode from '@fortawesome/fontawesome-free-solid/faCode';
 import fasFileCode from '@fortawesome/fontawesome-free-solid/faFileCode';
 import fasCodeBranch from '@fortawesome/fontawesome-free-solid/faCodeBranch';
 import fasCheck from '@fortawesome/fontawesome-free-solid/faCheck';
+
 // import fasTimes from '@fortawesome/fontawesome-free-solid/faTimes';
 import { GET_FAVICON_URL_PREFIX } from '../../../../shared/constants';
 import HorizontalDivider from '../../../UI/Divider/HorizontalDivider/HorizontalDivider';
@@ -102,8 +104,6 @@ const collectDrop = (connect, monitor) => {
 }
 
 
-
-
 const getHTML = (htmls) => {
   let htmlString = ``;
   if (htmls !== undefined) {
@@ -117,7 +117,9 @@ const getHTML = (htmls) => {
 @DropTarget('TASKCARD', cardTarget, collectDrop)
 @DragSource('TASKCARD', cardSource, collectDrag)
 class SnippetCard extends Component {
-
+  state = {
+    selected: false
+  }
   static propTypes = {
     // Injected by React DnD:
     connectDragSource: PropTypes.func.isRequired,
@@ -135,6 +137,7 @@ class SnippetCard extends Component {
     }, 1000);
   }
 
+
   inputChangedHandler = (event) => {
     event.persist();
     this.inputCallback(event);
@@ -142,6 +145,13 @@ class SnippetCard extends Component {
 
   goToThisLine = (lineNumber, codebaseId, filePath) => {
     FirebaseStore.setToOpenFile(codebaseId, filePath, lineNumber);
+  }
+
+  handleClick = (event,id) => {
+    this.setState({selected:!this.state.selected});
+    console.log('Props', this.props);
+    console.log('State', this.state);
+
   }
 
   render () {
@@ -306,13 +316,17 @@ class SnippetCard extends Component {
         {
           props.type === SNIPPET_TYPE.PIECE_GROUP
           ? null
-          : <div className={styles.TitleContainer}>
-              <div className={styles.Title}>
+          : <div className={styles.TitleContainer} >
+
+              <div className={styles.Title}
+              onClick={(event) => props.makeInteractionBox(event, props.id)}>
                 {props.title}
               </div>
+
               {
                 props.codeUseInfo !== undefined && props.codeUseInfo !== null
                 ? <div className={styles.CodeUsedContainer}>
+
                     <div
                       className={styles.CodeUsedTooltipHandle}
                       data-tip
@@ -551,7 +565,7 @@ class SnippetCard extends Component {
       <div className={styles.AttitudeContainer}>
         <ul>
           {transformedAttitudeList.map((op, idx) => {
-
+            // console.log('option', op);
             return (
               <li key={idx}>
                 <div style={{display: 'flex', alignItems: 'center', width: '70%'}}>
@@ -641,6 +655,7 @@ class SnippetCard extends Component {
 
     // disable Drag and Drop so that the content are selectable
     // return connectDropTarget(connectDragSource(
+
     return (
       <div
         className={[styles.SnippetCard, props.status ? null : styles.Hide, props.specificPieceId === props.id ? styles.FamousCard : null].join(' ')}
@@ -648,8 +663,14 @@ class SnippetCard extends Component {
           transform: isActive ? 'scale(1.2)' : 'scale(1.0)',
           opacity: isDragging ? '0.3' : '1.0',
           cursor: isDragging ? 'move' : 'auto',
-          width: props.isInTableView === true ? '100%' : '250px'
-        }}>
+          width: props.isInTableView === true ? '100%' : '250px',
+          borderWidth: '1px',
+          borderStyle: 'solid',
+          borderColor: this.state.selected ? '#009BF9': 'lightgray',
+          borderRadius: '3px'
+        }}
+        onClick={(event) => this.handleClick(event,props.id)}
+        >
         {header}
         {attitudes}
         <HorizontalDivider margin="5px" />

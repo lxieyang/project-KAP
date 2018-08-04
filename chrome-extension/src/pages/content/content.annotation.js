@@ -145,7 +145,7 @@ port.onMessage.addListener((response) => {
   if (response.msg === 'USER_INFO') {
     const { payload } = response;
     setUserIdAndName(payload.userId);
-    console.log(payload.userId);
+    console.log('payload.userId', payload.userId);
     handlePageCount();
     handleFromSearchToTask();
 
@@ -577,7 +577,8 @@ window.addEventListener('copy', function (event) {
       originalDimensions: parentPiece.initialDimensions,
       texts: parentPiece.text,
       codeSnippetHTMLs: [],
-      codeSnippetTexts: []
+      codeSnippetTexts: [],
+      selected: false
     }
     FirebaseStore.addAPieceToCurrentTask(piece, true);
     // console.log('just  added a piece');
@@ -660,7 +661,8 @@ if(window.location.hostname === "stackoverflow.com") {
           originalDimensions: postTextSnippet.initialDimensions,
           texts: postTextSnippet.text,
           codeSnippetHTMLs: codeSnippets.map(snp => snp.htmls),
-          codeSnippetTexts: codeSnippets.map(snp => snp.text)
+          codeSnippetTexts: codeSnippets.map(snp => snp.text),
+          selected: false
         }
         FirebaseStore.addAPieceToCurrentTask(piece).then((data) => {
           collectedPostKey = data;

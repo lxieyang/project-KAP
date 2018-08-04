@@ -1,5 +1,6 @@
 div {
   font-size: inherit;
+  box-sizing: content-box;
 }
 .SelectInteractionContainer {
   font-size: 24px;

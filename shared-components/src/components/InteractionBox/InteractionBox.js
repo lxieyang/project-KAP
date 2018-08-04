@@ -344,7 +344,8 @@ class interactionBox extends Component {
       codeSnippetTexts: this.state.codeSnippetTexts,
       title: this.state.title,
       autoSuggestedTitle: this.state.autoSuggestedTitle,
-      texts: this.state.selectedText
+      texts: this.state.selectedText,
+      selected: false
     }
 
     let attitudeList = {};

@@ -24,7 +24,7 @@ import { sortBy, reverse, slice } from 'lodash';
 
 const getNumColInResponsiveGridLayout = (windowSize) => {
   let maxNumCol = 99;  // make it so big that this is useless
-
+/*
   // if (windowSize > 1730) {
   //   maxNumCol = 5;
   // }
@@ -43,7 +43,7 @@ const getNumColInResponsiveGridLayout = (windowSize) => {
   // else {
   //   maxNumCol = 1;
   // }
-
+*/
   return maxNumCol;
 }
 

@@ -127,7 +127,7 @@ class SelectInteraction extends Component {
         className={styles.ButtonIcon} />
         </div>
         <div className={styles.ButtonText}>
-        <span>Option</span>
+        Option
         </div>
         </div>
         <div className={styles.CheckmarkContainer}>
@@ -157,7 +157,7 @@ class SelectInteraction extends Component {
         className={styles.ButtonIcon} />
         </div>
         <div className={styles.ButtonText}>
-        Criterion /Feature
+        Criterion
         </div>
         </div>
         </div>

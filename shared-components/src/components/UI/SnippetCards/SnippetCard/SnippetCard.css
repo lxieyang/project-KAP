@@ -4,8 +4,8 @@
   width: 250px;
   height: auto;
   margin: 15px 10px;
-  border: 1px solid lightgray;
-  border-radius: 3px;
+  /* border: 1px solid lightgray; */
+  /* border-radius: 3px; */
   box-shadow: 0 1px 1px 0 rgba(0,0,0,0.10), 0 1px 3px 0 rgba(0,0,0,0.06);
   box-sizing: border-box;
   position: relative;
@@ -23,6 +23,7 @@
 .SnippetCard:hover {
   z-index: 1000;
   transform: scale(1.05);
+
 }
 
 .Hide {
@@ -184,13 +185,16 @@
 }
 
 
-
+.Title:hover {
+  text-decoration: underline;
+  cursor: pointer;
+}
 
 
 .Title {
   font-size: 1.0rem;
   font-weight: 600;
-  word-wrap: break-word; 
+  word-wrap: break-word;
   padding-left: 10px;
   width: 75%;
 }
@@ -199,7 +203,7 @@
   font-size: 0.90rem;
   font-weight: 500;
   padding-left: 0px;
-  word-wrap: break-word; 
+  word-wrap: break-word;
 }
 
 .SiteInfo {
@@ -543,4 +547,3 @@
 .ViewIconInTooltip:hover {
   opacity: 0.8;
 }
-

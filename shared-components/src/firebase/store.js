@@ -88,14 +88,16 @@ export const addTaskFromSearchTerm = async (searchTerm, tabId) => {
     for (let task of taskList) {
       // console.log(task.name.toLowerCase());
       if (task.name.toLowerCase() === searchTerm.toLowerCase()) {
-        console.log("same task found");
+        // console.log("same task found");
         // set current task to previous task with same search term
-        if ((confirm('You have started a task with the same name before' + '\n' + 'To merge: select cancel' + '\n'+'To create a new task: select OK '))) {
-          console.log("should start new task now");
+        if ((confirm('You have started a task with the same name before'
+        + '\n' + 'To merge: select cancel'
+        + '\n' + 'To create a new task: select OK '))) {
+          // console.log("should start new task now");
         }
         else {
           switchCurrentTask(task.id);
-          console.log("should merge task now");
+          // console.log("should merge task now");
           return;
         }
       }
@@ -286,6 +288,7 @@ export const addAnOptionForCurrentTask = async (optionName) => {
     for (let option of currentTaskOptions) {
       if (option.name.toLowerCase() === optionName.toLowerCase()) {
         console.log('same option');
+        alert('You have entered the same option before, the duplicate will be deleted')
         return;
       }
     }
@@ -587,7 +590,8 @@ export const addAPieceToCurrentTask = async (piece, alsoSetCopyData = false) => 
       userId: userId,
       taskId: currentTaskId,
       pieceId: newPieceRef.key,
-      timestamp: (new Date()).toString()
+      timestamp: (new Date()).toString(),
+      selected: piece.selected
     };
     setCopyData(payload);
   }

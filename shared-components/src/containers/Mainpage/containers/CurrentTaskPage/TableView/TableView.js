@@ -518,6 +518,10 @@ class TableView extends Component {
     // console.log('option Heard',event.target.value);
     FirebaseStore.addARequirementForCurrentTask(event.target.value);
   }
+  log(event) {
+    console.log('click made');
+  }
+
   render () {
 
     // let pieceViewOption = (
@@ -652,7 +656,8 @@ class TableView extends Component {
                     opacity: rq.hide === true || op.hide === true ? `${inactiveOpacity}` : '1',
                   }}>
                     <div className={styles.AttitudeThumbInTableCellContainer}>
-                      { piecesInThisCell.length > 0 ?
+                      {
+                        piecesInThisCell.length > 0 ?
                         piecesInThisCell.map((p, idx) => {
                         let thumb = null;
                         switch (p.attitude) {
@@ -661,13 +666,14 @@ class TableView extends Component {
                           case 'idk':   thumb = (<QuestionMark />); break;
                           default: break;
                         }
-
+                        // TODO add onclick to bring up interactionbox for each attitude in table cell
                         return (
                           <Aux key={`${p.id}${op.id}${rq.id}`}>
                             <div
                               className={[styles.AttitudeInTableCell].join(' ')}
                               data-tip
-                              data-for={`${p.id}${op.id}${rq.id}`}>
+                              data-for={`${p.id}${op.id}${rq.id}`}
+                              >
                               {thumb}
                             </div>
                             <ReactTooltip
@@ -825,7 +831,7 @@ class TableView extends Component {
                         piecesInThisCell.map((p, idx) => {
                         let thumb = null;
                         switch (p.attitude) {
-                          case 'good':  thumb = (<ThumbV1 type='up' />); break;
+                          case 'good':  thumb = (<ThumbV1 type='up' onClick={(event) => this.log(event)}/>); break;
                           case 'bad':   thumb = (<ThumbV1 type='down' />); break;
                           case 'idk':   thumb = (<QuestionMark />); break;
                           default: break;
