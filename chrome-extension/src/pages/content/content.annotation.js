@@ -219,11 +219,8 @@ hoverAnchor.setAttribute('id', 'hover-box');
 let interactionBoxIsMounted = false;
 let hoverBoxIsMounted = false;
 
-// interactionBoxAnchor.style.left = '100px';
-// interactionBoxAnchor.style.top = '100px';
-// ReactDOM.render(<InteractionBox />, interactionBoxAnchor);
 
-
+/* CLEAN EVENTS */
 let customRemoveInteractionEvent = new CustomEvent('removeInteractionBoxes', {});
 
 const clean = () => {
@@ -255,6 +252,59 @@ document.addEventListener('mouseup', (event) => {
     document.dispatchEvent(customRemoveInteractionEvent);
   }
 });
+
+export const clipClicked = () => {
+  document.dispatchEvent(customRemoveInteractionEvent);
+}
+
+function displayInteractionBox (type) {
+  console.log('should put up interaction box');
+  let selectedText = null;
+  let originalDimensions = null;
+  let htmls = undefined;
+
+  // check type
+  if (type === SNIPPET_TYPE.LASSO) {
+    let rect = captureWindow.getBoundingClientRect();
+    let lassoSnapshot = takeSnapshot(rect);
+    selectedText = lassoSnapshot.text;
+    originalDimensions = lassoSnapshot.initialDimensions;
+    lassoSnapshot.htmls = lassoSnapshot.htmls.filter(html => html.indexOf('kap-clip') === -1 && html.indexOf('kap-button') === -1);
+    htmls = lassoSnapshot.htmls;
+
+  } else if (type === SNIPPET_TYPE.SELECTION) {
+    let selection = getDocumentSelection();
+    selectedText = selection.text;
+  }
+
+  // render interaction box
+  interactionBoxAnchor.style.left = `0px`;
+  interactionBoxAnchor.style.top = `0px`;
+  let postTags = [];
+  if(window.location.hostname === "stackoverflow.com") {
+    $(document.body).find('.post-taglist .post-tag').each((idx, tagNode) => {
+      postTags.push($(tagNode).text().toLowerCase());
+    });
+  }
+  ReactDOM.render(
+    <InteractionBox
+      type={type}
+      url={window.location.href}
+      htmls={htmls}
+      selectedText={selectedText}
+      postTags={postTags}
+      originalDimensions={originalDimensions}
+      clip={clipClicked}
+    />,
+  interactionBoxAnchor);
+
+  // adjusting position of interaction box after mounting
+  interactionBoxAnchor.style.top = `${Math.floor((window.innerHeight - interactionBoxAnchor.clientHeight)/3)}px`;
+  interactionBoxAnchor.style.left = `${Math.floor((window.innerWidth - interactionBoxAnchor.clientWidth)/2)}px`;
+
+  interactionBoxIsMounted = true;
+  dragElement(document.getElementById("interaction-box"));
+}
 
 
 
@@ -288,9 +338,7 @@ const getDocumentSelection = () => {
   };
 }
 
-export const clipClicked = () => {
-  document.dispatchEvent(customRemoveInteractionEvent);
-}
+
 
 /* context menu listener */
 chrome.runtime.onMessage.addListener(
@@ -334,41 +382,7 @@ chrome.runtime.onMessage.addListener(
       dragElement(document.getElementById("hover-box"));
 
     } else if (request.msg === actionTypes.ADD_PIECE_CONTEXT_MENU_CLICKED) {
-      // console.log('should put up interaction box');
-      let selection = getDocumentSelection();
-      let rect = null;
-      // console.log(selection.rect);
-      interactionBoxAnchor.style.left = `0px`;
-      interactionBoxAnchor.style.top = `0px`;
-      // if (selection.rect !== null) {
-      //   rect = {...selection.rect.toJSON()};
-      //   rect.top += document.documentElement.scrollTop;
-      //   interactionBoxAnchor.style.left = `${Math.floor(rect.left) - 25}px`;
-        // interactionBoxAnchor.style.top = `${Math.floor(rect.top) - 25}px`;
-      // }
-      let postTags = [];
-      if(window.location.hostname === "stackoverflow.com") {
-        $(document.body).find('.post-taglist .post-tag').each((idx, tagNode) => {
-          postTags.push($(tagNode).text().toLowerCase());
-        });
-      }
-      ReactDOM.render(
-        <InteractionBox
-          type={SNIPPET_TYPE.SELECTION}
-          url={window.location.href}
-          selectedText={selection.text}
-          postTags={postTags}
-          originalDimensions={rect !== null ? rect : null}
-          clip={clipClicked}
-        />,
-      interactionBoxAnchor);
-      // adjusting position of interaction box after mounting
-      interactionBoxAnchor.style.top = `${Math.floor((window.innerHeight - interactionBoxAnchor.clientHeight)/2)}px`;
-      interactionBoxAnchor.style.left = `${Math.floor((window.innerWidth - interactionBoxAnchor.clientWidth)/2)}px`;
-
-      interactionBoxIsMounted = true;
-      // console.log('annotation interaction box');
-      dragElement(document.getElementById("interaction-box"));
+      displayInteractionBox(SNIPPET_TYPE.SELECTION);
     }
   }
 );
@@ -393,11 +407,6 @@ window.addEventListener('mousedown', (event) => {
 });
 
 window.addEventListener('mousemove', (event) => {
-  // if (movingCaptureWindow) {
-  //   console.log('moving');
-  //   console.log(captureWindow.getBoundingClientRect());
-  // }
-
   // change cursor look
   if (event.altKey) {
     document.body.style.cursor = 'crosshair';
@@ -427,13 +436,6 @@ window.addEventListener('mousemove', (event) => {
 
 let takeSnapshot = (rect=null) => {
   let snapshot = KAPCaptureHelper.createSnapshot(rect);
-  // snapshot.logThisSnippet();
-  // console.log(snapshot.htmls);
-  // for (let i = 0; i < snapshot.htmls.length; i++) {
-  //   console.log(snapshot.htmls[i]);
-  // }
-  // console.log(snapshot.initialDimensions);
-  // console.log(snapshot.text);
   return snapshot;
 }
 
@@ -441,39 +443,6 @@ let takeSnapshot = (rect=null) => {
 let justSelectedRange;
 
 function selectionTimeout() {
-
-  function addPieceFromSelectInteration () {
-    let selection = getDocumentSelection();
-    let rect = null;
-    // console.log(selection.rect);
-    interactionBoxAnchor.style.left = `0px`;
-    interactionBoxAnchor.style.top = `0px`;
-    let postTags = [];
-    if(window.location.hostname === "stackoverflow.com") {
-      $(document.body).find('.post-taglist .post-tag').each((idx, tagNode) => {
-        postTags.push($(tagNode).text().toLowerCase());
-      });
-    }
-    ReactDOM.render(
-      <InteractionBox
-        type={SNIPPET_TYPE.SELECTION}
-        url={window.location.href}
-        selectedText={selection.text}
-        postTags={postTags}
-        originalDimensions={rect !== null ? rect : null}
-        clip={clipClicked}
-      />,
-    interactionBoxAnchor);
-    // adjusting position of interaction box after mounting
-    interactionBoxAnchor.style.top = `${Math.floor((window.innerHeight - interactionBoxAnchor.clientHeight)/2)}px`;
-    interactionBoxAnchor.style.left = `${Math.floor((window.innerWidth - interactionBoxAnchor.clientWidth)/2)}px`;
-
-    interactionBoxIsMounted = true;
-    // console.log('annotation interaction box');
-    dragElement(document.getElementById("interaction-box"));
-  }
-
-
   let selection = document.getSelection();
   // console.log('selected text:', selection.toString());
   if (selection.type === 'Range' && selection.toString().trim() !== '') {
@@ -484,7 +453,7 @@ function selectionTimeout() {
     ReactDOM.render(
         <SelectInteraction
           selectedText={selection.toString()}
-          addPiece={() => addPieceFromSelectInteration()}
+          addPiece={() => displayInteractionBox(SNIPPET_TYPE.SELECTION)}
           clip={() => ReactDOM.unmountComponentAtNode(popOverAnchor)}/>,
         popOverAnchor);
     // adjusting position of popover box after mounting
@@ -500,44 +469,8 @@ function selectionTimeout() {
   }
 
 
-  // TODO: Make the box popup in the middle of the window
   if (captureWindow.parentElement) {
-    let rect = captureWindow.getBoundingClientRect();
-    let lassoSnapshot = takeSnapshot(rect);
-    let snapshotDimension = lassoSnapshot.initialDimensions;
-    interactionBoxAnchor.style.left = `0px`;
-    interactionBoxAnchor.style.top = `0px`;
-    // if (selection.rect !== null) {
-    //   interactionBoxAnchor.style.left = `${Math.floor(snapshotDimension.left) + 0}px`;
-    //   interactionBoxAnchor.style.top = `${Math.floor(snapshotDimension.top) + 0}px`;
-    // }
-    // prepare for data transfer
-    let postTags = [];
-    if(window.location.hostname === "stackoverflow.com") {
-      $(document.body).find('.post-taglist .post-tag').each((idx, tagNode) => {
-        postTags.push($(tagNode).text().toLowerCase());
-      });
-    }
-
-    lassoSnapshot.htmls = lassoSnapshot.htmls.filter(html => html.indexOf('kap-clip') === -1 && html.indexOf('kap-button') === -1);
-
-    ReactDOM.render(
-      <InteractionBox
-        type={SNIPPET_TYPE.LASSO}
-        url={window.location.href}
-        htmls={lassoSnapshot.htmls}
-        selectedText={lassoSnapshot.text}
-        postTags={postTags}
-        originalDimensions={lassoSnapshot.initialDimensions}
-        clip={clipClicked}
-      />,
-    interactionBoxAnchor);
-    // adjusting position of interaction box after mounting
-    interactionBoxAnchor.style.top = `${Math.floor((window.innerHeight - interactionBoxAnchor.clientHeight)/2)}px`;
-    interactionBoxAnchor.style.left = `${Math.floor((window.innerWidth - interactionBoxAnchor.clientWidth)/2)}px`;
-
-    interactionBoxIsMounted = true;
-    dragElement(document.getElementById("interaction-box"));
+    displayInteractionBox(SNIPPET_TYPE.LASSO);
 
     if (!movingCaptureWindow) {
       styleSheet.deleteRule(0);
@@ -547,10 +480,13 @@ function selectionTimeout() {
   }
 }
 
-// listening to text selection using keyboard (cmd + shift + arrow etc)
+// listening to text selection using keyboard (option + shift + arrow etc)
 window.addEventListener('keyup', (event) => {
   if (event.key !== 'Escape') {
-    (selectionTimeout(), 10); // trick when dealing with window selection on mouse up
+    // trick when dealing with window selection on mouse up
+    setTimeout(() => {
+      selectionTimeout();
+    }, 10);
   }
 });
 
@@ -577,25 +513,6 @@ window.addEventListener('keydown', (event) => {
     document.dispatchEvent(customRemoveInteractionEvent);
   }
 });
-
-
-/* listen for screen 'capture' */
-// adapted from BentoChrome
-// var delta = 500;
-// var lastKeypressTime = 0;
-// window.addEventListener('keydown', (e) => {
-//   if (e.key === "Escape") {
-//     var thisKeypressTime = new Date();
-//     if ( thisKeypressTime - lastKeypressTime <= delta )
-//     {
-//       takeSnapshot();
-//       // optional - if we'd rather not detect a triple-press
-//       // as a second double-press, reset the timestamp
-//       thisKeypressTime = 0;
-//     }
-//     lastKeypressTime = thisKeypressTime;
-//   }
-// });
 
 
 window.addEventListener('copy', function (event) {
