@@ -15,6 +15,7 @@ import {
   setUserIdAndName,
   userPathInFirestore
 } from '../../../../shared-components/src/firebase/index';
+import firebase from '../../../../shared-components/src/firebase/firebase';
 // import * as FirebaseStore from '../../../../shared-components/src/firebase/store';
 
 
@@ -140,18 +141,26 @@ chrome.tabs.onActivated.addListener((activeInfo) => {
 // conditionally replace newtab
 // https://kushagragour.in/blog/2017/07/conditional-newtab-override-chrome-extension/
 let shouldOverrideNewtab = DEFAULT_SETTINGS.shouldOverrideNewtab;
-userPathInFirestore.onSnapshot((doc) => {
-  if (doc.exists) {
-    const { userSettings } = doc.data();
-    if (userSettings !== undefined && userSettings.shouldOverrideNewtab !== undefined) {
-      shouldOverrideNewtab = userSettings.shouldOverrideNewtab;
+
+firebase.auth().onAuthStateChanged(() => {
+  userPathInFirestore.onSnapshot((doc) => {
+    if (doc.exists) {
+      const { userSettings } = doc.data();
+      if (userSettings !== undefined && userSettings.shouldOverrideNewtab !== undefined) {
+        shouldOverrideNewtab = userSettings.shouldOverrideNewtab;
+      }
+    } else {
+      shouldOverrideNewtab = DEFAULT_SETTINGS.shouldOverrideNewtab;
     }
-  }
+  });
 });
+
+
 
 chrome.tabs.onCreated.addListener((tab) => {
   if (tab.url === 'chrome://newtab/') {
     if (shouldOverrideNewtab === true) {
+      console.log('Replacing new tab');
       chrome.tabs.update(
         tab.id, {
           url: chrome.extension.getURL('newtab.html')
