@@ -338,8 +338,8 @@ chrome.runtime.onMessage.addListener(
       let selection = getDocumentSelection();
       let rect = null;
       // console.log(selection.rect);
-      interactionBoxAnchor.style.left = `100px`;
-      interactionBoxAnchor.style.top = `${Math.floor(window.innerHeight / 5) + window.scrollY}px`;
+      interactionBoxAnchor.style.left = `0px`;
+      interactionBoxAnchor.style.top = `0px`;
       // if (selection.rect !== null) {
       //   rect = {...selection.rect.toJSON()};
       //   rect.top += document.documentElement.scrollTop;
@@ -362,6 +362,10 @@ chrome.runtime.onMessage.addListener(
           clip={clipClicked}
         />,
       interactionBoxAnchor);
+      // adjusting position of interaction box after mounting
+      interactionBoxAnchor.style.top = `${Math.floor((window.innerHeight - interactionBoxAnchor.clientHeight)/2)}px`;
+      interactionBoxAnchor.style.left = `${Math.floor((window.innerWidth - interactionBoxAnchor.clientWidth)/2)}px`;
+
       interactionBoxIsMounted = true;
       // console.log('annotation interaction box');
       dragElement(document.getElementById("interaction-box"));
@@ -437,6 +441,39 @@ let takeSnapshot = (rect=null) => {
 let justSelectedRange;
 
 function selectionTimeout() {
+
+  function addPieceFromSelectInteration () {
+    let selection = getDocumentSelection();
+    let rect = null;
+    // console.log(selection.rect);
+    interactionBoxAnchor.style.left = `0px`;
+    interactionBoxAnchor.style.top = `0px`;
+    let postTags = [];
+    if(window.location.hostname === "stackoverflow.com") {
+      $(document.body).find('.post-taglist .post-tag').each((idx, tagNode) => {
+        postTags.push($(tagNode).text().toLowerCase());
+      });
+    }
+    ReactDOM.render(
+      <InteractionBox
+        type={SNIPPET_TYPE.SELECTION}
+        url={window.location.href}
+        selectedText={selection.text}
+        postTags={postTags}
+        originalDimensions={rect !== null ? rect : null}
+        clip={clipClicked}
+      />,
+    interactionBoxAnchor);
+    // adjusting position of interaction box after mounting
+    interactionBoxAnchor.style.top = `${Math.floor((window.innerHeight - interactionBoxAnchor.clientHeight)/2)}px`;
+    interactionBoxAnchor.style.left = `${Math.floor((window.innerWidth - interactionBoxAnchor.clientWidth)/2)}px`;
+
+    interactionBoxIsMounted = true;
+    // console.log('annotation interaction box');
+    dragElement(document.getElementById("interaction-box"));
+  }
+
+
   let selection = document.getSelection();
   // console.log('selected text:', selection.toString());
   if (selection.type === 'Range' && selection.toString().trim() !== '') {
@@ -447,6 +484,7 @@ function selectionTimeout() {
     ReactDOM.render(
         <SelectInteraction
           selectedText={selection.toString()}
+          addPiece={() => addPieceFromSelectInteration()}
           clip={() => ReactDOM.unmountComponentAtNode(popOverAnchor)}/>,
         popOverAnchor);
     // adjusting position of popover box after mounting
@@ -462,13 +500,13 @@ function selectionTimeout() {
   }
 
 
-
+  // TODO: Make the box popup in the middle of the window
   if (captureWindow.parentElement) {
     let rect = captureWindow.getBoundingClientRect();
     let lassoSnapshot = takeSnapshot(rect);
     let snapshotDimension = lassoSnapshot.initialDimensions;
-    interactionBoxAnchor.style.left = `100px`;
-    interactionBoxAnchor.style.top = `${Math.floor(window.innerHeight / 5) + window.scrollY}px`;
+    interactionBoxAnchor.style.left = `0px`;
+    interactionBoxAnchor.style.top = `0px`;
     // if (selection.rect !== null) {
     //   interactionBoxAnchor.style.left = `${Math.floor(snapshotDimension.left) + 0}px`;
     //   interactionBoxAnchor.style.top = `${Math.floor(snapshotDimension.top) + 0}px`;
@@ -494,11 +532,15 @@ function selectionTimeout() {
         clip={clipClicked}
       />,
     interactionBoxAnchor);
+    // adjusting position of interaction box after mounting
+    interactionBoxAnchor.style.top = `${Math.floor((window.innerHeight - interactionBoxAnchor.clientHeight)/2)}px`;
+    interactionBoxAnchor.style.left = `${Math.floor((window.innerWidth - interactionBoxAnchor.clientWidth)/2)}px`;
+
     interactionBoxIsMounted = true;
     dragElement(document.getElementById("interaction-box"));
 
     if (!movingCaptureWindow) {
-      styleSheet.removeRule(0);
+      styleSheet.deleteRule(0);
     }
     movingCaptureWindow = false;
     selection.empty();
@@ -507,7 +549,9 @@ function selectionTimeout() {
 
 // listening to text selection using keyboard (cmd + shift + arrow etc)
 window.addEventListener('keyup', (event) => {
-  setTimeout(selectionTimeout(),10); // trick when dealing with window selection on mouse up
+  if (event.key !== 'Escape') {
+    (selectionTimeout(), 10); // trick when dealing with window selection on mouse up
+  }
 });
 
 window.addEventListener('mouseup', (event) => {

@@ -1,5 +1,5 @@
 .InteractionBoxAnchor {
-  position: absolute;
+  position: fixed;
   /* max-width: 500px; */
   z-index: 33333;
 }

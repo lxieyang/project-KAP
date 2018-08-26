@@ -6,7 +6,6 @@ import fasListUl from '@fortawesome/fontawesome-free-solid/faListUl';
 import fasFlagCheckered from '@fortawesome/fontawesome-free-solid/faFlagCheckered';
 import fasPuzzlePiece from '@fortawesome/fontawesome-free-solid/faPuzzlePiece';
 import * as FirebaseStore from '../../../firebase/store';
-import HoverInteraction from '../HoverInteraction/HoverInteraction';
 import InteractionBox from '../InteractionBox';
 import { SNIPPET_TYPE } from '../../../shared/constants';
 import styles from './SelectInteraction.css';
@@ -24,7 +23,7 @@ class SelectInteraction extends Component {
 
 
   collectButtonClickHandler = (btnType) => {
-    const { selectedText, clip } = this.props;
+    const { selectedText, addPiece, clip } = this.props;
     if (btnType === 'task') {
       // console.log('task option clicked');
       FirebaseStore.addTaskFromSearchTerm(selectedText);
@@ -46,36 +45,9 @@ class SelectInteraction extends Component {
     }
 
     else if (btnType === 'snippet') {
-      // console.log('add snippet clicked');
-      let interactionBoxAnchor = annotation.interactionBoxAnchor;
-      // let interactionBoxIsMounted =  annotation.interactionBoxIsMounted;
-      let postTags = [];
-      // if(window.location.hostname === "stackoverflow.com") {
-      //   $(document.body).find('.post-taglist .post-tag').each((idx, tagNode) => {
-      //     postTags.push($(tagNode).text().toLowerCase());
-      //   });
-      // }
-
-      ReactDOM.render(
-
-        <InteractionBox
-        type={SNIPPET_TYPE.SELECTION}
-        url={window.location.href}
-        selectedText={selectedText}
-        postTags={postTags}
-        originalDimensions={null}
-        clip={annotation.clipClicked}
-        />,
-        interactionBoxAnchor);
-        // interactionBoxIsMounted  = true;
-        dragElement(document.getElementById("interaction-box"));
-        // console.log('rendering selection interaction box');
-        if (clip !== undefined) {setTimeout(() => {clip();}, 800);}
-        // console.log('set up interactionbox, is mounted? ', interactionBoxIsMounted);
-        // TODO: bring down interaction box with close button
-      }
-
+      if (addPiece !== undefined) {setTimeout(() => {addPiece();}, 10);}
     }
+  }
 
     render () {
 
