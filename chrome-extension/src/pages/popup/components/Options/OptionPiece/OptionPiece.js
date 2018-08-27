@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { findDOMNode } from 'react-dom';
 import { DragSource, DropTarget } from 'react-dnd';
 import FontAwesomeIcon from '@fortawesome/react-fontawesome';
-import fasDelete from '@fortawesome/fontawesome-free-solid/faTimes';
+import fasDelete from '@fortawesome/fontawesome-free-solid/faTrashAlt';
 import fasStar from '@fortawesome/fontawesome-free-solid/faStar';
 import { debounce } from 'lodash';
 import ordinal from 'ordinal';
