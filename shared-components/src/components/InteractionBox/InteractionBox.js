@@ -9,7 +9,7 @@ import fasSave from '@fortawesome/fontawesome-free-solid/faSave';
 import fasDelete from '@fortawesome/fontawesome-free-solid/faTimes';
 import fasStar from '@fortawesome/fontawesome-free-solid/faStar';
 import fasListAlt from '@fortawesome/fontawesome-free-solid/faListAlt';
-// import fasPaperPlane from '@fortawesome/fontawesome-free-solid/faPaperPlane';
+import fasPaperPlane from '@fortawesome/fontawesome-free-solid/faPaperPlane';
 import fasFlagCheckered from '@fortawesome/fontawesome-free-solid/faFlagCheckered';
 import ThumbV1 from '../../components/UI/Thumbs/ThumbV1/ThumbV1';
 import QuestionMark from '../../components/UI/Thumbs/QuestionMark/QuestionMark';
@@ -445,12 +445,11 @@ class interactionBox extends Component {
       />
       &nbsp;
       {
-        // <div
-        // className={styles.AddSomethingButton}
-        // onClick={(event) => this.addButtonClicked(event, 'OP')}>
-        // <FontAwesomeIcon icon={fasPaperPlane}/> &nbsp; Add
-        // </div>
-        // onClick={(event) => this.addButtonClicked(event, 'RQ')}
+        <div
+        className={styles.AddSomethingButton}
+        onClick={(event) => this.addButtonClicked(event, 'OP')}>
+        <FontAwesomeIcon icon={fasPaperPlane}/> &nbsp; Add
+        </div>
       }
 
       </div>
@@ -464,9 +463,10 @@ class interactionBox extends Component {
       onInput={(event) => this.switchInputSourceHandler(event, 'RQ')}
       /> &nbsp;
       {
-      // <div className={styles.AddSomethingButton}>
-      // <FontAwesomeIcon icon={fasPaperPlane}/> &nbsp; Add
-      // </div>
+      <div className={styles.AddSomethingButton}
+      onClick={(event) => this.addButtonClicked(event, 'RQ')}>
+      <FontAwesomeIcon icon={fasPaperPlane}/> &nbsp; Add
+      </div>
       }
       </div>
 
