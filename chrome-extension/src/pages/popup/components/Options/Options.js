@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 
 import FontAwesomeIcon from '@fortawesome/react-fontawesome';
 import fasListAlt from '@fortawesome/fontawesome-free-solid/faListAlt';
+import fasPaperPlane from '@fortawesome/fontawesome-free-solid/faPaperPlane';
 import Input from '../../../../../../shared-components/src/components/UI/Input/Input';
 import OptionPiece from './OptionPiece/OptionPiece';
 import { sortBy } from 'lodash';
@@ -69,7 +70,7 @@ class Options extends Component {
               {
                 options !== null ? options.map((op, idx) => {
                   return (
-                    <OptionPiece 
+                    <OptionPiece
                       key={op.id}
                       index={idx}
                       op={op}
@@ -81,12 +82,13 @@ class Options extends Component {
                   )
                 }) : null
               }
-              <Input 
-                elementType={'input'} 
+              <Input
+                elementType={'input'}
                 elementConfig={inputConfig}
                 submitted={this.props.addOption}
                 value={this.props.newOptionValue}
                 changed={this.props.changed} />
+
             </ul>
           </div>
         </div>
