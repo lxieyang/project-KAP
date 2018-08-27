@@ -60,6 +60,22 @@
   margin-right: 10px;
 }
 
+.IconInHeader {
+  margin-left: 10px;
+  margin-right: 10px;
+  font-size: 1.4rem;
+  color: inherit;
+  opacity: 0.7;
+  padding: 0;
+  cursor: pointer;
+  transition: 0.1s all ease-in;
+}
+
+.IconInHeader:hover {
+  transform: scale(1.15);
+  opacity: 0.8;
+}
+
 .Profile {
   display: flex;
   align-items: center;
