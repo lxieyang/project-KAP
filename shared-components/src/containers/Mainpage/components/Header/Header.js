@@ -1,7 +1,10 @@
+/* global chrome */
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 import qs from 'query-string';
 import FontAwesomeIcon from '@fortawesome/react-fontawesome';
+import fasCog from '@fortawesome/fontawesome-free-solid/faCog';
+import fasExternalLinkSquareAlt from '@fortawesome/fontawesome-free-solid/faExternalLinkSquareAlt';
 import fasSignOutAlt from '@fortawesome/fontawesome-free-solid/faSignOutAlt';
 import Aux from '../../../../hoc/Aux/Aux';
 import NavigationItems from './NavigationItems/NavigationItems';
@@ -10,6 +13,7 @@ import AppHeader from '../../../../components/UI/AppHeader/AppHeader';
 import SearchBar from '../../../../components/UI/SeachBar/SearchBar';
 import styles from './Header.css';
 import ProfileImg from '../../../../assets/images/profile-img.png';
+import { APP_NAME_LONG, APP_NAME_SHORT } from '../../../../shared/constants';
 import Popover from 'react-tiny-popover';
 import { NavLink } from 'react-router-dom';
 import * as appRoutes from '../../../../shared/routes';
@@ -204,6 +208,13 @@ class Header extends Component {
     
   }
 
+  openSettingsPageClickedHandler = () => {
+    console.log('open settings tab');
+    chrome.runtime.sendMessage({
+      msg: 'OPEN_SETTINGS_PAGE'
+    });
+  }
+
   render () {
     const { userName, userProfilePhotoURL, authenticated, location } = this.props;
 
@@ -261,6 +272,13 @@ class Header extends Component {
                 searchInputHandler={this.searchInputHandler}
                 clearSearchHandler={this.clearSearchHandler}
                 itemInSearchResultsClickedHandler={this.itemInSearchResultsClickedHandler}/>
+            </div>
+            <div>
+              <div
+                title={'Open settings tab'}
+                onClick={(event) => this.openSettingsPageClickedHandler()}>
+                <FontAwesomeIcon icon={fasCog} className={styles.IconInHeader} />
+              </div>
             </div>
             <Popover
               containerStyle={{zIndex: '100000'}}

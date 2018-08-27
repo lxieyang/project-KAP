@@ -2,8 +2,8 @@ export const APP_NAME_LONG = 'Knowledge Accelerator for Programming';
 export const APP_NAME_SHORT = 'KAP';
 
 export const DEFAULT_SETTINGS = {
-  shouldOverrideNewtab: true,
-  shouldDisplayAllPages: true,
+  shouldOverrideNewtab: false,
+  shouldDisplayAllPages: false,
   taskOngoing: true
 }
 
