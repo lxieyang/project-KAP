@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import moment from 'moment';
 import FontAwesomeIcon from '@fortawesome/react-fontawesome';
 import farClock from '@fortawesome/fontawesome-free-regular/faClock';
-import fasDiagnoses from '@fortawesome/fontawesome-free-solid/faDiagnoses';
+import fasCircleNotch from '@fortawesome/fontawesome-free-solid/faCircleNotch';
 import fasCheck from '@fortawesome/fontawesome-free-solid/faCheck';
 import Input from '../../../../../../shared-components/src/components/UI/Input/Input';
 import { debounce } from 'lodash';
@@ -54,6 +54,21 @@ class CurrentTask extends Component {
               <FontAwesomeIcon icon={farClock} /> &nbsp;
               Current Task
             </div>
+          </div>
+          <div className={styles.TaskNameContainer}>
+            <div 
+              className={styles.TaskName}
+              contentEditable={true}
+              suppressContentEditableWarning={true}
+              onInput={(event) => this.inputChangedHandler(event, currentTaskId)}>
+              {currentTaskName}
+            </div>
+            <div className={styles.TaskSelect}>
+              <Input elementType='select' elementConfig={selectConfig} value={currentTaskId ? currentTaskId : ''} changed={onSwitch} />
+            </div>
+          </div>
+
+          <div>
             <div className={styles.StatusButtonsContainer}>
               <div 
                 className={styles.StatusButton}
@@ -61,8 +76,8 @@ class CurrentTask extends Component {
                   taskOngoing === true ? activeWorkingButtonStyle : null
                 }
                 onClick={(event) => switchTaskOngoinghandler(currentTaskId, true, taskOngoing)}>
-                <FontAwesomeIcon icon={fasDiagnoses} style={{marginRight: '4px'}}/>
-                Still working on it...
+                <FontAwesomeIcon icon={fasCircleNotch} style={{marginRight: '4px'}}/>
+                Ongoing...
               </div>
               <div 
                 className={styles.StatusButton}
@@ -76,18 +91,6 @@ class CurrentTask extends Component {
                   completionTimestamp !== null ? ` (${moment(completionTimestamp).fromNow()})` : null
                 }
               </div>
-            </div>
-          </div>
-          <div className={styles.TaskNameContainer}>
-            <div 
-              className={styles.TaskName}
-              contentEditable={true}
-              suppressContentEditableWarning={true}
-              onInput={(event) => this.inputChangedHandler(event, currentTaskId)}>
-              {currentTaskName}
-            </div>
-            <div className={styles.TaskSelect}>
-              <Input elementType='select' elementConfig={selectConfig} value={currentTaskId ? currentTaskId : ''} changed={onSwitch} />
             </div>
           </div>
           
