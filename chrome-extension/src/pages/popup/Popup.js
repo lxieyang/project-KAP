@@ -34,6 +34,8 @@ class Popup extends Component {
     newOptionInput: '',
     newRequirementInput: '',
     isEditingOption: true,
+    isEditingRequirement: false,
+    isEditingTaskName: false,
     currentTaskIdIsLoading: true,
     tasksIsLoading: true,
     loading: true,
@@ -71,7 +73,8 @@ class Popup extends Component {
         // Enter key pressed
         if (this.state.isEditingOption) {
           this.submitHandlerForOption(event);
-        } else {
+        } 
+        if (this.state.isEditingRequirement) {
           this.submitHandlerForRequirement(event);
         }
       }
@@ -117,6 +120,8 @@ class Popup extends Component {
   inputChangedHandlerForOption = (event) => {
     this.setState({
       isEditingOption: true,
+      isEditingRequirement: false,
+      isEditingTaskName: false,
       newOptionInput: event.target.value
     });
   }
@@ -151,6 +156,8 @@ class Popup extends Component {
   inputChangedHandlerForRequirement = (event) => {
     this.setState({
       isEditingOption: false,
+      isEditingRequirement: true,
+      isEditingTaskName: false,
       newRequirementInput: event.target.value
     });
   }
