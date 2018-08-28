@@ -89,9 +89,7 @@
 }
 
 
-.ActiveOption {
-  border: 3px solid rgba(111, 192, 70, 1);
-}
+
 
 .OptionStar {
   position: absolute;
@@ -119,4 +117,9 @@
   color: white;
   background-color: #f0ad4e;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.12);
+}
+
+
+.ActiveOption {
+  border: 3px solid rgba(111, 192, 70, 1);
 }

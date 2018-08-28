@@ -3,8 +3,10 @@ import PropTypes from 'prop-types';
 import { findDOMNode } from 'react-dom';
 import { DragSource, DropTarget } from 'react-dnd';
 import FontAwesomeIcon from '@fortawesome/react-fontawesome';
-import fasDelte from '@fortawesome/fontawesome-free-solid/faTrashAlt';
+import fasDelete from '@fortawesome/fontawesome-free-solid/faTrashAlt';
 import fasStar from '@fortawesome/fontawesome-free-solid/faStar';
+import fasMore from '@fortawesome/fontawesome-free-solid/faEllipsisV';
+import Popover from 'react-tiny-popover';
 import ordinal from 'ordinal';
 import { debounce } from 'lodash';
 import styles from './RequirementPiece.css';
@@ -79,6 +81,16 @@ class RequirementPiece extends Component {
     movePiece: PropTypes.func.isRequired,
   };
 
+  state = {
+    isPopoverOpen: false
+  }
+
+  switchPopoverOpenStatus = () => {
+    this.setState(prevState => {
+      return {isPopoverOpen: !prevState.isPopoverOpen}
+    });
+  }
+
   componentDidMount() {
     this.inputCallback = debounce((event, id) => {
       this.props.updateRequirementName(id, event.target.innerText.trim());
@@ -92,6 +104,11 @@ class RequirementPiece extends Component {
     this.inputCallback(event, id);
   }
 
+  switchStarStatus = (id) => {
+    this.props.switchStarStatusOfRequirement(id);
+    this.switchPopoverOpenStatus();
+  }
+
   render () {
     const { rq, index, isDragging, connectDragSource, connectDropTarget } = this.props;
     const opacity = isDragging ? 0 : 1;
@@ -101,27 +118,58 @@ class RequirementPiece extends Component {
       <li style={{ opacity, cursor }}>
         <div style={{display: 'flex', alignItems: 'center'}}>
           <span className={styles.Ordinal}>{ordinal(index + 1)}</span>
-          <div className={styles.Requirement}>
+
+          <div 
+            className={styles.Requirement}
+            style={{boxShadow: this.state.isPopoverOpen ? '4px 4px 6px rgba(0,0,0,0.2)' : null}}>
             <div
               className={[styles.RequirementStar, (
                 rq.starred === true ? styles.ActiveStar : null
-              )].join(' ')}
-              onClick={(event) => this.props.switchStarStatusOfRequirement(rq.id)}>
+              )].join(' ')}>
               <FontAwesomeIcon icon={fasStar} />
             </div>
-            <span
-              onClick={(event) => this.props.deleteRequirementWithId(rq.id)}>
-              <FontAwesomeIcon
-                icon={fasDelte}
-                className={styles.DeleteIcon}/>
-            </span>
-            <span
-              className={styles.RequirementText}
-              contentEditable={true}
-              suppressContentEditableWarning={true}
-              onInput={(event) => this.inputChangedHandler(event, rq.id)}>
-              {rq.name}
-            </span>
+            <div className={styles.RequirementContentRow}>
+              <span
+                className={styles.RequirementText}
+                contentEditable={true}
+                suppressContentEditableWarning={true}
+                onInput={(event) => this.inputChangedHandler(event, rq.id)}>
+                {rq.name}
+              </span>
+              <Popover
+                isOpen={this.state.isPopoverOpen}
+                position={'bottom'} // preferred position
+                onClickOutside={() => this.switchPopoverOpenStatus()}
+                containerClassName={styles.PopoverContainer}
+                content={(
+                  <div className={styles.PopoverContentContainer}>
+                    <ul>
+                      <li onClick={(event) => this.switchStarStatus(rq.id)}>
+                        <div className={styles.IconBoxInPopover}>
+                          <FontAwesomeIcon icon={fasStar} className={styles.IconInPopover}/>
+                        </div>
+                        <div>{rq.starred === true ? 'Remove' : 'Add'} Star</div>
+                      </li>
+
+                      <li onClick={(event) => this.props.deleteRequirementWithId(rq.id)}>
+                        <div className={styles.IconBoxInPopover}>
+                          <FontAwesomeIcon icon={fasDelete} className={styles.IconInPopover}/>
+                        </div>
+                        <div>Delete</div>
+                      </li>
+                    </ul>
+                  </div>
+                )}
+              >
+                <span 
+                  className={styles.MoreIconContainer}
+                  style={{opacity: this.state.isPopoverOpen ? '0.9' : null}}
+                  onClick={() => this.switchPopoverOpenStatus()}>
+                  <FontAwesomeIcon icon={fasMore}/>
+                </span>
+                
+              </Popover>
+            </div>
           </div>
         </div>
 
