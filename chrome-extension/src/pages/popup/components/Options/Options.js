@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 
 import FontAwesomeIcon from '@fortawesome/react-fontawesome';
 import fasListAlt from '@fortawesome/fontawesome-free-solid/faListAlt';
-import fasPaperPlane from '@fortawesome/fontawesome-free-solid/faPaperPlane';
 import Input from '../../../../../../shared-components/src/components/UI/Input/Input';
 import OptionPiece from './OptionPiece/OptionPiece';
 import { sortBy } from 'lodash';
@@ -88,7 +87,11 @@ class Options extends Component {
                 submitted={this.props.addOption}
                 value={this.props.newOptionValue}
                 changed={this.props.changed} />
-
+              <span>
+                {this.props.newOptionValue !== '' 
+                  ? <span className={styles.PromptToHitEnter}>Press Enter &#x23ce; when done</span> 
+                  : ' '}
+              </span>
             </ul>
           </div>
         </div>

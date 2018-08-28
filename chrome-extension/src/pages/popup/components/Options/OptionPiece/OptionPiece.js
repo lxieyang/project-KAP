@@ -5,7 +5,6 @@ import { DragSource, DropTarget } from 'react-dnd';
 import FontAwesomeIcon from '@fortawesome/react-fontawesome';
 import fasDelete from '@fortawesome/fontawesome-free-solid/faTrashAlt';
 import fasStar from '@fortawesome/fontawesome-free-solid/faStar';
-
 import fasMore from '@fortawesome/fontawesome-free-solid/faEllipsisV';
 import Popover from 'react-tiny-popover';
 import { debounce } from 'lodash';
@@ -170,7 +169,6 @@ class OptionPiece extends Component {
                 </span>
                 
               </Popover>
-              
 
             </div>
             
