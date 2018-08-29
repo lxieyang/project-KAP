@@ -317,6 +317,7 @@ class Popup extends Component {
 
       toRender = (
         <Aux>
+          
           {appTitle}
 
           <HorizontalDivider margin={dividerOptions.margin.long}/>

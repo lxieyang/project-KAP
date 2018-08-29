@@ -67,7 +67,7 @@ class AppHeader extends Component {
 
             <Popover
               containerStyle={{zIndex: '100000'}}
-              containerClassName={styles.LogoutPopover}
+              containerClassName={styles.LogoutPopoverContainer}
               isOpen={this.state.popoverOpen}
               position={'bottom'}
               align={'end'}
