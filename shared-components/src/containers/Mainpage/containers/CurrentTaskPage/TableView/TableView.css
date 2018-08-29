@@ -539,3 +539,14 @@ tr:nth-child(even) {background-color: #f2f2f2;} */
   float:left;
   z-index: 5;
 }
+
+.ModeToggleButtonsContainer {
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+}
+
+.ModeToggleButton {
+  cursor: pointer;
+  margin: 0px 10px;
+}

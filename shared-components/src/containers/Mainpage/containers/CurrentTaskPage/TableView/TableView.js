@@ -1100,21 +1100,13 @@ class TableView extends Component {
 
     return (
       <Aux>
-      <div className={styles.Section}>
-        <div className={styles.TableView}>
-          {/* <
-            div className={styles.ConfigureRow}>
-            <div className={styles.PieceConfigure}>
-              {pieceViewOption}
-            </div>
-          </div>
-          */}
-            <div
-             className={styles.Header}>
-             <div className={styles.HeaderNameContainer}>
+        <div className={styles.Section}>
+          <div className={styles.TableView}>
+            <div className={styles.Header}>
+              <div className={styles.HeaderNameContainer}>
                 <div className={styles.HeaderName}
                 onClick={(event) => this.switchTableIsOpenStatus(event)}>
-                 <span>Comparison Table</span>
+                  <span>Comparison Table</span>
                 </div>
                 <div className={styles.HeaderCollapseButton}
                   onClick={(event) => this.switchTableIsOpenStatus(event)}>
@@ -1135,31 +1127,33 @@ class TableView extends Component {
                 */}
               </div>
 
-              <div style={{margin:'0px 0px 0px 20px', textDecoration: this.state.readModeisOn ? 'underline' : 'none'}}
+              <div className={styles.ModeToggleButtonsContainer}>
+                <div className={styles.ModeToggleButton} style={{textDecoration: this.state.readModeisOn ? 'underline' : 'none'}}
+                  onClick={(event) => this.switchTableMode(event)}>
+                  View
+                </div>
+
+                <div>|</div>
+
+                <div className={styles.ModeToggleButton} style={{textDecoration: this.state.readModeisOn ? 'none' : 'underline'}}
                 onClick={(event) => this.switchTableMode(event)}>
-                View
+                  Edit
+                </div>
               </div>
 
-              <div>&nbsp;|&nbsp;
-              </div>
-              <div style={{margin:'0px 20px 0px 0px', textDecoration: this.state.readModeisOn ? 'none' : 'underline'}}
-              onClick={(event) => this.switchTableMode(event)}>
-                Edit
-              </div>
-              </div>
-              <Collapse isOpened={this.state.tableviewisOpen} springConfig={{stiffness: 700, damping: 50}}>
+            </div>
+            <Collapse isOpened={this.state.tableviewisOpen} springConfig={{stiffness: 700, damping: 50}}>
               <div className={styles.Content}>
               {
                 this.state.readModeisOn? readContent: writeContent
               }
-
               </div>
-              </Collapse>
+            </Collapse>
             {modal}
-            </div>
+          </div>
 
 
-            </div>
+        </div>
 
       </Aux>
     );
