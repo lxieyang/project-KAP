@@ -1,6 +1,6 @@
 {
   "name": "project-kap",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "description": "Help developers code more effectively.",
   "license": "MIT",
   "repository": {
@@ -53,6 +53,8 @@
     "react-simple-popover": "^0.2.4",
     "react-sticky": "^6.0.3",
     "react-sticky-table": "^2.0.4",
+    "react-tiny-popover": "^3.4.2",
+    "react-toastify": "^4.2.0",
     "react-toggle": "^4.0.2",
     "react-tooltip": "^3.6.1",
     "redux": "^3.7.2",

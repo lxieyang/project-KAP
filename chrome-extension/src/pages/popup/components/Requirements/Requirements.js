@@ -83,6 +83,11 @@ class Requirements extends Component {
                 submitted={this.props.addRequirement}
                 value={this.props.newRequirementValue}
                 changed={this.props.changed} />
+              <span>
+                {this.props.newRequirementValue !== '' 
+                  ? <span className={styles.PromptToHitEnter}>Press Enter &#x23ce; when done</span> 
+                  : ' '}
+              </span>
             </ul>
           </div>
         </div>

@@ -441,7 +441,11 @@
 }
 
 .Overlay td {
+<<<<<<< HEAD
   padding:0px;
+=======
+  padding: 3px 3px;
+>>>>>>> f4589e3744ad8da037a27d35b317b390fc3ada4c
   text-align: left;
 }
 
@@ -562,7 +566,11 @@ table.ComparisonTable {
 
 /* .ComparisonTable th, */
 .ComparisonTable td {
+<<<<<<< HEAD
   padding: 0px;
+=======
+  padding: 3px 3px;
+>>>>>>> f4589e3744ad8da037a27d35b317b390fc3ada4c
   text-align: left;
 
 }

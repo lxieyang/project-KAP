@@ -74,3 +74,11 @@
   margin-top: 5px;
   margin-bottom: 5px;
 }
+
+.PromptAutoSaved {
+  font-size: 0.8rem;
+  color: inherit;
+  opacity: 0.8;
+  margin-top: 5px;
+  margin-left: 5px;
+}

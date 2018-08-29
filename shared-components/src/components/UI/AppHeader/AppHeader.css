@@ -75,17 +75,13 @@
   box-shadow: 0 2px 5px 0 rgba(0,0,0,0.16), 0 2px 10px 0 rgba(0,0,0,0.12);
 }
 
-.LogoutPopover {
+.LogoutPopoverContainer {
   /* background-color: black;
   color: white; */
   background-color: white;
-  font-size: 1.3rem;
+  font-size: 1.0rem;
   text-decoration: none;
-  padding: 10px;
   box-shadow: 0 2px 5px 0 rgba(0,0,0,0.16), 0 2px 10px 0 rgba(0,0,0,0.12);
-  position: relative;
-  min-width: 30px;
-  min-height: 30px;
 }
 
 .SpinnerContainer {
@@ -96,6 +92,12 @@
 
 .MenuItem {
   cursor: pointer;
+  padding: 5px 10px 5px 6px;
+  transition: all 0.1s ease-in;
+}
+
+.MenuItem:hover {
+  background-color: #eee;
 }
 
 .Label {
