@@ -3,6 +3,7 @@
   font-size: 14px;
   line-height: 1.2rem;
   max-width: 900px;
+  max-height: 95%;
   /* min-width: 550px; */
   background-color: rgba(226, 236, 244, 1);
   box-shadow: 0 4px 10px 0 rgba(0,0,0,0.2), 0 4px 20px 0 #00000030;
@@ -19,9 +20,9 @@
 }
 
 .InteractionBoxDragHandle {
-   -moz-user-select: -moz-none;
-   -khtml-user-select: none;
-   -webkit-user-select: none;
+  -moz-user-select: -moz-none;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
   position: absolute;
   display: inline-block;
   background-color: rgba(211, 211, 211, 0.25);
@@ -122,7 +123,7 @@
   background-color: white;
   box-shadow: 0 1px 2px 0 rgba(0,0,0,0.16),0 1px 5px 0 rgba(0,0,0,0.12);
   padding: 10px;
-  max-height: 300px;
+  max-height: 270px;
   overflow-x: auto;
   overflow-y: auto;
 }
