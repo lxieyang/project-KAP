@@ -8,6 +8,10 @@ import fasToggleOn from '@fortawesome/fontawesome-free-solid/faToggleOn';
 import fasToggleOff from '@fortawesome/fontawesome-free-solid/faToggleOff';
 import fasTrash from '@fortawesome/fontawesome-free-solid/faTrash';
 import faEdit from '@fortawesome/fontawesome-free-solid/faEdit';
+import fasDelete from '@fortawesome/fontawesome-free-solid/faTrashAlt';
+import fasMore from '@fortawesome/fontawesome-free-solid/faEllipsisV';
+import Popover from 'react-tiny-popover';
+import ThreeDotsSpinner from '../../../../../../components/UI/ThreeDotsSpinner/ThreeDotsSpinner';
 import ordinal from 'ordinal';
 import PropTypes from 'prop-types';
 import { findDOMNode } from 'react-dom';
@@ -89,7 +93,15 @@ class TableRow extends Component {
     options: this.props.options,
     requirements: this.props.requirements,
     noteIsOpen: this.props.shouldShowNotes !== undefined ? this.props.shouldShowNotes : false,
-    newNote: ''
+    newNote: '',
+    isPopoverOpen: false,
+    shouldShowPrompt: false
+  }
+
+  switchPopoverOpenStatus = () => {
+    this.setState(prevState => {
+      return {isPopoverOpen: !prevState.isPopoverOpen}
+    });
   }
 
   componentDidMount () {
@@ -97,7 +109,8 @@ class TableRow extends Component {
       this.props.updateOptionName(id, event.target.innerText.trim());
       event.target.innerText = event.target.innerText.trim();
       event.target.blur();
-    }, 1000);
+      this.setState({shouldShowPrompt: false});
+    }, 1500);
 
     // event listener
     document.body.addEventListener('keyup', (event) => {
@@ -113,7 +126,18 @@ class TableRow extends Component {
 
   optionNameChangedHandler = (event, id) => {
     event.persist();
+    this.setState({shouldShowPrompt: true});
     this.optionCallback(event, id);
+  }
+
+  switchStarStatus = (id) => {
+    this.props.switchStarStatusOfOption(id);
+    this.switchPopoverOpenStatus();
+  }
+
+  switchUsedStatus = (id, used) => {
+    this.props.switchUsedStatusOfOption(id, used);
+    this.switchPopoverOpenStatus();
   }
 
   switchNoteShowStatus = () => {
@@ -148,32 +172,88 @@ class TableRow extends Component {
           */}
           <div style={{
               visibility: this.props.invisible ? 'visible' : 'hidden',
-              display: 'flex',
-              alignItems: 'center',
+              padding: '3px 3px',
               opacity: op.hide === true ? `${inactiveOpacity}` : '1',
               backgroundColor: op.used === true ? 'rgba(82, 184, 101, 0.3)' : 'transparent' }}>
-            <div>
-              <div
-                className={[styles.OptionStar, (
-                  op.starred === true ? styles.ActiveStar : null
-                )].join(' ')}
-                onClick={(event) => this.props.switchStarStatusOfOption(op.id)}>
-                <FontAwesomeIcon icon={fasStar} />
-              </div>
-
+            <div 
+              style={{
+                display: 'flex', 
+                alignItems: 'center', 
+                padding: '5px 0px'}}>
+            
               <span className={styles.Ordinal}>{(index + 1)}</span>
               
-              {/*
-              <div
-                className={[styles.OptionUseStatus, (
-                  op.used === true ? styles.UsedOption : null
-                )].join(' ')}
-                onClick={(event) => this.props.switchUsedStatusOfOption(op.id, op.used)}>
-                <FontAwesomeIcon icon={fasCheckCircle} />
-              </div>
-              */}
+              <div 
+                className={styles.Option}
+                style={{boxShadow: this.state.isPopoverOpen || this.state.shouldShowPrompt ? '4px 4px 6px rgba(0,0,0,0.2)' : null}}>
+                <div
+                  className={[styles.OptionStar, (
+                    op.starred === true ? styles.ActiveStar : null
+                  )].join(' ')}>
+                  <FontAwesomeIcon icon={fasStar} />
+                </div>
+                <div className={styles.OptionContentRow}>
+                  <span
+                    className={styles.OptionText}
+                    contentEditable={true}
+                    suppressContentEditableWarning={true}
+                    onInput={(event) => this.optionNameChangedHandler(event, op.id)}>
+                    {op.name}
+                  </span>
+                  <Popover
+                    isOpen={this.state.isPopoverOpen}
+                    position={'bottom'} // preferred position
+                    onClickOutside={() => this.switchPopoverOpenStatus()}
+                    containerClassName={styles.PopoverContainer}
+                    content={(
+                      <div className={styles.PopoverContentContainer}>
+                        <ul>
+                          <li onClick={(event) => this.switchUsedStatus(op.id, op.used)}>
+                            <div className={styles.IconBoxInPopover}>
+                              <FontAwesomeIcon icon={fasCheckCircle} className={styles.IconInPopover}/>
+                            </div>
+                            <div>{op.used === true ? 'Wish NOT to use' : 'Wish to use'}</div>
+                          </li>
 
+                          <li onClick={(event) => this.switchStarStatus(op.id)}>
+                            <div className={styles.IconBoxInPopover}>
+                              <FontAwesomeIcon icon={fasStar} className={styles.IconInPopover}/>
+                            </div>
+                            <div>{op.starred === true ? 'Remove' : 'Add'} Star</div>
+                          </li>
+    
+                          <li >
+                            <div className={styles.IconBoxInPopover}>
+                              <FontAwesomeIcon icon={fasDelete} className={styles.IconInPopover}/>
+                            </div>
+                            <div>Delete</div>
+                          </li>
+                        </ul>
+                      </div>
+                    )}
+                  >
+                    <span 
+                      className={styles.MoreIconContainer}
+                      style={{opacity: this.state.isPopoverOpen ? '0.7' : null}}
+                      onClick={() => this.switchPopoverOpenStatus()}>
+                      <FontAwesomeIcon icon={fasMore}/>
+                    </span>
+                    
+                  </Popover>
+    
+                </div>
+                
+              </div>
             </div>
+            <div className={styles.PromptAutoSaved}>
+              {this.state.shouldShowPrompt === true 
+                ? <span>
+                    Edits will automatically be saved <ThreeDotsSpinner />
+                  </span>
+                : null}
+            </div>
+              
+            {/*
             <div className={[styles.OptionNameContainer, !op.active ? styles.InactiveOption : null].join(' ')}>
               <span
                 contentEditable={true}
@@ -225,6 +305,7 @@ class TableRow extends Component {
                 </div>
               </UnmountClosed>
             </div>
+            */}
           </div>
 
         </td>

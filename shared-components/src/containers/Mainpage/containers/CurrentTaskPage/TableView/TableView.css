@@ -252,6 +252,7 @@
 .AttitudeThumbInTableCellContainer {
   display: flex;
   flex-wrap: wrap;
+  justify-content: space-around;
 }
 
 .AttitudeInTableCell {
@@ -511,7 +512,7 @@ table.ComparisonTable {
   font-weight: 500;
   position: sticky;
   top: 0;
-  background-color: rgba(255,255,255,1);
+  background-color: #fff;
   vertical-align: bottom;
   z-index: 44;
 }

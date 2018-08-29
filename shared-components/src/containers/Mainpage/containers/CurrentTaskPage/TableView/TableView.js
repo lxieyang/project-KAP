@@ -547,7 +547,7 @@ class TableView extends Component {
         <br></br>
         <br></br>
         <FontAwesomeIcon icon={fasFlagCheckered} className={styles.addCriterion}/>  &nbsp;
-        <input id='addCriterion' type="text" placeholder={'Add a Criterion'}
+        <input id='addCriterion' type="text" placeholder={'Add a Criterion / Feature'}
         className={styles.Input}
 
         />
