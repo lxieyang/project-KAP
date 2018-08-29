@@ -150,11 +150,9 @@ class TableRow extends Component {
               visibility: this.props.invisible ? 'visible' : 'hidden',
               display: 'flex',
               alignItems: 'center',
-              padding: '5px',
-              borderRadius: '3px',
               opacity: op.hide === true ? `${inactiveOpacity}` : '1',
               backgroundColor: op.used === true ? 'rgba(82, 184, 101, 0.3)' : 'transparent' }}>
-            <div style={{height: '100%'}}>
+            <div>
               <div
                 className={[styles.OptionStar, (
                   op.starred === true ? styles.ActiveStar : null
@@ -162,7 +160,10 @@ class TableRow extends Component {
                 onClick={(event) => this.props.switchStarStatusOfOption(op.id)}>
                 <FontAwesomeIcon icon={fasStar} />
               </div>
-              <span className={styles.Ordinal}>{ordinal(index + 1)}</span>
+
+              <span className={styles.Ordinal}>{(index + 1)}</span>
+              
+              {/*
               <div
                 className={[styles.OptionUseStatus, (
                   op.used === true ? styles.UsedOption : null
@@ -170,6 +171,8 @@ class TableRow extends Component {
                 onClick={(event) => this.props.switchUsedStatusOfOption(op.id, op.used)}>
                 <FontAwesomeIcon icon={fasCheckCircle} />
               </div>
+              */}
+
             </div>
             <div className={[styles.OptionNameContainer, !op.active ? styles.InactiveOption : null].join(' ')}>
               <span

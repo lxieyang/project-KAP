@@ -121,7 +121,7 @@ class RequirementPiece extends Component {
     return connectDragSource(connectDropTarget(
       <li style={{ opacity, cursor }}>
         <div style={{display: 'flex', alignItems: 'center'}}>
-          <span className={styles.Ordinal}>{ordinal(index + 1)}</span>
+          <span className={styles.Ordinal}>{(index + 1)}</span>
 
           <div 
             className={styles.Requirement}
@@ -167,7 +167,7 @@ class RequirementPiece extends Component {
               >
                 <span 
                   className={styles.MoreIconContainer}
-                  style={{opacity: this.state.isPopoverOpen ? '0.9' : null}}
+                  style={{opacity: this.state.isPopoverOpen ? '0.7' : null}}
                   onClick={() => this.switchPopoverOpenStatus()}>
                   <FontAwesomeIcon icon={fasMore}/>
                 </span>

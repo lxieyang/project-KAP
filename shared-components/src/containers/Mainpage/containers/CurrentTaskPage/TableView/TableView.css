@@ -401,7 +401,7 @@
 }
 
 .Overlay td {
-  padding: 8px;
+  padding: 3px 3px;
   text-align: left;
 }
 
@@ -522,7 +522,7 @@ table.ComparisonTable {
 
 /* .ComparisonTable th, */
 .ComparisonTable td {
-  padding: 8px;
+  padding: 3px 3px;
   text-align: left;
 
 }

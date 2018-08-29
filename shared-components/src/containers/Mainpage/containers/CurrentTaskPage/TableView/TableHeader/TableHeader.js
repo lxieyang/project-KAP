@@ -99,15 +99,17 @@ class TableHeader extends Component {
     const opacity = (isDragging) ? 0 : 1;
     return connectDragSource(connectDropTarget(
       <th style={{ opacity, visibility : isVisible ? 'visible' : 'hidden'}}>
+        {/*  
         <div
-            className={styles.ShowHideRequirement}
-            onClick={(event) => this.props.switchHideStatusOfARequirement(index, rq.id, rq.hide)}>
-            {
-              rq.hide !== true
-              ? <FontAwesomeIcon icon={fasToggleOff} className={styles.ShowHideRequirementIcon}/>
-              : <FontAwesomeIcon icon={fasToggleOn} className={styles.ShowHideRequirementIcon}/>
-            }
-          </div>
+          className={styles.ShowHideRequirement}
+          onClick={(event) => this.props.switchHideStatusOfARequirement(index, rq.id, rq.hide)}>
+          {
+            rq.hide !== true
+            ? <FontAwesomeIcon icon={fasToggleOff} className={styles.ShowHideRequirementIcon}/>
+            : <FontAwesomeIcon icon={fasToggleOn} className={styles.ShowHideRequirementIcon}/>
+          }
+        </div>
+        */}
         <div
           style={{opacity: rq.hide === true ? `${inactiveOpacity}` : '1'}}
           className={styles.RequirementInTableHeaderContainer}>
@@ -119,7 +121,7 @@ class TableHeader extends Component {
               onClick={(event) => this.props.switchStarStatusOfRequirement(rq.id)}>
               <FontAwesomeIcon icon={fasStar} />
             </div>
-            <span className={styles.Ordinal}>{ordinal(index + 1)}</span>
+            <span className={styles.Ordinal}>{(index + 1)}</span>
           </div>
           <div
             className={[styles.RequirementNameContainer,

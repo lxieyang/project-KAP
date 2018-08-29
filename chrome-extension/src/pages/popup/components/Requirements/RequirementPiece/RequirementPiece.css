@@ -1,12 +1,13 @@
 .Requirement {
-  color: white;
+  color: #333;
   font-weight: 300;
   font-family: 'Encode Sans Semi Expanded', sans-serif;
-  background-color: #48a1bb;
+  background-color: #fff;
   padding: 3px 10px;
   border-radius: 5px;
   box-sizing: border-box;
   border: 3px solid transparent;
+  box-shadow: 0px 0px 3px rgba(0,0,0,0.1);
   outline: none;
 
   position: relative;
@@ -34,6 +35,10 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+}
+
+.RequirementText {
+  font-weight: 500;
 }
 
 .RequirementText:focus {
@@ -116,8 +121,7 @@
   flex-shrink: 0;
   cursor: move;
   margin-right: 6px;
-  padding: 3px 6px;
-  width: 30px;
+  padding: 3px 8px;
   text-align: center;
   border-radius: 4px;
   font-size: 15px;
