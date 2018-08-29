@@ -214,6 +214,17 @@ class CurrentTaskPage extends Component {
     })
   }
 
+  willUnselectAlllSnippets = (event) => {
+    this.setState(prevState => {
+      return {selectedSnippets: true};
+    })
+  }
+
+  finishedUnselectingAllSnippets = (event) => {
+    this.setState(prevState => {
+      return {selectedSnippets: false};
+    })
+  }
 
   render () {
     const { isTable } = this.state;

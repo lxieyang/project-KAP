@@ -145,7 +145,7 @@
   font-weight: 300;
   font-family: 'Encode Sans Semi Expanded', sans-serif;
   background-color: #E4E5E7;
-  padding: 3px 8px;
+  padding: 3px 0px;
   border-radius: 5px;
   box-sizing: border-box;
   cursor: pointer;
@@ -252,7 +252,6 @@
 .AttitudeThumbInTableCellContainer {
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-around;
 }
 
 .AttitudeInTableCell {
@@ -322,8 +321,8 @@
 
 .RequirementAttitudeThumbContainer {
   display: inline-block;
-  width: 20px;
-  height: 20px;
+  width: 30px;
+  height: 30px;
   margin: 5px;
   cursor: pointer;
   opacity: 0.50;
@@ -441,7 +440,7 @@
 }
 
 .Overlay td {
-  padding: 3px 3px;
+  padding:0px;
   text-align: left;
 }
 
@@ -551,7 +550,7 @@ table.ComparisonTable {
   font-weight: 500;
   position: sticky;
   top: 0;
-  background-color: #fff;
+  background-color: rgba(255,255,255,1);
   vertical-align: bottom;
   z-index: 44;
 }
@@ -562,8 +561,9 @@ table.ComparisonTable {
 
 /* .ComparisonTable th, */
 .ComparisonTable td {
-  padding: 3px 3px;
+  padding: 0px;
   text-align: left;
+
 }
 
 
@@ -577,15 +577,4 @@ tr:nth-child(even) {background-color: #f2f2f2;} */
   display: table-column-group;
   float:left;
   z-index: 5;
-}
-
-.ModeToggleButtonsContainer {
-  font-size: 0.9rem;
-  display: flex;
-  align-items: center;
-}
-
-.ModeToggleButton {
-  cursor: pointer;
-  margin: 0px 10px;
 }

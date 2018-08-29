@@ -282,7 +282,7 @@ class Header extends Component {
             </div>
             <Popover
               containerStyle={{zIndex: '100000'}}
-              containerClassName={styles.LogoutPopover}
+              containerClassName={styles.LogoutPopoverContainer}
               isOpen={this.state.popoverOpen}
               position={'bottom'} 
               align={'end'}
@@ -292,7 +292,7 @@ class Header extends Component {
                   <NavLink 
                     to={appRoutes.LOG_OUT}
                     exact>
-                    <div className={styles.Label}>
+                    <div >
                       &nbsp;
                       <FontAwesomeIcon icon={fasSignOutAlt} /> &nbsp;
                       Sign out

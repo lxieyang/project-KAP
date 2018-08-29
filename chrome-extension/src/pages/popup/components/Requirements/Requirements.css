@@ -28,9 +28,9 @@
 
 .RequirementList ul li {
   margin: 10px 0px;
-  display: flex;
+  /* display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: center; */
 }
 
 .Requirement {
@@ -69,4 +69,11 @@
 .Input input:focus {
   outline: none;
   border-color: rgba(126,185,215, 1);
+}
+
+.PromptToHitEnter {
+  font-size: 0.8rem;
+  color: inherit;
+  opacity: 0.8;
+  margin-left: 5px;
 }

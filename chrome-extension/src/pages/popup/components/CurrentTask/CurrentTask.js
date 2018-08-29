@@ -6,6 +6,7 @@ import fasCircleNotch from '@fortawesome/fontawesome-free-solid/faCircleNotch';
 import fasCheck from '@fortawesome/fontawesome-free-solid/faCheck';
 import Input from '../../../../../../shared-components/src/components/UI/Input/Input';
 import { debounce } from 'lodash';
+import ThreeDotsSpinner from '../../../../../../shared-components/src/components/UI/ThreeDotsSpinner/ThreeDotsSpinner';
 import styles from './CurrentTask.css';
 
 
@@ -22,17 +23,22 @@ const activeFinishButtonStyle = {
 };
 
 class CurrentTask extends Component {
+  state = {
+    shouldShowPrompt: false
+  }
 
   componentDidMount() {
     this.inputCallback = debounce((event, id) => {
       this.props.updateTaskName(id, event.target.innerText.trim());
       event.target.innerText = event.target.innerText.trim();
       event.target.blur();
-    }, 2000);
+      this.setState({shouldShowPrompt: false});
+    }, 1500);
   }
 
   inputChangedHandler = (event, id) => {
     event.persist();
+    this.setState({shouldShowPrompt: true});
     this.inputCallback(event, id);
   }
 
@@ -66,6 +72,14 @@ class CurrentTask extends Component {
             <div className={styles.TaskSelect}>
               <Input elementType='select' elementConfig={selectConfig} value={currentTaskId ? currentTaskId : ''} changed={onSwitch} />
             </div>
+          </div>
+
+          <div className={styles.PromptAutoSaved}>
+            {this.state.shouldShowPrompt === true 
+              ? <span>
+                  Edits will automatically be saved <ThreeDotsSpinner />
+                </span>
+              : null}
           </div>
 
           <div>

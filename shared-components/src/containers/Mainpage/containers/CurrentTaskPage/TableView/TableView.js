@@ -58,7 +58,7 @@ class TableView extends Component {
     showModal: false,
     modalPieceId: '',
     tableviewisOpen: true,
-    readModeisOn: true,
+    readModeisOn: false,
   }
 
   UNSAFE_componentWillReceiveProps (nextProps) {
@@ -169,7 +169,7 @@ class TableView extends Component {
   }
 
   attitudeChangeHandler = (event) => {
-    console.log('TODO: update the attitudes of all selected snippets')
+    console.log('TODO: update the attitudes of all selected snippets and unselect all snippets')
   }
 
   switchTableMode = (event) => {
@@ -555,7 +555,7 @@ class TableView extends Component {
         <br></br>
         <br></br>
         <FontAwesomeIcon icon={fasFlagCheckered} className={styles.addCriterion}/>  &nbsp;
-        <input id='addCriterion' type="text" placeholder={'Add a Criterion'}
+        <input id='addCriterion' type="text" placeholder={'Add a Criterion / Feature'}
         className={styles.Input}
 
         />
@@ -639,7 +639,6 @@ class TableView extends Component {
             />
             {
               newRequirementsList.map((rq, index) => {
-                //TODO: need to detect when snippets are selected and only pull up rating options then
                 // find all pieces in the piecesList that has option id = op.id and requirement id = rq.id
                 let piecesInThisCell = [];
                 for (let pKey in this.state.pieces) {
@@ -1099,62 +1098,54 @@ class TableView extends Component {
     );
     let readContent = (
       <div style={{position: 'relative'}}>
-      <div id='bottom' style={{opacity:'1', zIndex: '15',borderSpacing: '0px',
-                            maxWidth: '90vw', maxHeight: '50vw',
-                            overflowY:'scroll', overflowX:'scroll'}}>
-      <table className={styles.ComparisonTable}>
-      <thead style={{ opacity: '1'}}>{viewTableHeader}</thead>
-      <tbody style={{ opacity: '1'}}>{invisibleOptionsOverlay}</tbody>
-      </table>
-      </div>
+        <div id='bottom' style={{opacity:'1', zIndex: '15',borderSpacing: '0px',
+                              maxWidth: '90vw', maxHeight: '50vw',
+                              overflowY:'auto', overflowX:'auto'}}>
+          <table className={styles.ComparisonTable}>
+            <thead style={{ opacity: '1'}}>{viewTableHeader}</thead>
+            <tbody style={{ opacity: '1'}}>{invisibleOptionsOverlay}</tbody>
+          </table>
+        </div>
 
-      <div id='middle' style={{zIndex: '30', position: 'absolute', top: '0',
-                    maxWidth: '90vw', maxHeight: '50vw',
-                    overflowY:'scroll', overflowX:'scroll'}}>
-      <table className={[styles.Overlay, styles.ComparisonTable].join(' ')}>
-        <thead style={{opacity:'0'}}>{viewTableHeader}</thead>
-        <tbody style={{opacity:'1'}}>{TableBodyOverlay}</tbody>
-      </table>
-      </div>
+        <div id='middle' style={{zIndex: '30', position: 'absolute', top: '0',
+                      maxWidth: '90vw', maxHeight: '50vw',
+                      overflowY:'scroll', overflowX:'scroll'}}>
+        <table className={[styles.Overlay, styles.ComparisonTable].join(' ')}>
+          <thead style={{opacity:'0'}}>{viewTableHeader}</thead>
+          <tbody style={{opacity:'1'}}>{TableBodyOverlay}</tbody>
+        </table>
+        </div>
 
-      <div id='top' style={{opacity: '1', zIndex: '45', position: 'absolute', top: '0', left: '0',
-                    maxWidth: '90vw', maxHeight: '50vw',
-                    overflowY:'scroll', overflowX:'scroll'}}
-                    onScroll={(event) => this.scrollTable(event)}>
-      <table className={[styles.Overlay].join(' ')}>
-      <thead style={{ opacity: '0'}}>{emptyHeader}</thead>
-      <tbody style={{ opacity: '1'}}>{invisibleIconOverlay}</tbody>
-      </table>
-      </div>
+        <div id='top' style={{opacity: '1', zIndex: '45', position: 'absolute', top: '0', left: '0',
+                      maxWidth: '90vw', maxHeight: '50vw',
+                      overflowY:'scroll', overflowX:'scroll'}}
+                      onScroll={(event) => this.scrollTable(event)}>
+        <table className={[styles.Overlay].join(' ')}>
+        <thead style={{ opacity: '0'}}>{emptyHeader}</thead>
+        <tbody style={{ opacity: '1'}}>{invisibleIconOverlay}</tbody>
+        </table>
+        </div>
 
-      <div style={{opacity: '1', zIndex: '44', position: 'absolute', top: '0', left: '0',
-                    maxWidth: '90vw', maxHeight: '50vw',
-                    overflowY:'hidden', overflowX:'hidden'}}>
-      <table className={[styles.Overlay].join(' ')}>
-      <thead style={{ opacity: '1'}}>{emptyHeader}</thead>
-      <tbody style={{ visibility: 'hidden'}}>{invisibleOptionsOverlay}</tbody>
-      </table>
-      </div>
+        <div style={{opacity: '1', zIndex: '44', position: 'absolute', top: '0', left: '0',
+                      maxWidth: '90vw', maxHeight: '50vw',
+                      overflowY:'hidden', overflowX:'hidden'}}>
+        <table className={[styles.Overlay].join(' ')}>
+        <thead style={{ opacity: '1'}}>{emptyHeader}</thead>
+        <tbody style={{ visibility: 'hidden'}}>{invisibleOptionsOverlay}</tbody>
+        </table>
+        </div>
       </div>
   );
 
     return (
       <Aux>
-      <div className={styles.Section}>
-        <div className={styles.TableView}>
-          {/* <
-            div className={styles.ConfigureRow}>
-            <div className={styles.PieceConfigure}>
-              {pieceViewOption}
-            </div>
-          </div>
-          */}
-            <div
-             className={styles.Header}>
-             <div className={styles.HeaderNameContainer}>
+        <div className={styles.Section}>
+          <div className={styles.TableView}>
+            <div className={styles.Header}>
+              <div className={styles.HeaderNameContainer}>
                 <div className={styles.HeaderName}
                 onClick={(event) => this.switchTableIsOpenStatus(event)}>
-                 <span>Comparison Table</span>
+                  <span>Comparison Table</span>
                 </div>
                 <div className={styles.HeaderCollapseButton}
                   onClick={(event) => this.switchTableIsOpenStatus(event)}>
@@ -1175,31 +1166,33 @@ class TableView extends Component {
                 */}
               </div>
 
-              <div style={{margin:'0px 0px 0px 20px', textDecoration: this.state.readModeisOn ? 'underline' : 'none'}}
+              <div className={styles.ModeToggleButtonsContainer}>
+                <div className={styles.ModeToggleButton} style={{textDecoration: this.state.readModeisOn ? 'underline' : 'none'}}
+                  onClick={(event) => this.switchTableMode(event)}>
+                  View
+                </div>
+
+                <div>|</div>
+
+                <div className={styles.ModeToggleButton} style={{textDecoration: this.state.readModeisOn ? 'none' : 'underline'}}
                 onClick={(event) => this.switchTableMode(event)}>
-                View
+                  Edit
+                </div>
               </div>
 
-              <div>&nbsp;|&nbsp;
-              </div>
-              <div style={{margin:'0px 20px 0px 0px', textDecoration: this.state.readModeisOn ? 'none' : 'underline'}}
-              onClick={(event) => this.switchTableMode(event)}>
-                Edit
-              </div>
-              </div>
-              <Collapse isOpened={this.state.tableviewisOpen} springConfig={{stiffness: 700, damping: 50}}>
+            </div>
+            <Collapse isOpened={this.state.tableviewisOpen} springConfig={{stiffness: 700, damping: 50}}>
               <div className={styles.Content}>
               {
                 this.state.readModeisOn? readContent: writeContent
               }
-
               </div>
-              </Collapse>
+            </Collapse>
             {modal}
-            </div>
+          </div>
 
 
-            </div>
+        </div>
 
       </Aux>
     );

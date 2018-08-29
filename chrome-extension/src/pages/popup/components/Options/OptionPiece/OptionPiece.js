@@ -5,6 +5,9 @@ import { DragSource, DropTarget } from 'react-dnd';
 import FontAwesomeIcon from '@fortawesome/react-fontawesome';
 import fasDelete from '@fortawesome/fontawesome-free-solid/faTrashAlt';
 import fasStar from '@fortawesome/fontawesome-free-solid/faStar';
+import fasMore from '@fortawesome/fontawesome-free-solid/faEllipsisV';
+import Popover from 'react-tiny-popover';
+import ThreeDotsSpinner from '../../../../../../../shared-components/src/components/UI/ThreeDotsSpinner/ThreeDotsSpinner';
 import { debounce } from 'lodash';
 import ordinal from 'ordinal';
 import styles from './OptionPiece.css';
@@ -77,17 +80,35 @@ class OptionPiece extends Component {
     movePiece: PropTypes.func.isRequired,
   };
 
+  state = {
+    isPopoverOpen: false,
+    shouldShowPrompt: false
+  }
+
+  switchPopoverOpenStatus = () => {
+    this.setState(prevState => {
+      return {isPopoverOpen: !prevState.isPopoverOpen}
+    });
+  }
+
   componentDidMount() {
     this.inputCallback = debounce((event, id) => {
       this.props.updateOptionName(id, event.target.innerText.trim());
       event.target.innerText = event.target.innerText.trim();
       event.target.blur();
-    }, 1000);
+      this.setState({shouldShowPrompt: false});
+    }, 1500);
   }
 
   inputChangedHandler = (event, id) => {
     event.persist();
+    this.setState({shouldShowPrompt: true});
     this.inputCallback(event, id);
+  }
+
+  switchStarStatus = (id) => {
+    this.props.switchStarStatusOfOption(id);
+    this.switchPopoverOpenStatus();
   }
 
 
@@ -99,30 +120,70 @@ class OptionPiece extends Component {
     return connectDragSource(connectDropTarget(
       <li style={{ opacity, cursor }}>
         <div style={{display: 'flex', alignItems: 'center'}}>
-          <span className={styles.Ordinal}>{ordinal(index + 1)}</span>
-          <div
-            className={styles.Option}>
+          
+          <span className={styles.Ordinal}>{(index + 1)}</span>
+          
+          <div 
+            className={styles.Option}
+            style={{boxShadow: this.state.isPopoverOpen || this.state.shouldShowPrompt ? '4px 4px 6px rgba(0,0,0,0.2)' : null}}>
             <div
               className={[styles.OptionStar, (
                 op.starred === true ? styles.ActiveStar : null
-              )].join(' ')}
-              onClick={(event) => this.props.switchStarStatusOfOption(op.id)}>
+              )].join(' ')}>
               <FontAwesomeIcon icon={fasStar} />
             </div>
-            <span
-              onClick={(event) => this.props.deleteOptionWithId(op.id)}>
-              <FontAwesomeIcon
-                icon={fasDelete}
-                className={styles.DeleteIcon}/>
-            </span>
-            <span
-              className={styles.OptionText}
-              contentEditable={true}
-              suppressContentEditableWarning={true}
-              onInput={(event) => this.inputChangedHandler(event, op.id)}>
-              {op.name}
-            </span>
+            <div className={styles.OptionContentRow}>
+              <span
+                className={styles.OptionText}
+                contentEditable={true}
+                suppressContentEditableWarning={true}
+                onInput={(event) => this.inputChangedHandler(event, op.id)}>
+                {op.name}
+              </span>
+              <Popover
+                isOpen={this.state.isPopoverOpen}
+                position={'bottom'} // preferred position
+                onClickOutside={() => this.switchPopoverOpenStatus()}
+                containerClassName={styles.PopoverContainer}
+                content={(
+                  <div className={styles.PopoverContentContainer}>
+                    <ul>
+                      <li onClick={(event) => this.switchStarStatus(op.id)}>
+                        <div className={styles.IconBoxInPopover}>
+                          <FontAwesomeIcon icon={fasStar} className={styles.IconInPopover}/>
+                        </div>
+                        <div>{op.starred === true ? 'Remove' : 'Add'} Star</div>
+                      </li>
+
+                      <li onClick={(event) => this.props.deleteOptionWithId(op.id)}>
+                        <div className={styles.IconBoxInPopover}>
+                          <FontAwesomeIcon icon={fasDelete} className={styles.IconInPopover}/>
+                        </div>
+                        <div>Delete</div>
+                      </li>
+                    </ul>
+                  </div>
+                )}
+              >
+                <span 
+                  className={styles.MoreIconContainer}
+                  style={{opacity: this.state.isPopoverOpen ? '0.7' : null}}
+                  onClick={() => this.switchPopoverOpenStatus()}>
+                  <FontAwesomeIcon icon={fasMore}/>
+                </span>
+                
+              </Popover>
+
+            </div>
+            
           </div>
+        </div>
+        <div className={styles.PromptAutoSaved}>
+          {this.state.shouldShowPrompt === true 
+            ? <span>
+                Edits will automatically be saved <ThreeDotsSpinner />
+              </span>
+            : null}
         </div>
       </li>
     ));

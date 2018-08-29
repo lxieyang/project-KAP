@@ -145,7 +145,7 @@
   font-weight: 300;
   font-family: 'Encode Sans Semi Expanded', sans-serif;
   background-color: #E4E5E7;
-  padding: 3px 8px;
+  padding: 3px 0px;
   border-radius: 5px;
   box-sizing: border-box;
   cursor: pointer;
@@ -322,8 +322,8 @@
 
 .RequirementAttitudeThumbContainer {
   display: inline-block;
-  width: 20px;
-  height: 20px;
+  width: 30px;
+  height: 30px;
   margin: 5px;
   cursor: pointer;
   opacity: 0.50;
@@ -441,7 +441,11 @@
 }
 
 .Overlay td {
+<<<<<<< HEAD
+  padding:0px;
+=======
   padding: 3px 3px;
+>>>>>>> f4589e3744ad8da037a27d35b317b390fc3ada4c
   text-align: left;
 }
 
@@ -562,8 +566,13 @@ table.ComparisonTable {
 
 /* .ComparisonTable th, */
 .ComparisonTable td {
+<<<<<<< HEAD
+  padding: 0px;
+=======
   padding: 3px 3px;
+>>>>>>> f4589e3744ad8da037a27d35b317b390fc3ada4c
   text-align: left;
+
 }
 
 
