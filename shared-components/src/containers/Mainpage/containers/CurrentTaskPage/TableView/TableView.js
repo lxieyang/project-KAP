@@ -49,6 +49,7 @@ class TableView extends Component {
     options: this.props.task.options,
     requirements: this.props.task.requirements,
     pieceGroups: this.props.task.pieceGroups,
+    selectedSnippets: 0,
     optionsList: [],
     requirementsList: [],
     piecesList: [],
@@ -61,6 +62,8 @@ class TableView extends Component {
   }
 
   UNSAFE_componentWillReceiveProps (nextProps) {
+    this.setState({selectedSnippets: nextProps.selectedSnippets})
+    // console.log('tableview selected snippet number', this.state.selectedSnippets);
     if (nextProps.specificPieceId !== undefined) {
       this.setState({specificPieceId: nextProps.specificPieceId})
     } else {
@@ -164,6 +167,11 @@ class TableView extends Component {
           $('#bottom').scrollLeft($(this).scrollLeft());
         });
   }
+
+  attitudeChangeHandler = (event) => {
+    console.log('TODO: update the attitudes of all selected snippets')
+  }
+
   switchTableMode = (event) => {
     this.setState({readModeisOn:!this.state.readModeisOn});
   }
@@ -607,6 +615,7 @@ class TableView extends Component {
     );
     let newTableBody = newOptionsList.map((op, idx) => {
       let optionVisibility = true;
+      let snippetsSelected = this.state.selectedSnippets;
       return (
         <tr key={op.id}>
           <TableRow
@@ -630,6 +639,7 @@ class TableView extends Component {
             />
             {
               newRequirementsList.map((rq, index) => {
+                //TODO: need to detect when snippets are selected and only pull up rating options then
                 // find all pieces in the piecesList that has option id = op.id and requirement id = rq.id
                 let piecesInThisCell = [];
                 for (let pKey in this.state.pieces) {
@@ -651,7 +661,35 @@ class TableView extends Component {
                 }
                 piecesInThisCell = reverse(sortBy(piecesInThisCell, ['attitude']));
 
+                if (snippetsSelected) {
                 return (
+                  <td key={rq.id} style={{alignItems:'center'}}>
+
+                  <div className={[styles.RequirementAttitudeContainer].join(' ')}>
+
+                  <div
+                  className={[styles.RequirementAttitudeThumbContainer].join(' ')}
+                  onClick={(event) => this.attitudeChangeHandler(event, op.id, rq.id, 'good')}>
+                  <ThumbV1 type={'up'}/>
+                  </div>
+
+                  <div
+                  className={[styles.RequirementAttitudeThumbContainer].join(' ')}
+                  onClick={(event) => this.attitudeChangeHandler(event, op.id, rq.id, 'idk')}>
+                  <QuestionMark />
+                  </div>
+
+                  <div
+                  className={[styles.RequirementAttitudeThumbContainer].join(' ')}
+                  onClick={(event) => this.attitudeChangeHandler(event, op.id, rq.id, 'bad')}>
+                  <ThumbV1 type={'down'}/>
+                  </div>
+
+                  </div>
+                  </td>
+                )}
+                else {
+                  return(
                   <td key={rq.id} style={{
                     opacity: rq.hide === true || op.hide === true ? `${inactiveOpacity}` : '1',
                   }}>
@@ -716,12 +754,14 @@ class TableView extends Component {
                       }): null}
                     </div>
                   </td>
-                );
+                  )
+                };
               })
             }
         </tr>
       );
     });
+
     let TableBodyOverlay = newOptionsList.map((op,idx) => {
     let optionVisibility = true;
     return (

@@ -145,7 +145,7 @@
   font-weight: 300;
   font-family: 'Encode Sans Semi Expanded', sans-serif;
   background-color: #E4E5E7;
-  padding: 3px 8px;
+  padding: 3px 0px;
   border-radius: 5px;
   box-sizing: border-box;
   cursor: pointer;
@@ -307,6 +307,45 @@
   margin-right: 8px;
 }
 
+.RequirementAttitudeContainer {
+  font-size: 1.8rem;
+  width: 40px;
+  height: 40px;
+  transition: all 0.1s ease-in;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  display: inline;
+  margin: auto;
+  padding-left: 10px;
+}
+
+.RequirementAttitudeThumbContainer {
+  display: inline-block;
+  width: 30px;
+  height: 30px;
+  margin: 5px;
+  cursor: pointer;
+  opacity: 0.50;
+  filter: grayscale(100%);
+  transition: all 0.1s ease-in;
+}
+
+.RequirementAttitudeThumbContainer:hover {
+  transform: scale(1.5);
+  filter: grayscale(0%);
+  opacity: 1;
+}
+
+.RequirementAttitude {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+
+  width: 20px;
+  height: 20px;
+  margin: 0px 0px;
+}
+
 .BadgeIcon {
   display: flex;
   align-items: center;
@@ -401,7 +440,7 @@
 }
 
 .Overlay td {
-  padding: 8px;
+  padding:0px;
   text-align: left;
 }
 
@@ -522,7 +561,7 @@ table.ComparisonTable {
 
 /* .ComparisonTable th, */
 .ComparisonTable td {
-  padding: 8px;
+  padding: 0px;
   text-align: left;
 
 }
@@ -533,7 +572,7 @@ table.ComparisonTable {
 tr:nth-child(even) {background-color: #f2f2f2;} */
 
 .stickyCol {
-  padding: 8px;
+  padding: 0px;
   text-align: left;
   display: table-column-group;
   float:left;
