@@ -18,6 +18,14 @@
   transition: all 0.1s ease-in;
 }
 
+.PromptAutoSaved {
+  margin-left: 5px;
+  font-size: 0.75rem;
+  color: inherit;
+  opacity: 0.8;
+  margin-top: 5px;
+}
+
 .Requirement:hover {
   box-shadow: 4px 4px 6px rgba(0,0,0,0.2);
 }

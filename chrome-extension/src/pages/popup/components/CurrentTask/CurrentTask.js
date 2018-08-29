@@ -6,6 +6,7 @@ import fasCircleNotch from '@fortawesome/fontawesome-free-solid/faCircleNotch';
 import fasCheck from '@fortawesome/fontawesome-free-solid/faCheck';
 import Input from '../../../../../../shared-components/src/components/UI/Input/Input';
 import { debounce } from 'lodash';
+import ThreeDotsSpinner from '../../../../../../shared-components/src/components/UI/ThreeDotsSpinner/ThreeDotsSpinner';
 import styles from './CurrentTask.css';
 
 
@@ -76,11 +77,7 @@ class CurrentTask extends Component {
           <div className={styles.PromptAutoSaved}>
             {this.state.shouldShowPrompt === true 
               ? <span>
-                  Edits will automatically be saved <div className={styles.Spinner}>
-                    <div className={styles.Bounce1}></div>
-                    <div className={styles.Bounce2}></div>
-                    <div className={styles.Bounce3}></div>
-                  </div>
+                  Edits will automatically be saved <ThreeDotsSpinner />
                 </span>
               : null}
           </div>

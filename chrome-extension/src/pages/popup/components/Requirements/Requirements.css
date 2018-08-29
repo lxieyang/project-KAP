@@ -28,9 +28,9 @@
 
 .RequirementList ul li {
   margin: 10px 0px;
-  display: flex;
+  /* display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: center; */
 }
 
 .Requirement {

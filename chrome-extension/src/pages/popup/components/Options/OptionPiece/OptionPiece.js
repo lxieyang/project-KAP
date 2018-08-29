@@ -7,6 +7,7 @@ import fasDelete from '@fortawesome/fontawesome-free-solid/faTrashAlt';
 import fasStar from '@fortawesome/fontawesome-free-solid/faStar';
 import fasMore from '@fortawesome/fontawesome-free-solid/faEllipsisV';
 import Popover from 'react-tiny-popover';
+import ThreeDotsSpinner from '../../../../../../../shared-components/src/components/UI/ThreeDotsSpinner/ThreeDotsSpinner';
 import { debounce } from 'lodash';
 import ordinal from 'ordinal';
 import styles from './OptionPiece.css';
@@ -80,7 +81,8 @@ class OptionPiece extends Component {
   };
 
   state = {
-    isPopoverOpen: false
+    isPopoverOpen: false,
+    shouldShowPrompt: false
   }
 
   switchPopoverOpenStatus = () => {
@@ -94,11 +96,13 @@ class OptionPiece extends Component {
       this.props.updateOptionName(id, event.target.innerText.trim());
       event.target.innerText = event.target.innerText.trim();
       event.target.blur();
-    }, 1000);
+      this.setState({shouldShowPrompt: false});
+    }, 1500);
   }
 
   inputChangedHandler = (event, id) => {
     event.persist();
+    this.setState({shouldShowPrompt: true});
     this.inputCallback(event, id);
   }
 
@@ -121,7 +125,7 @@ class OptionPiece extends Component {
           
           <div 
             className={styles.Option}
-            style={{boxShadow: this.state.isPopoverOpen ? '4px 4px 6px rgba(0,0,0,0.2)' : null}}>
+            style={{boxShadow: this.state.isPopoverOpen || this.state.shouldShowPrompt ? '4px 4px 6px rgba(0,0,0,0.2)' : null}}>
             <div
               className={[styles.OptionStar, (
                 op.starred === true ? styles.ActiveStar : null
@@ -173,6 +177,13 @@ class OptionPiece extends Component {
             </div>
             
           </div>
+        </div>
+        <div className={styles.PromptAutoSaved}>
+          {this.state.shouldShowPrompt === true 
+            ? <span>
+                Edits will automatically be saved <ThreeDotsSpinner />
+              </span>
+            : null}
         </div>
       </li>
     ));

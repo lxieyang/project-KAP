@@ -8,6 +8,7 @@ import fasStar from '@fortawesome/fontawesome-free-solid/faStar';
 import fasMore from '@fortawesome/fontawesome-free-solid/faEllipsisV';
 import Popover from 'react-tiny-popover';
 import ordinal from 'ordinal';
+import ThreeDotsSpinner from '../../../../../../../shared-components/src/components/UI/ThreeDotsSpinner/ThreeDotsSpinner';
 import { debounce } from 'lodash';
 import styles from './RequirementPiece.css';
 
@@ -82,7 +83,8 @@ class RequirementPiece extends Component {
   };
 
   state = {
-    isPopoverOpen: false
+    isPopoverOpen: false,
+    shouldShowPrompt: false
   }
 
   switchPopoverOpenStatus = () => {
@@ -96,11 +98,13 @@ class RequirementPiece extends Component {
       this.props.updateRequirementName(id, event.target.innerText.trim());
       event.target.innerText = event.target.innerText.trim();
       event.target.blur();
+      this.setState({shouldShowPrompt: false});
     }, 1000);
   }
 
   inputChangedHandler = (event, id) => {
     event.persist();
+    this.setState({shouldShowPrompt: true});
     this.inputCallback(event, id);
   }
 
@@ -121,7 +125,7 @@ class RequirementPiece extends Component {
 
           <div 
             className={styles.Requirement}
-            style={{boxShadow: this.state.isPopoverOpen ? '4px 4px 6px rgba(0,0,0,0.2)' : null}}>
+            style={{boxShadow: this.state.isPopoverOpen || this.state.shouldShowPrompt ? '4px 4px 6px rgba(0,0,0,0.2)' : null}}>
             <div
               className={[styles.RequirementStar, (
                 rq.starred === true ? styles.ActiveStar : null
@@ -172,7 +176,13 @@ class RequirementPiece extends Component {
             </div>
           </div>
         </div>
-
+        <div className={styles.PromptAutoSaved}>
+          {this.state.shouldShowPrompt === true 
+            ? <span>
+                Edits will automatically be saved <ThreeDotsSpinner />
+              </span>
+            : null}
+        </div>
 
       </li>
     ));
