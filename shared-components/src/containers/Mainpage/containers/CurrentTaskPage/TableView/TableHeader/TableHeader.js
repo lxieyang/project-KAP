@@ -170,13 +170,15 @@ class TableHeader extends Component {
                         </div>
                         <div>{rq.starred === true ? 'Remove' : 'Add'} Star</div>
                       </li>
-
+                      {/* TODO: Add delete requirement functionality back in*/}
+                      {/*
                       <li>
                         <div className={styles.IconBoxInPopover}>
                           <FontAwesomeIcon icon={fasDelete} className={styles.IconInPopover}/>
                         </div>
                         <div>Delete</div>
                       </li>
+                      */}
                     </ul>
                   </div>
                 )}

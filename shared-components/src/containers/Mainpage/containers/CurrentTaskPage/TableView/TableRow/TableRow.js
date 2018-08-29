@@ -221,13 +221,15 @@ class TableRow extends Component {
                             </div>
                             <div>{op.starred === true ? 'Remove' : 'Add'} Star</div>
                           </li>
-    
+                          {/* TODO: Add delete option functionality back in*/}
+                          {/*
                           <li >
                             <div className={styles.IconBoxInPopover}>
                               <FontAwesomeIcon icon={fasDelete} className={styles.IconInPopover}/>
                             </div>
                             <div>Delete</div>
                           </li>
+                          */}
                         </ul>
                       </div>
                     )}
