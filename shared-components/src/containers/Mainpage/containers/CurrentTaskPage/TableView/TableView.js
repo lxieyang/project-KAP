@@ -57,7 +57,7 @@ class TableView extends Component {
     showModal: false,
     modalPieceId: '',
     tableviewisOpen: true,
-    readModeisOn: true,
+    readModeisOn: false,
   }
 
   UNSAFE_componentWillReceiveProps (nextProps) {
@@ -1059,42 +1059,42 @@ class TableView extends Component {
     );
     let readContent = (
       <div style={{position: 'relative'}}>
-      <div id='bottom' style={{opacity:'1', zIndex: '15',borderSpacing: '0px',
-                            maxWidth: '90vw', maxHeight: '50vw',
-                            overflowY:'scroll', overflowX:'scroll'}}>
-      <table className={styles.ComparisonTable}>
-      <thead style={{ opacity: '1'}}>{viewTableHeader}</thead>
-      <tbody style={{ opacity: '1'}}>{invisibleOptionsOverlay}</tbody>
-      </table>
-      </div>
+        <div id='bottom' style={{opacity:'1', zIndex: '15',borderSpacing: '0px',
+                              maxWidth: '90vw', maxHeight: '50vw',
+                              overflowY:'auto', overflowX:'auto'}}>
+          <table className={styles.ComparisonTable}>
+            <thead style={{ opacity: '1'}}>{viewTableHeader}</thead>
+            <tbody style={{ opacity: '1'}}>{invisibleOptionsOverlay}</tbody>
+          </table>
+        </div>
 
-      <div id='middle' style={{zIndex: '30', position: 'absolute', top: '0',
-                    maxWidth: '90vw', maxHeight: '50vw',
-                    overflowY:'scroll', overflowX:'scroll'}}>
-      <table className={[styles.Overlay, styles.ComparisonTable].join(' ')}>
-        <thead style={{opacity:'0'}}>{viewTableHeader}</thead>
-        <tbody style={{opacity:'1'}}>{TableBodyOverlay}</tbody>
-      </table>
-      </div>
+        <div id='middle' style={{zIndex: '30', position: 'absolute', top: '0',
+                      maxWidth: '90vw', maxHeight: '50vw',
+                      overflowY:'scroll', overflowX:'scroll'}}>
+        <table className={[styles.Overlay, styles.ComparisonTable].join(' ')}>
+          <thead style={{opacity:'0'}}>{viewTableHeader}</thead>
+          <tbody style={{opacity:'1'}}>{TableBodyOverlay}</tbody>
+        </table>
+        </div>
 
-      <div id='top' style={{opacity: '1', zIndex: '45', position: 'absolute', top: '0', left: '0',
-                    maxWidth: '90vw', maxHeight: '50vw',
-                    overflowY:'scroll', overflowX:'scroll'}}
-                    onScroll={(event) => this.scrollTable(event)}>
-      <table className={[styles.Overlay].join(' ')}>
-      <thead style={{ opacity: '0'}}>{emptyHeader}</thead>
-      <tbody style={{ opacity: '1'}}>{invisibleIconOverlay}</tbody>
-      </table>
-      </div>
+        <div id='top' style={{opacity: '1', zIndex: '45', position: 'absolute', top: '0', left: '0',
+                      maxWidth: '90vw', maxHeight: '50vw',
+                      overflowY:'scroll', overflowX:'scroll'}}
+                      onScroll={(event) => this.scrollTable(event)}>
+        <table className={[styles.Overlay].join(' ')}>
+        <thead style={{ opacity: '0'}}>{emptyHeader}</thead>
+        <tbody style={{ opacity: '1'}}>{invisibleIconOverlay}</tbody>
+        </table>
+        </div>
 
-      <div style={{opacity: '1', zIndex: '44', position: 'absolute', top: '0', left: '0',
-                    maxWidth: '90vw', maxHeight: '50vw',
-                    overflowY:'hidden', overflowX:'hidden'}}>
-      <table className={[styles.Overlay].join(' ')}>
-      <thead style={{ opacity: '1'}}>{emptyHeader}</thead>
-      <tbody style={{ visibility: 'hidden'}}>{invisibleOptionsOverlay}</tbody>
-      </table>
-      </div>
+        <div style={{opacity: '1', zIndex: '44', position: 'absolute', top: '0', left: '0',
+                      maxWidth: '90vw', maxHeight: '50vw',
+                      overflowY:'hidden', overflowX:'hidden'}}>
+        <table className={[styles.Overlay].join(' ')}>
+        <thead style={{ opacity: '1'}}>{emptyHeader}</thead>
+        <tbody style={{ visibility: 'hidden'}}>{invisibleOptionsOverlay}</tbody>
+        </table>
+        </div>
       </div>
   );
 

@@ -299,7 +299,7 @@ function displayInteractionBox (type) {
   interactionBoxAnchor);
 
   // adjusting position of interaction box after mounting
-  interactionBoxAnchor.style.top = `${Math.floor((window.innerHeight - interactionBoxAnchor.clientHeight)/3)}px`;
+  interactionBoxAnchor.style.top = `${Math.floor((window.innerHeight - interactionBoxAnchor.clientHeight)/6)}px`;
   interactionBoxAnchor.style.left = `${Math.floor((window.innerWidth - interactionBoxAnchor.clientWidth)/2)}px`;
 
   interactionBoxIsMounted = true;

@@ -135,6 +135,7 @@ class TableRow extends Component {
     const opacity = isDragging ? 0 : 1;
     return connectDragSource(connectDropTarget(
         <td style={{ opacity, position: 'relative'}}>
+          {/*
           <div
             className={styles.ShowHideOption}
             onClick={(event) => this.props.switchHideStatusOfAnOption(index, op.id, op.hide)}>
@@ -144,6 +145,7 @@ class TableRow extends Component {
               : <FontAwesomeIcon icon={fasToggleOn} className={styles.ShowHidePieceIcon}/>
             }
           </div>
+          */}
           <div style={{
               visibility: this.props.invisible ? 'visible' : 'hidden',
               display: 'flex',
