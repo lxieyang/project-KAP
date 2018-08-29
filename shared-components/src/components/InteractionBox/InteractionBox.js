@@ -422,8 +422,10 @@ class interactionBox extends Component {
   }
 
   deleteOption = (event, optionId) => {
-    var surety = confirm('Are you sure you want to delete this option?');
-    (surety) ? FirebaseStore.deleteOptionWithId(optionId) : null;
+    var surety = window.confirm('Are you sure you want to delete this option?');
+    if (surety === true) {
+      FirebaseStore.deleteOptionWithId(optionId);
+    }
   }
 
   allowDrop = (event) => {

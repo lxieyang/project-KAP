@@ -584,9 +584,14 @@ tr:nth-child(even) {background-color: #f2f2f2;} */
   font-size: 0.9rem;
   display: flex;
   align-items: center;
+  margin-left: 15px;
 }
 
 .ModeToggleButton {
   cursor: pointer;
   margin: 0px 10px;
+}
+
+.ModeToggleButtonActive {
+  font-weight: 600;
 }

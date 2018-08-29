@@ -18,8 +18,8 @@ import fasMinusCircle from '@fortawesome/fontawesome-free-solid/faMinusCircle';
 import fasCheckCircle from '@fortawesome/fontawesome-free-solid/faCheckCircle';
 import fasToggleOn from '@fortawesome/fontawesome-free-solid/faToggleOn';
 import fasToggleOff from '@fortawesome/fontawesome-free-solid/faToggleOff';
-import fasChevronDown from '@fortawesome/fontawesome-free-solid/faChevronDown';
-import fasChevronUp from '@fortawesome/fontawesome-free-solid/faChevronUp';
+import fasAngleDown from '@fortawesome/fontawesome-free-solid/faAngleDown';
+import fasAngleRight from '@fortawesome/fontawesome-free-solid/faAngleRight';
 
 import TableRow from './TableRow/TableRow';
 import ToggleSwitch from '../../../../../components/UI/ToggleSwitch/ToggleSwitch';
@@ -172,8 +172,8 @@ class TableView extends Component {
     console.log('TODO: update the attitudes of all selected snippets')
   }
 
-  switchTableMode = (event) => {
-    this.setState({readModeisOn:!this.state.readModeisOn});
+  switchTableMode = (event, mode) => {
+    this.setState({readModeisOn: mode});
   }
 
   getOrderedRequirementListFromState () {
@@ -1149,11 +1149,12 @@ class TableView extends Component {
                   <span>Comparison Table</span>
                 </div>
                 <div className={styles.HeaderCollapseButton}
-                  onClick={(event) => this.switchTableIsOpenStatus(event)}>
+                  onClick={(event) => this.switchTableIsOpenStatus(event)}
+                  title={this.state.tableviewisOpen ? 'Collapse the table' : 'Show the table'}>
                   {
                     this.state.tableviewisOpen
-                    ? <FontAwesomeIcon icon={fasChevronUp} />
-                    : <FontAwesomeIcon icon={fasChevronDown} />
+                    ? <FontAwesomeIcon icon={fasAngleDown} />
+                    : <FontAwesomeIcon icon={fasAngleRight} />
                   }
                 </div>
                 { /* The show notes handler was not really working so it is temp. commented out
@@ -1167,19 +1168,23 @@ class TableView extends Component {
                 */}
               </div>
 
-              <div className={styles.ModeToggleButtonsContainer}>
-                <div className={styles.ModeToggleButton} style={{textDecoration: this.state.readModeisOn ? 'underline' : 'none'}}
-                  onClick={(event) => this.switchTableMode(event)}>
-                  View
-                </div>
+              {
+                this.state.tableviewisOpen
+                ? <div className={styles.ModeToggleButtonsContainer}>
+                    <div className={[styles.ModeToggleButton, this.state.readModeisOn === true ? styles.ModeToggleButtonActive : null].join(' ')} 
+                      onClick={(event) => this.switchTableMode(event, true)}>
+                      View
+                    </div>
 
-                <div>|</div>
+                    <div>|</div>
 
-                <div className={styles.ModeToggleButton} style={{textDecoration: this.state.readModeisOn ? 'none' : 'underline'}}
-                onClick={(event) => this.switchTableMode(event)}>
-                  Edit
-                </div>
-              </div>
+                    <div className={[styles.ModeToggleButton, this.state.readModeisOn === false ? styles.ModeToggleButtonActive : null].join(' ')} 
+                    onClick={(event) => this.switchTableMode(event, false)}>
+                      Edit
+                    </div>
+                  </div>
+                : null
+              }
 
             </div>
             <Collapse isOpened={this.state.tableviewisOpen} springConfig={{stiffness: 700, damping: 50}}>
