@@ -148,9 +148,13 @@ class SnippetCard extends Component {
   }
 
   handleClick = (event,id) => {
-    this.setState({selected:!this.state.selected});
-    console.log('Props', this.props);
-    console.log('State', this.state);
+    this.setState(prevState => {
+      let selected = this.state.selected;
+      selected ? this.props.decrementSelectedSnippetNumber(event) : this.props.incrementSelectedSnippetNumber(event);
+      return {selected:!(prevState.selected)};
+    })
+
+
 
   }
 
@@ -662,7 +666,7 @@ class SnippetCard extends Component {
         style={{
           transform: isActive ? 'scale(1.2)' : 'scale(1.0)',
           opacity: isDragging ? '0.3' : '1.0',
-          cursor: isDragging ? 'move' : 'auto',
+          cursor: isDragging ? 'move' : 'text',
           width: props.isInTableView === true ? '100%' : '250px',
           borderWidth: '1px',
           borderStyle: 'solid',

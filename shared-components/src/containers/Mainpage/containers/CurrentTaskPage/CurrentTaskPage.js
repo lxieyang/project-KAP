@@ -10,13 +10,19 @@ import styles from './CurrentTaskPage.css';
 import * as FirebaseStore from '../../../../firebase/store';
 
 class CurrentTaskPage extends Component {
+  constructor(props) {
+    super(props);
+    this.incrementSelectedSnippetNumber = this.incrementSelectedSnippetNumber.bind(this);
+    this.decrementSelectedSnippetNumber = this.decrementSelectedSnippetNumber.bind(this)
+  }
 
   state = {
     isTable: false,
     specific: this.props.specific,
     specificTask: null,
     specificPieceId: null,
-    errorMsg: null
+    errorMsg: null,
+    selectedSnippets: 0
   }
 
   switchView = (event, toState) => {
@@ -194,6 +200,20 @@ class CurrentTaskPage extends Component {
     this.props.history.push('/currtask');
   }
 
+  incrementSelectedSnippetNumber(event) {
+    // console.log('# of currently selected snippets, incrementing', this.state.selectedSnippets+1);
+    this.setState(prevState => {
+      return {selectedSnippets: ++prevState.selectedSnippets};
+    })
+  }
+
+  decrementSelectedSnippetNumber = (event) => {
+    // console.log('# of currently selected snippets, decrementing', this.state.selectedSnippets-1);
+    this.setState(prevState => {
+      return {selectedSnippets: --prevState.selectedSnippets};
+    })
+  }
+
 
   render () {
     const { isTable } = this.state;
@@ -204,8 +224,16 @@ class CurrentTaskPage extends Component {
 
         content =
         <Aux>
-        <TableView task={this.state.specificTask} specificPieceId={this.state.specificPieceId}/>
-        <CollectionView task={this.state.specificTask} specificPieceId={this.state.specificPieceId}/>
+        <TableView task={this.state.specificTask} specificPieceId={this.state.specificPieceId}
+        incrementSelectedSnippetNumber={this.incrementSelectedSnippetNumber}
+        decrementSelectedSnippetNumber={this.decrementSelectedSnippetNumber}
+        selectedSnippets={this.state.selectedSnippets}
+        />
+        <CollectionView task={this.state.specificTask} specificPieceId={this.state.specificPieceId}
+        incrementSelectedSnippetNumber={this.incrementSelectedSnippetNumber}
+        decrementSelectedSnippetNumber={this.decrementSelectedSnippetNumber}
+        selectedSnippets={this.state.selectedSnippets}
+        />
         </Aux>
       //
       //   content = !isTable
@@ -217,10 +245,18 @@ class CurrentTaskPage extends Component {
     } else {
       content =
       <Aux>
-      <TableView task={this.props.task}/>
+      <TableView task={this.props.task}
+        incrementSelectedSnippetNumber={this.incrementSelectedSnippetNumber}
+        decrementSelectedSnippetNumber={this.decrementSelectedSnippetNumber}
+        selectedSnippets={this.state.selectedSnippets}
+        />
       <CollectionView
         task={this.props.task}
-        shouldDisplayAllPages={this.props.shouldDisplayAllPages} />
+        shouldDisplayAllPages={this.props.shouldDisplayAllPages}
+        incrementSelectedSnippetNumber={this.incrementSelectedSnippetNumber}
+        decrementSelectedSnippetNumber={this.decrementSelectedSnippetNumber}
+        selectedSnippets={this.state.selectedSnippets}
+        />
       </Aux>
       // content = !isTable
       //   ? <CollectionView

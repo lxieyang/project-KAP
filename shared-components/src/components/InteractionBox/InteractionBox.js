@@ -503,11 +503,6 @@ class interactionBox extends Component {
         return (
           <tr key={op.id} className={styles.OptionTableRow}>
           <td>
-          {
-            // /*
-
-            // */
-          }
             </td>
             <td>
             <div
@@ -628,15 +623,16 @@ class interactionBox extends Component {
 
               <div
               className={[styles.RequirementAttitudeThumbContainer].join(' ')}
-              onClick={(event) => this.attitudeChangeHandler(event, op.id, rq.id, 'bad')}>
-              <ThumbV1 type={'down'}/>
+              onClick={(event) => this.attitudeChangeHandler(event, op.id, rq.id, 'idk')}>
+              <QuestionMark />
               </div>
 
               <div
               className={[styles.RequirementAttitudeThumbContainer].join(' ')}
-              onClick={(event) => this.attitudeChangeHandler(event, op.id, rq.id, 'idk')}>
-              <QuestionMark />
+              onClick={(event) => this.attitudeChangeHandler(event, op.id, rq.id, 'bad')}>
+              <ThumbV1 type={'down'}/>
               </div>
+              
               </div>
               </div>
             );

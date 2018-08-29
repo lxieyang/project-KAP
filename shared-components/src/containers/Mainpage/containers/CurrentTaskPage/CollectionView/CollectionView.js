@@ -120,7 +120,7 @@ const TopPages = (props) => {
         <div className={styles.HeaderNameContainer}
         onClick={(event) => props.switchDisplayStatus(event)}
         >
-          <div className={styles.HeaderName}>
+          <div className={styles.HeaderName} >
             Pages
           </div>
           {
@@ -223,7 +223,10 @@ const SnippetsGroup = (props) => {
                 deleteThisSnippet={props.deleteSnippet}
                 makeInteractionBox={props.makeInteractionBox}
                 createAPieceGroup={props.createAPieceGroup}
-                addAPieceToGroup={props.addAPieceToGroup}/>
+                addAPieceToGroup={props.addAPieceToGroup}
+                incrementSelectedSnippetNumber={props.incrementSelectedSnippetNumber}
+                decrementSelectedSnippetNumber={props.decrementSelectedSnippetNumber}
+                />
             );
           })}
         </div>
@@ -243,6 +246,7 @@ const SnippetsGroup = (props) => {
 class CollectionView extends Component {
   state = {
     numTopPageToDisplay: 5,
+    selectedSnippets: 0,
     pieceGroupDisplayType: 'all',
     windowSize: window.innerWidth,
     showModal: false,
@@ -258,6 +262,7 @@ class CollectionView extends Component {
   }
 
   UNSAFE_componentWillReceiveProps (nextProps) {
+    this.setState({selectedSnippets: nextProps.selectedSnippets})
     if (nextProps.specificPieceId !== undefined) {
       this.setState({specificPieceId: nextProps.specificPieceId})
     } else {
@@ -400,7 +405,6 @@ class CollectionView extends Component {
   render () {
     const { task } = this.props;
 
-
     /* Top pages */
     const { pageCountList } = task;
     let pageList = [];
@@ -498,7 +502,10 @@ class CollectionView extends Component {
         piecesList={filteredPiecesAccordingToFilterStatus}
         specificPieceId={this.state.specificPieceId}
         makeInteractionBox={this.makeInteractionbox}
-        deleteSnippet={this.deletePieceHandler} />
+        deleteSnippet={this.deletePieceHandler}
+        incrementSelectedSnippetNumber={this.props.incrementSelectedSnippetNumber}
+        decrementSelectedSnippetNumber={this.props.decrementSelectedSnippetNumber}
+        />
     );
 
     // const { pieceGroups } = task;
@@ -535,7 +542,10 @@ class CollectionView extends Component {
         makeInteractionBox={this.makeInteractionbox}
         deleteSnippet={this.deletePieceHandler}
         createAPieceGroup={this.createAPieceGroup}
-        addAPieceToGroup={this.addAPieceToGroup}/>
+        addAPieceToGroup={this.addAPieceToGroup}
+        incrementSelectedSnippetNumber={this.props.incrementSelectedSnippetNumber}
+        decrementSelectedSnippetNumber={this.props.decrementSelectedSnippetNumber}
+        />
     );
 
 
@@ -580,7 +590,6 @@ class CollectionView extends Component {
         );
       }
     }
-
 
     return (
       <Aux>
@@ -664,8 +673,6 @@ class CollectionView extends Component {
                           Uncategorized <FontAwesomeIcon icon={farQuestionCircle} />
                         </div>
                       </div>
-
-
                     </div>
                   </div>
                 </Aux>
@@ -684,7 +691,6 @@ class CollectionView extends Component {
               }
             </div>
         </div>
-
         {modal}
       </Aux>
     );
