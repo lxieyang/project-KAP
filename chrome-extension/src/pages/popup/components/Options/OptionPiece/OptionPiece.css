@@ -131,6 +131,14 @@
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.12);
 }
 
+.Ordinal:hover {
+  box-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+}
+
+.Ordinal:hover ~ .Option {
+  box-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+}
+
 
 .ActiveOption {
   border: 3px solid rgba(111, 192, 70, 1);

@@ -136,7 +136,7 @@ class TableHeader extends Component {
         <div className={styles.RequirementContainer}>
 
           <div className={styles.OrdinalContainer}>
-          <span className={styles.Ordinal}>{(index + 1)}</span>
+          <span className={styles.Ordinal} title={'drag to reorder critera'}>{(index + 1)}</span>
           </div>
 
           <div 

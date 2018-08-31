@@ -181,7 +181,7 @@ class TableRow extends Component {
                 alignItems: 'center', 
                 padding: '5px 0px'}}>
             
-              <span className={styles.Ordinal}>{(index + 1)}</span>
+              <span className={styles.Ordinal} title={'drag to reorder options'}>{(index + 1)}</span>
               
               <div 
                 className={styles.Option}
