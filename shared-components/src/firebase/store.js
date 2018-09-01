@@ -440,15 +440,21 @@ export const switchOptionVisibility = async (id, toStatus) => {
 
 export const deleteOptionWithId = async (id) => {
   currentTaskId = (await currentTaskIdRef.once('value')).val();
-  tasksRef.child(currentTaskId).child('options').child(id).set(null);
-  // also delete options in pieces.attitudeList
+
+  // delete options in pieces.attitudeList
   let pieces = await tasksRef.child(currentTaskId).child('pieces').once('value');
+  let pool = [];
   pieces.forEach((snap) => {
     let attitudeList = snap.val().attitudeList;
-    if (attitudeList !== undefined) {
+    if (attitudeList !== undefined && attitudeList !== null) {
       delete attitudeList[id];
+      pool.push(tasksRef.child(currentTaskId).child('pieces').child(snap.key).child('attitudeList').set(attitudeList));
     }
-    tasksRef.child(currentTaskId).child('pieces').child(snap.key).child('attitudeList').set(attitudeList);
+  });
+
+  Promise.all(pool).then(() => {
+    // delete option itself
+    tasksRef.child(currentTaskId).child('options').child(id).set(null);
   });
 }
 
@@ -554,20 +560,26 @@ export const switchRequirementVisibility = async (id, toStatus) => {
 
 export const deleteRequirementWithId = async (id) => {
   currentTaskId = (await currentTaskIdRef.once('value')).val();
-  tasksRef.child(currentTaskId).child('requirements').child(id).set(null);
+
   // delete those in the attitude list
   let pieces = await tasksRef.child(currentTaskId).child('pieces').once('value');
+  let pool = [];
   pieces.forEach((snap) => {
     let attitudeList = snap.val().attitudeList;
-    if (attitudeList !== undefined) {
+    if (attitudeList !== undefined && attitudeList !== null) {
       for (let opKey in attitudeList) {
         let attitudeReruirementPairs = attitudeList[opKey];
         if (attitudeReruirementPairs !== undefined) {
-          delete attitudeReruirementPairs[id];
+          delete attitudeReruirementPairs[id];    
+          pool.push(tasksRef.child(currentTaskId).child('pieces').child(snap.key).child('attitudeList').set(attitudeList));
         }
       }
     }
-    tasksRef.child(currentTaskId).child('pieces').child(snap.key).child('attitudeList').set(attitudeList);
+  });
+  
+  Promise.all(pool).then(() => {
+    // delete requirement itself
+    tasksRef.child(currentTaskId).child('requirements').child(id).set(null);
   });
 }
 

@@ -127,6 +127,7 @@ class TableView extends Component {
   }
 
   UNSAFE_componentWillReceiveProps (nextProps) {
+    
     this.setState({selectedSnippets: nextProps.selectedSnippets})
     // console.log('tableview selected snippet number', this.state.selectedSnippets);
     if (nextProps.specificPieceId !== undefined) {
@@ -230,6 +231,9 @@ class TableView extends Component {
     let shouldShowNotes = task.showOptionNotes;
 
     this.setState({optionsList, requirementsList, piecesList, shouldShowNotes});
+    this.setState({
+      pieces: task.pieces
+    })
   }
 
   switchTableIsOpenStatus = (event) => {
