@@ -8,7 +8,7 @@ const input = (props) => {
 
   switch (props.elementType) {
     case ('input'):
-      inputElement = <input className={inputClasses.join(' ')} {...props.elementConfig} value={props.value} id={props.id}
+      inputElement = <input {...props} className={inputClasses.join(' ')} {...props.elementConfig} value={props.value} id={props.id}
       onChange={(event) => props.changed(event)}/>;
       break;
     case ('textarea'):

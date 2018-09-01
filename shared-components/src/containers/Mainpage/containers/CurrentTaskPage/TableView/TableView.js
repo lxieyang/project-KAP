@@ -710,6 +710,7 @@ class TableView extends Component {
               content={(
                 <div className={styles.AddPopoverContentContainer}>
                   <Input
+                    autoFocus
                     elementType={'input'}
                     elementConfig={{placeholder: 'Add a criterion / feature'}}
                     submitted={this.submitHandlerForRequirement}
@@ -747,6 +748,7 @@ class TableView extends Component {
               content={(
                 <div className={styles.AddPopoverContentContainer}>
                   <Input
+                    autoFocus
                     elementType={'input'}
                     elementConfig={{placeholder: 'Add an option'}}
                     submitted={this.submitHandlerForOption}
