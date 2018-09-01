@@ -5,8 +5,8 @@ import qs from 'query-string';
 import {Collapse} from 'react-collapse';
 // import Scrollspy from 'react-scrollspy';
 import FontAwesomeIcon from '@fortawesome/react-fontawesome';
-import fasChevronDown from '@fortawesome/fontawesome-free-solid/faChevronDown';
-import fasChevronUp from '@fortawesome/fontawesome-free-solid/faChevronUp';
+import fasAngleDown from '@fortawesome/fontawesome-free-solid/faAngleDown';
+import fasAngleRight from '@fortawesome/fontawesome-free-solid/faAngleRight';
 import fasCode from '@fortawesome/fontawesome-free-solid/faCode';
 import fasStickyNote from '@fortawesome/fontawesome-free-solid/faStickyNote';
 import fasPuzzlePiece from '@fortawesome/fontawesome-free-solid/faPuzzlePiece';
@@ -129,8 +129,8 @@ const TopPages = (props) => {
                 className={styles.HeaderCollapseButton}>
                 {
                   props.isOpen
-                  ? <FontAwesomeIcon icon={fasChevronUp} />
-                  : <FontAwesomeIcon icon={fasChevronDown} />
+                  ? <FontAwesomeIcon icon={fasAngleDown} />
+                  : <FontAwesomeIcon icon={fasAngleRight} />
                 }
               </div>
             : null
@@ -601,7 +601,7 @@ class CollectionView extends Component {
                 <Aux>
                   <div className={styles.Header}>
                     <div className={styles.HeaderNameContainer}
-                         onClick={(event) => this.switchAllSnippetsOpenStatus(event)}
+                        onClick={(event) => this.switchAllSnippetsOpenStatus(event)}
                     >
                       <div className={styles.HeaderName}
                       >
@@ -613,8 +613,8 @@ class CollectionView extends Component {
                             className={styles.HeaderCollapseButton}>
                             {
                               this.state.allSnippetSIsOpen
-                              ? <FontAwesomeIcon icon={fasChevronUp} />
-                              : <FontAwesomeIcon icon={fasChevronDown} />
+                              ? <FontAwesomeIcon icon={fasAngleDown} />
+                              : <FontAwesomeIcon icon={fasAngleRight} />
                             }
                           </div>
                         : null

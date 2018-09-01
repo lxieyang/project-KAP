@@ -3,22 +3,101 @@
   /* width: 95%; */
 }
 
-.addButtons {
+.AddButtons {
   padding-left: 1rem;
+  padding-top: 0rem;
   vertical-align: middle;
   align-items: right;
+
+  position: relative;
 }
 
-.addCriterion {
+.AddButton {
+  font-size: 1.5rem;
+  border-radius: 50%;
+  cursor: pointer;
+  opacity: 0.5;
+  transition: all 0.05s ease-in;
+}
+
+.AddButton:hover {
+  transform: scale(1.05);
+  opacity: 1.0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.12);
+}
+
+.AddRequirementButtonContainer {
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  width: 50%;
+  height: 50%;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
+
+.AddRequirementButton {
+  color: #4E8EF9;
+}
+
+.AddOptionButtonContainer {
+  position: absolute;
+  bottom: 0px;
+  left: 0px;
+  width: 50%;
+  height: 50%;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
+
+.AddOptionButton {
+  color: #f0ad4e;
+}
+
+.AddTooltipContainer {
+  padding: 3px 5px !important;
+}
+
+.AddPopoverContainer {
+  border-radius: 2px;
+  border-width: 0;
+  background-color: #fff;
+  box-shadow: 0 0 16px rgba(0,0,0,0.4);
+  z-index: 66666;
+}
+
+.AddPopoverContentContainer {
+  min-width: 200px;
+  padding: 10px 1px 2px 10px;
+  display: flex;
+  flex-flow: column;
+  justify-items: center;
+}
+
+.PromptToHitEnter {
+  font-size: 0.8rem;
+  color: inherit;
+  opacity: 0.8;
+  margin-left: 5px;
+}
+
+
+
+
+/* .addCriterion {
   color: #4E8EF9;
   /* position: absolute;
   left: 0;
-  top: 0; */
-}
+  top: 0; 
+} */
 
 .addOption {
   color: orange;
-}
+} */
 
 .Active {
   opacity: 1;
@@ -583,9 +662,14 @@ tr:nth-child(even) {background-color: #f2f2f2;} */
   font-size: 0.9rem;
   display: flex;
   align-items: center;
+  margin-left: 15px;
 }
 
 .ModeToggleButton {
   cursor: pointer;
   margin: 0px 10px;
+}
+
+.ModeToggleButtonActive {
+  font-weight: 600;
 }

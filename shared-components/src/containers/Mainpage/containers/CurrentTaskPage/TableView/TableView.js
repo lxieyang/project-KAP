@@ -5,7 +5,7 @@ import { withRouter } from 'react-router-dom';
 import qs from 'query-string';
 import {Collapse} from 'react-collapse';
 import Aux from '../../../../../hoc/Aux/Aux';
-
+import fasPlusCircle from '@fortawesome/fontawesome-free-solid/faPlusCircle';
 import fasListAlt from '@fortawesome/fontawesome-free-solid/faListAlt';
 import fasFlagCheckered from '@fortawesome/fontawesome-free-solid/faFlagCheckered';
 import faPlus from '@fortawesome/fontawesome-free-solid/faPlus';
@@ -18,8 +18,8 @@ import fasMinusCircle from '@fortawesome/fontawesome-free-solid/faMinusCircle';
 import fasCheckCircle from '@fortawesome/fontawesome-free-solid/faCheckCircle';
 import fasToggleOn from '@fortawesome/fontawesome-free-solid/faToggleOn';
 import fasToggleOff from '@fortawesome/fontawesome-free-solid/faToggleOff';
-import fasChevronDown from '@fortawesome/fontawesome-free-solid/faChevronDown';
-import fasChevronUp from '@fortawesome/fontawesome-free-solid/faChevronUp';
+import fasAngleDown from '@fortawesome/fontawesome-free-solid/faAngleDown';
+import fasAngleRight from '@fortawesome/fontawesome-free-solid/faAngleRight';
 
 import TableRow from './TableRow/TableRow';
 import ToggleSwitch from '../../../../../components/UI/ToggleSwitch/ToggleSwitch';
@@ -33,6 +33,8 @@ import { SNIPPET_TYPE } from '../../../../../shared/constants';
 import { getFirstNWords } from '../../../../../shared/utilities';
 import { debounce, sortBy, reverse } from 'lodash';
 import ReactTooltip from 'react-tooltip';
+import Popover from 'react-tiny-popover';
+import Input from '../../../../../components/UI/Input/Input';
 import * as FirebaseStore from '../../../../../firebase/store';
 
 /* For DnD */
@@ -59,6 +61,69 @@ class TableView extends Component {
     modalPieceId: '',
     tableviewisOpen: true,
     readModeisOn: false,
+
+    addRequirementPopoverIsOpen: false,
+    addOptionPopoverIsOpen: false,
+    newOptionInput: '',
+    newRequirementInput: '',
+    isEditingOption: false,
+    isEditingRequirement: false,
+  }
+
+  switchPopoverOpenStatus = (isOption) => {
+    if (isOption) {
+      this.setState(prevState => {
+        return {addOptionPopoverIsOpen: !prevState.addOptionPopoverIsOpen}
+      });
+    } else {
+      this.setState(prevState => {
+        return {addRequirementPopoverIsOpen: !prevState.addRequirementPopoverIsOpen}
+      });
+    }
+  }
+
+  inputChangedHandlerForOption = (event) => {
+    this.setState({
+      isEditingOption: true,
+      isEditingRequirement: false,
+      newOptionInput: event.target.value
+    });
+  }
+
+  submitHandlerForOption = (event) => {
+    this.setState({
+      addOptionPopoverIsOpen: false
+    });
+    event.preventDefault();
+    const { newOptionInput } = this.state;
+    if (newOptionInput !== '') {
+      FirebaseStore.addAnOptionForCurrentTask(this.state.newOptionInput);
+    }
+    this.setState({
+      newOptionInput: ''
+    });
+  }
+
+  inputChangedHandlerForRequirement = (event) => {
+    this.setState({
+      isEditingOption: false,
+      isEditingRequirement: true,
+      newRequirementInput: event.target.value
+    });
+  }
+
+  submitHandlerForRequirement = (event) => {
+    this.setState({
+      addRequirementPopoverIsOpen: false
+    });
+    event.preventDefault();
+    const { newRequirementInput } = this.state;
+    if (newRequirementInput !== '') {
+      FirebaseStore.addARequirementForCurrentTask(this.state.newRequirementInput);
+    }
+    this.setState({
+      newRequirementInput: ''
+    });
   }
 
   UNSAFE_componentWillReceiveProps (nextProps) {
@@ -97,15 +162,28 @@ class TableView extends Component {
     });
 
     document.body.addEventListener('keyup', (event) => {
-      if(document.getElementById('addInput') === document.activeElement && event.keyCode === 13) {
-        // console.log('enter on option');
-        this.submitOption(event);
-        document.getElementById('addInput').value='';
+      if (event.keyCode === 13) {
+        // Enter key pressed
+        if (this.state.isEditingOption) {
+          this.submitHandlerForOption(event);
+        } 
+        if (this.state.isEditingRequirement) {
+          this.submitHandlerForRequirement(event);
+        }
       }
-      if(document.getElementById('addCriterion') === document.activeElement && event.keyCode === 13) {
-        // console.log('enter on criterion');
-        this.submitCriterion(event);
-        document.getElementById('addCriterion').value='';
+      if (event.key === 'Escape') {
+        if (this.state.addOptionPopoverIsOpen) {
+          this.setState({
+            addOptionPopoverIsOpen: false,
+            newOptionInput: ''
+          })
+        } 
+        if (this.state.addRequirementPopoverIsOpen) {
+          this.setState({
+            addRequirementPopoverIsOpen: false,
+            newRequirementInput: ''
+          })
+        }
       }
     });
   }
@@ -172,8 +250,8 @@ class TableView extends Component {
     console.log('TODO: update the attitudes of all selected snippets and unselect all snippets')
   }
 
-  switchTableMode = (event) => {
-    this.setState({readModeisOn:!this.state.readModeisOn});
+  switchTableMode = (event, mode) => {
+    this.setState({readModeisOn: mode});
   }
 
   getOrderedRequirementListFromState () {
@@ -517,15 +595,6 @@ class TableView extends Component {
     }
   }
 
-  submitOption (event) {
-    // console.log('option Heard',event.target.value);
-    FirebaseStore.addAnOptionForCurrentTask(event.target.value);
-  }
-
-  submitCriterion (event) {
-    // console.log('option Heard',event.target.value);
-    FirebaseStore.addARequirementForCurrentTask(event.target.value);
-  }
   log(event) {
     console.log('click made');
   }
@@ -550,22 +619,81 @@ class TableView extends Component {
     let newOptionsList = this.state.optionsList; // this.getOrderedOptionListFromState();
     let newTableHeader = (
       <tr>
-        <td className={styles.addButtons}>
-        <FontAwesomeIcon icon={faPlus} style={{visibility:'hidden'}}/>
-        <br></br>
-        <br></br>
-        <FontAwesomeIcon icon={fasFlagCheckered} className={styles.addCriterion}/>  &nbsp;
-        <input id='addCriterion' type="text" placeholder={'Add a Criterion / Feature'}
-        className={styles.Input}
+        <td className={styles.AddButtons}>
+          
+          <div className={styles.AddRequirementButtonContainer}>
+            <Popover
+              isOpen={this.state.addRequirementPopoverIsOpen}
+              position={'bottom'} // preferred position
+              onClickOutside={() => this.switchPopoverOpenStatus(false)}
+              containerClassName={styles.AddPopoverContainer}
+              content={(
+                <div className={styles.AddPopoverContentContainer}>
+                  <Input
+                    elementType={'input'}
+                    elementConfig={{placeholder: 'Add a criterion / feature'}}
+                    submitted={this.submitHandlerForRequirement}
+                    value={this.state.newRequirementInput}
+                    changed={this.inputChangedHandlerForRequirement} />
+                  <span>
+                    {this.state.newRequirementInput !== '' 
+                      ? <span className={styles.PromptToHitEnter}>Press Enter &#x23ce; when done</span> 
+                      : ' '}
+                  </span>
+                </div>
+              )}
+            >
+              <a data-tip data-for='addRequirement' onClick={() => this.switchPopoverOpenStatus(false)}> 
+                <FontAwesomeIcon icon={fasPlusCircle} className={[styles.AddButton, styles.AddRequirementButton].join(' ')}/>
+              </a>
+              <ReactTooltip 
+                id='addRequirement' 
+                type='dark' 
+                effect='solid'
+                place={'bottom'}
+                globalEventOff='click'
+                className={styles.AddTooltipContainer}>
+                Add a new criterion / feature
+              </ReactTooltip>
+            </Popover>            
+          </div>
 
-        />
-        <br></br>
-        <br></br>
-        <FontAwesomeIcon icon={fasListAlt} className={styles.addOption}/> &nbsp;
-        <input id='addInput' type="text" name="option" placeholder={'Add an Option'}
-        className={styles.Input} ref={(input) => { this.OptionInput = input; }}
-        onSubmit={(event) => this.submitOption(event)}/>
-
+          <div className={styles.AddOptionButtonContainer}>
+            <Popover
+              isOpen={this.state.addOptionPopoverIsOpen}
+              position={'bottom'} // preferred position
+              onClickOutside={() => this.switchPopoverOpenStatus(true)}
+              containerClassName={styles.AddPopoverContainer}
+              content={(
+                <div className={styles.AddPopoverContentContainer}>
+                  <Input
+                    elementType={'input'}
+                    elementConfig={{placeholder: 'Add an option'}}
+                    submitted={this.submitHandlerForOption}
+                    value={this.state.newOptionInput}
+                    changed={this.inputChangedHandlerForOption} />
+                  <span>
+                    {this.state.newOptionInput !== '' 
+                      ? <span className={styles.PromptToHitEnter}>Press Enter &#x23ce; when done</span> 
+                      : ' '}
+                  </span>
+                </div>
+              )}
+            >
+              <a data-tip data-for='addOption' onClick={() => this.switchPopoverOpenStatus(true)}> 
+                <FontAwesomeIcon icon={fasPlusCircle} className={[styles.AddButton, styles.AddOptionButton].join(' ')}/>
+              </a>
+              <ReactTooltip 
+                id='addOption' 
+                type='dark' 
+                effect='solid'
+                place={'bottom'}
+                globalEventOff='click'
+                className={styles.AddTooltipContainer}>
+                Add a new option
+              </ReactTooltip>
+            </Popover>
+          </div>
         </td>
 
         {
@@ -1148,11 +1276,12 @@ class TableView extends Component {
                   <span>Comparison Table</span>
                 </div>
                 <div className={styles.HeaderCollapseButton}
-                  onClick={(event) => this.switchTableIsOpenStatus(event)}>
+                  onClick={(event) => this.switchTableIsOpenStatus(event)}
+                  title={this.state.tableviewisOpen ? 'Collapse the table' : 'Show the table'}>
                   {
                     this.state.tableviewisOpen
-                    ? <FontAwesomeIcon icon={fasChevronUp} />
-                    : <FontAwesomeIcon icon={fasChevronDown} />
+                    ? <FontAwesomeIcon icon={fasAngleDown} />
+                    : <FontAwesomeIcon icon={fasAngleRight} />
                   }
                 </div>
                 { /* The show notes handler was not really working so it is temp. commented out
@@ -1166,19 +1295,23 @@ class TableView extends Component {
                 */}
               </div>
 
-              <div className={styles.ModeToggleButtonsContainer}>
-                <div className={styles.ModeToggleButton} style={{textDecoration: this.state.readModeisOn ? 'underline' : 'none'}}
-                  onClick={(event) => this.switchTableMode(event)}>
-                  View
-                </div>
+              {
+                this.state.tableviewisOpen
+                ? <div className={styles.ModeToggleButtonsContainer}>
+                    <div className={[styles.ModeToggleButton, this.state.readModeisOn === true ? styles.ModeToggleButtonActive : null].join(' ')} 
+                      onClick={(event) => this.switchTableMode(event, true)}>
+                      View
+                    </div>
 
-                <div>|</div>
+                    <div>|</div>
 
-                <div className={styles.ModeToggleButton} style={{textDecoration: this.state.readModeisOn ? 'none' : 'underline'}}
-                onClick={(event) => this.switchTableMode(event)}>
-                  Edit
-                </div>
-              </div>
+                    <div className={[styles.ModeToggleButton, this.state.readModeisOn === false ? styles.ModeToggleButtonActive : null].join(' ')} 
+                    onClick={(event) => this.switchTableMode(event, false)}>
+                      Edit
+                    </div>
+                  </div>
+                : null
+              }
 
             </div>
             <Collapse isOpened={this.state.tableviewisOpen} springConfig={{stiffness: 700, damping: 50}}>

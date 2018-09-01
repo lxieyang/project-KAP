@@ -155,7 +155,7 @@ class OptionPiece extends Component {
                         <div>{op.starred === true ? 'Remove' : 'Add'} Star</div>
                       </li>
 
-                      <li onClick={(event) => this.props.deleteOptionWithId(op.id)}>
+                      <li onClick={(event) => this.props.deleteOptionWithId(op.id, op.name)}>
                         <div className={styles.IconBoxInPopover}>
                           <FontAwesomeIcon icon={fasDelete} className={styles.IconInPopover}/>
                         </div>
