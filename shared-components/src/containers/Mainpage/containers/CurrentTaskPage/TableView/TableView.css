@@ -674,3 +674,33 @@ tr:nth-child(even) {background-color: #f2f2f2;} */
 .ModeToggleButtonActive {
   font-weight: 600;
 }
+
+
+
+/* snackbar */
+.SnackbarLeft {
+  max-width: 300px;
+}
+
+.SnackbarRight {
+  margin-left: 40px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.UndoButton {
+  font-size: 1.0rem;
+  font-weight: 600;
+  border-radius: 5px;
+  cursor: pointer;
+  background-color: #eee
+}
+
+.UndoButton:hover {
+  background-color: #fff;
+}
+
+.UndoButton:focus {
+  outline: none;
+}

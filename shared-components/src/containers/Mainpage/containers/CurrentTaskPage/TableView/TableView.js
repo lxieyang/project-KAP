@@ -40,6 +40,7 @@ import * as FirebaseStore from '../../../../../firebase/store';
 /* For DnD */
 import TableHeader from './TableHeader/TableHeader';
 import update from 'immutability-helper';
+import Snackbar from '../../../../../components/UI/Snackbar/Snackbar';
 
 const inactiveOpacity = 0.2;
 
@@ -68,6 +69,81 @@ class TableView extends Component {
     newRequirementInput: '',
     isEditingOption: false,
     isEditingRequirement: false,
+
+    // snackbar
+    deleteOptionSnackbarShouldShow: false,
+    deleteRequirementSnackbarShouldShow: false,
+    toDeleteOptionId: null,
+    toDeleteRequirementId: null,
+    toDeleteOptionName: null,
+    toDeleteRequirementName: null
+  }
+
+  showSnackbar = (type, id, name) => {
+    // https://www.w3schools.com/howto/tryit.asp?filename=tryhow_js_snackbar
+    if (type === 'op') {
+      this.setState({
+        deleteOptionSnackbarShouldShow: true,
+        toDeleteOptionId: id,
+        toDeleteOptionName: name
+      });
+      this.deleteOptionSnackbarTimer = setTimeout(() => {
+        this.setState({
+          deleteOptionSnackbarShouldShow: false,
+          toDeleteOptionId: null,
+          toDeleteOptionName: null
+        });
+      }, 5000);
+    } else if (type === 'rq') {
+      this.setState({
+        deleteRequirementSnackbarShouldShow: true,
+        toDeleteRequirementId: id,
+        toDeleteRequirementName: name
+      });
+      this.deleteRequirementSnackbarTimer = setTimeout(() => {
+        this.setState({
+          deleteRequirementSnackbarShouldShow: false,
+          toDeleteRequirementId: null,
+          toDeleteRequirementName: null
+        });
+      }, 5000);
+    }
+  }
+
+  deleteOptionHandler = (id, name) => {
+    this.showSnackbar('op', id, name);
+
+    FirebaseStore.switchOptionVisibility(id, false);
+    this.deleteOptionTimer = setTimeout(() => {
+      FirebaseStore.deleteOptionWithId(id);
+    }, 6000);
+  }
+
+  undoDeleteOptionHandler = () => {
+    clearTimeout(this.deleteOptionTimer);
+    clearTimeout(this.deleteOptionSnackbarTimer);
+    FirebaseStore.switchOptionVisibility(this.state.toDeleteOptionId, true);
+    this.setState({
+      deleteOptionSnackbarShouldShow: false
+    })
+  }
+
+  deleteRequirementHandler = (id, name) => {
+    this.showSnackbar('rq', id, name);
+
+    FirebaseStore.switchRequirementVisibility(id, false);
+    this.deleteRequirementTimer = setTimeout(() => {
+      FirebaseStore.deleteRequirementWithId(id);
+    }, 6000);
+  }
+
+  undoDeleteRequirementHandler = () => {
+    clearTimeout(this.deleteRequirementTimer);
+    clearTimeout(this.deleteRequirementSnackbarTimer);
+    FirebaseStore.switchRequirementVisibility(this.state.toDeleteRequirementId, true);
+    this.setState({
+      deleteRequirementSnackbarShouldShow: false
+    })
   }
 
   switchPopoverOpenStatus = (isOption) => {
@@ -701,7 +777,7 @@ class TableView extends Component {
         </td>
 
         {
-          newRequirementsList.map((rq, idx) => {
+          newRequirementsList.filter(rq => rq.visibility !== false).map((rq, idx) => {
             let isVisible = true;
             return (
               <TableHeader
@@ -712,6 +788,7 @@ class TableView extends Component {
                 inactiveOpacity={inactiveOpacity}
                 switchStarStatusOfRequirement={this.switchStarStatusOfRequirement}
                 switchHideStatusOfARequirement={this.switchHideStatusOfARequirement}
+                deleteRequirementWithId={this.deleteRequirementHandler}
                 updateRequirementName={FirebaseStore.updateRequirementName}
                 isVisible={isVisible}
                 />
@@ -737,6 +814,7 @@ class TableView extends Component {
                 inactiveOpacity={inactiveOpacity}
                 switchStarStatusOfRequirement={this.switchStarStatusOfRequirement}
                 switchHideStatusOfARequirement={this.switchHideStatusOfARequirement}
+                deleteRequirementWithId={this.deleteRequirementHandler}
                 updateRequirementName={FirebaseStore.updateRequirementName}
                 isVisible={isVisible}
                 />
@@ -745,7 +823,7 @@ class TableView extends Component {
         }
       </tr>
     );
-    let newTableBody = newOptionsList.map((op, idx) => {
+    let newTableBody = newOptionsList.filter(op => op.visibility !== false).map((op, idx) => {
       let optionVisibility = true;
       let snippetsSelected = this.state.selectedSnippets;
       return (
@@ -762,6 +840,7 @@ class TableView extends Component {
             pieces={this.state.pieces}
             options={this.state.options}
             requirements={this.state.requirements}
+            deleteOptionWithId={this.deleteOptionHandler}
             updateOptionName={FirebaseStore.updateOptionName}
             addANoteToOption={FirebaseStore.addANoteToAnOption}
             deleteANoteFromOption={FirebaseStore.deleteANoteFromAnOption}
@@ -940,6 +1019,7 @@ class TableView extends Component {
                 inactiveOpacity={inactiveOpacity}
                 switchStarStatusOfRequirement={this.switchStarStatusOfRequirement}
                 switchHideStatusOfARequirement={this.switchHideStatusOfARequirement}
+                deleteRequirementWithId={this.deleteRequirementHandler}
                 updateRequirementName={FirebaseStore.updateRequirementName}
                 isVisible={isVisible}
                 />
@@ -1331,6 +1411,36 @@ class TableView extends Component {
 
 
         </div>
+
+        <Snackbar 
+          id="deleteOptionSnackbar"
+          show={this.state.deleteOptionSnackbarShouldShow}>
+          <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+            <div className={styles.SnackbarLeft}>
+              Option <u>{this.state.toDeleteOptionName}</u> deleted
+            </div>
+            <div className={styles.SnackbarRight}>
+              <button 
+                className={styles.UndoButton}
+                onClick={() => this.undoDeleteOptionHandler()}>UNDO</button>
+            </div>
+          </div>
+        </Snackbar>
+
+        <Snackbar 
+          id="deleteRequirementSnackbar"
+          show={this.state.deleteRequirementSnackbarShouldShow}>
+          <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+            <div className={styles.SnackbarLeft}>
+              Criterion <u>{this.state.toDeleteRequirementName}</u> deleted
+            </div>
+            <div className={styles.SnackbarRight}>
+              <button 
+                className={styles.UndoButton}
+                onClick={() => this.undoDeleteRequirementHandler()}>UNDO</button>
+            </div>
+          </div>
+        </Snackbar>
 
       </Aux>
     );

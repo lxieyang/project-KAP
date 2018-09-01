@@ -221,9 +221,9 @@ class TableRow extends Component {
                             </div>
                             <div>{op.starred === true ? 'Remove' : 'Add'} Star</div>
                           </li>
-                          {/* TODO: Add delete option functionality back in*/}
                           
-                          <li >
+                          {/* TODO: Add delete option functionality back in*/}
+                          <li onClick={(event) => this.props.deleteOptionWithId(op.id, op.name)}>
                             <div className={styles.IconBoxInPopover}>
                               <FontAwesomeIcon icon={fasDelete} className={styles.IconInPopover}/>
                             </div>

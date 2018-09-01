@@ -170,15 +170,15 @@ class TableHeader extends Component {
                         </div>
                         <div>{rq.starred === true ? 'Remove' : 'Add'} Star</div>
                       </li>
+
                       {/* TODO: Add delete requirement functionality back in*/}
-                      {/*
-                      <li>
+                      <li onClick={(event) => this.props.deleteRequirementWithId(rq.id, rq.name)}>
                         <div className={styles.IconBoxInPopover}>
                           <FontAwesomeIcon icon={fasDelete} className={styles.IconInPopover}/>
                         </div>
                         <div>Delete</div>
                       </li>
-                      */}
+                      
                     </ul>
                   </div>
                 )}
@@ -201,34 +201,6 @@ class TableHeader extends Component {
               </span>
             : null}
         </div>
-
-        {/*
-        <div
-          style={{opacity: rq.hide === true ? `${inactiveOpacity}` : '1'}}
-          className={styles.RequirementInTableHeaderContainer}>
-          <div style={{height: '100%'}}>
-            <div
-              className={[styles.RequirementStar, (
-                rq.starred === true ? styles.ActiveStar : null
-              )].join(' ')}
-              onClick={(event) => this.props.switchStarStatusOfRequirement(rq.id)}>
-              <FontAwesomeIcon icon={fasStar} />
-            </div>
-            <span className={styles.Ordinal}>{(index + 1)}</span>
-          </div>
-          <div
-            className={[styles.RequirementNameContainer,
-            rq.active ? null : styles.InactiveRequirement].join(' ')}>
-              <span
-                className={styles.RequirementText}
-                contentEditable={true}
-                suppressContentEditableWarning={true}
-                onSubmit={(event) => this.requirementNameChangedHandler(event, rq.id)}>
-                {rq.name}
-              </span>
-          </div>
-        </div>
-        */}
 
       </th>
 
