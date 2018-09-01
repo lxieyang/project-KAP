@@ -17,6 +17,7 @@ import {
 } from '../../../../shared-components/src/firebase/index';
 import * as FirebaseStore from '../../../../shared-components/src/firebase/store';
 import styles from './Popup.css';
+import Snackbar from '../../../../shared-components/src/components/UI/Snackbar/Snackbar';
 
 
 const dividerOptions = {
@@ -42,7 +43,46 @@ class Popup extends Component {
     userId: null,
     userName: null,
     userProfilePhotoURL: null,
-    isSigningOut: null
+    isSigningOut: null,
+
+    // snackbar
+    deleteOptionSnackbarShouldShow: false,
+    deleteRequirementSnackbarShouldShow: false,
+    toDeleteOptionId: null,
+    toDeleteRequirementId: null,
+    toDeleteOptionName: null,
+    toDeleteRequirementName: null
+  }
+
+  showSnackbar = (type, id, name) => {
+    // https://www.w3schools.com/howto/tryit.asp?filename=tryhow_js_snackbar
+    if (type === 'op') {
+      this.setState({
+        deleteOptionSnackbarShouldShow: true,
+        toDeleteOptionId: id,
+        toDeleteOptionName: name
+      });
+      this.deleteOptionSnackbarTimer = setTimeout(() => {
+        this.setState({
+          deleteOptionSnackbarShouldShow: false,
+          toDeleteOptionId: null,
+          toDeleteOptionName: null
+        });
+      }, 5000);
+    } else if (type === 'rq') {
+      this.setState({
+        deleteRequirementSnackbarShouldShow: true,
+        toDeleteRequirementId: id,
+        toDeleteRequirementName: name
+      });
+      this.deleteRequirementSnackbarTimer = setTimeout(() => {
+        this.setState({
+          deleteRequirementSnackbarShouldShow: false,
+          toDeleteRequirementId: null,
+          toDeleteRequirementName: null
+        });
+      }, 5000);
+    }
   }
 
   componentDidMount() {
@@ -143,8 +183,22 @@ class Popup extends Component {
     FirebaseStore.switchStarStatusOfAnOptionWithId(id);
   }
 
-  deleteOptionHandler = (id) => {
-    FirebaseStore.deleteOptionWithId(id);
+  deleteOptionHandler = (id, name) => {
+    this.showSnackbar('op', id, name);
+
+    FirebaseStore.switchOptionVisibility(id, false);
+    this.deleteOptionTimer = setTimeout(() => {
+      FirebaseStore.deleteOptionWithId(id);
+    }, 6000);
+  }
+
+  undoDeleteOptionHandler = () => {
+    clearTimeout(this.deleteOptionTimer);
+    clearTimeout(this.deleteOptionSnackbarTimer);
+    FirebaseStore.switchOptionVisibility(this.state.toDeleteOptionId, true);
+    this.setState({
+      deleteOptionSnackbarShouldShow: false
+    })
   }
 
   updateOptionName = (id, name) => {
@@ -179,8 +233,22 @@ class Popup extends Component {
     FirebaseStore.switchStarStatusOfARequirementWithId(id);
   }
 
-  deleteRequirementHandler = (id) => {
-    FirebaseStore.deleteRequirementWithId(id);
+  deleteRequirementHandler = (id, name) => {
+    this.showSnackbar('rq', id, name);
+
+    FirebaseStore.switchRequirementVisibility(id, false);
+    this.deleteRequirementTimer = setTimeout(() => {
+      FirebaseStore.deleteRequirementWithId(id);
+    }, 6000);
+  }
+
+  undoDeleteRequirementHandler = () => {
+    clearTimeout(this.deleteRequirementTimer);
+    clearTimeout(this.deleteRequirementSnackbarTimer);
+    FirebaseStore.switchRequirementVisibility(this.state.toDeleteRequirementId, true);
+    this.setState({
+      deleteRequirementSnackbarShouldShow: false
+    })
   }
 
   updateRequirementName = (id, name) => {
@@ -355,6 +423,37 @@ class Popup extends Component {
               switchStarStatusOfRequirement={this.switchStarStatusOfRequirement}
               updateRequirementName={this.updateRequirementName}/>
           </div>
+
+          <Snackbar 
+            id="deleteOptionSnackbar"
+            show={this.state.deleteOptionSnackbarShouldShow}>
+            <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+              <div className={styles.SnackbarLeft}>
+                Option <u>{this.state.toDeleteOptionName}</u> deleted
+              </div>
+              <div className={styles.SnackbarRight}>
+                <button 
+                  className={styles.UndoButton}
+                  onClick={() => this.undoDeleteOptionHandler()}>UNDO</button>
+              </div>
+            </div>
+          </Snackbar>
+
+          <Snackbar 
+            id="deleteRequirementSnackbar"
+            show={this.state.deleteRequirementSnackbarShouldShow}>
+            <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+              <div className={styles.SnackbarLeft}>
+                Criterion <u>{this.state.toDeleteRequirementName}</u> deleted
+              </div>
+              <div className={styles.SnackbarRight}>
+                <button 
+                  className={styles.UndoButton}
+                  onClick={() => this.undoDeleteRequirementHandler()}>UNDO</button>
+              </div>
+            </div>
+          </Snackbar>
+
         </Aux>
       );
     }

@@ -67,7 +67,7 @@ class Options extends Component {
           <div className={styles.OptionList}>
             <ul>
               {
-                options !== null ? options.map((op, idx) => {
+                options !== null ? options.filter(op => op.visibility !== false).map((op, idx) => {
                   return (
                     <OptionPiece
                       key={op.id}

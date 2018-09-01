@@ -90,7 +90,7 @@ export const addTaskFromSearchTerm = async (searchTerm, tabId) => {
       if (task.name.toLowerCase() === searchTerm.toLowerCase()) {
         // console.log("same task found");
         // set current task to previous task with same search term
-        if ((confirm('You have started a task with the same name before'
+        if ((window.confirm('You have started a task with the same name before'
         + '\n' + 'To merge: select cancel'
         + '\n' + 'To create a new task: select OK '))) {
           // console.log("should start new task now");
@@ -433,6 +433,11 @@ export const switchHideStatusOfAnOptionWithId = async (id, hide, ordering) => {
   }
 }
 
+export const switchOptionVisibility = async (id, toStatus) => {
+  currentTaskId = (await currentTaskIdRef.once('value')).val();
+  tasksRef.child(currentTaskId).child('options').child(id).child('visibility').set(toStatus);
+}
+
 export const deleteOptionWithId = async (id) => {
   currentTaskId = (await currentTaskIdRef.once('value')).val();
   tasksRef.child(currentTaskId).child('options').child(id).set(null);
@@ -540,6 +545,11 @@ export const switchHideStatusOfARequirementWithId = async (id, hide, ordering) =
       hide: false
     });
   }
+}
+
+export const switchRequirementVisibility = async (id, toStatus) => {
+  currentTaskId = (await currentTaskIdRef.once('value')).val();
+  tasksRef.child(currentTaskId).child('requirements').child(id).child('visibility').set(toStatus);
 }
 
 export const deleteRequirementWithId = async (id) => {

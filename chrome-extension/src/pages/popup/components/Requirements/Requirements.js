@@ -66,7 +66,7 @@ class Requirements extends Component {
           <div className={styles.RequirementList}>
             <ul>
               {
-                requirements !== null ? requirements.map((rq, idx) => (
+                requirements !== null ? requirements.filter(rq => rq.visibility !== false).map((rq, idx) => (
                   <RequirementPiece 
                     key={rq.id}
                     index={idx}
