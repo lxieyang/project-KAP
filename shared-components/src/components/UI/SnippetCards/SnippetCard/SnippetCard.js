@@ -324,7 +324,7 @@ class SnippetCard extends Component {
 
               <div className={styles.Title}
               onClick={(event) => props.makeInteractionBox(event, props.id)}>
-                {props.title}
+                {getFirstNWords(10, props.title)}
               </div>
 
               {

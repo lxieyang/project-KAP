@@ -363,6 +363,7 @@
   opacity: 1 !important;
   background-color: white !important;
   pointer-events: auto !important;
+  z-index: 10000 !important;
 }
 
 .TooltipOverAttitude:hover {
