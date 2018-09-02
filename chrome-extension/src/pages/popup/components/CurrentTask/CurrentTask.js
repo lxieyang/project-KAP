@@ -24,7 +24,8 @@ const activeFinishButtonStyle = {
 
 class CurrentTask extends Component {
   state = {
-    shouldShowPrompt: false
+    shouldShowPrompt: false,
+    isEditingTaskName: false
   }
 
   componentDidMount() {
@@ -40,6 +41,12 @@ class CurrentTask extends Component {
     event.persist();
     this.setState({shouldShowPrompt: true});
     this.inputCallback(event, id);
+  }
+
+  switchEditingTaskNameStatus = () => {
+    this.setState(prevState => {
+      return {isEditingTaskName: !prevState.isEditingTaskName}
+    })
   }
 
 
@@ -61,13 +68,15 @@ class CurrentTask extends Component {
               Current Task
             </div>
           </div>
-          <div className={styles.TaskNameContainer}>
+          <div className={[styles.TaskNameContainer, this.state.isEditingTaskName ? styles.isEditing : null].join(' ')}>
             <div 
               title={'Click to edit'}
               className={styles.TaskName}
               contentEditable={true}
               suppressContentEditableWarning={true}
-              onInput={(event) => this.inputChangedHandler(event, currentTaskId)}>
+              onInput={(event) => this.inputChangedHandler(event, currentTaskId)}
+              onFocus={() => this.switchEditingTaskNameStatus()}
+              onBlur={() => this.switchEditingTaskNameStatus()}>
               {currentTaskName}
             </div>
             <div className={styles.TaskSelect}>
