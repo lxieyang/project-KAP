@@ -26,8 +26,10 @@ let userProfilePhotoURLCached = localStorage.getItem('userProfilePhotoURL');
 const updateBrowserIcon = (isLoggedIn) => {
   if (isLoggedIn) {
     chrome.browserAction.setIcon({path: 'icon-128.png'});
+    chrome.browserAction.setTitle({title: `${APP_NAME_LONG}`});
   } else {
     chrome.browserAction.setIcon({path: 'icon-inactive-128.png'});
+    chrome.browserAction.setTitle({title: `${APP_NAME_SHORT} (Please log in)`});
   }
 }
     
