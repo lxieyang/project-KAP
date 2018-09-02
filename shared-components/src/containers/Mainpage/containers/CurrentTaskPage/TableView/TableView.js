@@ -710,7 +710,7 @@ class TableView extends Component {
               content={(
                 <div className={styles.AddPopoverContentContainer}>
                   <Input
-                    autoFocus
+                    autoFocus={true}
                     elementType={'input'}
                     elementConfig={{placeholder: 'Add a criterion / feature'}}
                     submitted={this.submitHandlerForRequirement}
@@ -748,7 +748,7 @@ class TableView extends Component {
               content={(
                 <div className={styles.AddPopoverContentContainer}>
                   <Input
-                    autoFocus
+                    autoFocus={true}
                     elementType={'input'}
                     elementConfig={{placeholder: 'Add an option'}}
                     submitted={this.submitHandlerForOption}
@@ -1080,7 +1080,7 @@ class TableView extends Component {
                   <td key={rq.id} style={{
                     opacity: rq.hide === true || op.hide === true ? `${inactiveOpacity}` : '1',
                   }}>
-                    <div style={{display:'flex', flexWrap:'wrap', opacity:'0'}}>
+                    <div className={styles.AttitudeThumbInTableCellContainer}>
                       { piecesInThisCell.length > 0 ?
                         piecesInThisCell.map((p, idx) => {
                         let thumb = null;
@@ -1337,7 +1337,7 @@ class TableView extends Component {
                       onScroll={(event) => this.scrollTable(event)}>
         <table className={[styles.Overlay].join(' ')}>
         <thead style={{ opacity: '0'}}>{emptyHeader}</thead>
-        <tbody style={{ opacity: '1'}}>{invisibleIconOverlay}</tbody>
+        <tbody style={{ opacity: '0'}}>{invisibleIconOverlay}</tbody>
         </table>
         </div>
 

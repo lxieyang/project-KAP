@@ -522,6 +522,7 @@
 .Overlay td {
   padding:0px;
   text-align: left;
+  vertical-align: middle;
 }
 
 .PieceGroupNameContainer {
@@ -643,7 +644,7 @@ table.ComparisonTable {
 .ComparisonTable td {
   padding: 0px;
   text-align: left;
-
+  vertical-align: middle;
 }
 
 
