@@ -138,3 +138,36 @@
   text-decoration: none;
   box-shadow: 0 2px 5px 0 rgba(0,0,0,0.16), 0 2px 10px 0 rgba(0,0,0,0.12);
 }
+
+.PopoverContentContainer {
+  
+}
+
+.PopoverContentContainer ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.PopoverContentContainer ul li {
+  display: flex;
+  align-items: center;
+  padding: 5px 10px 5px 6px;
+  cursor: pointer;
+  transition: all 0.1s ease-in;
+}
+
+.PopoverContentContainer ul li:hover {
+  background-color: #eee;
+}
+
+.IconBoxInPopover {
+  width: 25px;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
+
+.IconInPopover {
+  
+}

@@ -72,6 +72,12 @@ class Header extends Component {
     this.setState({popoverOpen: !this.state.popoverOpen});
   }
 
+  switchPopoverOpenStatus = () => {
+    this.setState(prevState => {
+      return {popoverOpen: !prevState.popoverOpen}
+    });
+  }
+
   handleClose(e) {
     this.setState({popoverOpen: false});
   }
@@ -210,9 +216,12 @@ class Header extends Component {
 
   openSettingsPageClickedHandler = () => {
     console.log('open settings tab');
-    chrome.runtime.sendMessage({
-      msg: 'OPEN_SETTINGS_PAGE'
-    });
+    this.switchPopoverOpenStatus();
+    setTimeout(() => {
+      chrome.runtime.sendMessage({
+        msg: 'OPEN_SETTINGS_PAGE'
+      });
+    }, 300);
   }
 
   render () {
@@ -273,13 +282,7 @@ class Header extends Component {
                 clearSearchHandler={this.clearSearchHandler}
                 itemInSearchResultsClickedHandler={this.itemInSearchResultsClickedHandler}/>
             </div>
-            <div>
-              <div
-                title={'Open settings tab'}
-                onClick={(event) => this.openSettingsPageClickedHandler()}>
-                <FontAwesomeIcon icon={fasCog} className={styles.IconInHeader} />
-              </div>
-            </div>
+            
             <Popover
               containerStyle={{zIndex: '100000'}}
               containerClassName={styles.LogoutPopoverContainer}
@@ -288,23 +291,35 @@ class Header extends Component {
               align={'end'}
               onClickOutside={this.handleClose.bind(this)}
               content={(
-                <div className={styles.MenuItem} onClick={this.handleClose.bind(this)}>
-                  <NavLink 
-                    to={appRoutes.LOG_OUT}
-                    exact>
-                    <div >
-                      &nbsp;
-                      <FontAwesomeIcon icon={fasSignOutAlt} /> &nbsp;
-                      Sign out
-                    </div>
+                <div className={styles.PopoverContentContainer}>
+                  <ul>
+                    <li onClick={(event) => this.openSettingsPageClickedHandler()}>
+                      <div className={styles.IconBoxInPopover}>
+                        <FontAwesomeIcon icon={fasCog} className={styles.IconInPopover}/>
+                      </div>
+                      <div>Open Settings</div>
+                    </li>
+
+                    <li onClick={this.handleClose.bind(this)}>
+                      <NavLink 
+                        style={{color: 'inherit', textDecoration: 'none', display: 'flex'}}
+                        to={appRoutes.LOG_OUT}
+                        exact>
+                      <div className={styles.IconBoxInPopover}>
+                        <FontAwesomeIcon icon={fasSignOutAlt} className={styles.IconInPopover}/>
+                      </div>
+                      <div>Sign out</div>
+
                   </NavLink>
+                    </li>
+                  </ul>
                 </div>
               )}
             >
               <div 
-                title={'Click to sign out'}
+                title={'More...'}
                 className={styles.Profile}
-                onClick={this.handleClick.bind(this)}>
+                onClick={() => this.switchPopoverOpenStatus()}>
                 <img src={userProfilePhotoURL !== null ? userProfilePhotoURL : ProfileImg} alt="" className={styles.ProfileImg}/> 
                 <span>{userName}</span>
               </div>
