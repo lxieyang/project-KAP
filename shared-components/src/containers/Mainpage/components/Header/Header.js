@@ -225,11 +225,12 @@ class Header extends Component {
     if (!authenticated) {
       return (
         <Aux>
-          <header className={styles.Header}>
-            <div style={{width: '100%', display: 'flex', justifyContent: 'space-around', alignItems: 'center'}}>
-              <AppHeader logoSize='38px' hover={false} shouldDisplayHeaderButtons={false}/>
-            </div>
-          </header>
+          <div style={{position: 'fixed', top: '0', left: '0', width: '100%'}}>
+            <AppHeader 
+              logoSize='38px' hover={false} 
+              shouldDisplayHeaderButtons={false}
+              openInNewTabClickedHandler={() => console.log("Don't open new tab")}/>
+          </div>
         </Aux>
       )
     }

@@ -47,7 +47,7 @@ class AppHeader extends Component {
     const props = this.props;
     return (
       <Aux>
-        <div className={styles.AppHeader} >
+        <div className={[styles.AppHeader, props.shouldDisplayHeaderButtons ? styles.isLoggedIn : styles.isNotLoggedIn].join(' ')} >
           <div className={styles.HeaderText} onClick={(event) => props.openInNewTabClickedHandler()}>
             <Logo size={props.logoSize} hover={props.hover} /> &nbsp;&nbsp;
             <strong>{APP_NAME_LONG}</strong>
