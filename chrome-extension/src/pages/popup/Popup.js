@@ -23,7 +23,8 @@ import Snackbar from '../../../../shared-components/src/components/UI/Snackbar/S
 const dividerOptions = {
   margin: {
     long: '10px',
-    short: '30px'
+    short: '30px',
+    none: '0px'
   }
 }
 
@@ -322,7 +323,7 @@ class Popup extends Component {
             }}>
             {appTitle}
           </div>
-          <HorizontalDivider margin={dividerOptions.margin.short}/>
+          <HorizontalDivider margin={dividerOptions.margin.none}/>
           <div
             style={{
               width: '100%',
@@ -388,7 +389,7 @@ class Popup extends Component {
           
           {appTitle}
 
-          <HorizontalDivider margin={dividerOptions.margin.long}/>
+          <HorizontalDivider margin={dividerOptions.margin.none}/>
 
           <CurrentTask
             tasks={tasks}
@@ -400,7 +401,7 @@ class Popup extends Component {
             onSwitch={this.switchCurrentTaskHandler}
             updateTaskName={this.updateTaskName}/>
 
-          <HorizontalDivider margin={dividerOptions.margin.short}/>
+          <HorizontalDivider margin={dividerOptions.margin.none}/>
 
           <div className={styles.OptionsRequiementsContainer}>
             <Options

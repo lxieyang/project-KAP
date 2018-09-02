@@ -68,10 +68,6 @@ class Header extends Component {
 
   }
 
-  handleClick(e) {
-    this.setState({popoverOpen: !this.state.popoverOpen});
-  }
-
   switchPopoverOpenStatus = () => {
     this.setState(prevState => {
       return {popoverOpen: !prevState.popoverOpen}
@@ -215,7 +211,6 @@ class Header extends Component {
   }
 
   openSettingsPageClickedHandler = () => {
-    console.log('open settings tab');
     this.switchPopoverOpenStatus();
     setTimeout(() => {
       chrome.runtime.sendMessage({
@@ -305,12 +300,11 @@ class Header extends Component {
                         style={{color: 'inherit', textDecoration: 'none', display: 'flex'}}
                         to={appRoutes.LOG_OUT}
                         exact>
-                      <div className={styles.IconBoxInPopover}>
-                        <FontAwesomeIcon icon={fasSignOutAlt} className={styles.IconInPopover}/>
-                      </div>
-                      <div>Sign out</div>
-
-                  </NavLink>
+                        <div className={styles.IconBoxInPopover}>
+                          <FontAwesomeIcon icon={fasSignOutAlt} className={styles.IconInPopover}/>
+                        </div>
+                        <div>Sign out</div>
+                      </NavLink>
                     </li>
                   </ul>
                 </div>

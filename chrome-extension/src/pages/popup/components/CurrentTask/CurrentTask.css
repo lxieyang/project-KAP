@@ -1,8 +1,8 @@
 .CurrentTask {
   display: flex;
   flex-flow: column;
-  margin-left: 50px;
-  margin-right: 50px;
+  margin-left: 0px;
+  margin-right: 0px;
   font-size: 1.15rem;
   width: 100%;
 }
