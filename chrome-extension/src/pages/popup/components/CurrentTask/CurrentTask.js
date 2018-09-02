@@ -63,6 +63,7 @@ class CurrentTask extends Component {
           </div>
           <div className={styles.TaskNameContainer}>
             <div 
+              title={'Click to edit'}
               className={styles.TaskName}
               contentEditable={true}
               suppressContentEditableWarning={true}

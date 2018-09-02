@@ -194,6 +194,7 @@ class TableRow extends Component {
                 </div>
                 <div className={styles.OptionContentRow}>
                   <span
+                    title={'Click to edit'}
                     className={styles.OptionText}
                     contentEditable={true}
                     suppressContentEditableWarning={true}

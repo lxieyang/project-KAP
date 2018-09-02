@@ -134,6 +134,7 @@ class RequirementPiece extends Component {
             </div>
             <div className={styles.RequirementContentRow}>
               <span
+                title={'Click to edit'}
                 className={styles.RequirementText}
                 contentEditable={true}
                 suppressContentEditableWarning={true}
