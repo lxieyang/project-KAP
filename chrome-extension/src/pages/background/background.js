@@ -2,7 +2,7 @@
 import '../../../../shared-components/src/assets/images/icon-128.png';
 import '../../../../shared-components/src/assets/images/icon-34.png';
 import * as actionTypes from '../../../../shared-components/src/shared/actionTypes';
-import { DEFAULT_SETTINGS } from '../../../../shared-components/src/shared/constants';
+import { DEFAULT_SETTINGS, APP_NAME_LONG, APP_NAME_SHORT } from '../../../../shared-components/src/shared/constants';
 
 import { 
   // database,
@@ -286,5 +286,18 @@ chrome.contextMenus.create({
     chrome.tabs.sendMessage(tab.id, {
       msg: actionTypes.ADD_PIECE_CONTEXT_MENU_CLICKED
     }, () => {});
+  }
+});
+
+// browser_action context menu
+chrome.contextMenus.create({
+  title: `Open ${APP_NAME_SHORT} Tab`,
+  contexts: ["browser_action"],
+  onclick: (_, tab) => {
+    chrome.tabs.create({
+      url: chrome.extension.getURL('newtab.html')
+    }, (tab) => {
+        // Tab opened.
+    });
   }
 });
