@@ -100,18 +100,24 @@ chrome.runtime.onMessage.addListener(
       } catch (error) {
         // console.log(error);
       }
+
     } else if (request.msg === 'OPEN_IN_NEW_TAB') {
       chrome.tabs.create({
         url: chrome.extension.getURL('newtab.html')
       }, (tab) => {
           // Tab opened.
       });
+
     } else if (request.msg === 'OPEN_SETTINGS_PAGE') {
       chrome.tabs.create({
         url: chrome.extension.getURL('options.html')
       }, (tab) => {
           // Tab opened.
       });
+
+    } else if (request.msg === 'CLOSE_CURRENT_TAB') {
+      chrome.tabs.remove(sender.tab.id);
+
     } else if (request.msg === 'SIGN_OUT') {
       console.log('should sign out');
       chrome.tabs.create({
@@ -120,6 +126,7 @@ chrome.runtime.onMessage.addListener(
       }, (tab) => {
         // Tab opened.
       });
+      
     }
   }
 );

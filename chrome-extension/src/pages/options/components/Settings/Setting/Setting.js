@@ -6,7 +6,7 @@ import styles from './Setting.css';
 class Setting extends Component {
   render() {
     return (
-      <div className={styles.Setting}>
+      <div className={styles.Setting} onClick={() => this.props.statusChanged()}>
         <div className={styles.Left}>
           <div className={styles.Name}>
             <FontAwesomeIcon icon={this.props.icon} /> &nbsp;
