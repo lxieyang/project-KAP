@@ -6,11 +6,13 @@ import FontAwesomeIcon from '@fortawesome/react-fontawesome';
 import fasStar from '@fortawesome/fontawesome-free-solid/faStar';
 import farStar from '@fortawesome/fontawesome-free-regular/faStar';
 import fasTrash from '@fortawesome/fontawesome-free-solid/faTrash';
+import fasCircleNotch from '@fortawesome/fontawesome-free-solid/faCircleNotch';
 import fasListUl from '@fortawesome/fontawesome-free-solid/faListUl';
 import fasFlagCheckered from '@fortawesome/fontawesome-free-solid/faFlagCheckered';
 import fasPuzzlePiece from '@fortawesome/fontawesome-free-solid/faPuzzlePiece';
 import fasDiagnoses from '@fortawesome/fontawesome-free-solid/faDiagnoses';
 import fasCheck from '@fortawesome/fontawesome-free-solid/faCheck';
+import ReactTooltip from 'react-tooltip';
 import HorizontalDivider from '../../UI/Divider/HorizontalDivider/HorizontalDivider';
 import styles from './TaskCard.css';
 import moment from 'moment';
@@ -166,16 +168,15 @@ class TaskCard extends Component {
           className={styles.TaskOngoingStatusContainer}>
           {
             this.props.taskOngoing 
-            ? <div className={[styles.TaskOngoingBadge, styles.TaskOngoingTrue].join(' ')}>
-                <FontAwesomeIcon icon={fasDiagnoses} style={{marginRight: '4px'}}/>
-                In progress...
+            ? <div 
+                title={'In progress...'}
+                className={[styles.TaskOngoingBadge, styles.TaskOngoingTrue].join(' ')}>
+                <FontAwesomeIcon icon={fasCircleNotch}/>
               </div> 
-            : <div className={[styles.TaskOngoingBadge, styles.TaskOngoingFalse].join(' ')}>
-                <FontAwesomeIcon icon={fasCheck} style={{marginRight: '4px'}}/>    
-                Completed!
-                {
-                  this.props.completionTimestamp !== null ? ` (${moment(this.props.completionTimestamp).fromNow()})` : null
-                }
+            : <div 
+                title={`Completed!${this.props.completionTimestamp !== null ? ` (${moment(this.props.completionTimestamp).fromNow()})` : null}`}
+                className={[styles.TaskOngoingBadge, styles.TaskOngoingFalse].join(' ')}>
+                <FontAwesomeIcon icon={fasCheck}/> 
               </div>
           }
         </div>
