@@ -31,7 +31,7 @@
   top: 0px;
   right: 0px;
   width: 50%;
-  height: 50%;
+  height: 70%;
 
   display: flex;
   align-items: center;
@@ -46,7 +46,7 @@
   position: absolute;
   bottom: 0px;
   left: 0px;
-  width: 50%;
+  width: 70%;
   height: 50%;
 
   display: flex;
