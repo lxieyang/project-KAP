@@ -699,7 +699,7 @@ class TableView extends Component {
     let newOptionsList = this.state.optionsList; // this.getOrderedOptionListFromState();
     let newTableHeader = (
       <tr>
-        <td className={[styles.AddButtons, (newRequirementsList.length === 0 && newOptionsList.length === 0) ? styles.WhenNothingInTable : null].join(' ')}>
+        <td className={[styles.AddButtons, (newRequirementsList.length === 0 || newOptionsList.length === 0) ? styles.WhenNothingInTable : null].join(' ')}>
           
           <div className={styles.AddRequirementButtonContainer}>
             <Popover
