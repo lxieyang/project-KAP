@@ -4,6 +4,7 @@ import qs from 'query-string';
 import Aux from '../../../../hoc/Aux/Aux';
 import FontAwesomeIcon from '@fortawesome/react-fontawesome';
 import fasCopy from '@fortawesome/fontawesome-free-solid/faCopy';
+import TaskStatusView from './TaskStatusView/TaskStatusView';
 import CollectionView from './CollectionView/CollectionView';
 import TableView from './TableView/TableView';
 import styles from './CurrentTaskPage.css';
@@ -224,16 +225,16 @@ class CurrentTaskPage extends Component {
 
         content =
         <Aux>
-        <TableView task={this.state.specificTask} specificPieceId={this.state.specificPieceId}
-        incrementSelectedSnippetNumber={this.incrementSelectedSnippetNumber}
-        decrementSelectedSnippetNumber={this.decrementSelectedSnippetNumber}
-        selectedSnippets={this.state.selectedSnippets}
-        />
-        <CollectionView task={this.state.specificTask} specificPieceId={this.state.specificPieceId}
-        incrementSelectedSnippetNumber={this.incrementSelectedSnippetNumber}
-        decrementSelectedSnippetNumber={this.decrementSelectedSnippetNumber}
-        selectedSnippets={this.state.selectedSnippets}
-        />
+          <TableView task={this.state.specificTask} specificPieceId={this.state.specificPieceId}
+          incrementSelectedSnippetNumber={this.incrementSelectedSnippetNumber}
+          decrementSelectedSnippetNumber={this.decrementSelectedSnippetNumber}
+          selectedSnippets={this.state.selectedSnippets}
+          />
+          <CollectionView task={this.state.specificTask} specificPieceId={this.state.specificPieceId}
+          incrementSelectedSnippetNumber={this.incrementSelectedSnippetNumber}
+          decrementSelectedSnippetNumber={this.decrementSelectedSnippetNumber}
+          selectedSnippets={this.state.selectedSnippets}
+          />
         </Aux>
       //
       //   content = !isTable
@@ -245,18 +246,19 @@ class CurrentTaskPage extends Component {
     } else {
       content =
       <Aux>
-      <TableView task={this.props.task}
-        incrementSelectedSnippetNumber={this.incrementSelectedSnippetNumber}
-        decrementSelectedSnippetNumber={this.decrementSelectedSnippetNumber}
-        selectedSnippets={this.state.selectedSnippets}
-        />
-      <CollectionView
-        task={this.props.task}
-        shouldDisplayAllPages={this.props.shouldDisplayAllPages}
-        incrementSelectedSnippetNumber={this.incrementSelectedSnippetNumber}
-        decrementSelectedSnippetNumber={this.decrementSelectedSnippetNumber}
-        selectedSnippets={this.state.selectedSnippets}
-        />
+        <TaskStatusView task={this.props.task}/>
+        <TableView task={this.props.task}
+          incrementSelectedSnippetNumber={this.incrementSelectedSnippetNumber}
+          decrementSelectedSnippetNumber={this.decrementSelectedSnippetNumber}
+          selectedSnippets={this.state.selectedSnippets}
+          />
+        <CollectionView
+          task={this.props.task}
+          shouldDisplayAllPages={this.props.shouldDisplayAllPages}
+          incrementSelectedSnippetNumber={this.incrementSelectedSnippetNumber}
+          decrementSelectedSnippetNumber={this.decrementSelectedSnippetNumber}
+          selectedSnippets={this.state.selectedSnippets}
+          />
       </Aux>
       // content = !isTable
       //   ? <CollectionView
