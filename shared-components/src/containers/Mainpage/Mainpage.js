@@ -179,6 +179,7 @@ class Mainpage extends Component {
         }
         transformedTasks.push({
           id: childSnapshot.key,
+          visibility: childSnapshot.val().visibility,
           taskOngoing:
             childSnapshot.val().taskOngoing === undefined
             ? true
