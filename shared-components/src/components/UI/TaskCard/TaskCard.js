@@ -125,8 +125,6 @@ class TaskCard extends Component {
     const { connectDragSource, isDragging, connectDropTarget, canDrop, isOver } = this.props;
     const isActive = canDrop && isOver;
 
-    console.log(this.props.visibility, this.props.id);
-
     return connectDropTarget(connectDragSource(
       <div
         className={styles.TaskCard}
@@ -199,6 +197,7 @@ class TaskCard extends Component {
         </div>
 
         <div
+          title={'Go to this task'}
           className={styles.TaskName}
           onClick={(event) => this.titleClickedHandler(event, this.props.id)}>
           {this.props.taskName}
