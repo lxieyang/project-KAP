@@ -1,0 +1,108 @@
+.TaskStatusView {
+  margin: 0px 0px 10px 0px;
+
+}
+
+.TaskStatusViewWrapper {
+  display: flex;
+  align-items: center;
+}
+
+.TaskStatusViewLeft {
+ display: flex;
+ align-items: center;
+}
+
+.Title {
+  display: flex;
+  align-items: center;
+}
+
+.Label {
+  font-weight: 800;
+  margin: 10px 0px;
+}
+
+.TaskNameContainer {
+  position: relative;
+
+  display: flex;
+  align-items: center;
+  margin-left: 16px;
+  padding-left: 8px;
+  padding-right: 16px;
+  padding-top: 2px;
+  padding-bottom: 2px;
+
+  max-width: 300px;
+
+  border: 1px solid rgba(34,36,38,.15);
+  color: rgba(0,0,0,.87);
+  border-radius: 5px;
+
+  transition: all 0.1s ease-in;
+}
+
+.isEditing {
+  outline: rgba(126,185,215, 1);
+  box-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+}
+
+.TaskName {
+  /* text-transform: capitalize; */
+}
+
+.TaskName:focus {
+  outline: none;
+}
+
+.PromptAutoSaved {
+  position: absolute;
+  left: 0px;
+  bottom: -35px;
+  width: 400px;
+  height: 30px;
+  font-size: 0.8rem;
+  color: inherit;
+  opacity: 0.8;
+  margin-left: 8px;
+}
+
+
+
+
+
+.TaskStatusViewRight {
+  margin-left: 20px;
+  display: flex;
+  align-items: center;
+} 
+
+.StatusButtonsContainer {
+  margin-top: 10px;
+  margin-bottom: 8px;
+  margin-left: 0px;
+  display: flex;
+  align-items: center;
+}
+
+.StatusButton {
+  display: flex;
+  align-items: center;
+  font-size: 0.95rem;
+
+  padding: 3px 6px;
+  border-radius: 4px;
+  margin: 0px 10px;
+  box-shadow: 0 2px 2px 0 rgba(0,0,0,0.08), 0 2px 2px 0 rgba(0,0,0,0.06);
+
+  color: rgb(210, 210, 210);
+  background-color: rgb(254, 254, 254);
+
+  cursor: pointer;
+  transition: 0.1s all ease-in;
+}
+
+.StatusButton:hover {
+  transform: scale(1.05);
+}

@@ -5,7 +5,8 @@
   position: fixed;
   top: 0;
   left: 0;
-  background-color: rgba(247, 247, 247, 1);
+  background-color: rgba(251, 251, 251, 1);
+  box-shadow: 0 2px 6px 0 rgba(60,64,67,.15);
   display: flex;
   justify-content: space-between;
   align-items: center;

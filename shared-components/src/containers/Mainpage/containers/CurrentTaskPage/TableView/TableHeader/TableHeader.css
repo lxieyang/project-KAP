@@ -177,6 +177,11 @@
   background-color: #eee;
 }
 
+.DeleteLi:hover {
+  background-color: red !important;
+  color: #fff;
+}
+
 .IconBoxInPopover {
   width: 25px;
   display: flex;

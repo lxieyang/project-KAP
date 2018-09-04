@@ -194,6 +194,7 @@ class TableRow extends Component {
                 </div>
                 <div className={styles.OptionContentRow}>
                   <span
+                    title={'Click to edit'}
                     className={styles.OptionText}
                     contentEditable={true}
                     suppressContentEditableWarning={true}
@@ -221,15 +222,16 @@ class TableRow extends Component {
                             </div>
                             <div>{op.starred === true ? 'Remove' : 'Add'} Star</div>
                           </li>
-                          {/* TODO: Add delete option functionality back in*/}
-                          {/*
-                          <li >
+                          
+                          <li 
+                            onClick={(event) => this.props.deleteOptionWithId(op.id, op.name)}
+                            className={styles.DeleteLi}>
                             <div className={styles.IconBoxInPopover}>
                               <FontAwesomeIcon icon={fasDelete} className={styles.IconInPopover}/>
                             </div>
                             <div>Delete</div>
                           </li>
-                          */}
+                          
                         </ul>
                       </div>
                     )}

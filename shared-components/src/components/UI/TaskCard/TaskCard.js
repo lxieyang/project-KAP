@@ -6,17 +6,23 @@ import FontAwesomeIcon from '@fortawesome/react-fontawesome';
 import fasStar from '@fortawesome/fontawesome-free-solid/faStar';
 import farStar from '@fortawesome/fontawesome-free-regular/faStar';
 import fasTrash from '@fortawesome/fontawesome-free-solid/faTrash';
+import fasCircleNotch from '@fortawesome/fontawesome-free-solid/faCircleNotch';
 import fasListUl from '@fortawesome/fontawesome-free-solid/faListUl';
 import fasFlagCheckered from '@fortawesome/fontawesome-free-solid/faFlagCheckered';
 import fasPuzzlePiece from '@fortawesome/fontawesome-free-solid/faPuzzlePiece';
 import fasDiagnoses from '@fortawesome/fontawesome-free-solid/faDiagnoses';
 import fasCheck from '@fortawesome/fontawesome-free-solid/faCheck';
+import ReactTooltip from 'react-tooltip';
 import HorizontalDivider from '../../UI/Divider/HorizontalDivider/HorizontalDivider';
 import styles from './TaskCard.css';
 import moment from 'moment';
 import { DragSource, DropTarget } from 'react-dnd';
 import PropTypes from 'prop-types';
 import * as FirebaseStore from '../../../firebase/store';
+
+
+import Popover from 'react-tiny-popover';
+import fasMore from '@fortawesome/fontawesome-free-solid/faEllipsisV';
 
 /* drag and drop */
 const cardSource = {
@@ -79,7 +85,13 @@ const collectDrop = (connect, monitor) => {
 @DragSource('TASKCARD', cardSource, collectDrag)
 class TaskCard extends Component {
   state = {
-    popoverIsOpen: false
+    isPopoverOpen: false
+  }
+
+  switchPopoverOpenStatus = () => {
+    this.setState(prevState => {
+      return {isPopoverOpen: !prevState.isPopoverOpen}
+    });
   }
 
   static propTypes = {
@@ -94,6 +106,7 @@ class TaskCard extends Component {
 
   deleteTaskWithId = (event, id) => {
     FirebaseStore.deleteTaskWithId(id);
+    this.setState({isPopoverOpen: false});
   }
 
   titleClickedHandler = (event, id) => {
@@ -105,17 +118,14 @@ class TaskCard extends Component {
 
   starClicked = (event, id) => {
     FirebaseStore.switchStarStatusOfSelectedTask(id);
-  }
-
-  moreButtonClicked = (event) => {
-    this.setState(prevState => {
-      return {popoverIsOpen: !prevState.popoverIsOpen};
-    });
+    this.setState({isPopoverOpen: false});
   }
 
   render () {
     const { connectDragSource, isDragging, connectDropTarget, canDrop, isOver } = this.props;
     const isActive = canDrop && isOver;
+
+    console.log(this.props.visibility, this.props.id);
 
     return connectDropTarget(connectDragSource(
       <div
@@ -147,12 +157,44 @@ class TaskCard extends Component {
             <span className={styles.Time}>
               {moment(new Date(this.props.time)).fromNow()}
             </span>
-            <div title='Delete this task'>
-              <FontAwesomeIcon 
-                icon={fasTrash}
-                className={styles.DeleteTaskIcon}
-                onClick={(event) => this.deleteTaskWithId(event, this.props.id)}/>            
-            </div>
+            <Popover
+              isOpen={this.state.isPopoverOpen}
+              position={'bottom'} // preferred position
+              onClickOutside={() => this.switchPopoverOpenStatus()}
+              containerClassName={styles.PopoverContainer}
+              content={(
+                <div className={styles.PopoverContentContainer}>
+                  <ul>
+                    <li onClick={(event) => this.starClicked(event, this.props.id)}>
+                      <div className={styles.IconBoxInPopover}>
+                        <FontAwesomeIcon icon={fasStar} className={styles.IconInPopover}/>
+                      </div>
+                      <div>{this.props.isStarred === true ? 'Remove' : 'Add'} Star</div>
+                    </li>
+
+                    <li 
+                      onClick={(event) => this.props.deleteTaskHandler(this.props.id, this.props.taskName)}
+                      className={styles.DeleteLi}>
+                      <div className={styles.IconBoxInPopover}>
+                        <FontAwesomeIcon icon={fasTrash} className={styles.IconInPopover}/>
+                      </div>
+                      <div>Delete</div>
+                    </li>
+                  </ul>
+                </div>
+              )}
+            >
+              <span 
+                className={styles.MoreIconContainer}
+                style={{opacity: this.state.isPopoverOpen ? '0.7' : null}}
+                onClick={() => this.switchPopoverOpenStatus()}>
+                <FontAwesomeIcon icon={fasMore}/>
+              </span>
+              
+            </Popover>
+
+
+            
           </div>
         </div>
 
@@ -166,16 +208,15 @@ class TaskCard extends Component {
           className={styles.TaskOngoingStatusContainer}>
           {
             this.props.taskOngoing 
-            ? <div className={[styles.TaskOngoingBadge, styles.TaskOngoingTrue].join(' ')}>
-                <FontAwesomeIcon icon={fasDiagnoses} style={{marginRight: '4px'}}/>
-                In progress...
+            ? <div 
+                title={'In progress...'}
+                className={[styles.TaskOngoingBadge, styles.TaskOngoingTrue].join(' ')}>
+                <FontAwesomeIcon icon={fasCircleNotch}/>
               </div> 
-            : <div className={[styles.TaskOngoingBadge, styles.TaskOngoingFalse].join(' ')}>
-                <FontAwesomeIcon icon={fasCheck} style={{marginRight: '4px'}}/>    
-                Completed!
-                {
-                  this.props.completionTimestamp !== null ? ` (${moment(this.props.completionTimestamp).fromNow()})` : null
-                }
+            : <div 
+                title={`Completed!${this.props.completionTimestamp !== null ? ` (${moment(this.props.completionTimestamp).fromNow()})` : null}`}
+                className={[styles.TaskOngoingBadge, styles.TaskOngoingFalse].join(' ')}>
+                <FontAwesomeIcon icon={fasCheck}/> 
               </div>
           }
         </div>

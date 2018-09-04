@@ -324,7 +324,7 @@ class SnippetCard extends Component {
 
               <div className={styles.Title}
               onClick={(event) => props.makeInteractionBox(event, props.id)}>
-                {props.title}
+                {getFirstNWords(10, props.title)}
               </div>
 
               {
@@ -544,24 +544,26 @@ class SnippetCard extends Component {
 
     let transformedAttitudeList = [];
     for (let opkey in props.attitudeList) {
-      let transformedAttitudeOfOptionList = [];
-      let attitudeRequirementPairs = props.attitudeList[opkey];
-      if (attitudeRequirementPairs !== undefined) {
-        for (let rqKey in attitudeRequirementPairs) {
-          transformedAttitudeOfOptionList.push({
-            ...requirements[rqKey],
-            requirementId: rqKey,
-            attitude: attitudeRequirementPairs[rqKey]
-          });
+      if (options[opkey] !== undefined) {   // hack-fix still loading previous task options bug
+        let transformedAttitudeOfOptionList = [];
+        let attitudeRequirementPairs = props.attitudeList[opkey];
+        if (attitudeRequirementPairs !== undefined) {
+          for (let rqKey in attitudeRequirementPairs) {
+            transformedAttitudeOfOptionList.push({
+              ...requirements[rqKey],
+              requirementId: rqKey,
+              attitude: attitudeRequirementPairs[rqKey]
+            });
+          }
         }
+        transformedAttitudeOfOptionList = reverse(sortBy(transformedAttitudeOfOptionList, ['attitude']));
+        transformedAttitudeList.push({
+          ...options[opkey],
+          optionId: opkey,
+          optionName: options[opkey].name,
+          listOfAttitudes: transformedAttitudeOfOptionList
+        });
       }
-      transformedAttitudeOfOptionList = reverse(sortBy(transformedAttitudeOfOptionList, ['attitude']));
-      transformedAttitudeList.push({
-        ...options[opkey],
-        optionId: opkey,
-        optionName: options[opkey].name,
-        listOfAttitudes: transformedAttitudeOfOptionList
-      });
     }
     transformedAttitudeList = sortBy(transformedAttitudeList, ['order']);
 

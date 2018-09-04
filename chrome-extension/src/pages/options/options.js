@@ -2,6 +2,7 @@
 import React, { Component } from "react";
 import FontAwesomeIcon from '@fortawesome/react-fontawesome';
 import fasExternalLinkSquareAlt from '@fortawesome/fontawesome-free-solid/faExternalLinkSquareAlt';
+import fasArrowAltCircleLeft from '@fortawesome/fontawesome-free-solid/faArrowAltCircleLeft';
 import Header from './components/Header/Header';
 import Settings from './components/Settings/Settings';
 import Aux from '../../../../shared-components/src/hoc/Aux/Aux';
@@ -51,6 +52,14 @@ class Options extends Component {
     });
   }
 
+  closeCurrentTab = () => {
+    chrome.runtime.sendMessage({
+      msg: 'CLOSE_CURRENT_TAB'
+    });
+  }
+
+
+
   render () {
     let isLoggedIn = !(this.state.userId === null || this.state.userId === 'invalid');
 
@@ -70,7 +79,7 @@ class Options extends Component {
                 shouldDisplayHeaderButtons={false} />
             </div>
 
-            <HorizontalDivider margin={dividerOptions.margin.short}/>
+            {/*<HorizontalDivider margin={dividerOptions.margin.short}/>*/}
             <div
               style={{
                 width: '100%',
@@ -100,6 +109,20 @@ class Options extends Component {
           userProfilePhotoURL={this.state.userProfilePhotoURL}/>
         <main className={styles.Main}>
           <div className={styles.Content}>
+            <br/>
+            <div style={{width: 'auto'}}>
+              <div 
+                className={styles.GoBackButton}
+                onClick={() => this.closeCurrentTab()}>
+                <span>
+                  <FontAwesomeIcon icon={fasArrowAltCircleLeft} className={styles.IconInButton}/>
+                  Go back
+                </span>
+              </div>
+            </div>
+            <br/>
+            
+
             <Settings />
           </div>
         </main>

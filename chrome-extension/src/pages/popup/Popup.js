@@ -23,7 +23,8 @@ import Snackbar from '../../../../shared-components/src/components/UI/Snackbar/S
 const dividerOptions = {
   margin: {
     long: '10px',
-    short: '30px'
+    short: '30px',
+    none: '0px'
   }
 }
 
@@ -314,28 +315,21 @@ class Popup extends Component {
     if (!isLoggedIn) {
       return (
         <Aux>
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'space-around',
-              alignItems: 'center'
-            }}>
-            {appTitle}
-          </div>
-          <HorizontalDivider margin={dividerOptions.margin.short}/>
+          {appTitle}
+          {/*<HorizontalDivider margin={dividerOptions.margin.none}/>*/}
           <div
             style={{
               width: '100%',
-              height: '200px',
+              height: '100px',
               display: 'flex',
               justifyContent: 'space-around',
               alignItems: 'center'
             }}>
             <div
-              className={styles.GoToNewTabBtn}
+              className={styles.SignInButton}
               onClick={(event) => this.openInNewTabClickedHandler()}>
-              Sign in &nbsp;
-              <FontAwesomeIcon icon={fasExternalLinkSquareAlt} />
+              <FontAwesomeIcon icon={fasExternalLinkSquareAlt} className={styles.IconInButton} />
+              <span>Sign in</span>
             </div>
           </div>
         </Aux>
@@ -388,7 +382,7 @@ class Popup extends Component {
           
           {appTitle}
 
-          <HorizontalDivider margin={dividerOptions.margin.long}/>
+          {/*<HorizontalDivider margin={dividerOptions.margin.none}/>*/}
 
           <CurrentTask
             tasks={tasks}
@@ -400,7 +394,7 @@ class Popup extends Component {
             onSwitch={this.switchCurrentTaskHandler}
             updateTaskName={this.updateTaskName}/>
 
-          <HorizontalDivider margin={dividerOptions.margin.short}/>
+          <HorizontalDivider margin={dividerOptions.margin.none}/>
 
           <div className={styles.OptionsRequiementsContainer}>
             <Options

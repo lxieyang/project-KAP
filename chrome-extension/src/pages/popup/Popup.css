@@ -13,6 +13,9 @@
   text-decoration: underline;
 } 
 
+
+
+/* snackbar */
 .SnackbarLeft {
   max-width: 300px;
 }
@@ -38,4 +41,31 @@
 
 .UndoButton:focus {
   outline: none;
+}
+
+
+
+/* sign in */
+.SignInButton {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  font-size: 1.3rem;
+
+  border-radius: 5px;
+  padding: 6px 16px;
+  opacity: 0.8;
+  background-color: #fff;
+  color: inherit;
+  box-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+  transition: all 0.1s ease-in;
+}
+
+.SignInButton:hover {
+  box-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+  background-color: #efefef;
+}
+
+.IconInButton {
+  margin-right: 6px;
 }

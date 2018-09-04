@@ -134,6 +134,7 @@ class OptionPiece extends Component {
             </div>
             <div className={styles.OptionContentRow}>
               <span
+                title={'Click to edit'}
                 className={styles.OptionText}
                 contentEditable={true}
                 suppressContentEditableWarning={true}
@@ -155,7 +156,9 @@ class OptionPiece extends Component {
                         <div>{op.starred === true ? 'Remove' : 'Add'} Star</div>
                       </li>
 
-                      <li onClick={(event) => this.props.deleteOptionWithId(op.id, op.name)}>
+                      <li 
+                        onClick={(event) => this.props.deleteOptionWithId(op.id, op.name)}
+                        className={styles.DeleteLi}>
                         <div className={styles.IconBoxInPopover}>
                           <FontAwesomeIcon icon={fasDelete} className={styles.IconInPopover}/>
                         </div>

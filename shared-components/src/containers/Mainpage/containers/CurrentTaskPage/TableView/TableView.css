@@ -12,12 +12,17 @@
   position: relative;
 }
 
+.WhenNothingInTable {
+  width: 100px;
+  height: 100px;
+}
+
 .AddButton {
   font-size: 1.5rem;
   border-radius: 50%;
   cursor: pointer;
   opacity: 0.5;
-  transition: all 0.05s ease-in;
+  transition: all 0.1s ease-in;
 }
 
 .AddButton:hover {
@@ -31,7 +36,7 @@
   top: 0px;
   right: 0px;
   width: 50%;
-  height: 50%;
+  height: 70%;
 
   display: flex;
   align-items: center;
@@ -46,7 +51,7 @@
   position: absolute;
   bottom: 0px;
   left: 0px;
-  width: 50%;
+  width: 70%;
   height: 50%;
 
   display: flex;
@@ -92,7 +97,7 @@
   color: #4E8EF9;
   /* position: absolute;
   left: 0;
-  top: 0; 
+  top: 0;
 } */
 
 .addOption {
@@ -363,6 +368,7 @@
   opacity: 1 !important;
   background-color: white !important;
   pointer-events: auto !important;
+  z-index: 10000 !important;
 }
 
 .TooltipOverAttitude:hover {
@@ -522,6 +528,7 @@
 .Overlay td {
   padding: 3px 3px;
   text-align: left;
+  vertical-align: middle;
 }
 
 .PieceGroupNameContainer {
@@ -643,6 +650,7 @@ table.ComparisonTable {
 .ComparisonTable td {
   padding: 3px 3px;
   text-align: left;
+
 }
 
 
@@ -672,4 +680,34 @@ tr:nth-child(even) {background-color: #f2f2f2;} */
 
 .ModeToggleButtonActive {
   font-weight: 600;
+}
+
+
+
+/* snackbar */
+.SnackbarLeft {
+  max-width: 300px;
+}
+
+.SnackbarRight {
+  margin-left: 40px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.UndoButton {
+  font-size: 1.0rem;
+  font-weight: 600;
+  border-radius: 5px;
+  cursor: pointer;
+  background-color: #eee
+}
+
+.UndoButton:hover {
+  background-color: #fff;
+}
+
+.UndoButton:focus {
+  outline: none;
 }

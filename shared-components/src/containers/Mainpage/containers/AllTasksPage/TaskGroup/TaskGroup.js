@@ -34,12 +34,14 @@ class TaskGroup extends Component {
     if (tasks && tasks.length > 0) {
       taskCards = (
         <div className={styles.TaskCards}>
-          { tasks.map((task, idx) => {
+          { tasks.filter(t => t.visibility !== false).map((task, idx) => {
             return (
               <TaskCard 
                 currentTaskId={this.props.currentTaskId}
+                deleteTaskHandler={this.props.deleteTaskHandler}
                 combineSourceTaskWithTargetTask={this.props.combineSourceTaskWithTargetTask}
                 id={task.id}
+                visibility={task.visibility}
                 taskOngoing={task.taskOngoing}
                 completionTimestamp={task.completionTimestamp}
                 isStarred={task.isStarred}

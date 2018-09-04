@@ -2,7 +2,7 @@
 import '../../../../shared-components/src/assets/images/icon-128.png';
 import '../../../../shared-components/src/assets/images/icon-34.png';
 import * as actionTypes from '../../../../shared-components/src/shared/actionTypes';
-import { DEFAULT_SETTINGS } from '../../../../shared-components/src/shared/constants';
+import { DEFAULT_SETTINGS, APP_NAME_LONG, APP_NAME_SHORT } from '../../../../shared-components/src/shared/constants';
 
 import { 
   // database,
@@ -26,8 +26,10 @@ let userProfilePhotoURLCached = localStorage.getItem('userProfilePhotoURL');
 const updateBrowserIcon = (isLoggedIn) => {
   if (isLoggedIn) {
     chrome.browserAction.setIcon({path: 'icon-128.png'});
+    chrome.browserAction.setTitle({title: `${APP_NAME_LONG}`});
   } else {
     chrome.browserAction.setIcon({path: 'icon-inactive-128.png'});
+    chrome.browserAction.setTitle({title: `${APP_NAME_SHORT} (Please log in)`});
   }
 }
     
@@ -100,18 +102,24 @@ chrome.runtime.onMessage.addListener(
       } catch (error) {
         // console.log(error);
       }
+
     } else if (request.msg === 'OPEN_IN_NEW_TAB') {
       chrome.tabs.create({
         url: chrome.extension.getURL('newtab.html')
       }, (tab) => {
           // Tab opened.
       });
+
     } else if (request.msg === 'OPEN_SETTINGS_PAGE') {
       chrome.tabs.create({
         url: chrome.extension.getURL('options.html')
       }, (tab) => {
           // Tab opened.
       });
+
+    } else if (request.msg === 'CLOSE_CURRENT_TAB') {
+      chrome.tabs.remove(sender.tab.id);
+
     } else if (request.msg === 'SIGN_OUT') {
       console.log('should sign out');
       chrome.tabs.create({
@@ -120,6 +128,7 @@ chrome.runtime.onMessage.addListener(
       }, (tab) => {
         // Tab opened.
       });
+      
     }
   }
 );
@@ -286,5 +295,18 @@ chrome.contextMenus.create({
     chrome.tabs.sendMessage(tab.id, {
       msg: actionTypes.ADD_PIECE_CONTEXT_MENU_CLICKED
     }, () => {});
+  }
+});
+
+// browser_action context menu
+chrome.contextMenus.create({
+  title: `Open ${APP_NAME_SHORT} Tab`,
+  contexts: ["browser_action"],
+  onclick: (_, tab) => {
+    chrome.tabs.create({
+      url: chrome.extension.getURL('newtab.html')
+    }, (tab) => {
+        // Tab opened.
+    });
   }
 });

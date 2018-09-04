@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 import qs from 'query-string';
 
-import {Collapse} from 'react-collapse';
+import { Collapse } from 'react-collapse';
 // import Scrollspy from 'react-scrollspy';
 import FontAwesomeIcon from '@fortawesome/react-fontawesome';
 import fasAngleDown from '@fortawesome/fontawesome-free-solid/faAngleDown';

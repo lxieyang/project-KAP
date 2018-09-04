@@ -134,6 +134,7 @@ class RequirementPiece extends Component {
             </div>
             <div className={styles.RequirementContentRow}>
               <span
+                title={'Click to edit'}
                 className={styles.RequirementText}
                 contentEditable={true}
                 suppressContentEditableWarning={true}
@@ -155,7 +156,9 @@ class RequirementPiece extends Component {
                         <div>{rq.starred === true ? 'Remove' : 'Add'} Star</div>
                       </li>
 
-                      <li onClick={(event) => this.props.deleteRequirementWithId(rq.id, rq.name)}>
+                      <li 
+                        onClick={(event) => this.props.deleteRequirementWithId(rq.id, rq.name)}
+                        className={styles.DeleteLi}>
                         <div className={styles.IconBoxInPopover}>
                           <FontAwesomeIcon icon={fasDelete} className={styles.IconInPopover}/>
                         </div>
