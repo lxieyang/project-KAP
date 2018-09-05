@@ -6,6 +6,7 @@ import fasSignOutAlt from '@fortawesome/fontawesome-free-solid/faSignOutAlt';
 import Popover from 'react-tiny-popover';
 import ProfileImg from '../../../assets/images/profile-img.png';
 import { APP_NAME_LONG, APP_NAME_SHORT } from '../../../shared/constants';
+import { getFirstName } from '../../../shared/utilities';
 import Spinner from '../../UI/Spinner/Spinner';
 import Aux from '../../../hoc/Aux/Aux';
 import Logo from '../Logo/Logo';
@@ -111,7 +112,7 @@ class AppHeader extends Component {
                   src={props.userProfilePhotoURL !== null ? props.userProfilePhotoURL : ProfileImg}
                   alt=""
                   className={styles.ProfileImg}/>
-                <span>{props.userName}</span>
+                <span>{ getFirstName(props.userName) }</span>
               </div>
             </Popover>
 
