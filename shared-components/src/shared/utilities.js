@@ -38,6 +38,9 @@ export const getFirstNWords = (n, str) => {
   return split.length <= n ? split.join(' ') : split.slice(0, n).join(" ") + ' ...';
 };
 
+export const getFirstName = (fullname) => {
+  return fullname.split(' ')[0];
+}
 
 export const getFirstSentence = (str) => {
   // https://stackoverflow.com/questions/23200446/finding-the-first-sentence-with-jquery

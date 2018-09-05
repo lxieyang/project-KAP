@@ -81,6 +81,14 @@
   display: flex;
   align-items: center;
   cursor: pointer;
+  padding: 6px 8px;
+  border-radius: 5px;
+  transition: all 0.1s ease-in;
+}
+
+.Profile:hover {
+  box-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+  background-color: #eee;
 }
 
 .ProfileImg {

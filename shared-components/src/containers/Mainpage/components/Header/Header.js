@@ -19,6 +19,7 @@ import { NavLink } from 'react-router-dom';
 import * as appRoutes from '../../../../shared/routes';
 import axios from 'axios';
 import { database } from '../../../../firebase/index';
+import { getFirstName } from '../../../../shared/utilities';
 import Fuse from 'fuse.js';
 import * as FirebaseStore from '../../../../firebase/store';
 
@@ -316,7 +317,7 @@ class Header extends Component {
                 className={styles.Profile}
                 onClick={() => this.switchPopoverOpenStatus()}>
                 <img src={userProfilePhotoURL !== null ? userProfilePhotoURL : ProfileImg} alt="" className={styles.ProfileImg}/> 
-                <span>{userName}</span>
+                <span>{ getFirstName(userName) }</span>
               </div>
             </Popover>
           </div>

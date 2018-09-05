@@ -80,6 +80,11 @@
   padding: 5px 15px;
 
   cursor: pointer;
+  transition: all 0.05s ease-in;
+}
+
+.TaskName:hover {
+  transform: scale(1.02);
 }
 
 .TaskOngoingStatusContainer {
