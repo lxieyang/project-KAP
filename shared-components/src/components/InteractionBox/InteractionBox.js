@@ -690,16 +690,17 @@ class interactionBox extends Component {
           // Trailing ternary condition from removing the distinction between NEW and other snippets,
           // since title bar is needed for closing the box everywhere.
           <div
-          id="interaction-box-header"
-          className={this.state.mode === 'NEW' ?
+            id="interaction-box-header"
+            className={this.state.mode === 'NEW' ?
             styles.InteractionBoxDragHandle // may want to enable auto-scroll on this draggable element
             : styles.InteractionBoxTopBar}
             >
           Placeholder title bar text
           <div
-          className={styles.CloseBoxContainer}
-          onClick={(event) => this.closeBoxHandler(event)}>
-          &#10005;
+            title={'Close'}
+            className={styles.CloseBoxContainer}
+            onClick={(event) => this.closeBoxHandler(event)}>
+            &#10005;
           </div>
           <div style={{display: 'flex', width: '100%', justifyContent: 'space-between'}}>
           <div style={{display: 'flex', width: '80%', alignItems: 'center'}}>
