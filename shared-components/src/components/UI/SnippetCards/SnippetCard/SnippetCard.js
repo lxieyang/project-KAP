@@ -153,6 +153,16 @@ class SnippetCard extends Component {
       selected ? this.props.decrementSelectedSnippetNumber(event) : this.props.incrementSelectedSnippetNumber(event);
       return {selected:!(prevState.selected)};
     })
+  }
+
+  handleClickTitle = (event, props) => {
+    this.props.decrementSelectedSnippetNumber(event);
+    this.setState(prevState => {
+      this.state.selected ? props.decrementSelectedSnippetNumber(event) : props.incrementSelectedSnippetNumber(event);
+      return {selected:!(prevState.selected)};
+    })
+    this.props.decrementSelectedSnippetNumber(event);
+    props.makeInteractionBox(event, props.id);
 
 
 
@@ -323,7 +333,7 @@ class SnippetCard extends Component {
           : <div className={styles.TitleContainer} >
 
               <div className={styles.Title}
-              onClick={(event) => props.makeInteractionBox(event, props.id)}>
+              onClick={(event) => this.handleClickTitle(event, props)}>
                 {getFirstNWords(10, props.title)}
               </div>
 

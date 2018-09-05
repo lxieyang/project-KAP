@@ -182,7 +182,7 @@ class TableHeader extends Component {
                         </div>
                         <div>Delete</div>
                       </li>
-
+                      </li>
                     </ul>
                   </div>
                 )}

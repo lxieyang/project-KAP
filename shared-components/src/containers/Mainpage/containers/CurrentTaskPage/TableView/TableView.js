@@ -203,7 +203,7 @@ class TableView extends Component {
   }
 
   UNSAFE_componentWillReceiveProps (nextProps) {
-    
+
     this.setState({selectedSnippets: nextProps.selectedSnippets})
     // console.log('tableview selected snippet number', this.state.selectedSnippets);
     if (nextProps.specificPieceId !== undefined) {
@@ -243,7 +243,7 @@ class TableView extends Component {
         // Enter key pressed
         if (this.state.isEditingOption) {
           this.submitHandlerForOption(event);
-        } 
+        }
         if (this.state.isEditingRequirement) {
           this.submitHandlerForRequirement(event);
         }
@@ -254,7 +254,7 @@ class TableView extends Component {
             addOptionPopoverIsOpen: false,
             newOptionInput: ''
           })
-        } 
+        }
         if (this.state.addRequirementPopoverIsOpen) {
           this.setState({
             addRequirementPopoverIsOpen: false,
@@ -560,6 +560,9 @@ class TableView extends Component {
     }
   }
 
+  tableviewSnippetSeleciton() {
+    console.log('not to be selected snippets');
+  }
   getHTML = (htmls) => {
     let htmlString = ``;
     for (let html of htmls) {
@@ -700,7 +703,7 @@ class TableView extends Component {
     let newTableHeader = (
       <tr>
         <td className={[styles.AddButtons, (newRequirementsList.length === 0 || newOptionsList.length === 0) ? styles.WhenNothingInTable : null].join(' ')}>
-          
+
           <div className={styles.AddRequirementButtonContainer}>
             <Popover
               isOpen={this.state.addRequirementPopoverIsOpen}
@@ -717,26 +720,26 @@ class TableView extends Component {
                     value={this.state.newRequirementInput}
                     changed={this.inputChangedHandlerForRequirement} />
                   <span>
-                    {this.state.newRequirementInput !== '' 
-                      ? <span className={styles.PromptToHitEnter}>Press Enter &#x23ce; when done</span> 
+                    {this.state.newRequirementInput !== ''
+                      ? <span className={styles.PromptToHitEnter}>Press Enter &#x23ce; when done</span>
                       : ' '}
                   </span>
                 </div>
               )}
             >
-              <a data-tip data-for='addRequirement' onClick={() => this.switchPopoverOpenStatus(false)}> 
+              <a data-tip data-for='addRequirement' onClick={() => this.switchPopoverOpenStatus(false)}>
                 <FontAwesomeIcon icon={fasPlusCircle} className={[styles.AddButton, styles.AddRequirementButton].join(' ')}/>
               </a>
-              <ReactTooltip 
-                id='addRequirement' 
-                type='dark' 
+              <ReactTooltip
+                id='addRequirement'
+                type='dark'
                 effect='solid'
                 place={'bottom'}
                 globalEventOff='click'
                 className={styles.AddTooltipContainer}>
                 Add a new criterion / feature
               </ReactTooltip>
-            </Popover>            
+            </Popover>
           </div>
 
           <div className={styles.AddOptionButtonContainer}>
@@ -755,19 +758,19 @@ class TableView extends Component {
                     value={this.state.newOptionInput}
                     changed={this.inputChangedHandlerForOption} />
                   <span>
-                    {this.state.newOptionInput !== '' 
-                      ? <span className={styles.PromptToHitEnter}>Press Enter &#x23ce; when done</span> 
+                    {this.state.newOptionInput !== ''
+                      ? <span className={styles.PromptToHitEnter}>Press Enter &#x23ce; when done</span>
                       : ' '}
                   </span>
                 </div>
               )}
             >
-              <a data-tip data-for='addOption' onClick={() => this.switchPopoverOpenStatus(true)}> 
+              <a data-tip data-for='addOption' onClick={() => this.switchPopoverOpenStatus(true)}>
                 <FontAwesomeIcon icon={fasPlusCircle} className={[styles.AddButton, styles.AddOptionButton].join(' ')}/>
               </a>
-              <ReactTooltip 
-                id='addOption' 
-                type='dark' 
+              <ReactTooltip
+                id='addOption'
+                type='dark'
                 effect='solid'
                 place={'bottom'}
                 globalEventOff='click'
@@ -873,7 +876,7 @@ class TableView extends Component {
                 }
                 piecesInThisCell = reverse(sortBy(piecesInThisCell, ['attitude']));
 
-                if (snippetsSelected) {
+                if (snippetsSelected > 0) {
                 return (
                   <td key={rq.id} style={{alignItems:'center'}}>
 
@@ -954,6 +957,8 @@ class TableView extends Component {
                                     notes={p.notes}
                                     codeUseInfo={p.codeUseInfo}
                                     attitudeList={p.attitudeList}
+                                    incrementSelectedSnippetNumber={this.tableviewSnippetSeleciton}
+                                    decrementSelectedSnippetNumber={this.tableviewSnippetSeleciton}
                                     makeInteractionBox={(event, id) => this.makeInteractionbox(event, id)
                                     }/>
                                 );
@@ -1126,6 +1131,8 @@ class TableView extends Component {
                                     notes={p.notes}
                                     codeUseInfo={p.codeUseInfo}
                                     attitudeList={p.attitudeList}
+                                    incrementSelectedSnippetNumber={this.props.incrementSelectedSnippetNumber}
+                                    decrementSelectedSnippetNumber={this.props.decrementSelectedSnippetNumber}
                                     makeInteractionBox={(event, id) => this.makeInteractionbox(event, id)
                                     }/>
                                 );
@@ -1241,6 +1248,8 @@ class TableView extends Component {
                                     notes={p.notes}
                                     codeUseInfo={p.codeUseInfo}
                                     attitudeList={p.attitudeList}
+                                    incrementSelectedSnippetNumber={this.props.incrementSelectedSnippetNumber}
+                                    decrementSelectedSnippetNumber={this.props.decrementSelectedSnippetNumber}
                                     makeInteractionBox={(event, id) => this.makeInteractionbox(event, id)
                                     }/>
                                 );
@@ -1384,14 +1393,14 @@ class TableView extends Component {
               {
                 this.state.tableviewisOpen
                 ? <div className={styles.ModeToggleButtonsContainer}>
-                    <div className={[styles.ModeToggleButton, this.state.readModeisOn === true ? styles.ModeToggleButtonActive : null].join(' ')} 
+                    <div className={[styles.ModeToggleButton, this.state.readModeisOn === true ? styles.ModeToggleButtonActive : null].join(' ')}
                       onClick={(event) => this.switchTableMode(event, true)}>
                       View
                     </div>
 
                     <div>|</div>
 
-                    <div className={[styles.ModeToggleButton, this.state.readModeisOn === false ? styles.ModeToggleButtonActive : null].join(' ')} 
+                    <div className={[styles.ModeToggleButton, this.state.readModeisOn === false ? styles.ModeToggleButtonActive : null].join(' ')}
                     onClick={(event) => this.switchTableMode(event, false)}>
                       Edit
                     </div>
@@ -1413,7 +1422,7 @@ class TableView extends Component {
 
         </div>
 
-        <Snackbar 
+        <Snackbar
           id="deleteOptionSnackbar"
           show={this.state.deleteOptionSnackbarShouldShow}>
           <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
@@ -1421,14 +1430,14 @@ class TableView extends Component {
               Option <u>{this.state.toDeleteOptionName}</u> deleted
             </div>
             <div className={styles.SnackbarRight}>
-              <button 
+              <button
                 className={styles.UndoButton}
                 onClick={() => this.undoDeleteOptionHandler()}>UNDO</button>
             </div>
           </div>
         </Snackbar>
 
-        <Snackbar 
+        <Snackbar
           id="deleteRequirementSnackbar"
           show={this.state.deleteRequirementSnackbarShouldShow}>
           <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
@@ -1436,7 +1445,7 @@ class TableView extends Component {
               Criterion <u>{this.state.toDeleteRequirementName}</u> deleted
             </div>
             <div className={styles.SnackbarRight}>
-              <button 
+              <button
                 className={styles.UndoButton}
                 onClick={() => this.undoDeleteRequirementHandler()}>UNDO</button>
             </div>

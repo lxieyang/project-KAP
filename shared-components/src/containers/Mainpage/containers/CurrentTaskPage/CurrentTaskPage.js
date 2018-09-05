@@ -209,7 +209,7 @@ class CurrentTaskPage extends Component {
   }
 
   decrementSelectedSnippetNumber = (event) => {
-    // console.log('# of currently selected snippets, decrementing', this.state.selectedSnippets-1);
+    console.log('# of currently selected snippets, decrementing', this.state.selectedSnippets-1);
     this.setState(prevState => {
       return {selectedSnippets: --prevState.selectedSnippets};
     })
