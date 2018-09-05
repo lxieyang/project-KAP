@@ -155,7 +155,18 @@ class SnippetCard extends Component {
       let selected = this.state.selected;
       selected ? this.props.decrementSelectedSnippetNumber(event) : this.props.incrementSelectedSnippetNumber(event);
       return {selected:!(prevState.selected)};
-    });
+    })
+  }
+
+  handleClickTitle = (event, props) => {
+    this.props.decrementSelectedSnippetNumber(event);
+    this.setState(prevState => {
+      this.state.selected ? props.decrementSelectedSnippetNumber(event) : props.incrementSelectedSnippetNumber(event);
+      return {selected:!(prevState.selected)};
+    })
+    this.props.decrementSelectedSnippetNumber(event);
+    props.makeInteractionBox(event, props.id);
+
   }
   */
 
@@ -324,7 +335,7 @@ class SnippetCard extends Component {
           : <div className={styles.TitleContainer} >
 
               <div className={styles.Title}
-              onClick={(event) => props.makeInteractionBox(event, props.id)}>
+              onClick={(event) => this.handleClickTitle(event, props)}>
                 {getFirstNWords(10, props.title)}
               </div>
 
@@ -673,7 +684,7 @@ class SnippetCard extends Component {
           width: props.isInTableView === true ? '100%' : '250px',
           borderWidth: '1px',
           borderStyle: 'solid',
-          borderColor: this.state.selected ? '#009BF9': 'lightgray',
+          borderColor: (this.state.selected && this.props.selectable) ? '#009BF9': 'lightgray',
           borderRadius: '3px'
         }}
         // onClick={(event) => this.handleClick(event,props.id)}

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import FontAwesomeIcon from '@fortawesome/react-fontawesome';
-import faPlus from '@fortawesome/fontawesome-free-solid/faPlus';
+import fasBriefcase from '@fortawesome/fontawesome-free-solid/faBriefcase';
 import fasListUl from '@fortawesome/fontawesome-free-solid/faListUl';
 import fasFlagCheckered from '@fortawesome/fontawesome-free-solid/faFlagCheckered';
 import fasPuzzlePiece from '@fortawesome/fontawesome-free-solid/faPuzzlePiece';
@@ -71,7 +71,7 @@ class SelectInteraction extends Component {
         )].join(' ')}>
         <div className={styles.ButtonIconWrapper}>
         <FontAwesomeIcon
-        icon={faPlus}
+        icon={fasBriefcase}
         className={styles.ButtonIcon} />
         </div>
         <div className={styles.ButtonText}>

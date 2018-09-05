@@ -121,7 +121,7 @@ class TableHeader extends Component {
     const opacity = (isDragging) ? 0 : 1;
     return connectDragSource(connectDropTarget(
       <th style={{ opacity, visibility : isVisible ? 'visible' : 'hidden'}}>
-        {/*  
+        {/*
         <div
           className={styles.ShowHideRequirement}
           onClick={(event) => this.props.switchHideStatusOfARequirement(index, rq.id, rq.hide)}>
@@ -139,7 +139,7 @@ class TableHeader extends Component {
           <span className={styles.Ordinal} title={'drag to reorder critera'}>{(index + 1)}</span>
           </div>
 
-          <div 
+          <div
             className={styles.Requirement}
             style={{boxShadow: this.state.isPopoverOpen || this.state.shouldShowPrompt ? '4px 4px 6px rgba(0,0,0,0.2)' : null}}>
             <div
@@ -172,7 +172,9 @@ class TableHeader extends Component {
                         <div>{rq.starred === true ? 'Remove' : 'Add'} Star</div>
                       </li>
 
-                      <li 
+                      <li>
+
+                      <li
                         onClick={(event) => this.props.deleteRequirementWithId(rq.id, rq.name)}
                         className={styles.DeleteLi}>
                         <div className={styles.IconBoxInPopover}>
@@ -180,24 +182,24 @@ class TableHeader extends Component {
                         </div>
                         <div>Delete</div>
                       </li>
-                      
+                      </li>
                     </ul>
                   </div>
                 )}
               >
-                <span 
+                <span
                   className={styles.MoreIconContainer}
                   style={{opacity: this.state.isPopoverOpen ? '0.7' : null}}
                   onClick={() => this.switchPopoverOpenStatus()}>
                   <FontAwesomeIcon icon={fasMore}/>
                 </span>
-                
+
               </Popover>
             </div>
           </div>
         </div>
         <div className={styles.PromptAutoSaved}>
-          {this.state.shouldShowPrompt === true 
+          {this.state.shouldShowPrompt === true
             ? <span>
                 Edits will automatically be saved <ThreeDotsSpinner />
               </span>

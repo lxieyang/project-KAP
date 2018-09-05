@@ -175,15 +175,15 @@ class TableRow extends Component {
               padding: '3px 3px',
               opacity: op.hide === true ? `${inactiveOpacity}` : '1',
               backgroundColor: op.used === true ? 'rgba(82, 184, 101, 0.3)' : 'transparent' }}>
-            <div 
+            <div
               style={{
-                display: 'flex', 
-                alignItems: 'center', 
+                display: 'flex',
+                alignItems: 'center',
                 padding: '5px 0px'}}>
-            
+
               <span className={styles.Ordinal} title={'drag to reorder options'}>{(index + 1)}</span>
               
-              <div 
+              <div
                 className={styles.Option}
                 style={{boxShadow: this.state.isPopoverOpen || this.state.shouldShowPrompt ? '4px 4px 6px rgba(0,0,0,0.2)' : null}}>
                 <div
@@ -236,27 +236,27 @@ class TableRow extends Component {
                       </div>
                     )}
                   >
-                    <span 
+                    <span
                       className={styles.MoreIconContainer}
                       style={{opacity: this.state.isPopoverOpen ? '0.7' : null}}
                       onClick={() => this.switchPopoverOpenStatus()}>
                       <FontAwesomeIcon icon={fasMore}/>
                     </span>
-                    
+
                   </Popover>
-    
+
                 </div>
-                
+
               </div>
             </div>
             <div className={styles.PromptAutoSaved}>
-              {this.state.shouldShowPrompt === true 
+              {this.state.shouldShowPrompt === true
                 ? <span>
                     Edits will automatically be saved <ThreeDotsSpinner />
                   </span>
                 : null}
             </div>
-              
+
             {/*
             <div className={[styles.OptionNameContainer, !op.active ? styles.InactiveOption : null].join(' ')}>
               <span
