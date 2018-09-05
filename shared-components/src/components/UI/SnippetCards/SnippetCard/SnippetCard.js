@@ -147,16 +147,17 @@ class SnippetCard extends Component {
     FirebaseStore.setToOpenFile(codebaseId, filePath, lineNumber);
   }
 
+  // Hold off this selected feature to the future (after CHI 2019 deadline)
+  // TODO: Enable this feature
+  /*
   handleClick = (event,id) => {
     this.setState(prevState => {
       let selected = this.state.selected;
       selected ? this.props.decrementSelectedSnippetNumber(event) : this.props.incrementSelectedSnippetNumber(event);
       return {selected:!(prevState.selected)};
-    })
-
-
-
+    });
   }
+  */
 
   render () {
     const props = this.props;
@@ -675,7 +676,7 @@ class SnippetCard extends Component {
           borderColor: this.state.selected ? '#009BF9': 'lightgray',
           borderRadius: '3px'
         }}
-        onClick={(event) => this.handleClick(event,props.id)}
+        // onClick={(event) => this.handleClick(event,props.id)}
         >
         {header}
         {attitudes}
