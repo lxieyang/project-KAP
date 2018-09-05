@@ -682,7 +682,7 @@ class SnippetCard extends Component {
           width: props.isInTableView === true ? '100%' : '250px',
           borderWidth: '1px',
           borderStyle: 'solid',
-          borderColor: this.state.selected ? '#009BF9': 'lightgray',
+          borderColor: (this.state.selected && this.props.selectable) ? '#009BF9': 'lightgray',
           borderRadius: '3px'
         }}
         onClick={(event) => this.handleClick(event,props.id)}

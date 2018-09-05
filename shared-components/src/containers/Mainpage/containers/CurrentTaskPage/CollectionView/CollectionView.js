@@ -226,6 +226,7 @@ const SnippetsGroup = (props) => {
                 addAPieceToGroup={props.addAPieceToGroup}
                 incrementSelectedSnippetNumber={props.incrementSelectedSnippetNumber}
                 decrementSelectedSnippetNumber={props.decrementSelectedSnippetNumber}
+                selectable={true}
                 />
             );
           })}

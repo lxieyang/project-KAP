@@ -959,6 +959,7 @@ class TableView extends Component {
                                     attitudeList={p.attitudeList}
                                     incrementSelectedSnippetNumber={this.tableviewSnippetSeleciton}
                                     decrementSelectedSnippetNumber={this.tableviewSnippetSeleciton}
+                                    selectable={false}
                                     makeInteractionBox={(event, id) => this.makeInteractionbox(event, id)
                                     }/>
                                 );
@@ -1131,8 +1132,9 @@ class TableView extends Component {
                                     notes={p.notes}
                                     codeUseInfo={p.codeUseInfo}
                                     attitudeList={p.attitudeList}
-                                    incrementSelectedSnippetNumber={this.props.incrementSelectedSnippetNumber}
-                                    decrementSelectedSnippetNumber={this.props.decrementSelectedSnippetNumber}
+                                    incrementSelectedSnippetNumber={this.tableviewSnippetSeleciton}
+                                    decrementSelectedSnippetNumber={this.tableviewSnippetSeleciton}
+                                    selectable={false}
                                     makeInteractionBox={(event, id) => this.makeInteractionbox(event, id)
                                     }/>
                                 );
@@ -1248,8 +1250,9 @@ class TableView extends Component {
                                     notes={p.notes}
                                     codeUseInfo={p.codeUseInfo}
                                     attitudeList={p.attitudeList}
-                                    incrementSelectedSnippetNumber={this.props.incrementSelectedSnippetNumber}
-                                    decrementSelectedSnippetNumber={this.props.decrementSelectedSnippetNumber}
+                                    incrementSelectedSnippetNumber={this.tableviewSnippetSeleciton}
+                                    decrementSelectedSnippetNumber={this.tableviewSnippetSeleciton}
+                                    selectable={false}
                                     makeInteractionBox={(event, id) => this.makeInteractionbox(event, id)
                                     }/>
                                 );
