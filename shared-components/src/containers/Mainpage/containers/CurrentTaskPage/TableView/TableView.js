@@ -1,3 +1,4 @@
+/* global chrome */
 import $ from 'jquery';
 import React, { Component } from 'react';
 import { findDOMNode } from 'react-dom';
@@ -70,6 +71,9 @@ class TableView extends Component {
     isEditingOption: false,
     isEditingRequirement: false,
 
+    // chrome extension port
+    portToBackground: null,
+
     // snackbar
     deleteOptionSnackbarShouldShow: false,
     deleteRequirementSnackbarShouldShow: false,
@@ -79,33 +83,47 @@ class TableView extends Component {
     toDeleteRequirementName: null
   }
 
+  deleteOptionStateHelper = (snackbarStatus, id, name) => {
+    this.setState({
+      deleteOptionSnackbarShouldShow: snackbarStatus,
+      toDeleteOptionId: id,
+      toDeleteOptionName: name
+    });
+    const { portToBackground } = this.state;
+    portToBackground.postMessage({
+      msg: 'TO_DELETE_OPTION_STATUS_CHANGED',
+      payload: {
+        id: id
+      }
+    });
+  }
+
+  deleteRequirementStateHelper = (snackbarStatus, id, name) => {
+    this.setState({
+      deleteRequirementSnackbarShouldShow: snackbarStatus,
+      toDeleteRequirementId: id,
+      toDeleteRequirementName: name
+    });
+    const { portToBackground } = this.state;
+    portToBackground.postMessage({
+      msg: 'TO_DELETE_REQUIREMENT_STATUS_CHANGED',
+      payload: {
+        id: id
+      }
+    });
+  }
+
   showSnackbar = (type, id, name) => {
     // https://www.w3schools.com/howto/tryit.asp?filename=tryhow_js_snackbar
     if (type === 'op') {
-      this.setState({
-        deleteOptionSnackbarShouldShow: true,
-        toDeleteOptionId: id,
-        toDeleteOptionName: name
-      });
+      this.deleteOptionStateHelper(true, id, name);
       this.deleteOptionSnackbarTimer = setTimeout(() => {
-        this.setState({
-          deleteOptionSnackbarShouldShow: false,
-          toDeleteOptionId: null,
-          toDeleteOptionName: null
-        });
+        this.deleteOptionStateHelper(false, null, null);
       }, 5000);
     } else if (type === 'rq') {
-      this.setState({
-        deleteRequirementSnackbarShouldShow: true,
-        toDeleteRequirementId: id,
-        toDeleteRequirementName: name
-      });
+      this.deleteRequirementStateHelper(true, id, name);
       this.deleteRequirementSnackbarTimer = setTimeout(() => {
-        this.setState({
-          deleteRequirementSnackbarShouldShow: false,
-          toDeleteRequirementId: null,
-          toDeleteRequirementName: null
-        });
+        this.deleteRequirementStateHelper(false, null, null);
       }, 5000);
     }
   }
@@ -123,9 +141,7 @@ class TableView extends Component {
     clearTimeout(this.deleteOptionTimer);
     clearTimeout(this.deleteOptionSnackbarTimer);
     FirebaseStore.switchOptionVisibility(this.state.toDeleteOptionId, true);
-    this.setState({
-      deleteOptionSnackbarShouldShow: false
-    })
+    this.deleteOptionStateHelper(false, null, null);
   }
 
   deleteRequirementHandler = (id, name) => {
@@ -141,9 +157,7 @@ class TableView extends Component {
     clearTimeout(this.deleteRequirementTimer);
     clearTimeout(this.deleteRequirementSnackbarTimer);
     FirebaseStore.switchRequirementVisibility(this.state.toDeleteRequirementId, true);
-    this.setState({
-      deleteRequirementSnackbarShouldShow: false
-    })
+    this.deleteRequirementStateHelper(false, null, null);
   }
 
   switchPopoverOpenStatus = (isOption) => {
@@ -263,11 +277,24 @@ class TableView extends Component {
         }
       }
     });
+
+    let port = chrome.runtime.connect({name: 'FROM_TABLEVIEW'});
+    this.setState({portToBackground: port});
+    port.postMessage({msg: 'Istablishing connection'});
   }
 
   componentWillUnmount() {
     this.unlisten();
     document.body.removeEventListener('keydown', this.keyDownHandler);
+
+    // // clean up options and requirements
+    // if (this.state.toDeleteOptionId !== null) {
+    //   FirebaseStore.deleteOptionWithId(this.state.toDeleteOptionId);
+    // }
+
+    // if (this.state.toDeleteRequirementId !== null) {
+    //   FirebaseStore.deleteRequirementWithId(this.state.toDeleteRequirementId);
+    // }
   }
 
   transformData = (task) => {

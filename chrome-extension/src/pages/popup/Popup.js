@@ -46,6 +46,9 @@ class Popup extends Component {
     userProfilePhotoURL: null,
     isSigningOut: null,
 
+    // chrome extension port
+    portToBackground: null,
+
     // snackbar
     deleteOptionSnackbarShouldShow: false,
     deleteRequirementSnackbarShouldShow: false,
@@ -55,39 +58,54 @@ class Popup extends Component {
     toDeleteRequirementName: null
   }
 
+  deleteOptionStateHelper = (snackbarStatus, id, name) => {
+    this.setState({
+      deleteOptionSnackbarShouldShow: snackbarStatus,
+      toDeleteOptionId: id,
+      toDeleteOptionName: name
+    });
+    const { portToBackground } = this.state;
+    portToBackground.postMessage({
+      msg: 'TO_DELETE_OPTION_STATUS_CHANGED',
+      payload: {
+        id: id
+      }
+    });
+  }
+
+  deleteRequirementStateHelper = (snackbarStatus, id, name) => {
+    this.setState({
+      deleteRequirementSnackbarShouldShow: snackbarStatus,
+      toDeleteRequirementId: id,
+      toDeleteRequirementName: name
+    });
+    const { portToBackground } = this.state;
+    portToBackground.postMessage({
+      msg: 'TO_DELETE_REQUIREMENT_STATUS_CHANGED',
+      payload: {
+        id: id
+      }
+    });
+  }
+
   showSnackbar = (type, id, name) => {
     // https://www.w3schools.com/howto/tryit.asp?filename=tryhow_js_snackbar
     if (type === 'op') {
-      this.setState({
-        deleteOptionSnackbarShouldShow: true,
-        toDeleteOptionId: id,
-        toDeleteOptionName: name
-      });
+      this.deleteOptionStateHelper(true, id, name);
       this.deleteOptionSnackbarTimer = setTimeout(() => {
-        this.setState({
-          deleteOptionSnackbarShouldShow: false,
-          toDeleteOptionId: null,
-          toDeleteOptionName: null
-        });
+        this.deleteOptionStateHelper(false, null, null);
       }, 5000);
     } else if (type === 'rq') {
-      this.setState({
-        deleteRequirementSnackbarShouldShow: true,
-        toDeleteRequirementId: id,
-        toDeleteRequirementName: name
-      });
+      this.deleteRequirementStateHelper(true, id, name);
       this.deleteRequirementSnackbarTimer = setTimeout(() => {
-        this.setState({
-          deleteRequirementSnackbarShouldShow: false,
-          toDeleteRequirementId: null,
-          toDeleteRequirementName: null
-        });
+        this.deleteRequirementStateHelper(false, null, null);
       }, 5000);
     }
   }
 
   componentDidMount() {
     let port = chrome.runtime.connect({name: 'FROM_POPUP'});
+    this.setState({portToBackground: port});
     port.postMessage({msg: 'GET_USER_INFO'});
     port.onMessage.addListener((response) => {
       if(response.msg === 'USER_INFO') {
@@ -197,9 +215,7 @@ class Popup extends Component {
     clearTimeout(this.deleteOptionTimer);
     clearTimeout(this.deleteOptionSnackbarTimer);
     FirebaseStore.switchOptionVisibility(this.state.toDeleteOptionId, true);
-    this.setState({
-      deleteOptionSnackbarShouldShow: false
-    })
+    this.deleteOptionStateHelper(false, null, null);
   }
 
   updateOptionName = (id, name) => {
@@ -247,9 +263,7 @@ class Popup extends Component {
     clearTimeout(this.deleteRequirementTimer);
     clearTimeout(this.deleteRequirementSnackbarTimer);
     FirebaseStore.switchRequirementVisibility(this.state.toDeleteRequirementId, true);
-    this.setState({
-      deleteRequirementSnackbarShouldShow: false
-    })
+    this.deleteRequirementStateHelper(false, null, null);
   }
 
   updateRequirementName = (id, name) => {

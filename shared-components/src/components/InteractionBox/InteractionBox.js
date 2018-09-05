@@ -573,7 +573,7 @@ class interactionBox extends Component {
           </td>
           <td>
           <div className={styles.RequirementsContainer}>
-          {existingRequirements.map((rq, idx) => {
+          {existingRequirements.filter(rq => rq.visibility !== false).map((rq, idx) => {
             let attitude = op.attitudeRequirementPairs[rq.id];
             let attitudeDisplay = null;
             switch (attitude) {
