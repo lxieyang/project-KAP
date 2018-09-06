@@ -13,7 +13,8 @@ import * as actionTypes from '../../../../shared-components/src/shared/actionTyp
 import classes from './content.annotation.css';
 import { PageCountHelper, dragElement } from './content.utility';
 import { getFirstSentence } from '../../../../shared-components/src/shared/utilities';
-import { SNIPPET_TYPE } from '../../../../shared-components/src/shared/constants';
+import { SNIPPET_TYPE, APP_NAME_SHORT } from '../../../../shared-components/src/shared/constants';
+import APP_ICON_SMALL from '../../../../shared-components/src/assets/images/icon-34.png';
 import {
   userId,
   setUserIdAndName,
@@ -562,9 +563,13 @@ if(window.location.hostname === "stackoverflow.com") {
         <div class="kap-clip-post-checkmark-container">
           <div class="kap-clip-post-checkmark"></div>
         </div>
-        <div class="kap-button-text-container">
+        <div 
+          title="Save to ${APP_NAME_SHORT}"  
+          class="kap-button-text-container">
           <span class="kap-button-text">
-            <i class="fas fa-puzzle-piece"></i>
+            <img alt="icon" src=${chrome.extension.getURL(APP_ICON_SMALL)} class="kap-icon-in-button-text"/>
+            &nbsp;
+            Save
           </span>
         </div>
       </button>`

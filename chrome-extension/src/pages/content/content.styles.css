@@ -60,32 +60,28 @@
 
 
 /* Stack overflow */
-.kap-clip-post-button:focus,
 .kap-clip-post-button {
-  width: 44px;
-  margin-top: 10px;
-  background: rgb(236, 236, 236);
-  color: gray;
-  border: none;
-  outline: none;
-  border-radius: 3px;
-  transition: all 0.3s ease-in;
-  position: relative;
-  box-shadow: 0 1px 1px 0 rgba(0,0,0,0.10), 0 1px 3px 0 rgba(0,0,0,0.06);
+  width: 64px !important;
+  height: 32px !important;
+  margin-top: 10px !important;
+  background-color: #fefefe !important;
+  color: #333 !important;
+  border: 1px solid transparent !important;
+  outline: none !important;
+  border-radius: 3px !important;
+  transition: all 0.1s ease-in !important;
+  box-shadow: 2px 2px 4px rgba(0,0,0,0.1) !important;
+  position: relative !important;
 }
 
-.kap-clip-post-button.active{
-  background: rgb(236, 236, 236);
-  color: white;
-  border: none;
-  box-shadow: 0 1px 1px 0 rgba(0,0,0,0.10), 0 1px 3px 0 rgba(0,0,0,0.06);
-}
-
-.kap-clip-post-button:hover {
-  background: rgb(236, 236, 236);
-  color: gray;
-  border: none;
-  box-shadow: 0 1px 1px 0 rgba(0,0,0,0.10), 0 1px 3px 0 rgba(0,0,0,0.06);
+.kap-clip-post-button:hover,
+.kap-clip-post-button:focus,
+.kap-clip-post-button.active {
+  background-color: #efefef !important;
+  color: #333 !important;
+  outline: none !important;
+  border: 1px solid transparent !important;
+  box-shadow: 2px 2px 4px rgba(0,0,0,0.2) !important;
 }
 
 .kap-button-text-container {
@@ -100,7 +96,15 @@
 }
 
 .kap-button-text {
-  font-size: 20px;
+  font-size: 13px !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+.kap-icon-in-button-text {
+  width: 18px !important;
+  height: 18px !important;
+  border-radius: 2px !important;
 }
 
 .kap-clip-post-checkmark-container {
