@@ -561,7 +561,7 @@ class TableView extends Component {
   }
 
   tableviewSnippetSeleciton() {
-    console.log('not to be selected snippets');
+    // console.log('not to be selected snippets');
   }
   getHTML = (htmls) => {
     let htmlString = ``;
