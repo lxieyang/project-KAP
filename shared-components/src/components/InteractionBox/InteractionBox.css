@@ -191,9 +191,6 @@ button:hover {
 } */
 
 .AddOptionRowContainer {
-  margin-top: 8px;
-  padding: 0px 4px;
-  padding-right: 20px;
   width: 100%;
   display: flex;
   align-items: center;
@@ -202,6 +199,8 @@ button:hover {
 
 .AddSomthingInputContainer {
   width: 45%;
+  text-align: left;
+  padding-left: 6px;
 }
 
 .AddOptionRowContainer input {
@@ -216,6 +215,14 @@ button:hover {
 .AddOptionRowContainer input:focus {
   outline: purple;
 }
+
+.PromptToHitEnter {
+  font-size: 12px;
+  color: #666;
+  height: 15px;
+  padding-left: 20px;
+}
+
 
 .AddSomethingButton {
   display: inline-block;
@@ -262,7 +269,7 @@ button:hover {
 
 .OptionList {
   margin: 10px 0px;
-  padding-top: 10px;
+  /* padding-top: 10px; */
   width: 100%;
   max-height: 250px;
   overflow: auto;
@@ -290,6 +297,9 @@ button:hover {
   font-weight: 600;
   /* text-align: center; */
   width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
 }
 
 .DeleteOptionIconContainer {

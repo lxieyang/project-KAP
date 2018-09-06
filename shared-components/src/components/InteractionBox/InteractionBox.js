@@ -50,6 +50,7 @@ class interactionBox extends Component {
     used: this.props.used !== undefined ? this.props.used : [],
 
     inputSource: 'OP',
+    inputValue: '',
     canSubmit: false
   }
 
@@ -398,10 +399,12 @@ class interactionBox extends Component {
       FirebaseStore.addAnOptionForCurrentTask(this.optionInput.value);
       // console.log('submitted',this.optionInput.value);
       this.optionInput.value = '';
+      this.setState({inputValue: ''});
       // document.querySelector('#add-option-in-piece-input').value = "";
     } else {
       FirebaseStore.addARequirementForCurrentTask(this.CriterionInput.value);
       this.CriterionInput.value = '';
+      this.setState({inputValue: ''});
     }
   }
 
@@ -419,7 +422,10 @@ class interactionBox extends Component {
   }
 
   switchInputSourceHandler = (event, type) => {
-    this.setState({inputSource: type});
+    this.setState({
+      inputSource: type,
+      inputValue: event.target.value
+    });
   }
 
   deleteOption = (event, optionId) => {
@@ -439,39 +445,51 @@ class interactionBox extends Component {
 
     let addOptionRequirement = (
       <div className={styles.AddOptionRowContainer}>
-      <div className={styles.AddSomthingInputContainer} >
-      <FontAwesomeIcon icon={fasListAlt}/> &nbsp;
-      <input ref={(input) => { this.optionInput = input; }}
-      id="add-option-in-piece-input"
-      placeholder={'Add an Option'}
-      onInput={(event) => this.switchInputSourceHandler(event, 'OP')}
-      />
-      &nbsp;
-      {
-        <div
-        className={styles.AddSomethingButton}
-        onClick={(event) => this.addButtonClicked(event, 'OP')}>
-        <FontAwesomeIcon icon={fasPaperPlane}/> &nbsp; Add
-        </div>
-      }
+        <div className={styles.AddSomthingInputContainer} >
+          <div>
+            <FontAwesomeIcon icon={fasListAlt}/> &nbsp;
+            <input ref={(input) => { this.optionInput = input; }}
+              id="add-option-in-piece-input"
+              placeholder={'Add an Option'}
+              onInput={(event) => this.switchInputSourceHandler(event, 'OP')}
+              />
+          </div>
+          <div className={styles.PromptToHitEnter}>
+            {this.state.inputSource === 'OP' && this.state.inputValue !== '' 
+            ? <span>Press Enter &#x23ce; when done</span>
+            : ' '}
+          </div>
+          {/*
+            <div
+            className={styles.AddSomethingButton}
+            onClick={(event) => this.addButtonClicked(event, 'OP')}>
+            <FontAwesomeIcon icon={fasPaperPlane}/> &nbsp; Add
+            </div>
+          */}
 
-      </div>
-      <div
-      className={styles.AddSomthingInputContainer}
-      >
-      <FontAwesomeIcon icon={fasFlagCheckered}/> &nbsp;
-      <input ref={(input) => { this.CriterionInput = input; }}
-      id="add-requirement-in-piece-input"
-      placeholder={'Add a Criterion'}
-      onInput={(event) => this.switchInputSourceHandler(event, 'RQ')}
-      /> &nbsp;
-      {
-      <div className={styles.AddSomethingButton}
-      onClick={(event) => this.addButtonClicked(event, 'RQ')}>
-      <FontAwesomeIcon icon={fasPaperPlane}/> &nbsp; Add
-      </div>
-      }
-      </div>
+        </div>
+        <div className={styles.AddSomthingInputContainer}>
+          <div>
+            <FontAwesomeIcon icon={fasFlagCheckered}/> &nbsp;
+            <input ref={(input) => { this.CriterionInput = input; }}
+            id="add-requirement-in-piece-input"
+            placeholder={'Add a Criterion / Feature'}
+            onInput={(event) => this.switchInputSourceHandler(event, 'RQ')}
+            /> 
+          </div>
+          <div className={styles.PromptToHitEnter}>
+            {this.state.inputSource === 'RQ' && this.state.inputValue !== '' 
+            ? <span>Press Enter &#x23ce; when done</span>
+            : ' '}
+          </div>
+          {/*
+          <div className={styles.AddSomethingButton}
+          onClick={(event) => this.addButtonClicked(event, 'RQ')}>
+          <FontAwesomeIcon icon={fasPaperPlane}/> &nbsp; Add
+          </div>
+          */}
+        
+        </div>
 
       </div>
     );
@@ -483,22 +501,26 @@ class interactionBox extends Component {
       <tr>
       <td></td>
       <td>
-      <div className={styles.TableTitle}
-      onDrop={(event) => this.submitNewlyDroppedText(event.dataTransfer.getData("text"),'OP')}
-      onDragOver={(event) => this.allowDrop(event)}
-      >
-      <FontAwesomeIcon icon={fasListAlt}/> &nbsp;Options
-      </div>
+        <div 
+          className={styles.TableTitle}
+          onDrop={(event) => this.submitNewlyDroppedText(event.dataTransfer.getData("text"),'OP')}
+          onDragOver={(event) => this.allowDrop(event)}>
+          <span>
+            <FontAwesomeIcon icon={fasListAlt}/> &nbsp;Options
+          </span>
+        </div>
       </td>
       <td>
       </td>
       <td>
-      <div className={styles.TableTitle}
-      onDrop={(event) => this.submitNewlyDroppedText(event.dataTransfer.getData("text"),'RQ')}
-      onDragOver={(event) => this.allowDrop(event)}
-      >
-      <FontAwesomeIcon icon={fasFlagCheckered}/> &nbsp;
-      Criteria / Features
+      <div 
+        className={styles.TableTitle}
+        onDrop={(event) => this.submitNewlyDroppedText(event.dataTransfer.getData("text"),'RQ')}
+        onDragOver={(event) => this.allowDrop(event)}>
+        <span>
+          <FontAwesomeIcon icon={fasFlagCheckered}/> &nbsp;
+          Criteria / Features
+        </span>
       </div>
       </td>
       </tr>
