@@ -727,7 +727,7 @@ class interactionBox extends Component {
           </div>
           <div className={styles.TitleContainer}>
             <span className={styles.TitleLabel}>
-              <FontAwesomeIcon icon={fasPuzzlePiece}/> Title:
+              <FontAwesomeIcon icon={fasPuzzlePiece}/> &nbsp; Title:
             </span>
             <input
               type="text"
