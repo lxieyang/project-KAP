@@ -5,7 +5,8 @@
   max-width: 900px;
   max-height: 95%;
   /* min-width: 550px; */
-  background-color: rgba(226, 236, 244, 1);
+  background-color: #fefefe;
+  border-radius: 5px;
   box-shadow: 0 4px 10px 0 rgba(0,0,0,0.2), 0 4px 20px 0 #00000030;
   display: flex;
   flex-flow: column;
@@ -25,7 +26,7 @@
   -webkit-user-select: none;
   position: absolute;
   display: inline-block;
-  background-color: rgba(211, 211, 211, 0.25);
+  background-color: transparent;
   color: rgba(0,0,0,0);
   top: 1px;
   left: 1px;
@@ -39,14 +40,14 @@
   -moz-user-select: -moz-none;
   -khtml-user-select: none;
   -webkit-user-select: none;
- position: absolute;
- display: inline-block;
- background-color: rgba(211, 211, 211, 0.25);
- color: rgba(0,0,0,0);
- top: 1px;
- left: 1px;
- font-size: 20px;
- width: 100%;
+  position: absolute;
+  display: inline-block;
+  background-color: transparent;
+  color: rgba(0,0,0,0);
+  top: 1px;
+  left: 1px;
+  font-size: 20px;
+  width: 100%;
  /* opacity: 0; */
  /* cursor:pointer */
 }
@@ -59,37 +60,59 @@
   color: rgba(0,0,0,1);
   background-color: rgba(0, 0, 0, 0);
   cursor: pointer;
+  opacity: 0.5;
+  transform: scale(1.1);
+  font-weight: 600;
+  /* transition: all 0.1s ease-in; */
 }
 
 .CloseBoxContainer:hover {
-  cursor: pointer;
-  opacity: 1;
-  transform: scale(2);
+  opacity: 0.8;
+}
+
+.TitleContainer {
+  width: 90%;
+  display: flex;
+  align-items: center;
+  margin-top: 12px;
+}
+
+.TitleLabel {
+  margin-right: 8px;
+  margin-left: 15px;
+  color: #000;
+  font-weight: 600;
+  font-size: 16px;
+  width: 80px;
+
+  display: flex;
+  align-items: center;
 }
 
 .TitleInput {
-  border: 1px dashed lightgray !important;
+  border: 1px solid lightgray !important;
+  border-radius: 4px;
   width: 95%  !important;
   text-overflow: ellipsis;
   font-size: 16px;
   background-color: transparent !important;
   box-shadow: none !important;
   text-align: left;
-  padding: 2px 2px;
-  /* border-bottom: 1px dashed lightgray !important; */
+  padding: 2px 4px 2px 4px;
   color: rgba(0,0,0,.87);
-
+  transition: all 0.1s ease-in;
 }
 
 .TitleInput:focus {
-  outline: none;
+  outline: rgba(126,185,215, 1) !important;
+  box-shadow: 2px 2px 4px rgba(0,0,0,0.1) !important;
 }
 
 .AutoSuggestedBadge {
   /* opacity: 0; */
-   -moz-user-select: -moz-none;
-   -khtml-user-select: none;
-   -webkit-user-select: none;
+  -moz-user-select: -moz-none;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
   background-color: #f0ad4e;
   display: inline;
   padding: 1px 6px;
@@ -102,27 +125,37 @@
   cursor: default;
 }
 
+.SnippetContainer {
+  width: 100% !important;
+  margin-top: 50px;
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: space-between;
+}
+
 .selectedText {
   flex: 1;
-  margin-right: 20px;
+  margin-right: 0px;
   font-size: 16px;
   border-left: 6px solid #ccc !important;
-  background-color: #f1f1f1 !important;
-  box-shadow: 0 1px 2px 0 rgba(0,0,0,0.16),0 1px 5px 0 rgba(0,0,0,0.12);
+  background-color: #fff !important;
+  border-radius: 4px;
+  box-shadow: rgba(60, 64, 67, 0.3) 0 1px 2px 0, rgba(60, 64, 67, 0.15) 0 1px 3px 1px;
   padding: 10px;
-  max-height: 300px;
+  max-height: 270px;
   overflow-x: auto;
   overflow-y: auto;
 }
 
 .snappedText {
   flex: 1;
-  margin-right: 20px;
+  margin-right: 0px;
   font-size: 15px;
   border-left: 6px solid #ccc !important;
-  background-color: white;
-  box-shadow: 0 1px 2px 0 rgba(0,0,0,0.16),0 1px 5px 0 rgba(0,0,0,0.12);
-  padding: 10px;
+  background-color: #fff;
+  border-radius: 4px;
+  box-shadow: rgba(60, 64, 67, 0.3) 0 1px 2px 0, rgba(60, 64, 67, 0.15) 0 1px 3px 1px;
+  padding: 5px 10px;
   max-height: 270px;
   overflow-x: auto;
   overflow-y: auto;
@@ -158,9 +191,6 @@ button:hover {
 } */
 
 .AddOptionRowContainer {
-  margin-top: 8px;
-  padding: 0px 4px;
-  padding-right: 20px;
   width: 100%;
   display: flex;
   align-items: center;
@@ -169,6 +199,8 @@ button:hover {
 
 .AddSomthingInputContainer {
   width: 45%;
+  text-align: left;
+  padding-left: 6px;
 }
 
 .AddOptionRowContainer input {
@@ -183,6 +215,14 @@ button:hover {
 .AddOptionRowContainer input:focus {
   outline: purple;
 }
+
+.PromptToHitEnter {
+  font-size: 12px;
+  color: #666;
+  height: 15px;
+  padding-left: 20px;
+}
+
 
 .AddSomethingButton {
   display: inline-block;
@@ -229,7 +269,7 @@ button:hover {
 
 .OptionList {
   margin: 10px 0px;
-  padding-top: 10px;
+  /* padding-top: 10px; */
   width: 100%;
   max-height: 250px;
   overflow: auto;
@@ -257,6 +297,9 @@ button:hover {
   font-weight: 600;
   /* text-align: center; */
   width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
 }
 
 .DeleteOptionIconContainer {

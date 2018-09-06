@@ -39,7 +39,11 @@ export const getFirstNWords = (n, str) => {
 };
 
 export const getFirstName = (fullname) => {
-  return fullname.split(' ')[0];
+  if (fullname !== null && fullname !== undefined) {
+    return fullname.split(' ')[0];
+  } else {
+    return ''; 
+  }
 }
 
 export const getFirstSentence = (str) => {

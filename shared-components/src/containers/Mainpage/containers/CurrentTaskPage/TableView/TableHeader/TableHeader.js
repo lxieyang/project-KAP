@@ -172,8 +172,6 @@ class TableHeader extends Component {
                         <div>{rq.starred === true ? 'Remove' : 'Add'} Star</div>
                       </li>
 
-                      <li>
-
                       <li
                         onClick={(event) => this.props.deleteRequirementWithId(rq.id, rq.name)}
                         className={styles.DeleteLi}>
@@ -181,7 +179,6 @@ class TableHeader extends Component {
                           <FontAwesomeIcon icon={fasDelete} className={styles.IconInPopover}/>
                         </div>
                         <div>Delete</div>
-                      </li>
                       </li>
                     </ul>
                   </div>

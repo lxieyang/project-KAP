@@ -16,7 +16,7 @@ import {
   userPathInFirestore
 } from '../../../../shared-components/src/firebase/index';
 import firebase from '../../../../shared-components/src/firebase/firebase';
-// import * as FirebaseStore from '../../../../shared-components/src/firebase/store';
+import * as FirebaseStore from '../../../../shared-components/src/firebase/store';
 
 
 let userIdCached = localStorage.getItem('userId');
@@ -43,6 +43,7 @@ if (userIdCached !== null && userIdCached !== 'invalid') {
 let popPort;
 let optionsPort;
 let contentPort;
+let tableViewPort;
 
 chrome.runtime.onMessage.addListener(
   function(request, sender, sendResponse) {
@@ -180,9 +181,13 @@ chrome.tabs.onCreated.addListener((tab) => {
 });
 
 
+let toDeleteOptionId = null;
+let toDeleteRequirementId = null;
+
 chrome.runtime.onConnect.addListener(function(port) {
   console.log(port.name);
   if (port.name === 'FROM_POPUP') {
+    console.log('Incomming connections from POPUP...');
     popPort = port;
     popPort.onMessage.addListener((request) => {
       if (request.msg === 'GET_USER_INFO') {
@@ -195,6 +200,27 @@ chrome.runtime.onConnect.addListener(function(port) {
             userProfilePhotoURL
           }
         });
+
+      } else if (request.msg === 'TO_DELETE_OPTION_STATUS_CHANGED') {
+        toDeleteOptionId = request.payload.id;
+
+      } else if (request.msg === 'TO_DELETE_REQUIREMENT_STATUS_CHANGED') {
+        toDeleteRequirementId = request.payload.id;
+      }
+    });
+
+    popPort.onDisconnect.addListener(function () {
+      console.log('disconnecting from TABLEVIEW');
+
+      // help delete the options and requirements if their ids are not null
+      if (toDeleteOptionId !== null) {
+        console.log('should help delete option: ' + toDeleteOptionId);
+        FirebaseStore.deleteOptionWithId(toDeleteOptionId);
+      }
+
+      if (toDeleteRequirementId !== null) {
+        console.log('should help delete requirement: ' + toDeleteRequirementId);
+        FirebaseStore.deleteRequirementWithId(toDeleteRequirementId);
       }
     });
   } 
@@ -227,6 +253,33 @@ chrome.runtime.onConnect.addListener(function(port) {
             userProfilePhotoURL
           }
         });
+      }
+    });
+  }
+  if (port.name === 'FROM_TABLEVIEW') {
+    tableViewPort = port;
+    console.log('Incomming connections from TABLEVIEW...');
+    tableViewPort.onMessage.addListener((request) => {
+      if (request.msg === 'TO_DELETE_OPTION_STATUS_CHANGED') {
+        toDeleteOptionId = request.payload.id;
+
+      } else if (request.msg === 'TO_DELETE_REQUIREMENT_STATUS_CHANGED') {
+        toDeleteRequirementId = request.payload.id;
+      }
+    });
+
+    tableViewPort.onDisconnect.addListener(function () {
+      console.log('disconnecting from TABLEVIEW');
+
+      // help delete the options and requirements if their ids are not null
+      if (toDeleteOptionId !== null) {
+        console.log('should help delete option: ' + toDeleteOptionId);
+        FirebaseStore.deleteOptionWithId(toDeleteOptionId);
+      }
+
+      if (toDeleteRequirementId !== null) {
+        console.log('should help delete requirement: ' + toDeleteRequirementId);
+        FirebaseStore.deleteRequirementWithId(toDeleteRequirementId);
       }
     });
   }
