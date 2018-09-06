@@ -8,6 +8,7 @@ import fasSave from '@fortawesome/fontawesome-free-solid/faSave';
 // import fasTrash from '@fortawesome/fontawesome-free-solid/faTrash';
 import fasDelete from '@fortawesome/fontawesome-free-solid/faTimes';
 import fasStar from '@fortawesome/fontawesome-free-solid/faStar';
+import fasPuzzlePiece from '@fortawesome/fontawesome-free-solid/faPuzzlePiece';
 import fasListAlt from '@fortawesome/fontawesome-free-solid/faListAlt';
 import fasPaperPlane from '@fortawesome/fontawesome-free-solid/faPaperPlane';
 import fasFlagCheckered from '@fortawesome/fontawesome-free-solid/faFlagCheckered';
@@ -662,123 +663,125 @@ class interactionBox extends Component {
           ? this.state.snippetDimension.width+'px'
           : '600px'}}>
           {this.state.selectedText}
-          </div>
-        );
-      } else if (this.state.type === SNIPPET_TYPE.LASSO || this.state.type === SNIPPET_TYPE.POST_SNAPSHOT  || this.state.type === SNIPPET_TYPE.COPIED_PIECE) {
-        snippet = (
-          <div
-          id="interaction-box-editable-selected-text"
-          contentEditable={false}
-          suppressContentEditableWarning={true}
-          className={styles.snappedText}
-          style={{width:
-            this.state.snippetDimension !== null
-            ? this.state.snippetDimension.width+'px'
-            : '600px'}}
-            dangerouslySetInnerHTML={this.getHTML()}>
-            </div>
-          );
-        }
+        </div>
+      );
+    } else if (this.state.type === SNIPPET_TYPE.LASSO || this.state.type === SNIPPET_TYPE.POST_SNAPSHOT  || this.state.type === SNIPPET_TYPE.COPIED_PIECE) {
+      snippet = (
+        <div
+        id="interaction-box-editable-selected-text"
+        contentEditable={false}
+        suppressContentEditableWarning={true}
+        className={styles.snappedText}
+        style={{width:
+          this.state.snippetDimension !== null
+          ? this.state.snippetDimension.width+'px'
+          : '600px'}}
+          dangerouslySetInnerHTML={this.getHTML()}>
+        </div>
+      );
+    }
 
-        return (
-          // console.log(this.state);
-          <div
-          id="interaction-box-content"
-          className={styles.InteractionBox}>
-          {
-          // this.state.mode !== 'NOTHING' ? //
-          // Trailing ternary condition from removing the distinction between NEW and other snippets,
-          // since title bar is needed for closing the box everywhere.
-          <div
-            id="interaction-box-header"
-            className={this.state.mode === 'NEW' ?
-            styles.InteractionBoxDragHandle // may want to enable auto-scroll on this draggable element
-            : styles.InteractionBoxTopBar}
-            >
-          Placeholder title bar text
+    return (
+      // console.log(this.state);
+      <div
+      id="interaction-box-content"
+      className={styles.InteractionBox}>
+        {/*
+        // this.state.mode !== 'NOTHING' ? //
+        // Trailing ternary condition from removing the distinction between NEW and other snippets,
+        // since title bar is needed for closing the box everywhere.
+        */}
+        <div
+          id="interaction-box-header"
+          className={this.state.mode === 'NEW' ?
+          styles.InteractionBoxDragHandle // may want to enable auto-scroll on this draggable element
+          : styles.InteractionBoxTopBar}
+          >
           <div
             title={'Close'}
             className={styles.CloseBoxContainer}
             onClick={(event) => this.closeBoxHandler(event)}>
             &#10005;
           </div>
-          <div style={{display: 'flex', width: '100%', justifyContent: 'space-between'}}>
-          <div style={{display: 'flex', width: '80%', alignItems: 'center'}}>
-          <span style={{display: 'flex', fontSize: '16px', fontWeight: '600', margin:'20px 10px 10px 20px', color: 'rgba(0,0,0,1)'}}>Title: &nbsp;</span>
-          <input
-          type="text"
-          value={this.state.title}
-          placeholder={'Click to add a title'}
-          className={styles.TitleInput}
-          onChange={(event) => this.titleInputChangeHandler(event)}/> &nbsp;
-          { // commented out block to hide AutoSuggestedBadge
-            // // this.state.mode === 'NEW' &&
-            // this.state.autoSuggestedTitle === true
-            // ? <span className={styles.AutoSuggestedBadge}>Auto Suggested</span>
-            // : null
-          }
+          <div className={styles.TitleContainer}>
+            <span className={styles.TitleLabel}>
+              <FontAwesomeIcon icon={fasPuzzlePiece}/> Title:
+            </span>
+            <input
+              type="text"
+              title={'Click to edit'}
+              value={this.state.title}
+              placeholder={'Click to add a title'}
+              className={styles.TitleInput}
+              onChange={(event) => this.titleInputChangeHandler(event)}/> &nbsp;
+            {/* // commented out block to hide AutoSuggestedBadge
+              // // this.state.mode === 'NEW' &&
+              // this.state.autoSuggestedTitle === true
+              // ? <span className={styles.AutoSuggestedBadge}>Auto Suggested</span>
+              // : null
+            */}
           </div>
-          </div>
-          </div>
-          // { commmented out to bring back close interaction box handler
-          //   this.state.mode !== 'NEW'
-          //   ? <div style={{marginRight: '20px', fontSize: '16px', opacity: '0.6'}}>
-          //   <a target="_blank" href={this.state.url} style={{color: 'black', textDecoration: 'none', fontSize: '13px'}} onClick={(event) => openLinkInTextEditorExtension(event, this.state.url)} title="Open the original page in a new tab"><FontAwesomeIcon icon={fasShareSquare}/> Open in new tab</a>
-          //   </div>
-          //   : null
-          // }
-          // : null
-        }
-
-        <div style={{display: 'flex', width: '100%', justifyContent:'space-between', marginTop:'60px', marginBottom: '10px', alignItems: 'flex-end'}}>
-        {snippet}
         </div>
+        {/*
+        // { commmented out to bring back close interaction box handler
+        //   this.state.mode !== 'NEW'
+        //   ? <div style={{marginRight: '20px', fontSize: '16px', opacity: '0.6'}}>
+        //   <a target="_blank" href={this.state.url} style={{color: 'black', textDecoration: 'none', fontSize: '13px'}} onClick={(event) => openLinkInTextEditorExtension(event, this.state.url)} title="Open the original page in a new tab"><FontAwesomeIcon icon={fasShareSquare}/> Open in new tab</a>
+        //   </div>
+        //   : null
+        // }
+        // : null
+        */}
 
-        {experimentalOptionList}
+      <div 
+        className={styles.SnippetContainer}>
+        {snippet}
+      </div>
 
-        {this.props.specificPieceId === undefined || this.props.specificPieceId === null ? addOptionRequirement : null}
+      {experimentalOptionList}
+
+      {this.props.specificPieceId === undefined || this.props.specificPieceId === null ? addOptionRequirement : null}
 
 
-        <div className={styles.FooterContainer}>
+      <div className={styles.FooterContainer}>
         <div className={styles.NoteContainer} >
-        <Input
-        elementType='textarea'
-        elementConfig={{placeholder: 'Type some notes'}}
-        value={this.state.notes}
-        changed={this.inputChangedHandler}/>
+          <Input
+            elementType='textarea'
+            elementConfig={{placeholder: 'Type some notes'}}
+            value={this.state.notes}
+            changed={this.inputChangedHandler}/>
         </div>
         <div className={styles.ClipButtonContainer}>
-        <button
-        title="Save this Snippet"
-        className={styles.ClipButton}
-        onClick={(event) => this.submitPieceHandler(event)}
-        >
-        <div className={styles.CheckmarkContainer}>
-        <div className={[styles.Checkmark,
-          (
-            this.state.canSubmit
-            ? styles.CheckmarkSpin
-            : null)].join(' ')}></div>
+          <button
+            title="Save this Snippet"
+            className={styles.ClipButton}
+            onClick={(event) => this.submitPieceHandler(event)}
+            >
+            <div className={styles.CheckmarkContainer}>
+              <div className={[styles.Checkmark,
+                (
+                  this.state.canSubmit
+                  ? styles.CheckmarkSpin
+                  : null)].join(' ')}></div>
             </div>
             <div className={styles.ButtonTextContainer}>
-            <span className={[styles.ButtonText,
-              (
-                this.state.canSubmit
-                ? styles.ButtonTextDisappear
-                : null
-              )].join(' ')}>
-              <FontAwesomeIcon icon={fasSave} className={styles.ClipButtonIcon}/>
+              <span className={[styles.ButtonText,
+                (
+                  this.state.canSubmit
+                  ? styles.ButtonTextDisappear
+                  : null
+                )].join(' ')}>
+                <FontAwesomeIcon icon={fasSave} className={styles.ClipButtonIcon}/>
               </span>
-              </div>
+            </div>
+          </button>
+        </div>
+      </div>
 
-              </button>
-              </div>
-              </div>
+    </div>
+    );
+  }
 
-              </div>
-            );
-          }
+}
 
-        }
-
-        export default interactionBox;
+export default interactionBox;
