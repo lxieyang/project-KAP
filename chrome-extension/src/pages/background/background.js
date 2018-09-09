@@ -289,67 +289,67 @@ chrome.runtime.onConnect.addListener(function(port) {
 
 /* create context menu items */
 chrome.contextMenus.removeAll();
-chrome.contextMenus.create({
-  title: 'Add an Option',
-  onclick: (_, tab) => {
-    console.log(tab);
-    // send to content scripts
-    chrome.tabs.sendMessage(tab.id, {
-      msg: actionTypes.ADD_OPTION_CONTEXT_MENU_CLICKED
-    }, () => {});
-  }
-});
+// chrome.contextMenus.create({
+//   title: 'Add an Option',
+//   onclick: (_, tab) => {
+//     console.log(tab);
+//     // send to content scripts
+//     chrome.tabs.sendMessage(tab.id, {
+//       msg: actionTypes.ADD_OPTION_CONTEXT_MENU_CLICKED
+//     }, () => {});
+//   }
+// });
 
 
-chrome.contextMenus.create({
-  title: 'Add a Criterion',
-  onclick: (_, tab) => {
-    console.log(tab);
-    // send to content scripts
-    chrome.tabs.sendMessage(tab.id, {
-      msg: actionTypes.ADD_REQUIREMENT_CONTEXT_MENU_CLICKED
-    }, () => {});
-  }
-});
+// chrome.contextMenus.create({
+//   title: 'Add a Criterion',
+//   onclick: (_, tab) => {
+//     console.log(tab);
+//     // send to content scripts
+//     chrome.tabs.sendMessage(tab.id, {
+//       msg: actionTypes.ADD_REQUIREMENT_CONTEXT_MENU_CLICKED
+//     }, () => {});
+//   }
+// });
 
 
-chrome.contextMenus.create({
-  title: 'Add "%s" as an Option',
-  "contexts": ["selection"],
-  onclick: (_, tab) => {
-    console.log(tab);
-    // send to content scripts
-    chrome.tabs.sendMessage(tab.id, {
-      msg: actionTypes.ADD_OPTION_CONTEXT_MENU_CLICKED
-    }, () => {});
-  }
-});
+// chrome.contextMenus.create({
+//   title: 'Add "%s" as an Option',
+//   "contexts": ["selection"],
+//   onclick: (_, tab) => {
+//     console.log(tab);
+//     // send to content scripts
+//     chrome.tabs.sendMessage(tab.id, {
+//       msg: actionTypes.ADD_OPTION_CONTEXT_MENU_CLICKED
+//     }, () => {});
+//   }
+// });
 
 
-chrome.contextMenus.create({
-  title: 'Add "%s" as a Criterion',
-  "contexts": ["selection"],
-  onclick: (_, tab) => {
-    console.log(tab);
-    // send to content scripts
-    chrome.tabs.sendMessage(tab.id, {
-      msg: actionTypes.ADD_REQUIREMENT_CONTEXT_MENU_CLICKED
-    }, () => {});
-  }
-});
+// chrome.contextMenus.create({
+//   title: 'Add "%s" as a Criterion',
+//   "contexts": ["selection"],
+//   onclick: (_, tab) => {
+//     console.log(tab);
+//     // send to content scripts
+//     chrome.tabs.sendMessage(tab.id, {
+//       msg: actionTypes.ADD_REQUIREMENT_CONTEXT_MENU_CLICKED
+//     }, () => {});
+//   }
+// });
 
 
-chrome.contextMenus.create({
-  title: 'Collect it as a Snippet',
-  "contexts": ["selection"],
-  onclick: (_, tab) => {
-    console.log(tab);
-    // send to content scripts
-    chrome.tabs.sendMessage(tab.id, {
-      msg: actionTypes.ADD_PIECE_CONTEXT_MENU_CLICKED
-    }, () => {});
-  }
-});
+// chrome.contextMenus.create({
+//   title: 'Collect it as a Snippet',
+//   "contexts": ["selection"],
+//   onclick: (_, tab) => {
+//     console.log(tab);
+//     // send to content scripts
+//     chrome.tabs.sendMessage(tab.id, {
+//       msg: actionTypes.ADD_PIECE_CONTEXT_MENU_CLICKED
+//     }, () => {});
+//   }
+// });
 
 // browser_action context menu
 chrome.contextMenus.create({

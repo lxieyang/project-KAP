@@ -4,7 +4,6 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import KAPCaptureHelper from './captures/capture.helper';
 import InteractionBox from '../../../../shared-components/src/components/InteractionBox/InteractionBox';
-import HoverInteraction from '../../../../shared-components/src/components/InteractionBox/HoverInteraction/HoverInteraction';
 import SelectInteraction from '../../../../shared-components/src/components/InteractionBox/SelectInteraction/SelectInteraction';
 import GoogleInPageTaskPrompt from '../../components/InPageTaskPrompt/GoogleInPageTaskPrompt/GoogleInPageTaskPrompt';
 import SetAsNewTaskButton from '../../components/InPageTaskPrompt/GoogleInPageTaskPrompt/SetAsNewTaskButton';
@@ -244,11 +243,20 @@ document.addEventListener('removeInteractionBoxes', () =>	clean());
 // let selectedElement = null;
 
 document.addEventListener('mouseup', (event) => {
+  let popoverList = document.getElementsByName('kap-popover-container');
+
   document.body.style.cursor = 'auto';
   if (interactionBoxAnchor.contains(event.target) || hoverAnchor.contains(event.target)) {
     // log("mouse up within the interaction box / hover box");
     return false;
   }
+
+  if (popoverList.length > 0) {
+    if (popoverList[0].contains(event.target)) {
+      return false;
+    }
+  }
+  
   if (interactionBoxAnchor.parentElement !== null | hoverAnchor.parentElement !== null) {
     document.dispatchEvent(customRemoveInteractionEvent);
   }
@@ -338,57 +346,6 @@ const getDocumentSelection = () => {
     rect: null
   };
 }
-
-
-
-/* context menu listener */
-chrome.runtime.onMessage.addListener(
-  (request, sender, sendResponse) => {
-    if (request.msg === actionTypes.ADD_OPTION_CONTEXT_MENU_CLICKED) {
-      // console.log('should put up hover interaction');
-      let selection = getDocumentSelection();
-      // let rect = {};
-      hoverAnchor.style.left = `${Math.floor(window.innerWidth / 2) - 250 }px`;
-      hoverAnchor.style.top = `${Math.floor(window.innerHeight / 2) - 150 + window.scrollY}px`;
-      // if (selection.rect !== null) {
-      //   rect = {...selection.rect.toJSON()};
-      //   rect.top += document.documentElement.scrollTop;
-      //   hoverAnchor.style.left = `${Math.floor(rect.left) + 25}px`;
-      //   hoverAnchor.style.top = `${Math.floor(rect.top) + 25}px`;
-      // }
-      ReactDOM.render(
-        <HoverInteraction content={selection.text} clip={clipClicked}/>,
-        hoverAnchor
-      );
-      hoverBoxIsMounted = true;
-      dragElement(document.getElementById("hover-box"));
-
-    } else if (request.msg === actionTypes.ADD_REQUIREMENT_CONTEXT_MENU_CLICKED) {
-      // console.log('should put up hover interaction');
-      let selection = getDocumentSelection();
-      // let rect = {};
-      hoverAnchor.style.left = `${Math.floor(window.innerWidth / 2) - 250 }px`;
-      hoverAnchor.style.top = `${Math.floor(window.innerHeight / 2) - 150 + window.scrollY}px`;
-      // if (selection.rect !== null) {
-      //   rect = {...selection.rect.toJSON()};
-      //   rect.top += document.documentElement.scrollTop;
-      //   hoverAnchor.style.left = `${Math.floor(rect.left) + 25}px`;
-      //   hoverAnchor.style.top = `${Math.floor(rect.top) + 25}px`;
-      // }
-      ReactDOM.render(
-        <HoverInteraction type={'RQ'} content={selection.text} clip={clipClicked}/>,
-        hoverAnchor
-      );
-      hoverBoxIsMounted = true;
-      dragElement(document.getElementById("hover-box"));
-
-    } else if (request.msg === actionTypes.ADD_PIECE_CONTEXT_MENU_CLICKED) {
-      displayInteractionBox(SNIPPET_TYPE.SELECTION);
-    }
-  }
-);
-
-
 
 
 

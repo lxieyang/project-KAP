@@ -1,3 +1,4 @@
+/* global chrome */
 import React, { Component }from 'react';
 import ReactDOM from 'react-dom'
 import FontAwesomeIcon from '@fortawesome/react-fontawesome';
@@ -11,6 +12,8 @@ import fasStar from '@fortawesome/fontawesome-free-solid/faStar';
 import fasPuzzlePiece from '@fortawesome/fontawesome-free-solid/faPuzzlePiece';
 import fasListAlt from '@fortawesome/fontawesome-free-solid/faListAlt';
 import fasPaperPlane from '@fortawesome/fontawesome-free-solid/faPaperPlane';
+import fasMore from '@fortawesome/fontawesome-free-solid/faEllipsisV';
+import Popover from 'react-tiny-popover';
 import fasFlagCheckered from '@fortawesome/fontawesome-free-solid/faFlagCheckered';
 import ThumbV1 from '../../components/UI/Thumbs/ThumbV1/ThumbV1';
 import QuestionMark from '../../components/UI/Thumbs/QuestionMark/QuestionMark';
@@ -21,6 +24,10 @@ import { SNIPPET_TYPE } from '../../shared/constants';
 import { sortBy, reverse } from 'lodash';
 import * as FirebaseStore from '../../firebase/store';
 import { openLinkInTextEditorExtension, getFirstNWords, getFirstSentence } from '../../shared/utilities';
+import APP_LOGO from '../../assets/images/icon-128.png';
+
+import OptionPiece from './Components/OptionPiece/OptionPiece';
+import { DH_CHECK_P_NOT_PRIME } from 'constants';
 
 const dummyText = 'Please select some text';
 const dummyHtml = [`<p>Please lasso select some text</p>`];
@@ -62,6 +69,14 @@ class interactionBox extends Component {
     this.onCopy = this.copyCodeListener.bind(this);
   }
 
+  updateOptionName = (id, name) => {
+    FirebaseStore.updateOptionName(id, name);
+  }
+
+  switchStarStatusOfOption = (id) => {
+    FirebaseStore.switchStarStatusOfAnOptionWithId(id);
+  }
+
   componentDidMount() {
     if (this.props.specificPieceId !== undefined && this.props.specificPieceId !== null) {
       // reviewing
@@ -82,6 +97,7 @@ class interactionBox extends Component {
           let attitudeRequirementPairs = attitudeList[opKey] !== undefined ? attitudeList[opKey] : {};
           transformedOptions.push({
             id: opKey,
+            starred: this.props.options[opKey].starred,
             name: this.props.options[opKey].name,
             active: false,
             attitudeRequirementPairs: attitudeRequirementPairs
@@ -89,6 +105,7 @@ class interactionBox extends Component {
         } else {
           transformedOptions.push({
             id: opKey,
+            starred: this.props.options[opKey].starred,
             name: this.props.options[opKey].name,
             active: false,
             attitudeRequirementPairs: {}
@@ -122,6 +139,7 @@ class interactionBox extends Component {
                 dataOptions.forEach((opSnapshot) => {
                   transformedOptions.push({
                     id: opSnapshot.key,
+                    starred: opSnapshot.val().starred,
                     name: opSnapshot.val().name,
                     active: opSnapshot.key === currentOptionId,
                     attitudeRequirementPairs: {}
@@ -142,6 +160,7 @@ class interactionBox extends Component {
                   let attitudeRequirementPairs = attitudeList[opKey] !== undefined ? attitudeList[opKey] : {};
                   transformedOptions.push({
                     id: opKey,
+                    starred: opSnapshot.val().starred,
                     name: opSnapshot.val().name,
                     active: false,
                     attitudeRequirementPairs: attitudeRequirementPairs
@@ -149,6 +168,7 @@ class interactionBox extends Component {
                 } else {
                   transformedOptions.push({
                     id: opKey,
+                    starred: opSnapshot.val().starred,
                     name: opSnapshot.val().name,
                     active: false,
                     attitudeRequirementPairs: {}
@@ -368,7 +388,7 @@ class interactionBox extends Component {
     if (this.props.clip !== undefined){
       setTimeout(() => {
         this.props.clip();
-      }, 1000);
+      }, 300);
     }
   }
 
@@ -428,8 +448,8 @@ class interactionBox extends Component {
     });
   }
 
-  deleteOption = (event, optionId) => {
-    var surety = window.confirm('Are you sure you want to delete this option?');
+  deleteOption = (optionId, optionName) => {
+    var surety = window.confirm(`Are you sure you want to delete "${optionName}"?`);
     if (surety === true) {
       FirebaseStore.deleteOptionWithId(optionId);
     }
@@ -530,27 +550,18 @@ class interactionBox extends Component {
           <td>
             </td>
             <td>
-            <div
-            className={styles.OptionRowContainer}>
+              <div
+                className={styles.OptionRowContainer}>
+                
+                <OptionPiece 
+                  op={op}
+                  hasAttitudes={Object.keys(op.attitudeRequirementPairs).length > 0}
+                  updateOptionName={this.updateOptionName}
+                  switchStarStatusOfOption={this.switchStarStatusOfOption}
+                  deleteOptionWithId={this.deleteOption}/>
 
-            <div
-            className={styles.Option}
-            // contentEditable={true}
-            // suppressContentEditableWarning={true}
-            // onInput={(event) => this.inputChangedHandler(event, op.id)}
-            >
-            <span>
-            {op.name}
-            </span>
-            <span
-            title="Delete this option"
-            className={styles.DeleteOptionIconContainer}
-            onClick={(event) => this.deleteOption(event, op.id)}>
-            <FontAwesomeIcon icon={fasDelete} />
-            </span>
-            </div>
+              </div>
 
-            </div>
             </td>
             {/*
               <td>
@@ -614,51 +625,51 @@ class interactionBox extends Component {
             }
             return (
               <div
-              key={idx}
-              title={rq.name}
-              className={[styles.Requirement, (
-                attitude === undefined
-                ? styles.InactiveRequirement
-                : null
-              )].join(' ')}>
-              <div
-              className={[styles.RequirementStar, (
-                rq.starred === true ? styles.ActiveStar : null
-              )].join(' ')}>
-              {/* onClick={(event) => this.switchStarStatusOfRequirement(rq.id)} */}
-              <FontAwesomeIcon icon={fasStar}/>
-              </div>
-              <div
-              className={styles.RequirementAttitude}
-              onClick={(event) => this.attitudeChangeHandler(event, op.id, rq.id, attitude)}>
-              {attitudeDisplay}
-              </div>
-              <div
-              title={rq.name}
-              className={styles.RequirementName}>
-              {getFirstNWords(4, rq.name)}
-              </div>
+                key={idx}
+                title={rq.name}
+                className={[styles.Requirement, (
+                  attitude === undefined
+                  ? styles.InactiveRequirement
+                  : null
+                )].join(' ')}>
+                  <div
+                    className={[styles.RequirementStar, (
+                      rq.starred === true ? styles.ActiveStar : null
+                    )].join(' ')}>
+                    {/* onClick={(event) => this.switchStarStatusOfRequirement(rq.id)} */}
+                    <FontAwesomeIcon icon={fasStar}/>
+                    </div>
+                  <div
+                    className={styles.RequirementAttitude}
+                    onClick={(event) => this.attitudeChangeHandler(event, op.id, rq.id, attitude)}>
+                    {attitudeDisplay}
+                  </div>
+                  <div
+                    title={rq.name}
+                    className={styles.RequirementName}>
+                    {getFirstNWords(4, rq.name)}
+                  </div>
 
-              <div className={styles.RequirementAttitudeContainer}>
-              <div
-              className={[styles.RequirementAttitudeThumbContainer].join(' ')}
-              onClick={(event) => this.attitudeChangeHandler(event, op.id, rq.id, 'good')}>
-              <ThumbV1 type={'up'}/>
-              </div>
+                  <div className={styles.RequirementAttitudeContainer}>
+                  <div
+                    className={[styles.RequirementAttitudeThumbContainer].join(' ')}
+                    onClick={(event) => this.attitudeChangeHandler(event, op.id, rq.id, 'good')}>
+                    <ThumbV1 type={'up'}/>
+                  </div>
 
-              <div
-              className={[styles.RequirementAttitudeThumbContainer].join(' ')}
-              onClick={(event) => this.attitudeChangeHandler(event, op.id, rq.id, 'idk')}>
-              <QuestionMark />
-              </div>
+                  <div
+                    className={[styles.RequirementAttitudeThumbContainer].join(' ')}
+                    onClick={(event) => this.attitudeChangeHandler(event, op.id, rq.id, 'idk')}>
+                    <QuestionMark />
+                  </div>
 
-              <div
-              className={[styles.RequirementAttitudeThumbContainer].join(' ')}
-              onClick={(event) => this.attitudeChangeHandler(event, op.id, rq.id, 'bad')}>
-              <ThumbV1 type={'down'}/>
-              </div>
-              
-              </div>
+                  <div
+                    className={[styles.RequirementAttitudeThumbContainer].join(' ')}
+                    onClick={(event) => this.attitudeChangeHandler(event, op.id, rq.id, 'bad')}>
+                    <ThumbV1 type={'down'}/>
+                  </div>
+                
+                </div>
               </div>
             );
           })}
@@ -727,7 +738,7 @@ class interactionBox extends Component {
           </div>
           <div className={styles.TitleContainer}>
             <span className={styles.TitleLabel}>
-              <FontAwesomeIcon icon={fasPuzzlePiece}/> &nbsp; Title:
+              Title:
             </span>
             <input
               type="text"
@@ -768,32 +779,23 @@ class interactionBox extends Component {
       <div className={styles.FooterContainer}>
         <div className={styles.NoteContainer} >
           <Input
+            style={{height: '100%'}}
             elementType='textarea'
             elementConfig={{placeholder: 'Type some notes'}}
             value={this.state.notes}
             changed={this.inputChangedHandler}/>
         </div>
+
         <div className={styles.ClipButtonContainer}>
           <button
             title="Save this Snippet"
             className={styles.ClipButton}
             onClick={(event) => this.submitPieceHandler(event)}
             >
-            <div className={styles.CheckmarkContainer}>
-              <div className={[styles.Checkmark,
-                (
-                  this.state.canSubmit
-                  ? styles.CheckmarkSpin
-                  : null)].join(' ')}></div>
-            </div>
             <div className={styles.ButtonTextContainer}>
-              <span className={[styles.ButtonText,
-                (
-                  this.state.canSubmit
-                  ? styles.ButtonTextDisappear
-                  : null
-                )].join(' ')}>
-                <FontAwesomeIcon icon={fasSave} className={styles.ClipButtonIcon}/>
+              <img src={chrome.extension.getURL(APP_LOGO)} alt={'Save Snippet'}/>
+              <span>
+                {this.state.canSubmit ? 'Saved!' : 'Save Snippet'}
               </span>
             </div>
           </button>
