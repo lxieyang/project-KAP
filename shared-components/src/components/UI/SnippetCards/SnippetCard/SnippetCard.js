@@ -33,6 +33,10 @@ import * as FirebaseStore from '../../../../firebase/store';
 import ordinal from 'ordinal';
 
 
+import Popover from 'react-tiny-popover';
+import fasMore from '@fortawesome/fontawesome-free-solid/faEllipsisV';
+
+
 /* drag and drop */
 const cardSource = {
   beginDrag(props) {
@@ -118,8 +122,21 @@ const getHTML = (htmls) => {
 @DragSource('TASKCARD', cardSource, collectDrag)
 class SnippetCard extends Component {
   state = {
-    selected: false
+    selected: false,
+    isPopoverOpen: false
   }
+
+  switchPopoverOpenStatus = () => {
+    this.setState(prevState => {
+      return {isPopoverOpen: !prevState.isPopoverOpen}
+    });
+  }
+
+  deleteSnippetWithId = (event, id, type) => {
+    this.props.deleteThisSnippet(event, id, type);
+    this.setState({isPopoverOpen: false});
+  }
+
   static propTypes = {
     // Injected by React DnD:
     connectDragSource: PropTypes.func.isRequired,
@@ -541,15 +558,45 @@ class SnippetCard extends Component {
         {
           props.isInTableView === true
           ? null
-          : <div
-              title={props.type === SNIPPET_TYPE.PIECE_GROUP ? 'Discard this group\n(snippets will be preserved)' : 'Delete this snippet'}
-              className={styles.DeleteContainer}
-              onClick={(event) => props.deleteThisSnippet(event, props.id, props.type)}>
-              <FontAwesomeIcon
-                icon={fasTrash}
-                className={styles.Icon}
-                />
-            </div>
+          : <Popover
+              isOpen={this.state.isPopoverOpen}
+              position={'bottom'} // preferred position
+              onClickOutside={() => this.switchPopoverOpenStatus()}
+              containerClassName={styles.PopoverContainer}
+              content={(
+                <div className={styles.PopoverContentContainer}>
+                  <ul>
+                    
+                    <li 
+                      onClick={(event) => this.deleteSnippetWithId(event, props.id, props.type)}
+                      className={styles.DeleteLi}>
+                      <div className={styles.IconBoxInPopover}>
+                        <FontAwesomeIcon icon={fasTrash} className={styles.IconInPopover}/>
+                      </div>
+                      <div>Delete</div>
+                    </li>
+                  </ul>
+                </div>
+              )}
+            >
+              <span 
+                className={styles.MoreIconContainer}
+                style={{opacity: this.state.isPopoverOpen ? '0.7' : null}}
+                onClick={() => this.switchPopoverOpenStatus()}>
+                <FontAwesomeIcon icon={fasMore}/>
+              </span>
+              
+            </Popover>
+          
+            // <div
+            //   title={props.type === SNIPPET_TYPE.PIECE_GROUP ? 'Discard this group\n(snippets will be preserved)' : 'Delete this snippet'}
+            //   className={styles.DeleteContainer}
+            //   onClick={(event) => props.deleteThisSnippet(event, props.id, props.type)}>
+            //   <FontAwesomeIcon
+            //     icon={fasTrash}
+            //     className={styles.Icon}
+            //     />
+            // </div>
         }
 
       </div>

@@ -548,3 +548,73 @@
 .ViewIconInTooltip:hover {
   opacity: 0.8;
 }
+
+
+
+
+.MoreIconContainer {
+  position: absolute;
+  z-index: 100;
+  top: 6px;
+  right: 6px;
+
+  margin-left: 2px;
+  margin-right: -4px;
+  width: 15px;
+  display: flex;
+  justify-content: space-around;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.1s ease-in-out;
+  opacity: 0.4;
+}
+
+.MoreIconContainer:hover {
+  opacity: 0.7;
+}
+
+.PopoverContainer {
+  border-radius: 2px;
+  border-width: 0;
+  background-color: #fff;
+  box-shadow: 0 0 4px rgba(0,0,0,0.2);
+  z-index: 99999;
+}
+
+.PopoverContentContainer {
+  
+}
+
+.PopoverContentContainer ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.PopoverContentContainer ul li {
+  display: flex;
+  align-items: center;
+  padding: 5px 10px 5px 6px;
+  cursor: pointer;
+  transition: all 0.1s ease-in;
+}
+
+.PopoverContentContainer ul li:hover {
+  background-color: #ddd;
+}
+
+.DeleteLi:hover {
+  background-color: red !important;
+  color: #fff;
+}
+
+.IconBoxInPopover {
+  width: 25px;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
+
+.IconInPopover {
+  
+}
