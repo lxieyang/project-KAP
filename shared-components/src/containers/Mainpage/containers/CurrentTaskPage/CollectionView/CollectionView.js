@@ -203,10 +203,9 @@ const SnippetsGroup = (props) => {
                 options={props.options}
                 requirements={props.requirements}
                 status={p.status}
-                pieceIds={p.type === SNIPPET_TYPE.PIECE_GROUP ? p.pieceIds : []}
-                title={p.type === SNIPPET_TYPE.PIECE_GROUP ? p.name : p.title}
-                texts={p.type === SNIPPET_TYPE.PIECE_GROUP ? p.name : p.texts}
-                name={p.type === SNIPPET_TYPE.PIECE_GROUP ? null : (new URL(p.url)).hostname}
+                title={p.title}
+                texts={p.texts}
+                name={(new URL(p.url)).hostname}
                 link={p.url}
                 icon={p.url}
                 htmls={p.htmls}
@@ -222,8 +221,6 @@ const SnippetsGroup = (props) => {
                 attitudeOptionPairsList={attitudeOptionPairsList}
                 deleteThisSnippet={props.deleteSnippet}
                 makeInteractionBox={props.makeInteractionBox}
-                createAPieceGroup={props.createAPieceGroup}
-                addAPieceToGroup={props.addAPieceToGroup}
                 incrementSelectedSnippetNumber={props.incrementSelectedSnippetNumber}
                 decrementSelectedSnippetNumber={props.decrementSelectedSnippetNumber}
                 selectable={true}
@@ -357,28 +354,9 @@ class CollectionView extends Component {
     FirebaseStore.deleteAPageFromCountList(id);
   }
 
-  createAPieceGroup = (piece1Id, piece2Id) => {
-    let pieceGroup = {
-      pieceIds: [piece1Id, piece2Id],
-      name: '',
-      timestamp: (new Date()).getTime(),
-      type: SNIPPET_TYPE.PIECE_GROUP
-    };
-    FirebaseStore.createAPieceGroup(pieceGroup);
-  }
-
-  addAPieceToGroup = (groupId, pieceId) => {
-    FirebaseStore.addAPieceToGroup(groupId, pieceId);
-  }
-
   deletePieceHandler = (event, id, type) => {
     console.log("To delete piece with id: " + id);
-    if (type === SNIPPET_TYPE.PIECE_GROUP) {
-      FirebaseStore.deleteAPieceGroup(id);
-    } else {
-      FirebaseStore.deleteAPieceWithId(id);
-    }
-
+    FirebaseStore.deleteAPieceWithId(id);
   }
 
   dismissModal = () => {
@@ -509,23 +487,10 @@ class CollectionView extends Component {
         />
     );
 
-    // const { pieceGroups } = task;
-    // let pieceGroupsList = [];
+    
     let piecesListClone = piecesList.map(p => JSON.parse(JSON.stringify(p)));   // ==> temporarily disable poece grouping
     piecesListClone = sortBy(piecesListClone, ['codeUseInfo']);
-    // for (let pgKey in pieceGroups) {
-    //   let group = pieceGroups[pgKey];
-    //   pieceGroupsList.push({
-    //     ...group,
-    //     id: pgKey,
-    //     status: true  // should display
-    //   });
-    //   for (let pId of group.pieceIds) {
-    //     piecesListClone.filter(p => p.id === pId)[0].status = false;
-    //   }
-    // }
-    // let newPiecesList = pieceGroupsList.concat(reverse(sortBy(piecesListClone, ['status'])));
-    // console.log(newPiecesList);
+    
 
 
     let allPieces = (
@@ -542,8 +507,6 @@ class CollectionView extends Component {
         specificPieceId={this.state.specificPieceId}
         makeInteractionBox={this.makeInteractionbox}
         deleteSnippet={this.deletePieceHandler}
-        createAPieceGroup={this.createAPieceGroup}
-        addAPieceToGroup={this.addAPieceToGroup}
         incrementSelectedSnippetNumber={this.props.incrementSelectedSnippetNumber}
         decrementSelectedSnippetNumber={this.props.decrementSelectedSnippetNumber}
         />

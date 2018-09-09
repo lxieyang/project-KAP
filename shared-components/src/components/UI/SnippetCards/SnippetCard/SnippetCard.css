@@ -22,8 +22,6 @@
 
 .SnippetCard:hover {
   z-index: 1000;
-  transform: scale(1.05);
-
 }
 
 .Hide {
@@ -286,25 +284,6 @@
   padding-top: 8px;
   padding-right: 12px;
 }
-
-.DeleteContainer {
-  position: absolute;
-  z-index: 100;
-  top: 0px;
-  right: 6px;
-  opacity: 0.1;
-  cursor: pointer;
-  transition: all 0.1s ease-in;
-}
-
-.DeleteContainer .Icon {
-  font-size: 0.8rem;
-}
-
-.DeleteContainer:hover {
-  opacity: 0.8;
-}
-
 
 
 .NotesContainer {
