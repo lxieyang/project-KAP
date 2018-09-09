@@ -58,8 +58,8 @@ class SnippetCard extends Component {
     });
   }
 
-  deleteSnippetWithId = (event, id, type) => {
-    this.props.deleteThisSnippet(event, id, type);
+  deleteSnippetWithId = (event, id, name) => {
+    this.props.deleteThisSnippet(id, name);
     this.setState({isPopoverOpen: false});
   }
 
@@ -351,7 +351,7 @@ class SnippetCard extends Component {
                   <ul>
                     
                     <li 
-                      onClick={(event) => this.deleteSnippetWithId(event, props.id, props.type)}
+                      onClick={(event) => this.deleteSnippetWithId(event, props.id, props.title)}
                       className={styles.DeleteLi}>
                       <div className={styles.IconBoxInPopover}>
                         <FontAwesomeIcon icon={fasTrash} className={styles.IconInPopover}/>

@@ -280,7 +280,6 @@ class TableView extends Component {
 
     let port = chrome.runtime.connect({name: 'FROM_TABLEVIEW'});
     this.setState({portToBackground: port});
-    port.postMessage({msg: 'Istablishing connection'});
   }
 
   componentWillUnmount() {
