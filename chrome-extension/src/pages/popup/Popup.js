@@ -20,9 +20,6 @@ import styles from './Popup.css';
 import Snackbar from '../../../../shared-components/src/components/UI/Snackbar/Snackbar';
 
 
-// testing
-import SetAsNewTaskButton from '../../components/InPageTaskPrompt/GoogleInPageTaskPrompt/SetAsNewTaskButton';
-
 const dividerOptions = {
   margin: {
     long: '10px',
@@ -464,9 +461,6 @@ class Popup extends Component {
               </div>
             </div>
           </Snackbar>
-
-
-          <SetAsNewTaskButton />
 
         </Aux>
       );

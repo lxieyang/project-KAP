@@ -27,12 +27,25 @@ div {
   border-color: black transparent transparent transparent;
 }
 
-.Title {
+.TitleContainer {
   margin-top: 6px;
   margin-bottom: 6px;
   padding-left: 6px;
-  font-size: 12px;
   text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
+
+.Title {
+  display: flex;
+  align-items: center;
+
+  font-size: 15px;
+}
+
+.LogoContainer {
+  box-shadow: 0px 0px 3px 1px rgba(255,255,255,0.6);
 }
 
 .AddedSomething {
