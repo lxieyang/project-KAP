@@ -624,6 +624,11 @@ export const addAPieceToCurrentTask = async (piece, alsoSetCopyData = false) => 
   return newPieceRef.key;
 }
 
+export const switchPieceVisibility = async (id, toStatus) => {
+  currentTaskId = (await currentTaskIdRef.once('value')).val();
+  tasksRef.child(currentTaskId).child('pieces').child(id).child('visibility').set(toStatus);
+}
+
 export const deleteAPieceWithId = async (id) => {
   currentTaskId = (await currentTaskIdRef.once('value')).val();
   tasksRef.child(currentTaskId).child('pieces').child(id).set(null);

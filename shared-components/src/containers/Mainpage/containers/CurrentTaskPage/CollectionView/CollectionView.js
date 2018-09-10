@@ -1,3 +1,4 @@
+/* global chrome */
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 import qs from 'query-string';
@@ -18,32 +19,16 @@ import PageCard from '../../../../../components/UI/SnippetCards/PageCard/PageCar
 import SnippetCard from '../../../../../components/UI/SnippetCards/SnippetCard/SnippetCard';
 import Aux from '../../../../../hoc/Aux/Aux';
 import styles from './CollectionView.css';
+import { getFirstNWords } from '../../../../../shared/utilities';
 import { SNIPPET_TYPE } from '../../../../../shared/constants';
 import * as FirebaseStore from '../../../../../firebase/store';
 import { sortBy, reverse, slice } from 'lodash';
 
+import Snackbar from '../../../../../components/UI/Snackbar/Snackbar';
+
+
 const getNumColInResponsiveGridLayout = (windowSize) => {
   let maxNumCol = 99;  // make it so big that this is useless
-/*
-  // if (windowSize > 1730) {
-  //   maxNumCol = 5;
-  // }
-  // else if (windowSize <= 1730 && windowSize > 1220) {
-  //   maxNumCol = 5;
-  // }
-  // else if (windowSize <= 1220 && windowSize > 900) {
-  //   maxNumCol = 4;
-  // }
-  // else if (windowSize <= 900 && windowSize > 630) {
-  //   maxNumCol = 3;
-  // }
-  // else if (windowSize <= 900 && windowSize > 630) {
-  //   maxNumCol = 2;
-  // }
-  // else {
-  //   maxNumCol = 1;
-  // }
-*/
   return maxNumCol;
 }
 
@@ -182,7 +167,7 @@ const SnippetsGroup = (props) => {
     <div className={styles.Content}>
       {responsiveGridViewPartitionOfSnippets.map((pgroup, outerIndex) => (
         <div className={styles.ResponsiveColumn} key={outerIndex}>
-          {pgroup.map((p, idx) => {
+          {pgroup.filter(p => p.visibility !== false).map((p, idx) => {
             let attitudeOptionPairsList = [];
             if (Object.keys(options).length > 0 && p.attitudeOptionPairs !== undefined) {
               p.attitudeOptionPairs.forEach((pair) => {
@@ -203,10 +188,9 @@ const SnippetsGroup = (props) => {
                 options={props.options}
                 requirements={props.requirements}
                 status={p.status}
-                pieceIds={p.type === SNIPPET_TYPE.PIECE_GROUP ? p.pieceIds : []}
-                title={p.type === SNIPPET_TYPE.PIECE_GROUP ? p.name : p.title}
-                texts={p.type === SNIPPET_TYPE.PIECE_GROUP ? p.name : p.texts}
-                name={p.type === SNIPPET_TYPE.PIECE_GROUP ? null : (new URL(p.url)).hostname}
+                title={p.title}
+                texts={p.texts}
+                name={(new URL(p.url)).hostname}
                 link={p.url}
                 icon={p.url}
                 htmls={p.htmls}
@@ -222,8 +206,6 @@ const SnippetsGroup = (props) => {
                 attitudeOptionPairsList={attitudeOptionPairsList}
                 deleteThisSnippet={props.deleteSnippet}
                 makeInteractionBox={props.makeInteractionBox}
-                createAPieceGroup={props.createAPieceGroup}
-                addAPieceToGroup={props.addAPieceToGroup}
                 incrementSelectedSnippetNumber={props.incrementSelectedSnippetNumber}
                 decrementSelectedSnippetNumber={props.decrementSelectedSnippetNumber}
                 selectable={true}
@@ -259,7 +241,55 @@ class CollectionView extends Component {
     withNodeSnippetsIsOpen: false,
     codeFilterOn: false,
     notesFilterOn: false,
-    unCategorizedFilterOn: false
+    unCategorizedFilterOn: false,
+
+    // chrome extension port
+    portToBackground: null,
+
+    // snackbar
+    deletePieceSnackbarShouldShow: false,
+    toDeletePieceId: null,
+    toDeletePieceName: null
+  }
+
+  deletePieceStateHelper = (snackbarStatus, pid, name) => {
+    this.setState({
+      deletePieceSnackbarShouldShow: snackbarStatus,
+      toDeletePieceId: pid,
+      toDeletePieceName: name
+    });
+    const { portToBackground } = this.state;
+    portToBackground.postMessage({
+      msg: 'TO_DELETE_PIECE_STATUS_CHANGED',
+      payload: {
+        id: pid
+      }
+    });
+  }
+
+  showSnackbar = (type, id, name) => {
+    // https://www.w3schools.com/howto/tryit.asp?filename=tryhow_js_snackbar
+    if (type === 'piece') {
+      this.deletePieceStateHelper(true, id, name);
+      this.deletePieceSnackbarTimer = setTimeout(() => {
+        this.deletePieceStateHelper(false, null, null);
+      }, 5000);
+    } 
+  }
+
+  deletePieceHandler = (id, name) => {
+    this.showSnackbar('piece', id, name);
+    FirebaseStore.switchPieceVisibility(id, false);
+    this.deletePieceTimer = setTimeout(() => {
+      FirebaseStore.deleteAPieceWithId(id);
+    }, 6000);
+  }
+
+  undoDeletePieceHandler = () => {
+    clearTimeout(this.deletePieceTimer);
+    clearTimeout(this.deletePieceSnackbarTimer);
+    FirebaseStore.switchPieceVisibility(this.state.toDeletePieceId, true);
+    this.deletePieceStateHelper(false, null, null);
   }
 
   UNSAFE_componentWillReceiveProps (nextProps) {
@@ -293,6 +323,9 @@ class CollectionView extends Component {
         this.setState({showModal: false});
       }
     });
+
+    let port = chrome.runtime.connect({name: 'FROM_COLLECTIONVIEW'});
+    this.setState({portToBackground: port});
   }
 
   componentWillUnmount() {
@@ -355,30 +388,6 @@ class CollectionView extends Component {
 
   deletePageHandler = (event, id) => {
     FirebaseStore.deleteAPageFromCountList(id);
-  }
-
-  createAPieceGroup = (piece1Id, piece2Id) => {
-    let pieceGroup = {
-      pieceIds: [piece1Id, piece2Id],
-      name: '',
-      timestamp: (new Date()).getTime(),
-      type: SNIPPET_TYPE.PIECE_GROUP
-    };
-    FirebaseStore.createAPieceGroup(pieceGroup);
-  }
-
-  addAPieceToGroup = (groupId, pieceId) => {
-    FirebaseStore.addAPieceToGroup(groupId, pieceId);
-  }
-
-  deletePieceHandler = (event, id, type) => {
-    console.log("To delete piece with id: " + id);
-    if (type === SNIPPET_TYPE.PIECE_GROUP) {
-      FirebaseStore.deleteAPieceGroup(id);
-    } else {
-      FirebaseStore.deleteAPieceWithId(id);
-    }
-
   }
 
   dismissModal = () => {
@@ -509,23 +518,10 @@ class CollectionView extends Component {
         />
     );
 
-    // const { pieceGroups } = task;
-    // let pieceGroupsList = [];
+    
     let piecesListClone = piecesList.map(p => JSON.parse(JSON.stringify(p)));   // ==> temporarily disable poece grouping
     piecesListClone = sortBy(piecesListClone, ['codeUseInfo']);
-    // for (let pgKey in pieceGroups) {
-    //   let group = pieceGroups[pgKey];
-    //   pieceGroupsList.push({
-    //     ...group,
-    //     id: pgKey,
-    //     status: true  // should display
-    //   });
-    //   for (let pId of group.pieceIds) {
-    //     piecesListClone.filter(p => p.id === pId)[0].status = false;
-    //   }
-    // }
-    // let newPiecesList = pieceGroupsList.concat(reverse(sortBy(piecesListClone, ['status'])));
-    // console.log(newPiecesList);
+    
 
 
     let allPieces = (
@@ -542,8 +538,6 @@ class CollectionView extends Component {
         specificPieceId={this.state.specificPieceId}
         makeInteractionBox={this.makeInteractionbox}
         deleteSnippet={this.deletePieceHandler}
-        createAPieceGroup={this.createAPieceGroup}
-        addAPieceToGroup={this.addAPieceToGroup}
         incrementSelectedSnippetNumber={this.props.incrementSelectedSnippetNumber}
         decrementSelectedSnippetNumber={this.props.decrementSelectedSnippetNumber}
         />
@@ -595,104 +589,119 @@ class CollectionView extends Component {
     return (
       <Aux>
         <div className={styles.CollectionView}>
-            <div className={styles.Main} id="scrollable-content-container">
+          <div className={styles.Main} id="scrollable-content-container">
 
 
-              <div className={styles.Section}>
-                <Aux>
-                  <div className={styles.Header}>
-                    <div className={styles.HeaderNameContainer}
-                        onClick={(event) => this.switchAllSnippetsOpenStatus(event)}
+            <div className={styles.Section}>
+              <Aux>
+                <div className={styles.Header}>
+                  <div className={styles.HeaderNameContainer}
+                      onClick={(event) => this.switchAllSnippetsOpenStatus(event)}
+                  >
+                    <div className={styles.HeaderName}
                     >
-                      <div className={styles.HeaderName}
-                      >
-                        <span>Snippets</span>
+                      <span>Snippets</span>
+                    </div>
+                    {
+                      piecesList.length > 0
+                      ? <div
+                          className={styles.HeaderCollapseButton}>
+                          {
+                            this.state.allSnippetSIsOpen
+                            ? <FontAwesomeIcon icon={fasAngleDown} />
+                            : <FontAwesomeIcon icon={fasAngleRight} />
+                          }
+                        </div>
+                      : null
+                    }
+                  </div>
+                  <div className={styles.FilterNameContainer}>
+                    <div>
+                      <FontAwesomeIcon icon={fasFilter} className={styles.FilterIcon}/>
+                    </div>
+                    <div className={styles.SectionFilterContainer}>
+                      <div
+                        className={[styles.SectionFilterName,
+                          (
+                            this.state.codeFilterOn === true
+                            ? styles.Active
+                            : null
+                          )
+                        ].join(' ')}
+                        onClick={() => this.switchFilterStatus('code')}>
+                        With Code <FontAwesomeIcon icon={fasCode} />
                       </div>
+                    </div>
+
+                    <div className={styles.SectionFilterContainer}>
+                      <div
+                        className={[styles.SectionFilterName,
+                          (
+                            this.state.notesFilterOn === true
+                            ? styles.Active
+                            : null
+                          )
+                        ].join(' ')}
+                        onClick={() => this.switchFilterStatus('notes')}>
+                        With Notes <FontAwesomeIcon icon={fasStickyNote} />
+                      </div>
+                    </div>
+
+                    <div className={styles.SectionFilterContainer}>
                       {
-                        piecesList.length > 0
+                        unCategorizedCount !== 0
                         ? <div
-                            className={styles.HeaderCollapseButton}>
-                            {
-                              this.state.allSnippetSIsOpen
-                              ? <FontAwesomeIcon icon={fasAngleDown} />
-                              : <FontAwesomeIcon icon={fasAngleRight} />
-                            }
+                            className={[styles.SectionFilterBadge, styles.SectionFilterBadgeDanger].join(' ')}>
+                            {unCategorizedCount}
                           </div>
                         : null
                       }
-                    </div>
-                    <div className={styles.FilterNameContainer}>
-                      <div>
-                        <FontAwesomeIcon icon={fasFilter} className={styles.FilterIcon}/>
-                      </div>
-                      <div className={styles.SectionFilterContainer}>
-                        <div
-                          className={[styles.SectionFilterName,
-                            (
-                              this.state.codeFilterOn === true
-                              ? styles.Active
-                              : null
-                            )
-                          ].join(' ')}
-                          onClick={() => this.switchFilterStatus('code')}>
-                          With Code <FontAwesomeIcon icon={fasCode} />
-                        </div>
-                      </div>
-
-                      <div className={styles.SectionFilterContainer}>
-                        <div
-                          className={[styles.SectionFilterName,
-                            (
-                              this.state.notesFilterOn === true
-                              ? styles.Active
-                              : null
-                            )
-                          ].join(' ')}
-                          onClick={() => this.switchFilterStatus('notes')}>
-                          With Notes <FontAwesomeIcon icon={fasStickyNote} />
-                        </div>
-                      </div>
-
-                      <div className={styles.SectionFilterContainer}>
-                        {
-                          unCategorizedCount !== 0
-                          ? <div
-                              className={[styles.SectionFilterBadge, styles.SectionFilterBadgeDanger].join(' ')}>
-                              {unCategorizedCount}
-                            </div>
-                          : null
-                        }
-                        <div
-                          className={[styles.SectionFilterName,
-                            (
-                              this.state.unCategorizedFilterOn === true
-                              ? styles.Active
-                              : null
-                            )
-                          ].join(' ')}
-                          onClick={() => this.switchFilterStatus('uncat')}>
-                          Uncategorized <FontAwesomeIcon icon={farQuestionCircle} />
-                        </div>
+                      <div
+                        className={[styles.SectionFilterName,
+                          (
+                            this.state.unCategorizedFilterOn === true
+                            ? styles.Active
+                            : null
+                          )
+                        ].join(' ')}
+                        onClick={() => this.switchFilterStatus('uncat')}>
+                        Uncategorized <FontAwesomeIcon icon={farQuestionCircle} />
                       </div>
                     </div>
                   </div>
-                </Aux>
-                {
-                  this.state.codeFilterOn || this.state.notesFilterOn || this.state.unCategorizedFilterOn
-                  ? filteredPieces
-                  : allPieces
-                }
-              </div>
+                </div>
+              </Aux>
               {
-                this.props.shouldDisplayAllPages
-                ? <div className={styles.Section}>
-                    {topPages}
-                  </div>
-                : null
+                this.state.codeFilterOn || this.state.notesFilterOn || this.state.unCategorizedFilterOn
+                ? filteredPieces
+                : allPieces
               }
             </div>
+            {
+              this.props.shouldDisplayAllPages
+              ? <div className={styles.Section}>
+                  {topPages}
+                </div>
+              : null
+            }
+          </div>
         </div>
         {modal}
+
+        <Snackbar
+          id="deletePieceSnackbar"
+          show={this.state.deletePieceSnackbarShouldShow}>
+          <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+            <div className={styles.SnackbarLeft}>
+              Snippet <u>{ getFirstNWords(10, this.state.toDeletePieceName) }</u> deleted
+            </div>
+            <div className={styles.SnackbarRight}>
+              <button
+                className={styles.UndoButton}
+                onClick={() => this.undoDeletePieceHandler()}>UNDO</button>
+            </div>
+          </div>
+        </Snackbar>
       </Aux>
     );
   }

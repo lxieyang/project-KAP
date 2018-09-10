@@ -44,6 +44,7 @@ let popPort;
 let optionsPort;
 let contentPort;
 let tableViewPort;
+let collectionViewPort;
 
 chrome.runtime.onMessage.addListener(
   function(request, sender, sendResponse) {
@@ -183,6 +184,7 @@ chrome.tabs.onCreated.addListener((tab) => {
 
 let toDeleteOptionId = null;
 let toDeleteRequirementId = null;
+let toDeletePieceId = null;
 
 chrome.runtime.onConnect.addListener(function(port) {
   console.log(port.name);
@@ -283,73 +285,31 @@ chrome.runtime.onConnect.addListener(function(port) {
       }
     });
   }
+  if (port.name === 'FROM_COLLECTIONVIEW') {
+    collectionViewPort = port;
+    console.log('Incomming connections from COLLECTIONVIEW...');
+    collectionViewPort.onMessage.addListener((request) => {
+      if (request.msg === 'TO_DELETE_PIECE_STATUS_CHANGED') {
+        toDeletePieceId = request.payload.id;
+      }
+    });
+
+    collectionViewPort.onDisconnect.addListener(function () {
+      console.log('disconnecting from COLLECTIONVIEW');
+
+      // help delete the pieces if their ids are not null
+      if (toDeleteOptionId !== null) {
+        console.log('should help delete piece: ' + toDeletePieceId);
+        FirebaseStore.deleteAPieceWithId(toDeletePieceId);
+      }
+    });
+  }
 });
 
 
 
 /* create context menu items */
 chrome.contextMenus.removeAll();
-chrome.contextMenus.create({
-  title: 'Add an Option',
-  onclick: (_, tab) => {
-    console.log(tab);
-    // send to content scripts
-    chrome.tabs.sendMessage(tab.id, {
-      msg: actionTypes.ADD_OPTION_CONTEXT_MENU_CLICKED
-    }, () => {});
-  }
-});
-
-
-chrome.contextMenus.create({
-  title: 'Add a Criterion',
-  onclick: (_, tab) => {
-    console.log(tab);
-    // send to content scripts
-    chrome.tabs.sendMessage(tab.id, {
-      msg: actionTypes.ADD_REQUIREMENT_CONTEXT_MENU_CLICKED
-    }, () => {});
-  }
-});
-
-
-chrome.contextMenus.create({
-  title: 'Add "%s" as an Option',
-  "contexts": ["selection"],
-  onclick: (_, tab) => {
-    console.log(tab);
-    // send to content scripts
-    chrome.tabs.sendMessage(tab.id, {
-      msg: actionTypes.ADD_OPTION_CONTEXT_MENU_CLICKED
-    }, () => {});
-  }
-});
-
-
-chrome.contextMenus.create({
-  title: 'Add "%s" as a Criterion',
-  "contexts": ["selection"],
-  onclick: (_, tab) => {
-    console.log(tab);
-    // send to content scripts
-    chrome.tabs.sendMessage(tab.id, {
-      msg: actionTypes.ADD_REQUIREMENT_CONTEXT_MENU_CLICKED
-    }, () => {});
-  }
-});
-
-
-chrome.contextMenus.create({
-  title: 'Collect it as a Snippet',
-  "contexts": ["selection"],
-  onclick: (_, tab) => {
-    console.log(tab);
-    // send to content scripts
-    chrome.tabs.sendMessage(tab.id, {
-      msg: actionTypes.ADD_PIECE_CONTEXT_MENU_CLICKED
-    }, () => {});
-  }
-});
 
 // browser_action context menu
 chrome.contextMenus.create({

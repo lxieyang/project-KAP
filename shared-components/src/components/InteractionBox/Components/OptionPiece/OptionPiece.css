@@ -1,5 +1,5 @@
-.Requirement {
-  color: #333;
+.Option {
+  color: rgba(51, 51, 51, 0.6);
   font-weight: 300;
   font-family: 'Encode Sans Semi Expanded', sans-serif;
   background-color: #fff;
@@ -7,7 +7,8 @@
   border-radius: 5px;
   box-sizing: border-box;
   border: 3px solid transparent;
-  box-shadow: 0px 0px 3px rgba(0,0,0,0.1);
+  /* box-shadow: 0px 0px 3px rgba(0,0,0,0.1); */
+  box-shadow: 0 1px 1px 0 rgba(0,0,0,0.16), 0 1px 5px 0 rgba(0,0,0,0.12);
   outline: none;
 
   position: relative;
@@ -19,6 +20,11 @@
   transition: all 0.1s ease-in;
 }
 
+.hasAttitudes {
+  background-color: #f08f4e;
+  color: #fff;
+}
+
 .PromptAutoSaved {
   margin-left: 5px;
   font-size: 0.75rem;
@@ -27,21 +33,26 @@
   margin-top: 5px;
 }
 
-.Requirement:hover {
+.Option:hover {
+  color: #333;
   box-shadow: 4px 4px 6px rgba(0,0,0,0.2);
 }
 
-.RequirementContentRow {
+.hasAttitudes:hover {
+  color: #fff;
+}
+
+.OptionContentRow {
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
 
-.RequirementText {
+.OptionText {
   font-weight: 500;
 }
 
-.RequirementText:focus {
+.OptionText:focus {
   outline: none;
 }
 
@@ -57,8 +68,8 @@
   opacity: 0;
 }
 
-.Requirement:hover .MoreIconContainer {
-  opacity: 0.9;
+.Option:hover .MoreIconContainer {
+  opacity: 0.4;
 }
 
 .PopoverContainer {
@@ -66,6 +77,7 @@
   border-width: 0;
   background-color: #fff;
   box-shadow: 0 0 4px rgba(0,0,0,0.2);
+  z-index: 999999;
 }
 
 .PopoverContentContainer {
@@ -109,11 +121,11 @@
 
 
 
-.RequirementStar {
+.OptionStar {
   position: absolute;
   top: -10px;
   left: -10px;
-  color: rgb(255, 232,90);
+  color: rgb(255, 232, 90);
   transition: all 0.1s ease-in;
   opacity: 0;
 }
@@ -132,7 +144,7 @@
   font-size: 15px;
   font-weight: 500;
   color: white;
-  background-color: #4280eb;
+  background-color: #f0ad4e;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.12);
 }
 
@@ -140,6 +152,11 @@
   box-shadow: 2px 2px 4px rgba(0,0,0,0.2);
 }
 
-.Ordinal:hover ~ .Requirement {
+.Ordinal:hover ~ .Option {
   box-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+}
+
+
+.ActiveOption {
+  border: 3px solid rgba(111, 192, 70, 1);
 }

@@ -19,7 +19,8 @@ const searchBar = (props) => {
           name="search"
           onBlur={(event) => props.searchBlurHandler(event)}
           onFocus={(event) => props.searchFocusHandler(event)}
-          onInput={(event) => props.searchInputHandler(event)}
+          // onInput={(event) => props.searchInputHandler(event)}
+          onChange={(event) => props.searchInputHandler(event)}
           />
         <div
           className={[styles.SearchButton, props.searchString.trim() !== '' ? styles.SearchClearButton : null].join(' ')}

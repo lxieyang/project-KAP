@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import moment from 'moment';
 import FontAwesomeIcon from '@fortawesome/react-fontawesome';
-import farClock from '@fortawesome/fontawesome-free-regular/faClock';
+import fasClock from '@fortawesome/fontawesome-free-solid/faClock';
 import fasCircleNotch from '@fortawesome/fontawesome-free-solid/faCircleNotch';
 import fasCheck from '@fortawesome/fontawesome-free-solid/faCheck';
 import Input from '../../../../../../shared-components/src/components/UI/Input/Input';
@@ -64,7 +64,7 @@ class CurrentTask extends Component {
         <div className={styles.CurrentTask}>
           <div className={styles.Title}>
             <div className={styles.Label}>
-              <FontAwesomeIcon icon={farClock} /> &nbsp;
+              <FontAwesomeIcon icon={fasClock} /> &nbsp;
               Current Task
             </div>
           </div>

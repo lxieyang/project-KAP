@@ -7,7 +7,9 @@
   /* min-width: 550px; */
   background-color: #fefefe;
   border-radius: 5px;
-  box-shadow: 0 4px 10px 0 rgba(0,0,0,0.2), 0 4px 20px 0 #00000030;
+  /* box-shadow: 0 4px 10px 0 rgba(0,0,0,0.2), 0 4px 20px 0 #00000030; */
+  box-shadow: 10px 10px 42px 32px rgba(0,0,0,0.33), inset 0 0 6px lightgray;
+  border: 1px solid lightgray;
   display: flex;
   flex-flow: column;
   width: 100%;
@@ -83,7 +85,7 @@
   color: #000;
   font-weight: 600;
   font-size: 16px;
-  width: 80px;
+  flex-shrink: 0;
 
   display: flex;
   align-items: center;
@@ -98,14 +100,17 @@
   background-color: transparent !important;
   box-shadow: none !important;
   text-align: left;
-  padding: 2px 4px 2px 4px;
+  padding: 3px 6px;
   color: rgba(0,0,0,.87);
   transition: all 0.1s ease-in;
 }
 
+.TitleInput:hover,
 .TitleInput:focus {
-  outline: rgba(126,185,215, 1) !important;
+  outline: none !important;
+  border-color: rgba(126,185,215, 1) !important;
   box-shadow: 2px 2px 4px rgba(0,0,0,0.1) !important;
+  /* background-color: #eee !important; */
 }
 
 .AutoSuggestedBadge {
@@ -136,9 +141,11 @@
 .selectedText {
   flex: 1;
   margin-right: 0px;
-  font-size: 16px;
+  word-break: keep-all !important;
+  text-align: left !important;
+  font-size: 14px;
   border-left: 6px solid #ccc !important;
-  background-color: #fff !important;
+  background-color: rgb(243, 243, 243) !important;
   border-radius: 4px;
   box-shadow: rgba(60, 64, 67, 0.3) 0 1px 2px 0, rgba(60, 64, 67, 0.15) 0 1px 3px 1px;
   padding: 10px;
@@ -152,7 +159,7 @@
   margin-right: 0px;
   font-size: 15px;
   border-left: 6px solid #ccc !important;
-  background-color: #fff;
+  background-color: #efefef !important;
   border-radius: 4px;
   box-shadow: rgba(60, 64, 67, 0.3) 0 1px 2px 0, rgba(60, 64, 67, 0.15) 0 1px 3px 1px;
   padding: 5px 10px;
@@ -204,16 +211,18 @@ button:hover {
 }
 
 .AddOptionRowContainer input {
-  font-size: 16px;
+  font-size: 14px;
   border-radius: 5px;
   border: 1px solid lightgray;
   padding: 3px 6px;
   width: 60%;
 
 }
-
+.AddOptionRowContainer input:hover,
 .AddOptionRowContainer input:focus {
-  outline: purple;
+  outline: none !important;
+  border-color: rgba(126,185,215, 1) !important;
+  box-shadow: 2px 2px 4px rgba(0,0,0,0.1) !important;
 }
 
 .PromptToHitEnter {
@@ -289,7 +298,7 @@ button:hover {
 
 .OptionTableRow {
   /* height: 100%; */
-  border-bottom: 1px solid #ddd;
+  /* border-bottom: 1px solid #ddd; */
 }
 
 .TableTitle {
@@ -330,12 +339,12 @@ button:hover {
   display: flex;
   align-items: center;
   height: 100%;
-  min-width: 150px;
-  max-width: 250px;
+  max-width: 150px;
 
 }
 
-.Option {
+
+/* .Option {
   position: relative;
   color: white;
   font-size: 16px;
@@ -350,7 +359,7 @@ button:hover {
   word-break: keep-all;
   box-sizing: border-box;
   box-shadow: 0 1px 1px 0 rgba(0,0,0,0.16), 0 1px 5px 0 rgba(0,0,0,0.12);
-}
+} */
 
 .AttitudeThumbContainer {
   width: 25px;
@@ -377,35 +386,48 @@ button:hover {
   flex-shrink: none;
   display: flex;
   align-items: center;
-  margin: 10px 12px;
+  margin: 8px 10px;
 
   align-self: center;
   max-width: 100px;
   white-space: pre-wrap;
   word-break: keep-all;
   cursor: default;
-  font-size: 12px;
+  font-size: 13px;
+  line-height: 13px;
   color: white;
   font-weight: 300;
-  font-family: 'Encode Sans Semi Expanded', sans-serif;
-  background-color: #81cae0;
+  /* font-family: 'Encode Sans Semi Expanded', sans-serif; */
+  /* background-color: #81cae0; */
+  background-color: #4280eb;
   padding: 1px 6px;
   border-radius: 4px;
   box-sizing: border-box;
   box-shadow: 0 1px 1px 0 rgba(0,0,0,0.16), 0 1px 5px 0 rgba(0,0,0,0.12);
 
   position: relative;
-  /* transition: all 0.05s ease-in; */
+  transition: all 0.05s ease-in;
+}
+
+.Requirement:hover {
+  box-shadow: 4px 4px 6px rgba(0,0,0,0.2);
 }
 
 .InactiveRequirement {
-  color: rgb(121, 121, 121);
-  background-color: rgb(223, 221, 221);
+  color: rgba(51, 51, 51, 0.6);
+  background-color: #fff;
+}
 
+.InactiveRequirement:hover {
+  color: #333;
 }
 
 .RequirementName {
+  color: inherit !important;
+}
 
+.RequirementName a {
+  color: inherit !important;
 }
 
 .RequirementAttitudeContainer {
@@ -545,14 +567,18 @@ button:hover {
 
 
 .FooterContainer {
-  margin-top: 10px;
+  margin-top: 3px;
+  margin-bottom: 10px;
   width: 100%;
+  height: 50px;
   display: flex;
+  align-content: stretch;
 }
 
 .NoteContainer {
-  width: 80%;
-  font-size: 16px;
+  height: 100% !important;
+  width: 80% !important;
+  font-size: 14px !important;
 }
 
 
@@ -563,142 +589,57 @@ button:hover {
 /* Clip button */
 .ClipButtonContainer {
   width: 20%;
+  height: 100%;
   display: flex;
-  align-items: flex-end;
   justify-content: flex-end;
-  padding-right: 5px;
-  padding-bottom: 8px;
+}
+
+
+.ClipButton {
+  cursor: pointer !important;
+  width: 98% !important;
+  height: 100% !important;
+  background-color: #efefef !important;
+  padding: 0px !important;
+  color: inherit !important;
+  opacity: 0.8 !important;
+  border: none !important;
+  outline: none !important;
+  border-radius: 5px !important;
+  box-shadow: 2px 2px 4px rgba(0,0,0,0.1) !important;
+
+  transition: all 0.1s ease-in !important;
+
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-around !important;
 }
 
 .ClipButton:focus,
-.ClipButton {
-  cursor: pointer;
-  width: 90px;
-  height: 50px;
-  background: rgb(236, 236, 236);
-  color: gray;
-  border: none;
-  outline: none;
-  border-radius: 3px;
-  position: relative;
-  box-shadow: 0 2px 5px 0 rgba(0,0,0,0.2), 0 2px 10px 0 #00000030;
-}
-
-.ClipButton.active{
-  background: rgb(236, 236, 236);
-  color: white;
-  border: none;
-  box-shadow: 0 1px 1px 0 rgba(0,0,0,0.10), 0 1px 3px 0 rgba(0,0,0,0.06);
-}
-
 .ClipButton:hover {
-  background: rgb(236, 236, 236);
-  color: gray;
-  border: none;
-  box-shadow: 0 1px 1px 0 rgba(0,0,0,0.10), 0 1px 3px 0 rgba(0,0,0,0.06);
-}
-
-.ClipButtonIcon {
+  box-shadow: 2px 2px 4px rgba(0,0,0,0.2) !important;
+  background-color: #dedede !important;
+  border: none !important;
+  outline: none !important;
 }
 
 .ButtonTextContainer {
   display: flex;
   align-items: center;
-  justify-content: space-around;
+  font-size: 16px;
 }
 
-.ButtonText {
-  font-size: 26px;
+.ButtonTextContainer img {
+  height: 25px;
+  width: auto;
+  margin-right: 8px;
+  
 }
 
-.CheckmarkContainer {
-  position: absolute;
-  top: 0px;
-  left: 0px;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: space-around;
-}
 
-.Checkmark {
-  display: block;
-  opacity: 0;
-}
 
-.Checkmark:after{
-  /*Add another block-level blank space*/
-  content: '';
-  display: block;
-  box-sizing: border-box;
-
-  /*Make it a small rectangle so the border will create an L-shape*/
-  width: 14px;
-  height: 22px;
-
-  /*Add a white border on the bottom and left, creating that 'L' */
-  border: solid #000;
-  border-width: 0 6px 6px 0;
-  border-color: rgb(0, 200, 0);
-
-  /*Rotate the L 45 degrees to turn it into a checkmark*/
-  transform: rotate(45deg);
-}
-
-.CheckmarkSpin {
-  animation-name: SpinOneRound;
-  animation-duration: 0.3s;
-  animation-iteration-count: 1;
-  animation-timing-function: linear;
-  animation-fill-mode: forwards;
-}
-
-@keyframes SpinOneRound {
-  0% {
-    opacity: 0;
-    transform: rotate(0deg);
-  }
-  20% {
-    opacity: 0.1;
-    transform: rotate(10deg);
-  }
-  25% {
-    opacity: 0.2;
-    transform: rotate(90deg);
-  }
-  50% {
-    opacity: 0.5;
-    transform: rotate(270deg);
-  }
-  100% {
-    opacity: 1;
-    transform: rotate(720deg);
-  }
-}
-
-.ButtonTextDisappear {
-  animation-name: DisappearOneRound;
-  animation-duration: 0.3s;
-  animation-iteration-count: 1;
-  animation-timing-function: linear;
-  animation-fill-mode: forwards;
-}
-
-@keyframes DisappearOneRound {
-  0% {
-    opacity: 1;
-  }
-  20% {
-    opacity: 0.5;
-  }
-  25% {
-    opacity: 0.2;
-  }
-  50% {
-    opacity: 0.1;
-  }
-  100% {
-    opacity: 0;
-  }
+/* Tooltip */
+.RequirementNameTooltipContainer {
+  padding: 6px 10px !important;
+  font-size: 15px;
 }
