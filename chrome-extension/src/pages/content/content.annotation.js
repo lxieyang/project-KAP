@@ -39,7 +39,7 @@ taskPromptAnchor.style.zIndex = '99999';
 
 const setAsNewTaskBtnAnchor = document.body.insertBefore(document.createElement('div'), document.body.childNodes[0]);
 setAsNewTaskBtnAnchor.style.position = 'absolute';
-setAsNewTaskBtnAnchor.style.top = '28px';
+setAsNewTaskBtnAnchor.style.top = '26px';
 setAsNewTaskBtnAnchor.style.left = '790px';
 setAsNewTaskBtnAnchor.style.zIndex = '99999';
 
@@ -64,11 +64,19 @@ const handleFromSearchToTask = () => {
             <GoogleInPageTaskPrompt />
           </div>,
           document.querySelector('.mw'));
+        
+        let searchBar = document.querySelector('.RNNXgb');
+        let searchBarHeight = searchBar.clientHeight;
+        let searchBarTop = searchBar.getBoundingClientRect().top;
 
         ReactDOM.render(
           <SetAsNewTaskButton searchTerm={searchTerm} setAsNewTaskHandler={FirebaseStore.addTaskFromSearchTerm}/>,
           setAsNewTaskBtnAnchor
         );
+
+        // align with google search bar
+        let newTopPos = Math.floor(searchBarTop + searchBarHeight / 2 - setAsNewTaskBtnAnchor.clientHeight / 2);
+        setAsNewTaskBtnAnchor.style.top = newTopPos + 'px';
 
         // check if should create a new task or stay on the same one
         currentTaskIdRef.once('value', (snapshot) => {

@@ -27,7 +27,7 @@ import { openLinkInTextEditorExtension, getFirstNWords, getFirstSentence } from 
 import APP_LOGO from '../../assets/images/icon-128.png';
 
 import OptionPiece from './Components/OptionPiece/OptionPiece';
-import { DH_CHECK_P_NOT_PRIME } from 'constants';
+import ReactTooltip from 'react-tooltip';
 
 const dummyText = 'Please select some text';
 const dummyHtml = [`<p>Please lasso select some text</p>`];
@@ -192,6 +192,29 @@ class interactionBox extends Component {
     window.addEventListener('keydown', this.onKeyDown, false);
     window.addEventListener('copy', this.onCopy, false);
 
+  }
+
+  updateLayoutAccordingToWindow = () => {
+    let boxHeight = this.interactionBoxContent.clientHeight;
+    let quoteHeight = this.interactionBoxSelectedText.clientHeight;
+    let quoteRealHeight = this.interactionBoxSelectedText.scrollHeight;
+    let tableHeight = this.interactionBoxOptionList.clientHeight;
+    let tableRealHeight = this.interactionBoxOptionList.scrollHeight;
+    let windowHeight = window.innerHeight;
+    let windowCutOffHeight = windowHeight * 0.95;
+
+    let newTableHeight = tableHeight;
+    if (tableRealHeight >= tableHeight) {
+      newTableHeight = Math.floor((windowCutOffHeight - boxHeight) + tableRealHeight);
+      newTableHeight = boxHeight - tableHeight + newTableHeight > windowCutOffHeight ? Math.floor((windowCutOffHeight - boxHeight) + tableHeight) : newTableHeight;
+      this.interactionBoxOptionList.style.maxHeight = newTableHeight + 'px';
+    }
+  }
+
+  UNSAFE_componentWillUpdate() {
+    if (this.state.existingOptions !== [] && this.state.existingRequirements !== []) {
+      this.updateLayoutAccordingToWindow();
+    }
   }
 
   componentWillUnmount () {
@@ -515,7 +538,10 @@ class interactionBox extends Component {
     );
 
     let experimentalOptionList = (
-      <div className={styles.OptionList}>
+      <div 
+        className={styles.OptionList} 
+        id='interaction-box-option-list'
+        ref={node => this.interactionBoxOptionList = node}>
       <table className={styles.Table}>
       <tbody>
       <tr>
@@ -610,15 +636,19 @@ class interactionBox extends Component {
           {existingRequirements.filter(rq => rq.visibility !== false).map((rq, idx) => {
             let attitude = op.attitudeRequirementPairs[rq.id];
             let attitudeDisplay = null;
+            let attitudeText = null;
             switch (attitude) {
               case 'good':
               attitudeDisplay = (<ThumbV1 type={'up'} />);
+              attitudeText = 'Good!';
               break;
               case 'bad':
               attitudeDisplay = (<ThumbV1 type={'down'} />);
+              attitudeText = 'Bad.';
               break;
               case 'idk':
               attitudeDisplay = (<QuestionMark />);
+              attitudeText = `I don't know yet...`;
               break;
               default:
               break;
@@ -626,7 +656,6 @@ class interactionBox extends Component {
             return (
               <div
                 key={idx}
-                title={rq.name}
                 className={[styles.Requirement, (
                   attitude === undefined
                   ? styles.InactiveRequirement
@@ -640,14 +669,24 @@ class interactionBox extends Component {
                     <FontAwesomeIcon icon={fasStar}/>
                     </div>
                   <div
+                    title={attitudeText}
                     className={styles.RequirementAttitude}
                     onClick={(event) => this.attitudeChangeHandler(event, op.id, rq.id, attitude)}>
                     {attitudeDisplay}
                   </div>
                   <div
-                    title={rq.name}
                     className={styles.RequirementName}>
+                    <a data-tip data-for={`${op.id}-${rq.id}`}>
                     {getFirstNWords(4, rq.name)}
+                    </a>
+                    <ReactTooltip
+                      id={`${op.id}-${rq.id}`}
+                      type='dark'
+                      effect='solid'
+                      place={'bottom'}
+                      className={styles.RequirementNameTooltipContainer}>
+                      {rq.name}
+                    </ReactTooltip>
                   </div>
 
                   <div className={styles.RequirementAttitudeContainer}>
@@ -687,28 +726,30 @@ class interactionBox extends Component {
     if (this.state.type === SNIPPET_TYPE.SELECTION) {
       snippet = (
         <div
-        id="interaction-box-editable-selected-text"
-        contentEditable={false}
-        suppressContentEditableWarning={true}
-        className={styles.selectedText}
-        style={{width:
-          this.state.snippetDimension !== null
-          ? this.state.snippetDimension.width+'px'
-          : '600px'}}>
+          ref={node => this.interactionBoxSelectedText = node}
+          id="interaction-box-editable-selected-text"
+          contentEditable={false}
+          suppressContentEditableWarning={true}
+          className={styles.selectedText}
+          style={{width:
+            this.state.snippetDimension !== null
+            ? this.state.snippetDimension.width+'px'
+            : '600px'}}>
           {this.state.selectedText}
         </div>
       );
     } else if (this.state.type === SNIPPET_TYPE.LASSO || this.state.type === SNIPPET_TYPE.POST_SNAPSHOT  || this.state.type === SNIPPET_TYPE.COPIED_PIECE) {
       snippet = (
         <div
-        id="interaction-box-editable-selected-text"
-        contentEditable={false}
-        suppressContentEditableWarning={true}
-        className={styles.snappedText}
-        style={{width:
-          this.state.snippetDimension !== null
-          ? this.state.snippetDimension.width+'px'
-          : '600px'}}
+          ref={node => this.interactionBoxSelectedText = node}
+          id="interaction-box-editable-selected-text"
+          contentEditable={false}
+          suppressContentEditableWarning={true}
+          className={styles.snappedText}
+          style={{width:
+            this.state.snippetDimension !== null
+            ? this.state.snippetDimension.width+'px'
+            : '600px'}}
           dangerouslySetInnerHTML={this.getHTML()}>
         </div>
       );
@@ -717,8 +758,9 @@ class interactionBox extends Component {
     return (
       // console.log(this.state);
       <div
-      id="interaction-box-content"
-      className={styles.InteractionBox}>
+        ref={node => this.interactionBoxContent = node}
+        id="interaction-box-content"
+        className={styles.InteractionBox}>
         {/*
         // this.state.mode !== 'NOTHING' ? //
         // Trailing ternary condition from removing the distinction between NEW and other snippets,

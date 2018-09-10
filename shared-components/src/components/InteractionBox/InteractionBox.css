@@ -8,7 +8,8 @@
   background-color: #fefefe;
   border-radius: 5px;
   /* box-shadow: 0 4px 10px 0 rgba(0,0,0,0.2), 0 4px 20px 0 #00000030; */
-  box-shadow: 10px 10px 42px 32px rgba(0,0,0,0.33);
+  box-shadow: 10px 10px 42px 32px rgba(0,0,0,0.33), inset 0 0 6px lightgray;
+  border: 1px solid lightgray;
   display: flex;
   flex-flow: column;
   width: 100%;
@@ -144,7 +145,7 @@
   text-align: left !important;
   font-size: 14px;
   border-left: 6px solid #ccc !important;
-  background-color: #eee !important;
+  background-color: rgb(243, 243, 243) !important;
   border-radius: 4px;
   box-shadow: rgba(60, 64, 67, 0.3) 0 1px 2px 0, rgba(60, 64, 67, 0.15) 0 1px 3px 1px;
   padding: 10px;
@@ -422,7 +423,11 @@ button:hover {
 }
 
 .RequirementName {
+  color: inherit !important;
+}
 
+.RequirementName a {
+  color: inherit !important;
 }
 
 .RequirementAttitudeContainer {
@@ -629,4 +634,12 @@ button:hover {
   width: auto;
   margin-right: 8px;
   
+}
+
+
+
+/* Tooltip */
+.RequirementNameTooltipContainer {
+  padding: 6px 10px !important;
+  font-size: 15px;
 }
