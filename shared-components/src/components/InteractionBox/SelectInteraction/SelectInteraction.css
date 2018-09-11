@@ -85,6 +85,14 @@ div {
   display: block;
 }
 
+.ButtonOption {
+  color: #f0ad4e !important;
+}
+
+.ButtonRequirement {
+  color: #4280eb !important;
+}
+
 .ButtonIconWrapper {
   display: flex;
   justify-content: space-around;

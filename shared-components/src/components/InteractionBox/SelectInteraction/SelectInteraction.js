@@ -96,7 +96,7 @@ class SelectInteraction extends Component {
             className={styles.Button}
             style={{width: '42px'}}
             onClick={(event) => this.collectButtonClickHandler('option')}>
-            <div>
+            <div className={styles.ButtonOption}>
               <div 
                 className={[styles.ButtonContentWrapper, (this.state.canSubmitOption ? styles.ButtonTextDisappear : null)].join(' ')}>
                 <div className={styles.ButtonIconWrapper}>
@@ -124,7 +124,7 @@ class SelectInteraction extends Component {
             className={styles.Button}
             style={{width: '42px'}}
             onClick={(event) => this.collectButtonClickHandler('requirement')}>
-            <div>
+            <div className={styles.ButtonRequirement}>
               <div className={[styles.ButtonContentWrapper, (
                 this.state.canSubmitRequirement
                 ? styles.ButtonTextDisappear
