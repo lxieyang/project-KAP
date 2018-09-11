@@ -89,13 +89,15 @@ class TableView extends Component {
       toDeleteOptionId: id,
       toDeleteOptionName: name
     });
-    const { portToBackground } = this.state;
-    portToBackground.postMessage({
-      msg: 'TO_DELETE_OPTION_STATUS_CHANGED',
-      payload: {
-        id: id
-      }
-    });
+    if (window.chrome !== undefined && window.chrome.extension !== undefined) {
+      const { portToBackground } = this.state;
+      portToBackground.postMessage({
+        msg: 'TO_DELETE_OPTION_STATUS_CHANGED',
+        payload: {
+          id: id
+        }
+      });
+    }
   }
 
   deleteRequirementStateHelper = (snackbarStatus, id, name) => {
@@ -104,13 +106,15 @@ class TableView extends Component {
       toDeleteRequirementId: id,
       toDeleteRequirementName: name
     });
-    const { portToBackground } = this.state;
-    portToBackground.postMessage({
-      msg: 'TO_DELETE_REQUIREMENT_STATUS_CHANGED',
-      payload: {
-        id: id
-      }
-    });
+    if (window.chrome !== undefined && window.chrome.extension !== undefined) {
+      const { portToBackground } = this.state;
+      portToBackground.postMessage({
+        msg: 'TO_DELETE_REQUIREMENT_STATUS_CHANGED',
+        payload: {
+          id: id
+        }
+      });
+    }
   }
 
   showSnackbar = (type, id, name) => {
@@ -277,9 +281,10 @@ class TableView extends Component {
         }
       }
     });
-
-    let port = chrome.runtime.connect({name: 'FROM_TABLEVIEW'});
-    this.setState({portToBackground: port});
+    if (window.chrome !== undefined && window.chrome.extension !== undefined) {
+      let port = chrome.runtime.connect({name: 'FROM_TABLEVIEW'});
+      this.setState({portToBackground: port});
+    }
   }
 
   componentWillUnmount() {
