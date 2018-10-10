@@ -430,6 +430,10 @@ button:hover {
   color: inherit !important;
 }
 
+.RequirementName a:hover {
+  text-decoration: none !important;
+}
+
 .RequirementAttitudeContainer {
   margin: 8px 0px;
 }
@@ -624,15 +628,15 @@ button:hover {
 }
 
 .ButtonTextContainer {
-  display: flex;
-  align-items: center;
-  font-size: 16px;
+  display: flex !important;
+  align-items: center !important;
+  font-size: 16px !important;
 }
 
 .ButtonTextContainer img {
-  height: 25px;
-  width: auto;
-  margin-right: 8px;
+  height: 25px !important;
+  width: auto !important;
+  margin-right: 8px !important;
   
 }
 

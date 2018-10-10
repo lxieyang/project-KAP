@@ -213,7 +213,7 @@ class interactionBox extends Component {
 
   UNSAFE_componentWillUpdate() {
     if (this.state.existingOptions !== [] && this.state.existingRequirements !== []) {
-      this.updateLayoutAccordingToWindow();
+      // this.updateLayoutAccordingToWindow();
     }
   }
 

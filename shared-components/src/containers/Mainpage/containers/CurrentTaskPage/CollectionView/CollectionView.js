@@ -258,13 +258,15 @@ class CollectionView extends Component {
       toDeletePieceId: pid,
       toDeletePieceName: name
     });
-    const { portToBackground } = this.state;
-    portToBackground.postMessage({
-      msg: 'TO_DELETE_PIECE_STATUS_CHANGED',
-      payload: {
-        id: pid
-      }
-    });
+    if (window.chrome !== undefined && window.chrome.extension !== undefined) {
+      const { portToBackground } = this.state;
+      portToBackground.postMessage({
+        msg: 'TO_DELETE_PIECE_STATUS_CHANGED',
+        payload: {
+          id: pid
+        }
+      });
+    }
   }
 
   showSnackbar = (type, id, name) => {
@@ -323,9 +325,10 @@ class CollectionView extends Component {
         this.setState({showModal: false});
       }
     });
-
-    let port = chrome.runtime.connect({name: 'FROM_COLLECTIONVIEW'});
-    this.setState({portToBackground: port});
+    if (window.chrome !== undefined && window.chrome.extension !== undefined) {
+      let port = chrome.runtime.connect({name: 'FROM_COLLECTIONVIEW'});
+      this.setState({portToBackground: port});
+    }
   }
 
   componentWillUnmount() {
