@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import FontAwesomeIcon from '@fortawesome/react-fontawesome';
 import fasWindowMaximize from '@fortawesome/fontawesome-free-regular/faWindowMaximize';
 import fasClipboardList from '@fortawesome/fontawesome-free-solid/faClipboardList';
+import faCommentAlt from '@fortawesome/fontawesome-free-solid/faCommentAlt';
 import Setting from './Setting/Setting';
 import { APP_NAME_SHORT, DEFAULT_SETTINGS } from '../../../../../../shared-components/src/shared/constants';
 import {
@@ -66,9 +67,9 @@ class Settings extends Component {
       <div className={styles.Settings}>
       <Setting
         name={'Turn on the Selector'}
-        icon={fasWindowMaximize}
+        icon={faCommentAlt}
         description={
-          `By switching on this option, Chrome will display a popover for collecting information whenever you highlight text`
+          `By switching on this option, Chrome will display a popover for collecting information whenever you highlight text. (Please reload the webpage if this button does not immediately switch on/off the popover)`
         }
         checked={this.state.shouldShowSelector || false}
         statusChanged={this.switchShouldShowSelector}/>
