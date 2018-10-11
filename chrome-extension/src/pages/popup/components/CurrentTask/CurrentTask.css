@@ -1,5 +1,6 @@
 .CurrentTask {
-  display: flex;
+  /* display: flex; */
+  float:right;
   flex-flow: column;
   margin-left: 0px;
   margin-right: 0px;
@@ -10,16 +11,21 @@
 .Title {
   display: flex;
   align-items: center;
+  float:right;
 }
 
 .Label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   font-weight: 800;
   margin: 10px 0px;
+
 }
 
 .StatusButtonsContainer {
-  margin-top: 10px;
-  margin-bottom: 8px;
+  margin-top: 0px;
+  margin-bottom: 0px;
   margin-left: 0px;
   display: flex;
   align-items: center;

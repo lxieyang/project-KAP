@@ -10,16 +10,24 @@ import SetAsNewTaskButton from '../../components/InPageTaskPrompt/GoogleInPageTa
 import { getSearchTerm, getOrigin } from '../../../../shared-components/src/shared/utilities';
 import * as actionTypes from '../../../../shared-components/src/shared/actionTypes';
 import classes from './content.annotation.css';
+import { DEFAULT_SETTINGS } from '../../../../shared-components/src/shared/constants';
 import { PageCountHelper, dragElement } from './content.utility';
 import { getFirstSentence } from '../../../../shared-components/src/shared/utilities';
 import { SNIPPET_TYPE, APP_NAME_SHORT } from '../../../../shared-components/src/shared/constants';
 import APP_ICON_SMALL from '../../../../shared-components/src/assets/images/icon-34.png';
 import {
+  lastTaskIdRef,
+  codebasesRef,
   userId,
+  userName,
+  userProfilePhotoURL,
+  database,
   setUserIdAndName,
+  userPathInFirestore,
   tasksRef,
   currentTaskIdRef
 } from '../../../../shared-components/src/firebase/index';
+import firebase from '../../../../shared-components/src/firebase/firebase';
 import * as FirebaseStore from '../../../../shared-components/src/firebase/store';
 
 /* Set up popover box anchor */
@@ -64,7 +72,7 @@ const handleFromSearchToTask = () => {
             <GoogleInPageTaskPrompt />
           </div>,
           document.querySelector('.mw'));
-        
+
         let searchBar = document.querySelector('.RNNXgb');
         let searchBarHeight = searchBar.clientHeight;
         let searchBarTop = searchBar.getBoundingClientRect().top;
@@ -264,7 +272,7 @@ document.addEventListener('mouseup', (event) => {
       return false;
     }
   }
-  
+
   if (interactionBoxAnchor.parentElement !== null | hoverAnchor.parentElement !== null) {
     document.dispatchEvent(customRemoveInteractionEvent);
   }
@@ -409,6 +417,8 @@ let takeSnapshot = (rect=null) => {
 let justSelectedRange;
 
 function selectionTimeout() {
+
+
   let selection = document.getSelection();
   // console.log('selected text:', selection.toString());
   if (selection.type === 'Range' && selection.toString().trim() !== '') {
@@ -416,12 +426,31 @@ function selectionTimeout() {
     // popOverAnchor.style.width = '100px';
     popOverAnchor.top = '0px';
     popOverAnchor.style.left = `0px`;
-    ReactDOM.render(
-        <SelectInteraction
-          selectedText={selection.toString()}
-          addPiece={() => displayInteractionBox(SNIPPET_TYPE.SELECTION)}
-          clip={() => ReactDOM.unmountComponentAtNode(popOverAnchor)}/>,
-        popOverAnchor);
+
+    var shouldShowSelector;
+    firebase.auth().onAuthStateChanged(() => {
+
+      userPathInFirestore.onSnapshot((doc) => {
+        if (doc.exists) {
+          const { userSettings } = doc.data();
+          if (userSettings !== undefined && userSettings.shouldShowSelector !== undefined) {
+            shouldShowSelector = userSettings.shouldShowSelector;
+          }
+        } else {
+          shouldShowSelector = DEFAULT_SETTINGS.shouldShowSelector;
+        }
+        if (shouldShowSelector) {
+          ReactDOM.render(
+              <SelectInteraction
+                selectedText={selection.toString()}
+                addPiece={() => displayInteractionBox(SNIPPET_TYPE.SELECTION)}
+                clip={() => ReactDOM.unmountComponentAtNode(popOverAnchor)}/>,
+              popOverAnchor);
+          }
+      });
+    });
+
+
     // adjusting position of popover box after mounting
     popOverAnchor.style.top = `${rect.top - 5 + window.scrollY - popOverAnchor.clientHeight}px`;
     let leftPosition = Math.floor(rect.left + rect.width/2 - popOverAnchor.clientWidth/2);
@@ -528,8 +557,8 @@ if(window.location.hostname === "stackoverflow.com") {
         <div class="kap-clip-post-checkmark-container">
           <div class="kap-clip-post-checkmark"></div>
         </div>
-        <div 
-          title="Save to ${APP_NAME_SHORT}"  
+        <div
+          title="Save to ${APP_NAME_SHORT}"
           class="kap-button-text-container">
           <span class="kap-button-text">
             <img alt="icon" src=${chrome.extension.getURL(APP_ICON_SMALL)} class="kap-icon-in-button-text"/>

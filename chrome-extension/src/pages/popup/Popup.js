@@ -10,15 +10,13 @@ import Options from './components/Options/Options';
 import Requirements from './components/Requirements/Requirements';
 import { DragDropContext } from 'react-dnd';
 import HTML5Backend from 'react-dnd-html5-backend';
-import {
-  tasksRef,
-  currentTaskIdRef,
-  setUserIdAndName
-} from '../../../../shared-components/src/firebase/index';
+import {DEFAULT_SETTINGS } from '../../../../shared-components/src/shared/constants';
+import {tasksRef,currentTaskIdRef,setUserIdAndName} from '../../../../shared-components/src/firebase/index';
+import {userPathInFirestore} from '../../../../shared-components/src/firebase/index';
+
 import * as FirebaseStore from '../../../../shared-components/src/firebase/store';
 import styles from './Popup.css';
 import Snackbar from '../../../../shared-components/src/components/UI/Snackbar/Snackbar';
-
 
 const dividerOptions = {
   margin: {
@@ -39,6 +37,7 @@ class Popup extends Component {
     isEditingRequirement: false,
     isEditingTaskName: false,
     currentTaskIdIsLoading: true,
+    // shouldShowSelector:DEFAULT_SETTINGS.shouldShowSelector,
     tasksIsLoading: true,
     loading: true,
     userId: null,
@@ -56,6 +55,16 @@ class Popup extends Component {
     toDeleteRequirementId: null,
     toDeleteOptionName: null,
     toDeleteRequirementName: null
+  }
+
+  switchSelector = (event) => {
+    /*
+    this.setState(prevState => {
+      return {shouldShowSelector: !prevState.shouldShowSelector}
+    })*/
+
+    FirebaseStore.switchShouldShowSelector(!this.state.shouldShowSelector);
+
   }
 
   deleteOptionStateHelper = (snackbarStatus, id, name) => {
@@ -104,6 +113,23 @@ class Popup extends Component {
   }
 
   componentDidMount() {
+    /*
+    userPathInFirestore.onSnapshot((doc) => {
+      if (doc.exists && doc.data().userSettings !== undefined) {
+        const {
+          shouldShowSelector
+        } = doc.data().userSettings;
+        this.setState({
+          shouldShowSelector
+        });
+
+      } else {
+        FirebaseStore.switchShouldShowSelector(this.state.shouldShowSelector);
+      }
+    });
+    */
+
+
     let port = chrome.runtime.connect({name: 'FROM_POPUP'});
     this.setState({portToBackground: port});
     port.postMessage({msg: 'GET_USER_INFO'});
@@ -120,6 +146,7 @@ class Popup extends Component {
         if (payload.userId === 'invalid') {
           this.setState({
             isSigningOut: false
+
           });
         }
         this.updateTask();
@@ -132,7 +159,7 @@ class Popup extends Component {
         // Enter key pressed
         if (this.state.isEditingOption) {
           this.submitHandlerForOption(event);
-        } 
+        }
         if (this.state.isEditingRequirement) {
           this.submitHandlerForRequirement(event);
         }
@@ -271,6 +298,7 @@ class Popup extends Component {
   }
 
   updateTaskName = (id, taskName) => {
+
     FirebaseStore.updateTaskName(id, taskName);
   }
 
@@ -305,6 +333,9 @@ class Popup extends Component {
       shouldTaskBeOngoing !== originalShouldTaskBeOngoing
     );
   }
+  togglePopoverDisplay() {
+  }
+
 
   render () {
 
@@ -393,7 +424,7 @@ class Popup extends Component {
 
       toRender = (
         <Aux>
-          
+
           {appTitle}
 
           {/*<HorizontalDivider margin={dividerOptions.margin.none}/>*/}
@@ -404,6 +435,8 @@ class Popup extends Component {
             currentTaskId={currentTaskId}
             taskOngoing={currentTaskOngoing}
             completionTimestamp={completionTimestamp}
+            // selector={this.state.shouldShowSelector}
+            // switchSelector={this.switchSelector}
             switchTaskOngoinghandler={this.switchTaskOngoinghandler}
             onSwitch={this.switchCurrentTaskHandler}
             updateTaskName={this.updateTaskName}/>
@@ -432,7 +465,7 @@ class Popup extends Component {
               updateRequirementName={this.updateRequirementName}/>
           </div>
 
-          <Snackbar 
+          <Snackbar
             id="deleteOptionSnackbar"
             show={this.state.deleteOptionSnackbarShouldShow}>
             <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
@@ -440,14 +473,14 @@ class Popup extends Component {
                 Option <u>{this.state.toDeleteOptionName}</u> deleted
               </div>
               <div className={styles.SnackbarRight}>
-                <button 
+                <button
                   className={styles.UndoButton}
                   onClick={() => this.undoDeleteOptionHandler()}>UNDO</button>
               </div>
             </div>
           </Snackbar>
 
-          <Snackbar 
+          <Snackbar
             id="deleteRequirementSnackbar"
             show={this.state.deleteRequirementSnackbarShouldShow}>
             <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
@@ -455,7 +488,7 @@ class Popup extends Component {
                 Criterion <u>{this.state.toDeleteRequirementName}</u> deleted
               </div>
               <div className={styles.SnackbarRight}>
-                <button 
+                <button
                   className={styles.UndoButton}
                   onClick={() => this.undoDeleteRequirementHandler()}>UNDO</button>
               </div>

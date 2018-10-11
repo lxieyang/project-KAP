@@ -4,7 +4,7 @@ import fasWindowMaximize from '@fortawesome/fontawesome-free-regular/faWindowMax
 import fasClipboardList from '@fortawesome/fontawesome-free-solid/faClipboardList';
 import Setting from './Setting/Setting';
 import { APP_NAME_SHORT, DEFAULT_SETTINGS } from '../../../../../../shared-components/src/shared/constants';
-import { 
+import {
   userPathInFirestore
 } from '../../../../../../shared-components/src/firebase/index';
 import * as FirebaseStore from '../../../../../../shared-components/src/firebase/store';
@@ -15,26 +15,38 @@ class Settings extends Component {
   state = {
     shouldOverrideNewtab: DEFAULT_SETTINGS.shouldOverrideNewtab,
     shouldDisplayAllPages: DEFAULT_SETTINGS.shouldDisplayAllPages,
+    shouldShowSelector:DEFAULT_SETTINGS.shouldShowSelector
   }
 
   componentDidMount () {
     userPathInFirestore.onSnapshot((doc) => {
       if (doc.exists && doc.data().userSettings !== undefined) {
-        const { 
+        const {
+          shouldShowSelector,
           shouldOverrideNewtab,
-          shouldDisplayAllPages
-        } = doc.data().userSettings;
+          shouldDisplayAllPages,
 
+        } = doc.data().userSettings;
+        // console.log(doc.data().userSettings);
         this.setState({
-          shouldOverrideNewtab, 
-          shouldDisplayAllPages
+          shouldShowSelector,
+          shouldOverrideNewtab,
+          shouldDisplayAllPages,
+
         });
-        
+
       } else {
+        FirebaseStore.switchShouldShowSelector(DEFAULT_SETTINGS.shouldShowSelector)
         FirebaseStore.switchShouldOverrideNewtab(DEFAULT_SETTINGS.shouldOverrideNewtab);
         FirebaseStore.switchShouldDisplayAllPages(DEFAULT_SETTINGS.shouldDisplayAllPages);
+
       }
     });
+  }
+
+  switchShouldShowSelector = () => {
+    console.log('should switch shouldShowSelector');
+    FirebaseStore.switchShouldShowSelector(!this.state.shouldShowSelector)
   }
 
   switchShouldOverrideNewtabHandler = () => {
@@ -47,10 +59,21 @@ class Settings extends Component {
     FirebaseStore.switchShouldDisplayAllPages(!this.state.shouldDisplayAllPages);
   }
 
+
+
   render() {
     return (
       <div className={styles.Settings}>
-        <Setting 
+      <Setting
+        name={'Turn on the Selector'}
+        icon={fasWindowMaximize}
+        description={
+          `By switching on this option, Chrome will display a popover for collecting information whenever you highlight text`
+        }
+        checked={this.state.shouldShowSelector || false}
+        statusChanged={this.switchShouldShowSelector}/>
+
+        <Setting
           name={'Override the new tab'}
           icon={fasWindowMaximize}
           description={
@@ -59,7 +82,7 @@ class Settings extends Component {
           checked={this.state.shouldOverrideNewtab || false}
           statusChanged={this.switchShouldOverrideNewtabHandler}/>
 
-        <Setting 
+        <Setting
           name={'Track all web pages'}
           icon={fasClipboardList}
           description={
@@ -67,7 +90,7 @@ class Settings extends Component {
           }
           checked={this.state.shouldDisplayAllPages || false}
           statusChanged={this.switchShouldDisplayAllPagesHandler}/>
-        
+
       </div>
     )
   }
