@@ -63,15 +63,32 @@ const handleFromSearchToTask = () => {
       if (searchTerm !== '') {
         // google search results page
         // console.log('google search result page');
-        ReactDOM.render(
-          <div style={{
-            marginLeft: '150px',
-            marginTop: '6px',
-            marginBottom: '12px'
-          }}>
-            <GoogleInPageTaskPrompt />
-          </div>,
-          document.querySelector('.mw'));
+        var shouldShowSelector = DEFAULT_SETTINGS.shouldShowSelector
+        firebase.auth().onAuthStateChanged(() => {
+
+          userPathInFirestore.onSnapshot((doc) => {
+            if (doc.exists) {
+              const { userSettings } = doc.data();
+              if (userSettings !== undefined && userSettings.shouldShowSelector !== undefined) {
+                shouldShowSelector = userSettings.shouldShowSelector;
+              }
+            } else {
+              shouldShowSelector = DEFAULT_SETTINGS.shouldShowSelector;
+            }
+            if (shouldShowSelector) {
+              ReactDOM.render(
+                <div style={{
+                  marginLeft: '150px',
+                  marginTop: '6px',
+                  marginBottom: '12px'
+                }}>
+                  <GoogleInPageTaskPrompt />
+                </div>,
+                document.querySelector('.mw'));
+
+              }
+          });
+        });
 
         let searchBar = document.querySelector('.RNNXgb');
         let searchBarHeight = searchBar.clientHeight;
@@ -107,17 +124,34 @@ const handleFromSearchToTask = () => {
       } else {
         // google home page
         // console.log('google home page');
+        var shouldShowSelector = DEFAULT_SETTINGS.shouldShowSelector
+        firebase.auth().onAuthStateChanged(() => {
 
-        ReactDOM.render(
-          <div style={{
-            marginTop: '8px',
-            width: '100%',
-            display: 'flex',
-            justifyContent: 'space-around'
-          }}>
-            <GoogleInPageTaskPrompt />
-          </div>,
-          taskPromptAnchor);
+          userPathInFirestore.onSnapshot((doc) => {
+            if (doc.exists) {
+              const { userSettings } = doc.data();
+              if (userSettings !== undefined && userSettings.shouldShowSelector !== undefined) {
+                shouldShowSelector = userSettings.shouldShowSelector;
+              }
+            } else {
+              shouldShowSelector = DEFAULT_SETTINGS.shouldShowSelector;
+            }
+            if (shouldShowSelector) {
+              ReactDOM.render(
+                <div style={{
+                  marginTop: '8px',
+                  width: '100%',
+                  display: 'flex',
+                  justifyContent: 'space-around'
+                }}>
+                  <GoogleInPageTaskPrompt />
+                </div>,
+                taskPromptAnchor);
+
+              }
+          });
+        });
+
       }
     }
   } else {

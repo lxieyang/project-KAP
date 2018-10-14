@@ -69,7 +69,7 @@ class Settings extends Component {
         name={'Turn on the Selector'}
         icon={faCommentAlt}
         description={
-          `By switching on this option, Chrome will display a popover for collecting information whenever you highlight text. (Please reload the webpage if this button does not immediately switch on/off the popover)`
+          `By switching on this option, Chrome will display a popover for collecting information whenever you highlight text as well as an in-page task prompt when you make a search in Google. (Please reload your webpage if this button does not immediately work)`
         }
         checked={this.state.shouldShowSelector || false}
         statusChanged={this.switchShouldShowSelector}/>
