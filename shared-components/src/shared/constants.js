@@ -4,7 +4,8 @@ export const APP_NAME_SHORT = 'KAP';
 export const DEFAULT_SETTINGS = {
   shouldOverrideNewtab: false,
   shouldDisplayAllPages: false,
-  taskOngoing: true
+  shouldShowSelector: false,
+  taskOngoing: true,
 }
 
 // https://stackoverflow.com/questions/10282939/how-to-get-favicons-url-from-a-generic-webpage-in-javascript

@@ -371,7 +371,7 @@ class Mainpage extends Component {
           userProfilePhotoURL={userProfilePhotoURL}
           userId={userId}
           resetParameters={this.resetParameters}
-          
+
           >
           {routes}
 

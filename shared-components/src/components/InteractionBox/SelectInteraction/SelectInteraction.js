@@ -10,16 +10,18 @@ import * as FirebaseStore from '../../../firebase/store';
 import InteractionBox from '../InteractionBox';
 import { SNIPPET_TYPE } from '../../../shared/constants';
 import styles from './SelectInteraction.css';
+import popup from '../../../../../chrome-extension/src/pages/popup/Popup.js';
 import { PageCountHelper, dragElement } from '../../../../../chrome-extension/src/pages/content/content.utility.js';
 import classes from '../../../../../chrome-extension/src/pages/content/content.annotation.css';
+
 import * as annotation from '../../../../../chrome-extension/src/pages/content/content.annotation.js';
 
 class SelectInteraction extends Component {
-
   state = {
     canSubmitTask: false,
     canSubmitOption: false,
-    canSubmitRequirement: false
+    canSubmitRequirement: false,
+    shouldDisplaySelectInteraction: false
   }
 
 
@@ -84,7 +86,7 @@ class SelectInteraction extends Component {
               </div>
             </div>
             <div className={styles.CheckmarkContainer}>
-              <div 
+              <div
                 className={[styles.AddedSomething, (this.state.canSubmitTask ? null : styles.TextAppear)].join(' ')}>
                 Started New Task
               </div>
@@ -97,7 +99,7 @@ class SelectInteraction extends Component {
             style={{width: '42px'}}
             onClick={(event) => this.collectButtonClickHandler('option')}>
             <div className={styles.ButtonOption}>
-              <div 
+              <div
                 className={[styles.ButtonContentWrapper, (this.state.canSubmitOption ? styles.ButtonTextDisappear : null)].join(' ')}>
                 <div className={styles.ButtonIconWrapper}>
                   <FontAwesomeIcon
@@ -109,7 +111,7 @@ class SelectInteraction extends Component {
                 </div>
               </div>
               <div className={styles.CheckmarkContainer}>
-                <div 
+                <div
                   className={[styles.AddedSomething, (this.state.canSubmitOption ? null : styles.TextAppear)].join(' ')}>
                   Added Option
                 </div>
@@ -141,7 +143,7 @@ class SelectInteraction extends Component {
               </div>
             </div>
             <div className={styles.CheckmarkContainer}>
-              <div 
+              <div
                 className={[styles.AddedSomething, (this.state.canSubmitRequirement ? null : styles.TextAppear)].join(' ')}>
                 Added Criterion
               </div>

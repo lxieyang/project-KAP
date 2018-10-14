@@ -49,6 +49,7 @@ export const switchShouldOverrideNewtab = (shouldOverrideNewtab) => {
 
 // SHOULD DISPLAY ALL PAGES
 export const switchShouldDisplayAllPages = (shouldDisplayAllPages) => {
+  console.log(shouldDisplayAllPages);
   userPathInFirestore.set({
     userSettings: {
       shouldDisplayAllPages
@@ -58,9 +59,22 @@ export const switchShouldDisplayAllPages = (shouldDisplayAllPages) => {
   })
   .then(() => {})
   .catch((error) => console.log(error));
+
 }
 
-
+// SHOULD SHOW SELECTOR
+export const switchShouldShowSelector = (shouldShowSelector) => {
+  console.log(shouldShowSelector);
+  userPathInFirestore.set({
+    userSettings: {
+      shouldShowSelector
+    }
+  }, {
+    merge: true
+  })
+  .then(() => {})
+  .catch((error) => console.log(error));
+}
 
 
 /** TASKS */
@@ -574,13 +588,13 @@ export const deleteRequirementWithId = async (id) => {
       for (let opKey in attitudeList) {
         let attitudeReruirementPairs = attitudeList[opKey];
         if (attitudeReruirementPairs !== undefined) {
-          delete attitudeReruirementPairs[id];    
+          delete attitudeReruirementPairs[id];
           pool.push(tasksRef.child(currentTaskId).child('pieces').child(snap.key).child('attitudeList').set(attitudeList));
         }
       }
     }
   });
-  
+
   Promise.all(pool).then(() => {
     // delete requirement itself
     tasksRef.child(currentTaskId).child('requirements').child(id).set(null);

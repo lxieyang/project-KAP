@@ -6,7 +6,9 @@ import fasCircleNotch from '@fortawesome/fontawesome-free-solid/faCircleNotch';
 import fasCheck from '@fortawesome/fontawesome-free-solid/faCheck';
 import Input from '../../../../../../shared-components/src/components/UI/Input/Input';
 import { debounce } from 'lodash';
+import Setting from '../../../../../../chrome-extension/src/pages/options/components/Settings/Setting/Setting.js';
 import ThreeDotsSpinner from '../../../../../../shared-components/src/components/UI/ThreeDotsSpinner/ThreeDotsSpinner';
+import ToggleSwitch from '../../../../../../shared-components/src/components/UI/ToggleSwitch/ToggleSwitch';
 import styles from './CurrentTask.css';
 
 
@@ -49,27 +51,45 @@ class CurrentTask extends Component {
     })
   }
 
-
   render () {
-    const { currentTaskId, currentTaskName, taskOngoing, completionTimestamp, onSwitch, switchTaskOngoinghandler } = this.props;
+    const { currentTaskId, currentTaskName, taskOngoing, completionTimestamp, onSwitch, switchTaskOngoinghandler} = this.props;
 
     let selectConfig = {
       options: this.props.tasks.length > 0
               ? this.props.tasks
               : []
     };
-  
+    /*
+
+    */
+
+
     return (
       <div style={{display: 'flex'}}>
         <div className={styles.CurrentTask}>
-          <div className={styles.Title}>
+
             <div className={styles.Label}>
+            <div>
               <FontAwesomeIcon icon={fasClock} /> &nbsp;
               Current Task
-            </div>
-          </div>
+              </div>
+              {
+                      /*
+        <div style={{display: 'flex'}}>
+                      Selector &nbsp;
+                      <ToggleSwitch
+                        checked={selector}
+                        statusChanged={switchSelector}/>
+                        </div>
+                        */
+                      }
+                      </div>
+
+
+
+
           <div className={[styles.TaskNameContainer, this.state.isEditingTaskName ? styles.isEditing : null].join(' ')}>
-            <div 
+            <div
               title={'Click to edit'}
               className={styles.TaskName}
               contentEditable={true}
@@ -85,7 +105,7 @@ class CurrentTask extends Component {
           </div>
 
           <div className={styles.PromptAutoSaved}>
-            {this.state.shouldShowPrompt === true 
+            {this.state.shouldShowPrompt === true
               ? <span>
                   Edits will automatically be saved <ThreeDotsSpinner />
                 </span>
@@ -94,7 +114,7 @@ class CurrentTask extends Component {
 
           <div>
             <div className={styles.StatusButtonsContainer}>
-              <div 
+              <div
                 className={styles.StatusButton}
                 style={
                   taskOngoing === true ? activeWorkingButtonStyle : null
@@ -103,7 +123,7 @@ class CurrentTask extends Component {
                 <FontAwesomeIcon icon={fasCircleNotch} style={{marginRight: '4px'}}/>
                 Ongoing...
               </div>
-              <div 
+              <div
                 className={styles.StatusButton}
                 style={
                   taskOngoing === false ? activeFinishButtonStyle : null
@@ -117,12 +137,12 @@ class CurrentTask extends Component {
               </div>
             </div>
           </div>
-          
+
         </div>
       </div>
     );
   }
-  
+
 };
 
 export default CurrentTask;
