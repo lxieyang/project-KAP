@@ -1,0 +1,108 @@
+html {
+    /* font-family: "Open Sans",Arial,"Lucida Grande",sans-serif; */
+    font-family: 'Nunito', sans-serif;
+}
+
+body {
+    font-size: 13px;
+    color: #777;
+    line-height: 1.5em;
+}
+
+a {
+    color: #c1000f;
+}
+
+h1 {
+    margin-left: 1em;
+    font-size: 2em;
+    line-height: 1.14286em;
+    display: block;
+}
+
+h1, h2, h3 {
+    font-weight: 400;
+    color: #000;
+}
+
+h2 {
+    font-size: 1.875em;
+    /* margin-top: 1.6em; */
+}
+
+img {
+    border: 1px solid lightgray;
+    box-shadow: 0 2px 5px 0 rgba(0,0,0,0.16),0 2px 10px 0 rgba(0,0,0,0.12);
+    max-width: 100%;
+    max-height: 100%;
+}
+
+p {
+    margin: 1.5em 0;
+    display: block;
+    -webkit-margin-before: 1em;
+    -webkit-margin-after: 1em;
+    -webkit-margin-start: 0px;
+    -webkit-margin-end: 0px;
+
+}
+
+.container {
+    max-width: 870px;
+    margin: auto;
+    width: 90%;
+    padding-top: 5em;
+}
+
+.column {
+    flex: 33.33%;
+    padding: 5px;
+}
+
+.row {
+    display: flex;
+}
+
+.sidenav {
+    width: 130px;
+    position: fixed;
+    z-index: 1;
+    padding: 15px 1em;
+    padding-top: 15px;
+    padding-right: 1em;
+    padding-bottom: 15px;
+    padding-left: 1em;
+    background-color: #f6f6f6;
+    overflow-x: hidden;
+    padding: 8px 0;
+}
+
+.sidenav a {
+    padding: 6px 8px 6px 16px;
+    text-decoration: none;
+    font-size: 13px;
+    color: #c1000f;
+    display: block;
+    transition: all 0.1s ease-in;
+}
+
+.sidenav a:hover {
+    /* color: #064579; */
+    text-decoration: underline;
+}
+
+.main {
+    margin-left: 140px;
+    font-size: 13px;
+    padding: 0px 10px;
+    /* padding-top: 5em; */
+}
+
+.Publications ul {
+    padding-left: 0px;
+}
+
+@media screen and (max-height: 450px) {
+    .sidenav {padding-top: 1px;}
+    .sidenav a {font-size: 18px;}
+}
