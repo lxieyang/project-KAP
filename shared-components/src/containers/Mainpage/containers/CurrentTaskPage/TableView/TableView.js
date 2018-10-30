@@ -742,8 +742,8 @@ class TableView extends Component {
       <tr>
         <td className={[styles.AddButtons, (newRequirementsList.length === 0 || newOptionsList.length === 0) ? styles.WhenNothingInTable : null].join(' ')}>
 
-          <div 
-            className={styles.AddRequirementButtonContainer} 
+          <div
+            className={styles.AddRequirementButtonContainer}
             style={{visibility: readModeisOn ? 'hidden' : null}}>
             <Popover
               isOpen={this.state.addRequirementPopoverIsOpen}
@@ -782,7 +782,7 @@ class TableView extends Component {
             </Popover>
           </div>
 
-          <div 
+          <div
             className={styles.AddOptionButtonContainer}
             style={{visibility: readModeisOn ? 'hidden' : null}}>
             <Popover
@@ -845,7 +845,7 @@ class TableView extends Component {
         }
       </tr>
     );
-    
+
     let newTableBody = newOptionsList.filter(op => op.visibility !== false).map((op, idx) => {
       let optionVisibility = true;
       let snippetsSelected = this.state.selectedSnippets;
@@ -998,7 +998,7 @@ class TableView extends Component {
         </tr>
       );
     });
-    
+
     let modal = null;
     if (this.state.showModal) {
       let piece = this.props.task.pieces[this.state.modalPieceId];
@@ -1087,11 +1087,7 @@ class TableView extends Component {
                 ? <div className={styles.ModeToggleButtonsContainer}>
                     <div className={[styles.ModeToggleButton, this.state.readModeisOn === true ? styles.ModeToggleButtonActive : null].join(' ')}
                       onClick={(event) => this.switchTableMode(event, true)}>
-                      View
-                    </div>
-
-                    <div>|</div>
-
+                      View</div> <div>|</div>
                     <div className={[styles.ModeToggleButton, this.state.readModeisOn === false ? styles.ModeToggleButtonActive : null].join(' ')}
                     onClick={(event) => this.switchTableMode(event, false)}>
                       Edit
@@ -1104,7 +1100,10 @@ class TableView extends Component {
             <Collapse isOpened={this.state.tableviewisOpen} springConfig={{stiffness: 700, damping: 50}}>
               <div className={styles.Content}>
                 {writeContent}
+                <div className={styles.Content}>The comparison table above is part of a working progress for representing information related to decisions in programming, to provide feedback or learn more about our project, please visit our &nbsp;
+                <a href="https://docs.google.com/forms/d/1YCBRRyCyt6dGgN74dD18I1OJ3szntC59TTmpcI3Lhe8/" target="_blank">Google form</a>.  </div>
               </div>
+
             </Collapse>
             {modal}
           </div>

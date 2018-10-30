@@ -205,17 +205,16 @@ class CurrentTaskPage extends Component {
     let content = null;
     if (this.state.specific === true) {
       if (this.state.specificTask !== null) {
-
         content =
         <React.Fragment>
-          <TableView 
+          <TableView
             showoff={showoff}
             task={this.state.specificTask} specificPieceId={this.state.specificPieceId}
             incrementSelectedSnippetNumber={this.incrementSelectedSnippetNumber}
             decrementSelectedSnippetNumber={this.decrementSelectedSnippetNumber}
             selectedSnippets={this.state.selectedSnippets}
           />
-          <CollectionView 
+          <CollectionView
             showoff={showoff}
             task={this.state.specificTask} specificPieceId={this.state.specificPieceId}
             incrementSelectedSnippetNumber={this.incrementSelectedSnippetNumber}
@@ -230,7 +229,7 @@ class CurrentTaskPage extends Component {
       content =
       <React.Fragment>
         <TaskStatusView task={this.props.task} showoff={showoff}/>
-        <TableView 
+        <TableView
           showoff={showoff}
           task={this.props.task}
           incrementSelectedSnippetNumber={this.incrementSelectedSnippetNumber}

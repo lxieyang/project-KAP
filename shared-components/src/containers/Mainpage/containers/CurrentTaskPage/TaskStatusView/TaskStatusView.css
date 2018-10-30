@@ -19,6 +19,7 @@
 .Title {
   display: flex;
   align-items: center;
+  text-align: center;
 }
 
 .Label {
@@ -37,7 +38,28 @@
   padding-top: 2px;
   padding-bottom: 2px;
 
-  max-width: 400px;
+  max-width: 300px;
+
+  border: 1px solid rgba(34,36,38,.15);
+  color: rgba(0,0,0,.87);
+  border-radius: 5px;
+
+  transition: all 0.1s ease-in;
+}
+
+
+.TaskDebriefContainer {
+  position: relative;
+
+  display: flex;
+  align-items: center;
+  margin-left: 6px;
+  padding-left: 0px;
+  padding-right: 16px;
+  padding-top: 2px;
+  padding-bottom: 2px;
+
+  max-width: 300px;
 
   border: 1px solid rgba(34,36,38,.15);
   color: rgba(0,0,0,.87);
@@ -79,7 +101,7 @@
   margin-left: 20px;
   display: flex;
   align-items: center;
-} 
+}
 
 .StatusButtonsContainer {
   margin-top: 10px;

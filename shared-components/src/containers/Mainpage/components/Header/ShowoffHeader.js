@@ -11,6 +11,7 @@ import Logo from '../../../../components/UI/Logo/Logo';
 import AppHeader from '../../../../components/UI/AppHeader/AppHeader';
 import { APP_WEBSITE } from '../../../../shared/constants';
 
+
 class Header extends Component {
   state = {
   }
@@ -22,8 +23,8 @@ class Header extends Component {
       return (
         <Aux>
           <div style={{position: 'fixed', top: '0', left: '0', width: '100%', zIndex: '1000'}}>
-            <AppHeader 
-              logoSize='38px' hover={false} 
+            <AppHeader
+              logoSize='38px' hover={false}
               shouldDisplayHeaderButtons={false}
               openInNewTabClickedHandler={() => window.open(APP_WEBSITE)}/>
           </div>

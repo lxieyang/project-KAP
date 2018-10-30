@@ -60,7 +60,7 @@ class TaskStatusView extends Component {
 
   render () {
     const { task, showoff } = this.props;
-
+    const taskDebrief = "brief description of task \n \n\n\n\n\n";
     return (
       <div className={styles.TaskStatusView}>
         <div className={styles.TaskStatusViewWrapper}>
@@ -71,7 +71,7 @@ class TaskStatusView extends Component {
               </div>
             </div>
             <div className={[styles.TaskNameContainer, this.state.isEditingTaskName ? styles.isEditing : null].join(' ')}>
-              <div 
+              <div
                 title={'Click to edit'}
                 className={styles.TaskName}
                 contentEditable={showoff !== true}
@@ -82,7 +82,7 @@ class TaskStatusView extends Component {
                 {task.displayName}
               </div>
 
-              {this.state.shouldShowPrompt === true 
+              {this.state.shouldShowPrompt === true
                 ? <div className={styles.PromptAutoSaved}>
                     <span>Edits will automatically be saved <ThreeDotsSpinner /></span>
                   </div>
@@ -97,7 +97,7 @@ class TaskStatusView extends Component {
             ? null
             : <div className={styles.TaskStatusViewRight}>
                 <div className={styles.StatusButtonsContainer}>
-                  <div 
+                  <div
                     title={`I'm still working on this.`}
                     className={styles.StatusButton}
                     style={
@@ -107,7 +107,7 @@ class TaskStatusView extends Component {
                     <FontAwesomeIcon icon={fasCircleNotch} style={{marginRight: '4px'}}/>
                     Ongoing...
                   </div>
-                  <div 
+                  <div
                     title={`I've completed it!`}
                     className={styles.StatusButton}
                     style={
@@ -120,10 +120,28 @@ class TaskStatusView extends Component {
                       task.completionTimestamp !== null && task.completionTimestamp !== undefined ? ` (${moment(task.completionTimestamp).fromNow()})` : null
                     }
                   </div>
+
+                  <div className={styles.Title}>
+                    <div className={styles.Label}>
+                      Task Debrief:
+                    </div>
+                  </div>
+                  <div className={[styles.TaskDebriefContainer].join(' ')}>
+                    <div
+                      title={'Click to edit'}
+                      className={styles.TaskName}
+                      contentEditable={showoff == true}
+                      suppressContentEditableWarning={true}
+                      >
+                      {taskDebrief}
+                    </div>
+                    </div>
+
+
                 </div>
               </div>
           }
-          
+
         </div>
       </div>
     )
