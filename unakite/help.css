@@ -51,8 +51,9 @@ p {
 .container {
     max-width: 870px;
     margin: auto;
-    width: 90%;
+    width: 80%;
     padding-top: 5em;
+
 }
 
 .column {
@@ -65,7 +66,7 @@ p {
 }
 
 .sidenav {
-    width: 130px;
+    width: 150px;
     position: fixed;
     z-index: 1;
     padding: 15px 1em;
