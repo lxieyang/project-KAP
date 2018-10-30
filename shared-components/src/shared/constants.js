@@ -1,5 +1,6 @@
 export const APP_NAME_LONG = 'Knowledge Accelerator for Programming';
 export const APP_NAME_SHORT = 'KAP';
+export const APP_WEBSITE = 'https://lxieyang.github.io/project-KAP/unakite/';
 
 export const DEFAULT_SETTINGS = {
   shouldOverrideNewtab: false,

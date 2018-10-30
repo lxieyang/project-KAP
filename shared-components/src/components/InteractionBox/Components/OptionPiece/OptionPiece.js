@@ -45,7 +45,7 @@ class OptionPiece extends Component {
 
 
   render () {
-    const { op, hasAttitudes } = this.props;
+    const { op, hasAttitudes, showoff } = this.props;
 
     return (
       <div>
@@ -62,9 +62,9 @@ class OptionPiece extends Component {
             </div>
             <div className={styles.OptionContentRow}>
               <span
-                title={'Click to edit'}
+                title={showoff !== true ? 'Click to edit' : null}
                 className={styles.OptionText}
-                contentEditable={true}
+                contentEditable={showoff !== true ? true : false}
                 suppressContentEditableWarning={true}
                 onInput={(event) => this.inputChangedHandler(event, op.id)}>
                 {op.name}
@@ -98,7 +98,10 @@ class OptionPiece extends Component {
               >
                 <span 
                   className={styles.MoreIconContainer}
-                  style={{opacity: this.state.isPopoverOpen ? '0.7' : null}}
+                  style={{
+                    opacity: this.state.isPopoverOpen ? '0.7' : null,
+                    visibility: showoff ? 'hidden' : null
+                  }}
                   onClick={() => this.switchPopoverOpenStatus()}>
                   <FontAwesomeIcon icon={fasMore}/>
                 </span>

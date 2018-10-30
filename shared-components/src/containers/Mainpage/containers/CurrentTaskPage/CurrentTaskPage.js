@@ -18,7 +18,6 @@ class CurrentTaskPage extends Component {
   }
 
   state = {
-    isTable: false,
     specific: this.props.specific,
     specificTask: null,
     specificPieceId: null,
@@ -26,30 +25,9 @@ class CurrentTaskPage extends Component {
     selectedSnippets: 0
   }
 
-  switchView = (event, toState) => {
-    if (toState === false) {
-      const query = {
-        ...qs.parse(this.props.location.search),
-        view: 'collection'
-      };
-      this.props.history.push({
-        search: qs.stringify(query)
-      });
-    } else {
-      const query = {
-        ...qs.parse(this.props.location.search),
-        view: 'table'
-      };
-      this.props.history.push({
-        search: qs.stringify(query)
-      });
-    }
-  }
-
   UNSAFE_componentWillReceiveProps (newProps) {
     this.setState({specific: newProps.specific});
     if (newProps.specific === true) {
-      this.setState({isTable: false});
       let userId = newProps.match.params.userId;
       let taskId = newProps.match.params.taskId;
       let pieceId = this.props.match.params.pieceId;
@@ -57,15 +35,15 @@ class CurrentTaskPage extends Component {
       this.updateTask({database: newProps.database, userId, taskId});
     }
 
-    if (newProps.task.id !== this.props.task.id) {
-      const query = {
-        ...qs.parse(this.props.location.search),
-        view: 'collection'
-      };
-      this.props.history.push({
-        search: qs.stringify(query)
-      });
-    }
+    // if (newProps.task.id !== this.props.task.id) {
+    //   const query = {
+    //     ...qs.parse(this.props.location.search),
+    //     view: 'collection'
+    //   };
+    //   this.props.history.push({
+    //     search: qs.stringify(query)
+    //   });
+    // }
   }
 
   componentDidMount() {
@@ -78,22 +56,16 @@ class CurrentTaskPage extends Component {
       this.updateTask({database: this.props.database, userId, taskId});
     }
 
-    const query = {
-      ...qs.parse(this.props.location.search),
-      view: 'collection'
-    };
-    this.props.history.push({
-      search: qs.stringify(query)
-    });
+    // const query = {
+    //   ...qs.parse(this.props.location.search),
+    //   view: 'collection'
+    // };
+    // this.props.history.push({
+    //   search: qs.stringify(query)
+    // });
 
     this.unlisten = this.props.history.listen((location, action) => {
       const search = qs.parse(location.search);
-      if (search.view === 'collection') {
-        this.setState({isTable: false});
-
-      } else {
-        this.setState({isTable: true});
-      }
     });
   }
 
@@ -228,54 +200,52 @@ class CurrentTaskPage extends Component {
   }
 
   render () {
-    const { isTable } = this.state;
+    const { showoff } = this.props;
 
     let content = null;
     if (this.state.specific === true) {
       if (this.state.specificTask !== null) {
 
         content =
-        <Aux>
-          <TableView task={this.state.specificTask} specificPieceId={this.state.specificPieceId}
-          incrementSelectedSnippetNumber={this.incrementSelectedSnippetNumber}
-          decrementSelectedSnippetNumber={this.decrementSelectedSnippetNumber}
-          selectedSnippets={this.state.selectedSnippets}
+        <React.Fragment>
+          <TableView 
+            showoff={showoff}
+            task={this.state.specificTask} specificPieceId={this.state.specificPieceId}
+            incrementSelectedSnippetNumber={this.incrementSelectedSnippetNumber}
+            decrementSelectedSnippetNumber={this.decrementSelectedSnippetNumber}
+            selectedSnippets={this.state.selectedSnippets}
           />
-          <CollectionView task={this.state.specificTask} specificPieceId={this.state.specificPieceId}
-          incrementSelectedSnippetNumber={this.incrementSelectedSnippetNumber}
-          decrementSelectedSnippetNumber={this.decrementSelectedSnippetNumber}
-          selectedSnippets={this.state.selectedSnippets}
+          <CollectionView 
+            showoff={showoff}
+            task={this.state.specificTask} specificPieceId={this.state.specificPieceId}
+            incrementSelectedSnippetNumber={this.incrementSelectedSnippetNumber}
+            decrementSelectedSnippetNumber={this.decrementSelectedSnippetNumber}
+            selectedSnippets={this.state.selectedSnippets}
           />
-        </Aux>
-      //
-      //   content = !isTable
-      //     ? <CollectionView task={this.state.specificTask} specificPieceId={this.state.specificPieceId}/>
-      //     : <TableView task={this.state.specificTask} specificPieceId={this.state.specificPieceId}/>
+        </React.Fragment>
       } else {
         content = this.state.errorMsg !== null ? <div style={{marginTop: '40px'}}>{this.state.errorMsg}</div> : null;
       }
     } else {
       content =
-      <Aux>
-        <TaskStatusView task={this.props.task}/>
-        <TableView task={this.props.task}
+      <React.Fragment>
+        <TaskStatusView task={this.props.task} showoff={showoff}/>
+        <TableView 
+          showoff={showoff}
+          task={this.props.task}
           incrementSelectedSnippetNumber={this.incrementSelectedSnippetNumber}
           decrementSelectedSnippetNumber={this.decrementSelectedSnippetNumber}
           selectedSnippets={this.state.selectedSnippets}
           />
         <CollectionView
+          showoff={showoff}
           task={this.props.task}
           shouldDisplayAllPages={this.props.shouldDisplayAllPages}
           incrementSelectedSnippetNumber={this.incrementSelectedSnippetNumber}
           decrementSelectedSnippetNumber={this.decrementSelectedSnippetNumber}
           selectedSnippets={this.state.selectedSnippets}
           />
-      </Aux>
-      // content = !isTable
-      //   ? <CollectionView
-      //     task={this.props.task}
-      //     shouldDisplayAllPages={this.props.shouldDisplayAllPages} />
-      //   : <TableView task={this.props.task}/>
+      </React.Fragment>
     }
 
     return (
@@ -308,18 +278,5 @@ class CurrentTaskPage extends Component {
     );
   }
 }
-// previous toggle button between collection view and comparison table
-// <div className={styles.Switcher}>
-  // <button
-  //   onClick={(event) => this.switchView(event, false)}
-  //   className={[isTable ? null : styles.Active]}>
-  //   Collections
-  // </button>
-  //
-  // <button
-  //   onClick={(event) => this.switchView(event, true)}
-  //   className={[isTable ? styles.Active : null]}>
-  //   Comparison Table
-  // </button>
-// </div>
+
 export default withRouter(CurrentTaskPage);

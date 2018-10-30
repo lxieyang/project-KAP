@@ -39,6 +39,7 @@ class interactionBox extends Component {
   // - highlightedText
   // - candidateOptions
   state = {
+    showoff: this.props.showoff,
     mode: this.props.mode !== undefined ? this.props.mode : 'NEW',
     id: this.props.id !== undefined ? this.props.id : '',
     type: this.props.type !== undefined ? this.props.type : SNIPPET_TYPE.LASSO,
@@ -55,6 +56,7 @@ class interactionBox extends Component {
     title: this.props.title !== undefined ? this.props.title : getFirstSentence(this.props.selectedText),
     autoSuggestedTitle: this.props.autoSuggestedTitle !== undefined ? this.props.autoSuggestedTitle : true,
     used: this.props.used !== undefined ? this.props.used : [],
+    app_logo_url: APP_LOGO,
 
     inputSource: 'OP',
     inputValue: '',
@@ -78,7 +80,12 @@ class interactionBox extends Component {
   }
 
   componentDidMount() {
-    if (this.props.specificPieceId !== undefined && this.props.specificPieceId !== null) {
+    if (chrome.extension !== undefined) {
+      this.setState({
+        app_logo_url: chrome.extension.getURL(APP_LOGO)
+      })
+    }
+    if ((this.props.specificPieceId !== undefined && this.props.specificPieceId !== null) || this.props.showoff) {
       // reviewing
 
       let transformedOptions = [];
@@ -120,10 +127,11 @@ class interactionBox extends Component {
 
     } else {
       // working
-
       currentTaskIdRef.on('value', (snapshot) => {
-        tasksRef.child(snapshot.val() + '/options').on('value', (dataOptions) => {
-          tasksRef.child(snapshot.val() + '/requirements').on('value', (dataRequirements) => {
+        let taskId = snapshot.val();
+
+        tasksRef.child(taskId + '/options').on('value', (dataOptions) => {
+          tasksRef.child(taskId + '/requirements').on('value', (dataRequirements) => {
             let transformedRequiremennts = [];
             dataRequirements.forEach(rqSnapshpt => {
               transformedRequiremennts.push({
@@ -133,7 +141,7 @@ class interactionBox extends Component {
             });
             transformedRequiremennts = sortBy(transformedRequiremennts, ['order']);
             if (this.state.mode !== 'UPDATE') {   // new ones
-              tasksRef.child(snapshot.val() + '/currentOptionId').once('value', (databack) => {
+              tasksRef.child(taskId + '/currentOptionId').once('value', (databack) => {
                 let currentOptionId = databack.val();
                 let transformedOptions = [];
                 dataOptions.forEach((opSnapshot) => {
@@ -298,6 +306,9 @@ class interactionBox extends Component {
   }
 
   attitudeChangeHandler = (event, optionId, requirementId, intendedFor) => {
+    if (this.props.showoff) {
+      return;
+    }
     // find idx of target option
     const { existingOptions }  = this.state
     let idx = 0;
@@ -484,14 +495,16 @@ class interactionBox extends Component {
 
 
   render () {
-    const { existingOptions, existingRequirements } = this.state;
+    const { existingOptions, existingRequirements, showoff } = this.state;
 
     let addOptionRequirement = (
       <div className={styles.AddOptionRowContainer}>
         <div className={styles.AddSomthingInputContainer} >
           <div>
             <FontAwesomeIcon icon={fasListAlt}/> &nbsp;
-            <input ref={(input) => { this.optionInput = input; }}
+            <input 
+              disabled={showoff !== true ? null : true}
+              ref={(input) => { this.optionInput = input; }}
               id="add-option-in-piece-input"
               placeholder={'Add an Option'}
               onInput={(event) => this.switchInputSourceHandler(event, 'OP')}
@@ -502,36 +515,24 @@ class interactionBox extends Component {
             ? <span>Press Enter &#x23ce; when done</span>
             : ' '}
           </div>
-          {/*
-            <div
-            className={styles.AddSomethingButton}
-            onClick={(event) => this.addButtonClicked(event, 'OP')}>
-            <FontAwesomeIcon icon={fasPaperPlane}/> &nbsp; Add
-            </div>
-          */}
-
         </div>
+
         <div className={styles.AddSomthingInputContainer}>
           <div>
             <FontAwesomeIcon icon={fasFlagCheckered}/> &nbsp;
-            <input ref={(input) => { this.CriterionInput = input; }}
-            id="add-requirement-in-piece-input"
-            placeholder={'Add a Criterion / Feature'}
-            onInput={(event) => this.switchInputSourceHandler(event, 'RQ')}
+            <input 
+              disabled={showoff !== true ? null : true}
+              ref={(input) => { this.CriterionInput = input; }}
+              id="add-requirement-in-piece-input"
+              placeholder={'Add a Criterion / Feature'}
+              onInput={(event) => this.switchInputSourceHandler(event, 'RQ')}
             /> 
           </div>
           <div className={styles.PromptToHitEnter}>
             {this.state.inputSource === 'RQ' && this.state.inputValue !== '' 
             ? <span>Press Enter &#x23ce; when done</span>
             : ' '}
-          </div>
-          {/*
-          <div className={styles.AddSomethingButton}
-          onClick={(event) => this.addButtonClicked(event, 'RQ')}>
-          <FontAwesomeIcon icon={fasPaperPlane}/> &nbsp; Add
-          </div>
-          */}
-        
+          </div>        
         </div>
 
       </div>
@@ -573,13 +574,14 @@ class interactionBox extends Component {
       {existingOptions.map((op, idx) => {
         return (
           <tr key={op.id} className={styles.OptionTableRow}>
-          <td>
+            <td>
             </td>
             <td>
               <div
                 className={styles.OptionRowContainer}>
                 
                 <OptionPiece 
+                  showoff={showoff}
                   op={op}
                   hasAttitudes={Object.keys(op.attitudeRequirementPairs).length > 0}
                   updateOptionName={this.updateOptionName}
@@ -587,133 +589,94 @@ class interactionBox extends Component {
                   deleteOptionWithId={this.deleteOption}/>
 
               </div>
-
             </td>
-            {/*
-              <td>
-              <div
-              className={[styles.AttitudeThumbContainer, (
-              op.attitude === true
-              ? styles.Active
-              : styles.Inactive
-            )].join(' ')}
-            onClick={(event) => this.attitudeSwitchHandler(event, idx, 'good')}>
-            <ThumbV1 type={'up'}/>
-            </div>
-            </td>
+            
             <td>
-            <div
-            className={[styles.AttitudeThumbContainer, (
-            op.attitude === false
-            ? styles.Active
-            : styles.Inactive
-          )].join(' ')}
-          onClick={(event) => this.attitudeSwitchHandler(event, idx, 'bad')}>
-          <ThumbV1 type={'down'}/>
-          </div>
-          </td>
-          <td>
-          <div
-          className={[styles.AttitudeThumbContainer, (
-          op.active && op.attitude === null
-          ? styles.Active
-          : styles.Inactive
-        )].join(' ')}
-        onClick={(event) => this.attitudeSwitchHandler(event, idx, null)}>
-        <QuestionMark />
-        </div>
-        </td>
-        */}
-        <td>
-        {/*
-          <div className={styles.InTermsOf}>
-          is
-          </div>
-          */}
-          </td>
-          <td>
-          <div className={styles.RequirementsContainer}>
-          {existingRequirements.filter(rq => rq.visibility !== false).map((rq, idx) => {
-            let attitude = op.attitudeRequirementPairs[rq.id];
-            let attitudeDisplay = null;
-            let attitudeText = null;
-            switch (attitude) {
-              case 'good':
-              attitudeDisplay = (<ThumbV1 type={'up'} />);
-              attitudeText = 'Good!';
-              break;
-              case 'bad':
-              attitudeDisplay = (<ThumbV1 type={'down'} />);
-              attitudeText = 'Bad.';
-              break;
-              case 'idk':
-              attitudeDisplay = (<QuestionMark />);
-              attitudeText = `I don't know yet...`;
-              break;
-              default:
-              break;
-            }
-            return (
-              <div
-                key={idx}
-                className={[styles.Requirement, (
-                  attitude === undefined
-                  ? styles.InactiveRequirement
-                  : null
-                )].join(' ')}>
+            </td>
+
+            <td>
+              <div className={styles.RequirementsContainer}>
+              {existingRequirements.filter(rq => rq.visibility !== false).map((rq, idx) => {
+                let attitude = op.attitudeRequirementPairs[rq.id];
+                let attitudeDisplay = null;
+                let attitudeText = null;
+                switch (attitude) {
+                  case 'good':
+                  attitudeDisplay = (<ThumbV1 type={'up'} />);
+                  attitudeText = 'Good!';
+                  break;
+                  case 'bad':
+                  attitudeDisplay = (<ThumbV1 type={'down'} />);
+                  attitudeText = 'Bad.';
+                  break;
+                  case 'idk':
+                  attitudeDisplay = (<QuestionMark />);
+                  attitudeText = `I don't know yet...`;
+                  break;
+                  default:
+                  break;
+                }
+                return (
                   <div
-                    className={[styles.RequirementStar, (
-                      rq.starred === true ? styles.ActiveStar : null
+                    key={idx}
+                    className={[styles.Requirement, (
+                      attitude === undefined
+                      ? styles.InactiveRequirement
+                      : null
                     )].join(' ')}>
-                    {/* onClick={(event) => this.switchStarStatusOfRequirement(rq.id)} */}
-                    <FontAwesomeIcon icon={fasStar}/>
+                      <div
+                        className={[styles.RequirementStar, (
+                          rq.starred === true ? styles.ActiveStar : null
+                        )].join(' ')}>
+                        {/* onClick={(event) => this.switchStarStatusOfRequirement(rq.id)} */}
+                        <FontAwesomeIcon icon={fasStar}/>
+                        </div>
+                      <div
+                        title={attitudeText}
+                        className={styles.RequirementAttitude}
+                        onClick={(event) => this.attitudeChangeHandler(event, op.id, rq.id, attitude)}>
+                        {attitudeDisplay}
+                      </div>
+                      <div
+                        className={styles.RequirementName}>
+                        <a data-tip data-for={`${op.id}-${rq.id}`}>
+                        {getFirstNWords(4, rq.name)}
+                        </a>
+                        <ReactTooltip
+                          id={`${op.id}-${rq.id}`}
+                          type='dark'
+                          effect='solid'
+                          place={'bottom'}
+                          className={styles.RequirementNameTooltipContainer}>
+                          {rq.name}
+                        </ReactTooltip>
+                      </div>
+
+                      <div className={styles.RequirementAttitudeContainer}>
+                      <div
+                        className={[styles.RequirementAttitudeThumbContainer].join(' ')}
+                        onClick={(event) => this.attitudeChangeHandler(event, op.id, rq.id, 'good')}>
+                        <ThumbV1 type={'up'}/>
+                      </div>
+
+                      <div
+                        className={[styles.RequirementAttitudeThumbContainer].join(' ')}
+                        onClick={(event) => this.attitudeChangeHandler(event, op.id, rq.id, 'idk')}>
+                        <QuestionMark />
+                      </div>
+
+                      <div
+                        className={[styles.RequirementAttitudeThumbContainer].join(' ')}
+                        onClick={(event) => this.attitudeChangeHandler(event, op.id, rq.id, 'bad')}>
+                        <ThumbV1 type={'down'}/>
+                      </div>
+                    
                     </div>
-                  <div
-                    title={attitudeText}
-                    className={styles.RequirementAttitude}
-                    onClick={(event) => this.attitudeChangeHandler(event, op.id, rq.id, attitude)}>
-                    {attitudeDisplay}
                   </div>
-                  <div
-                    className={styles.RequirementName}>
-                    <a data-tip data-for={`${op.id}-${rq.id}`}>
-                    {getFirstNWords(4, rq.name)}
-                    </a>
-                    <ReactTooltip
-                      id={`${op.id}-${rq.id}`}
-                      type='dark'
-                      effect='solid'
-                      place={'bottom'}
-                      className={styles.RequirementNameTooltipContainer}>
-                      {rq.name}
-                    </ReactTooltip>
-                  </div>
-
-                  <div className={styles.RequirementAttitudeContainer}>
-                  <div
-                    className={[styles.RequirementAttitudeThumbContainer].join(' ')}
-                    onClick={(event) => this.attitudeChangeHandler(event, op.id, rq.id, 'good')}>
-                    <ThumbV1 type={'up'}/>
-                  </div>
-
-                  <div
-                    className={[styles.RequirementAttitudeThumbContainer].join(' ')}
-                    onClick={(event) => this.attitudeChangeHandler(event, op.id, rq.id, 'idk')}>
-                    <QuestionMark />
-                  </div>
-
-                  <div
-                    className={[styles.RequirementAttitudeThumbContainer].join(' ')}
-                    onClick={(event) => this.attitudeChangeHandler(event, op.id, rq.id, 'bad')}>
-                    <ThumbV1 type={'down'}/>
-                  </div>
-                
-                </div>
+                );
+              })}
               </div>
-            );
-          })}
-          </div>
-          </td>
+            </td>
           </tr>
         );
       })}
@@ -761,11 +724,6 @@ class interactionBox extends Component {
         ref={node => this.interactionBoxContent = node}
         id="interaction-box-content"
         className={styles.InteractionBox}>
-        {/*
-        // this.state.mode !== 'NOTHING' ? //
-        // Trailing ternary condition from removing the distinction between NEW and other snippets,
-        // since title bar is needed for closing the box everywhere.
-        */}
         <div
           id="interaction-box-header"
           className={this.state.mode === 'NEW' ?
@@ -784,67 +742,54 @@ class interactionBox extends Component {
             </span>
             <input
               type="text"
-              title={'Click to edit'}
+              disabled={showoff !== true ? null : true}
+              // title={showoff !== true ? 'Click to edit' : false}
               value={this.state.title}
               placeholder={'Click to add a title'}
               className={styles.TitleInput}
               onChange={(event) => this.titleInputChangeHandler(event)}/> &nbsp;
-            {/* // commented out block to hide AutoSuggestedBadge
-              // // this.state.mode === 'NEW' &&
-              // this.state.autoSuggestedTitle === true
-              // ? <span className={styles.AutoSuggestedBadge}>Auto Suggested</span>
-              // : null
-            */}
           </div>
         </div>
-        {/*
-        // { commmented out to bring back close interaction box handler
-        //   this.state.mode !== 'NEW'
-        //   ? <div style={{marginRight: '20px', fontSize: '16px', opacity: '0.6'}}>
-        //   <a target="_blank" href={this.state.url} style={{color: 'black', textDecoration: 'none', fontSize: '13px'}} onClick={(event) => openLinkInTextEditorExtension(event, this.state.url)} title="Open the original page in a new tab"><FontAwesomeIcon icon={fasShareSquare}/> Open in new tab</a>
-        //   </div>
-        //   : null
-        // }
-        // : null
-        */}
 
-      <div 
-        className={styles.SnippetContainer}>
-        {snippet}
-      </div>
-
-      {experimentalOptionList}
-
-      {this.props.specificPieceId === undefined || this.props.specificPieceId === null ? addOptionRequirement : null}
-
-
-      <div className={styles.FooterContainer}>
-        <div className={styles.NoteContainer} >
-          <Input
-            style={{height: '100%'}}
-            elementType='textarea'
-            elementConfig={{placeholder: 'Type some notes'}}
-            value={this.state.notes}
-            changed={this.inputChangedHandler}/>
+        <div 
+          className={styles.SnippetContainer}>
+          {snippet}
         </div>
 
-        <div className={styles.ClipButtonContainer}>
-          <button
-            title="Save this Snippet"
-            className={styles.ClipButton}
-            onClick={(event) => this.submitPieceHandler(event)}
-            >
-            <div className={styles.ButtonTextContainer}>
-              <img src={chrome.extension.getURL(APP_LOGO)} alt={'Save Snippet'}/>
-              <span>
-                {this.state.canSubmit ? 'Saved!' : 'Save Snippet'}
-              </span>
-            </div>
-          </button>
-        </div>
-      </div>
+        {experimentalOptionList}
 
-    </div>
+        {this.props.specificPieceId === undefined || this.props.specificPieceId === null ? addOptionRequirement : null}
+
+
+        <div className={styles.FooterContainer}>
+          <div className={styles.NoteContainer} >
+            <Input
+              showoff={showoff}
+              style={{height: '100%'}}
+              elementType='textarea'
+              elementConfig={{placeholder: 'Type some notes'}}
+              value={this.state.notes}
+              changed={this.inputChangedHandler}/>
+          </div>
+
+          <div className={styles.ClipButtonContainer}>
+            <button
+              title="Save this Snippet"
+              className={styles.ClipButton}
+              onClick={(event) => this.submitPieceHandler(event)}
+              disabled={showoff !== true ? null : true}
+              >
+              <div className={styles.ButtonTextContainer}>
+                <img src={this.state.app_logo_url} alt={'Save Snippet'}/>
+                <span>
+                  {this.state.canSubmit ? 'Saved!' : 'Save Snippet'}
+                </span>
+              </div>
+            </button>
+          </div>
+        </div>
+
+      </div>
     );
   }
 

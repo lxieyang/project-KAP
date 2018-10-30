@@ -59,7 +59,7 @@ class TaskStatusView extends Component {
   }
 
   render () {
-    const { task } = this.props;
+    const { task, showoff } = this.props;
 
     return (
       <div className={styles.TaskStatusView}>
@@ -74,7 +74,7 @@ class TaskStatusView extends Component {
               <div 
                 title={'Click to edit'}
                 className={styles.TaskName}
-                contentEditable={true}
+                contentEditable={showoff !== true}
                 suppressContentEditableWarning={true}
                 onInput={(event) => this.inputChangedHandler(event, task.id)}
                 onFocus={() => this.switchEditingTaskNameStatus()}
@@ -92,33 +92,38 @@ class TaskStatusView extends Component {
             </div>
           </div>
 
-          <div className={styles.TaskStatusViewRight}>
-            <div className={styles.StatusButtonsContainer}>
-              <div 
-                title={`I'm still working on this.`}
-                className={styles.StatusButton}
-                style={
-                  task.taskOngoing === true ? activeWorkingButtonStyle : null
-                }
-                onClick={(event) => this.switchTaskOngoinghandler(task.id, true, task.taskOngoing)}>
-                <FontAwesomeIcon icon={fasCircleNotch} style={{marginRight: '4px'}}/>
-                Ongoing...
+          {
+            showoff === true
+            ? null
+            : <div className={styles.TaskStatusViewRight}>
+                <div className={styles.StatusButtonsContainer}>
+                  <div 
+                    title={`I'm still working on this.`}
+                    className={styles.StatusButton}
+                    style={
+                      task.taskOngoing === true ? activeWorkingButtonStyle : null
+                    }
+                    onClick={(event) => this.switchTaskOngoinghandler(task.id, true, task.taskOngoing)}>
+                    <FontAwesomeIcon icon={fasCircleNotch} style={{marginRight: '4px'}}/>
+                    Ongoing...
+                  </div>
+                  <div 
+                    title={`I've completed it!`}
+                    className={styles.StatusButton}
+                    style={
+                      task.taskOngoing === false ? activeFinishButtonStyle : null
+                    }
+                    onClick={(event) => this.switchTaskOngoinghandler(task.id, false, task.taskOngoing)}>
+                    <FontAwesomeIcon icon={fasCheck} style={{marginRight: '4px'}}/>
+                    Completed!
+                    {
+                      task.completionTimestamp !== null && task.completionTimestamp !== undefined ? ` (${moment(task.completionTimestamp).fromNow()})` : null
+                    }
+                  </div>
+                </div>
               </div>
-              <div 
-                title={`I've completed it!`}
-                className={styles.StatusButton}
-                style={
-                  task.taskOngoing === false ? activeFinishButtonStyle : null
-                }
-                onClick={(event) => this.switchTaskOngoinghandler(task.id, false, task.taskOngoing)}>
-                <FontAwesomeIcon icon={fasCheck} style={{marginRight: '4px'}}/>
-                Completed!
-                {
-                  task.completionTimestamp !== null && task.completionTimestamp !== undefined ? ` (${moment(task.completionTimestamp).fromNow()})` : null
-                }
-              </div>
-            </div>
-          </div>
+          }
+          
         </div>
       </div>
     )

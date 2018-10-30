@@ -27,6 +27,9 @@ const rowSource = {
       index: props.index
     };
   },
+  canDrag(props) {
+    return props.readModeisOn ? false : true
+  }
 }
 
 const rowTarget = {
@@ -155,7 +158,7 @@ class TableRow extends Component {
   }
 
   render () {
-    const { op, index, inactiveOpacity, isDragging, connectDragSource, connectDropTarget } = this.props;
+    const { op, index, inactiveOpacity, isDragging, connectDragSource, connectDropTarget, readModeisOn } = this.props;
     const opacity = isDragging ? 0 : 1;
     return connectDragSource(connectDropTarget(
         <td style={{ opacity, position: 'relative'}}>
@@ -181,7 +184,12 @@ class TableRow extends Component {
                 alignItems: 'center',
                 padding: '5px 0px'}}>
 
-              <span className={styles.Ordinal} title={'drag to reorder options'}>{(index + 1)}</span>
+              <span 
+                className={styles.Ordinal} 
+                title={readModeisOn !== true ? 'drag to reorder options' : null}
+                style={{cursor: readModeisOn ? 'default' : null}}>
+                {(index + 1)}
+              </span>
               
               <div
                 className={styles.Option}
@@ -194,9 +202,9 @@ class TableRow extends Component {
                 </div>
                 <div className={styles.OptionContentRow}>
                   <span
-                    title={'Click to edit'}
+                    title={readModeisOn !== true ? 'Click to edit' : null}
                     className={styles.OptionText}
-                    contentEditable={true}
+                    contentEditable={readModeisOn !== true ? true : false}
                     suppressContentEditableWarning={true}
                     onInput={(event) => this.optionNameChangedHandler(event, op.id)}>
                     {op.name}
@@ -238,7 +246,10 @@ class TableRow extends Component {
                   >
                     <span
                       className={styles.MoreIconContainer}
-                      style={{opacity: this.state.isPopoverOpen ? '0.7' : null}}
+                      style={{
+                        opacity: this.state.isPopoverOpen ? '0.7' : null,
+                        visibility: readModeisOn ? 'hidden' : null
+                      }}
                       onClick={() => this.switchPopoverOpenStatus()}>
                       <FontAwesomeIcon icon={fasMore}/>
                     </span>

@@ -241,6 +241,10 @@ class TableView extends Component {
   }
 
   componentDidMount () {
+    if(this.props.showoff === true) {
+      this.setState({readModeisOn: true});
+    }
+
     const { task } = this.props;
     this.transformData(task);
 
@@ -728,6 +732,9 @@ class TableView extends Component {
     //   </Aux>
     // );
 
+    const { readModeisOn } = this.state;
+    const { showoff } = this.props;
+
 
     let newRequirementsList = this.state.requirementsList; // this.getOrderedRequirementListFromState();
     let newOptionsList = this.state.optionsList; // this.getOrderedOptionListFromState();
@@ -735,7 +742,9 @@ class TableView extends Component {
       <tr>
         <td className={[styles.AddButtons, (newRequirementsList.length === 0 || newOptionsList.length === 0) ? styles.WhenNothingInTable : null].join(' ')}>
 
-          <div className={styles.AddRequirementButtonContainer}>
+          <div 
+            className={styles.AddRequirementButtonContainer} 
+            style={{visibility: readModeisOn ? 'hidden' : null}}>
             <Popover
               isOpen={this.state.addRequirementPopoverIsOpen}
               position={'bottom'} // preferred position
@@ -773,7 +782,9 @@ class TableView extends Component {
             </Popover>
           </div>
 
-          <div className={styles.AddOptionButtonContainer}>
+          <div 
+            className={styles.AddOptionButtonContainer}
+            style={{visibility: readModeisOn ? 'hidden' : null}}>
             <Popover
               isOpen={this.state.addOptionPopoverIsOpen}
               position={'bottom'} // preferred position
@@ -817,6 +828,7 @@ class TableView extends Component {
             let isVisible = true;
             return (
               <TableHeader
+                readModeisOn={readModeisOn}
                 key={rq.id}
                 rq={rq}
                 index={idx}
@@ -833,38 +845,14 @@ class TableView extends Component {
         }
       </tr>
     );
-    let viewTableHeader = (
-      <tr>
-        <td className={styles.addButtons}>
-      </td>
-
-        {
-          newRequirementsList.map((rq, idx) => {
-            let isVisible = true;
-            return (
-              <TableHeader
-                key={rq.id}
-                rq={rq}
-                index={idx}
-                moveHeader={this.moveHeader}
-                inactiveOpacity={inactiveOpacity}
-                switchStarStatusOfRequirement={this.switchStarStatusOfRequirement}
-                switchHideStatusOfARequirement={this.switchHideStatusOfARequirement}
-                deleteRequirementWithId={this.deleteRequirementHandler}
-                updateRequirementName={FirebaseStore.updateRequirementName}
-                isVisible={isVisible}
-                />
-            );
-          })
-        }
-      </tr>
-    );
+    
     let newTableBody = newOptionsList.filter(op => op.visibility !== false).map((op, idx) => {
       let optionVisibility = true;
       let snippetsSelected = this.state.selectedSnippets;
       return (
         <tr key={op.id}>
           <TableRow
+            readModeisOn={readModeisOn}
             op={op}
             index={idx}
             moveRow={this.moveRow}
@@ -1010,302 +998,10 @@ class TableView extends Component {
         </tr>
       );
     });
-
-    let TableBodyOverlay = newOptionsList.map((op,idx) => {
-    let optionVisibility = true;
-    return (
-        <tr
-        key={op.id}
-        style={{position:'relative',backgroundColor:'rgba(255,255,255,1)'}}
-        >
-        <TableRow
-          op={op}
-          index={idx}
-          moveRow={this.moveRow}
-          inactiveOpacity={inactiveOpacity}
-          switchStarStatusOfOption={this.switchStarStatusOfOption}
-          switchHideStatusOfAnOption={this.switchHideStatusOfAnOption}
-          switchUsedStatusOfOption={this.switchUsedStatusOfOption}
-          newRequirementsList={newRequirementsList}
-          pieces={this.state.pieces}
-          options={this.state.options}
-          requirements={this.state.requirements}
-          updateOptionName={FirebaseStore.updateOptionName}
-          addANoteToOption={FirebaseStore.addANoteToAnOption}
-          deleteANoteFromOption={FirebaseStore.deleteANoteFromAnOption}
-          shouldShowNotes={this.state.shouldShowNotes}
-          makeInteractionbox={this.makeInteractionbox}
-          invisible={optionVisibility}
-          />
-        </tr>
-      )});
-    let emptyHeader = (
-      <tr>
-          <th>
-            <div className={styles.ConfigurationLine}>
-            </div>
-            </th>
-
-        {   newRequirementsList.map((rq, idx) => {
-            let isVisible = false;
-            return (
-              <TableHeader
-                key={rq.id}
-                rq={rq}
-                index={idx}
-                moveHeader={this.moveHeader}
-                inactiveOpacity={inactiveOpacity}
-                switchStarStatusOfRequirement={this.switchStarStatusOfRequirement}
-                switchHideStatusOfARequirement={this.switchHideStatusOfARequirement}
-                deleteRequirementWithId={this.deleteRequirementHandler}
-                updateRequirementName={FirebaseStore.updateRequirementName}
-                isVisible={isVisible}
-                />
-            );
-          })
-        }
-      </tr>
-    );
-    let invisibleIconOverlay = newOptionsList.map((op, idx) => {
-      let optionVisibility = false;
-      return (
-        <tr key={op.id}>
-          <TableRow
-            op={op}
-            index={idx}
-            moveRow={this.moveRow}
-            inactiveOpacity={inactiveOpacity}
-            switchStarStatusOfOption={this.switchStarStatusOfOption}
-            switchHideStatusOfAnOption={this.switchHideStatusOfAnOption}
-            switchUsedStatusOfOption={this.switchUsedStatusOfOption}
-            newRequirementsList={newRequirementsList}
-            pieces={this.state.pieces}
-            options={this.state.options}
-            requirements={this.state.requirements}
-            updateOptionName={FirebaseStore.updateOptionName}
-            addANoteToOption={FirebaseStore.addANoteToAnOption}
-            deleteANoteFromOption={FirebaseStore.deleteANoteFromAnOption}
-            shouldShowNotes={this.state.shouldShowNotes}
-            makeInteractionbox={this.makeInteractionbox}
-            invisible={optionVisibility}
-            />
-            {
-              newRequirementsList.map((rq, index) => {
-                // find all pieces in the piecesList that has option id = op.id and requirement id = rq.id
-                let piecesInThisCell = [];
-                for (let pKey in this.state.pieces) {
-                  let piece = this.state.pieces[pKey];
-                  let attitudeList = piece.attitudeList;
-                  if (attitudeList !== undefined) {
-                    let attitudeRequirementPairs = attitudeList[op.id];
-                    if (attitudeRequirementPairs !== undefined) {
-                      let attitude = attitudeRequirementPairs[rq.id];
-                      if (attitude !== undefined) {
-                        piecesInThisCell.push({
-                          ...piece,
-                          id: pKey,
-                          attitude: attitude
-                        })
-                      }
-                    }
-                  }
-                }
-                piecesInThisCell = reverse(sortBy(piecesInThisCell, ['attitude']));
-
-                return (
-                  <td key={rq.id} style={{
-                    opacity: rq.hide === true || op.hide === true ? `${inactiveOpacity}` : '1',
-                  }}>
-                    <div className={styles.AttitudeThumbInTableCellContainer}>
-                      { piecesInThisCell.length > 0 ?
-                        piecesInThisCell.map((p, idx) => {
-                        let thumb = null;
-                        switch (p.attitude) {
-                          case 'good':  thumb = (<ThumbV1 type='up' onClick={(event) => this.log(event)}/>); break;
-                          case 'bad':   thumb = (<ThumbV1 type='down' />); break;
-                          case 'idk':   thumb = (<QuestionMark />); break;
-                          default: break;
-                        }
-
-                        return (
-                          <Aux key={`${p.id}${op.id}${rq.id}`}>
-                            <div
-                              className={[styles.AttitudeInTableCell].join(' ')}
-                              data-tip
-                              data-for={`${p.id}${op.id}${rq.id}`}>
-                              {thumb}
-                            </div>
-                            <ReactTooltip
-                              place="right"
-                              type="light"
-                              effect="solid"
-                              id={`${p.id}${op.id}${rq.id}`}
-                              className={styles.TooltipOverAttitude}
-                              getContent={() => {
-                                return (
-                                  <SnippetCard
-                                    id={p.id}
-                                    type={p.type}
-                                    isInTableView={true}
-                                    allPieces={this.state.pieces}
-                                    options={this.state.options}
-                                    requirements={this.state.requirements}
-                                    status={true}
-                                    pieceIds={p.type === SNIPPET_TYPE.PIECE_GROUP ? p.pieceIds : []}
-                                    title={p.type === SNIPPET_TYPE.PIECE_GROUP ? p.name : p.title}
-                                    texts={p.type === SNIPPET_TYPE.PIECE_GROUP ? p.name : p.texts}
-                                    name={p.type === SNIPPET_TYPE.PIECE_GROUP ? null : (new URL(p.url)).hostname}
-                                    link={p.url}
-                                    icon={p.url}
-                                    htmls={p.htmls}
-                                    timestamp={p.timestamp}
-                                    postTags={p.postTags}
-                                    notes={p.notes}
-                                    codeUseInfo={p.codeUseInfo}
-                                    attitudeList={p.attitudeList}
-                                    incrementSelectedSnippetNumber={this.tableviewSnippetSeleciton}
-                                    decrementSelectedSnippetNumber={this.tableviewSnippetSeleciton}
-                                    selectable={false}
-                                    makeInteractionBox={(event, id) => this.makeInteractionbox(event, id)
-                                    }/>
-                                );
-                              }}>
-
-                            </ReactTooltip>
-                          </Aux>
-                        );
-
-                      }): null}
-                    </div>
-                  </td>
-                );
-              })
-            }
-        </tr>
-      );
-    });
-    let invisibleOptionsOverlay = newOptionsList.map((op, idx) => {
-      let optionVisibility = false;
-      return (
-        <tr key={op.id}>
-          <TableRow
-            op={op}
-            index={idx}
-            moveRow={this.moveRow}
-            inactiveOpacity={inactiveOpacity}
-            switchStarStatusOfOption={this.switchStarStatusOfOption}
-            switchHideStatusOfAnOption={this.switchHideStatusOfAnOption}
-            switchUsedStatusOfOption={this.switchUsedStatusOfOption}
-            newRequirementsList={newRequirementsList}
-            pieces={this.state.pieces}
-            options={this.state.options}
-            requirements={this.state.requirements}
-            updateOptionName={FirebaseStore.updateOptionName}
-            addANoteToOption={FirebaseStore.addANoteToAnOption}
-            deleteANoteFromOption={FirebaseStore.deleteANoteFromAnOption}
-            shouldShowNotes={this.state.shouldShowNotes}
-            makeInteractionbox={this.makeInteractionbox}
-            invisible={optionVisibility}
-            />
-            {
-              newRequirementsList.map((rq, index) => {
-                // find all pieces in the piecesList that has option id = op.id and requirement id = rq.id
-                let piecesInThisCell = [];
-                for (let pKey in this.state.pieces) {
-                  let piece = this.state.pieces[pKey];
-                  let attitudeList = piece.attitudeList;
-                  if (attitudeList !== undefined) {
-                    let attitudeRequirementPairs = attitudeList[op.id];
-                    if (attitudeRequirementPairs !== undefined) {
-                      let attitude = attitudeRequirementPairs[rq.id];
-                      if (attitude !== undefined) {
-                        piecesInThisCell.push({
-                          ...piece,
-                          id: pKey,
-                          attitude: attitude
-                        })
-                      }
-                    }
-                  }
-                }
-                piecesInThisCell = reverse(sortBy(piecesInThisCell, ['attitude']));
-
-                return (
-                  <td key={rq.id} style={{
-                    opacity: rq.hide === true || op.hide === true ? `${inactiveOpacity}` : '1',
-                  }}>
-                    <div className={styles.AttitudeThumbInTableCellContainer}>
-                      { piecesInThisCell.length > 0 ?
-                        piecesInThisCell.map((p, idx) => {
-                        let thumb = null;
-                        switch (p.attitude) {
-                          case 'good':  thumb = (<ThumbV1 type='up' />); break;
-                          case 'bad':   thumb = (<ThumbV1 type='down' />); break;
-                          case 'idk':   thumb = (<QuestionMark />); break;
-                          default: break;
-                        }
-
-                        return (
-                          <Aux key={`${p.id}${op.id}${rq.id}`}>
-                            <div
-                              className={[styles.AttitudeInTableCell].join(' ')}
-                              data-tip
-                              data-for={`${p.id}${op.id}${rq.id}`}>
-                              {thumb}
-                            </div>
-                            <ReactTooltip
-                              place="right"
-                              type="light"
-                              effect="solid"
-                              id={`${p.id}${op.id}${rq.id}`}
-                              className={styles.TooltipOverAttitude}
-                              getContent={() => {
-                                return (
-                                  <SnippetCard
-                                    id={p.id}
-                                    type={p.type}
-                                    isInTableView={true}
-                                    allPieces={this.state.pieces}
-                                    options={this.state.options}
-                                    requirements={this.state.requirements}
-                                    status={true}
-                                    pieceIds={p.type === SNIPPET_TYPE.PIECE_GROUP ? p.pieceIds : []}
-                                    title={p.type === SNIPPET_TYPE.PIECE_GROUP ? p.name : p.title}
-                                    texts={p.type === SNIPPET_TYPE.PIECE_GROUP ? p.name : p.texts}
-                                    name={p.type === SNIPPET_TYPE.PIECE_GROUP ? null : (new URL(p.url)).hostname}
-                                    link={p.url}
-                                    icon={p.url}
-                                    htmls={p.htmls}
-                                    timestamp={p.timestamp}
-                                    postTags={p.postTags}
-                                    notes={p.notes}
-                                    codeUseInfo={p.codeUseInfo}
-                                    attitudeList={p.attitudeList}
-                                    incrementSelectedSnippetNumber={this.tableviewSnippetSeleciton}
-                                    decrementSelectedSnippetNumber={this.tableviewSnippetSeleciton}
-                                    selectable={false}
-                                    makeInteractionBox={(event, id) => this.makeInteractionbox(event, id)
-                                    }/>
-                                );
-                              }}>
-
-                            </ReactTooltip>
-                          </Aux>
-                        );
-
-                      }): null}
-                    </div>
-                  </td>
-                );
-              })
-            }
-        </tr>
-      );
-    });
+    
     let modal = null;
     if (this.state.showModal) {
       let piece = this.props.task.pieces[this.state.modalPieceId];
-      // console.log(piece);
 
       if (piece !== undefined) {
       // console.log('tableview interaction box');
@@ -1316,6 +1012,8 @@ class TableView extends Component {
             <div
               className={styles.ModalContentBackground}>
               <InteractionBox
+                taskId={this.props.task.id}
+                showoff={showoff}
                 mode={'UPDATE'}
                 clip={this.dismissModal}
                 id={this.state.modalPieceId}
@@ -1353,46 +1051,6 @@ class TableView extends Component {
       </table>
       </div>
     );
-    let readContent = (
-      <div style={{position: 'relative'}}>
-        <div id='bottom' style={{opacity:'1', zIndex: '15',borderSpacing: '0px',
-                              maxWidth: '90vw', maxHeight: '50vw',
-                              overflowY:'auto', overflowX:'auto'}}>
-          <table className={styles.ComparisonTable}>
-            <thead style={{ opacity: '1'}}>{viewTableHeader}</thead>
-            <tbody style={{ opacity: '1'}}>{invisibleOptionsOverlay}</tbody>
-          </table>
-        </div>
-
-        <div id='middle' style={{zIndex: '30', position: 'absolute', top: '0',
-                      maxWidth: '90vw', maxHeight: '50vw',
-                      overflowY:'scroll', overflowX:'scroll'}}>
-        <table className={[styles.Overlay, styles.ComparisonTable].join(' ')}>
-          <thead style={{opacity:'0'}}>{viewTableHeader}</thead>
-          <tbody style={{opacity:'1'}}>{TableBodyOverlay}</tbody>
-        </table>
-        </div>
-
-        <div id='top' style={{opacity: '1', zIndex: '45', position: 'absolute', top: '0', left: '0',
-                      maxWidth: '90vw', maxHeight: '50vw',
-                      overflowY:'scroll', overflowX:'scroll'}}
-                      onScroll={(event) => this.scrollTable(event)}>
-        <table className={[styles.Overlay].join(' ')}>
-        <thead style={{ opacity: '0'}}>{emptyHeader}</thead>
-        <tbody style={{ opacity: '0'}}>{invisibleIconOverlay}</tbody>
-        </table>
-        </div>
-
-        <div style={{opacity: '1', zIndex: '44', position: 'absolute', top: '0', left: '0',
-                      maxWidth: '90vw', maxHeight: '50vw',
-                      overflowY:'hidden', overflowX:'hidden'}}>
-        <table className={[styles.Overlay].join(' ')}>
-        <thead style={{ opacity: '1'}}>{emptyHeader}</thead>
-        <tbody style={{ visibility: 'hidden'}}>{invisibleOptionsOverlay}</tbody>
-        </table>
-        </div>
-      </div>
-  );
 
     return (
       <Aux>
@@ -1425,7 +1083,7 @@ class TableView extends Component {
               </div>
 
               {
-                this.state.tableviewisOpen
+                showoff !== true && this.state.tableviewisOpen
                 ? <div className={styles.ModeToggleButtonsContainer}>
                     <div className={[styles.ModeToggleButton, this.state.readModeisOn === true ? styles.ModeToggleButtonActive : null].join(' ')}
                       onClick={(event) => this.switchTableMode(event, true)}>
@@ -1445,9 +1103,7 @@ class TableView extends Component {
             </div>
             <Collapse isOpened={this.state.tableviewisOpen} springConfig={{stiffness: 700, damping: 50}}>
               <div className={styles.Content}>
-              {
-                this.state.readModeisOn? readContent: writeContent
-              }
+                {writeContent}
               </div>
             </Collapse>
             {modal}

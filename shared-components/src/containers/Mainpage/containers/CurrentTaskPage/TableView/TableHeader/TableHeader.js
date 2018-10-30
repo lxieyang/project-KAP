@@ -23,6 +23,9 @@ const headerSource = {
       index: props.index
     };
   },
+  canDrag(props) {
+    return props.readModeisOn ? false : true
+  }
 }
 
 const headerTarget = {
@@ -117,7 +120,7 @@ class TableHeader extends Component {
   }
 
   render () {
-    const { rq, index, inactiveOpacity, isDragging, connectDragSource, connectDropTarget, isVisible } = this.props;
+    const { rq, index, inactiveOpacity, isDragging, connectDragSource, connectDropTarget, isVisible, readModeisOn } = this.props;
     const opacity = (isDragging) ? 0 : 1;
     return connectDragSource(connectDropTarget(
       <th style={{ opacity, visibility : isVisible ? 'visible' : 'hidden'}}>
@@ -136,7 +139,12 @@ class TableHeader extends Component {
         <div className={styles.RequirementContainer}>
 
           <div className={styles.OrdinalContainer}>
-          <span className={styles.Ordinal} title={'drag to reorder critera'}>{(index + 1)}</span>
+          <span 
+            className={styles.Ordinal} 
+            title={readModeisOn !== true ? 'drag to reorder critera' : null}
+            style={{cursor: readModeisOn ? 'default' : null}}>
+            {(index + 1)}
+          </span>
           </div>
 
           <div
@@ -150,9 +158,9 @@ class TableHeader extends Component {
             </div>
             <div className={styles.RequirementContentRow}>
               <span
-                title={'Click to edit'}
+                title={readModeisOn !== true ? 'Click to edit' : null}
                 className={styles.RequirementText}
-                contentEditable={true}
+                contentEditable={readModeisOn !== true ? true : false}
                 suppressContentEditableWarning={true}
                 onInput={(event) => this.requirementNameChangedHandler(event, rq.id)}>
                 {rq.name}
@@ -186,7 +194,10 @@ class TableHeader extends Component {
               >
                 <span
                   className={styles.MoreIconContainer}
-                  style={{opacity: this.state.isPopoverOpen ? '0.7' : null}}
+                  style={{
+                    opacity: this.state.isPopoverOpen ? '0.7' : null, 
+                    visibility: readModeisOn ? 'hidden' : null
+                  }}
                   onClick={() => this.switchPopoverOpenStatus()}>
                   <FontAwesomeIcon icon={fasMore}/>
                 </span>

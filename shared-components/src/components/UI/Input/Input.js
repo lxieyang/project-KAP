@@ -13,7 +13,8 @@ const input = (props) => {
       break;
     case ('textarea'):
       inputElement = <textarea className={inputClasses.join(' ')} {...props.elementConfig} value={props.value} id={props.id}
-      onChange={props.changed}/>;
+      onChange={props.changed}
+      disabled={props.showoff !== true ? null : true}/>;
       break;
     case ('select'):
       inputElement = (

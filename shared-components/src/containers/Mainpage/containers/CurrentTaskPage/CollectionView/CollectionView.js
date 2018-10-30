@@ -416,7 +416,7 @@ class CollectionView extends Component {
   }
 
   render () {
-    const { task } = this.props;
+    const { task, showoff } = this.props;
 
     /* Top pages */
     const { pageCountList } = task;
@@ -563,6 +563,8 @@ class CollectionView extends Component {
             <div
               className={styles.ModalContentBackground}>
               <InteractionBox
+                taskId={this.props.task.id}
+                showoff={showoff}
                 mode={'UPDATE'}
                 clip={this.dismissModal}
                 id={this.state.modalPieceId}

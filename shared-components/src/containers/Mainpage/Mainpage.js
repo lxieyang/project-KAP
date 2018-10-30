@@ -44,11 +44,10 @@ class Mainpage extends Component {
   }
 
   UNSAFE_componentWillMount() {
-    // document.body.style.zoom = 0.67;
-
     this.removeAuthListerner = firebase.auth().onAuthStateChanged((user) => {
       if (user !== null) {
         setUserIdAndName(user.uid, user.displayName, user.photoURL);
+        console.log("User token: " + user.uid)
 
         FirebaseStore.updateUserProfile(user.uid, user.displayName, user.photoURL, user.email);
 
@@ -165,6 +164,7 @@ class Mainpage extends Component {
   loadTasks () {
     currentTaskIdRef.on('value', (snapshot) => {
       this.setState({currentTaskId: snapshot.val()});
+      console.log("CurrentTaskId: " + snapshot.val());
     });
     lastTaskIdRef.on('value', (snapshot) => {
       this.setState({lastTaskId: snapshot.val()});
