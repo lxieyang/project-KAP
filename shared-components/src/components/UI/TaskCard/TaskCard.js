@@ -81,8 +81,8 @@ const collectDrop = (connect, monitor) => {
 
 
 // https://www.npmjs.com/package/react-awesome-popover
-@DropTarget('TASKCARD', cardTarget, collectDrop)
-@DragSource('TASKCARD', cardSource, collectDrag)
+// @DropTarget('TASKCARD', cardTarget, collectDrop)
+// @DragSource('TASKCARD', cardSource, collectDrag)
 class TaskCard extends Component {
   state = {
     isPopoverOpen: false
@@ -244,4 +244,10 @@ class TaskCard extends Component {
 
 }
 
-export default withRouter(TaskCard);
+export default withRouter(DropTarget('TASKCARD', cardTarget, collectDrop)(
+  DragSource('TASKCARD', cardSource, collectDrag)(
+    TaskCard
+  )
+));
+
+// export default withRouter(TaskCard);

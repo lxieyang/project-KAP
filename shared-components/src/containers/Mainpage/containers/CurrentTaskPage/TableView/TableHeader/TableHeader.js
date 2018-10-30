@@ -72,13 +72,13 @@ const headerTarget = {
   }
 }
 
-@DropTarget('TABLE_HEADER', headerTarget, (connect, monitor) => ({
-  connectDropTarget: connect.dropTarget(),
-}))
-@DragSource('TABLE_HEADER', headerSource, (connect, monitor) => ({
-  connectDragSource: connect.dragSource(),
-  isDragging: monitor.isDragging(),
-}))
+// @DropTarget('TABLE_HEADER', headerTarget, (connect, monitor) => ({
+//   connectDropTarget: connect.dropTarget(),
+// }))
+// @DragSource('TABLE_HEADER', headerSource, (connect, monitor) => ({
+//   connectDragSource: connect.dragSource(),
+//   isDragging: monitor.isDragging(),
+// }))
 class TableHeader extends Component {
   static propTypes = {
     connectDragSource: PropTypes.func.isRequired,
@@ -220,4 +220,16 @@ class TableHeader extends Component {
   }
 }
 
-export default TableHeader;
+export default DropTarget('TABLE_HEADER', headerTarget, (connect, monitor) => ({
+  connectDropTarget: connect.dropTarget(),
+}))(
+  DragSource('TABLE_HEADER', headerSource, (connect, monitor) => ({
+    connectDragSource: connect.dragSource(),
+    isDragging: monitor.isDragging(),
+  }))(
+    TableHeader
+  )
+);
+
+
+// export default TableHeader;

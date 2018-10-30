@@ -28,7 +28,7 @@
     "popper.js": "^1.14.3",
     "postcss-flexbugs-fixes": "^3.3.1",
     "postcss-loader": "^2.1.6",
-    "query-string": "^6.1.0",
+    "query-string": "^5.1.1",
     "query-strings": "0.0.1",
     "react": "^16.5.0",
     "react-awesome-popover": "^2.0.6",

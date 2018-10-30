@@ -75,13 +75,13 @@ const rowTarget = {
   },
 }
 
-@DropTarget('TABLE_ROW', rowTarget, (connect, monitor) => ({
-  connectDropTarget: connect.dropTarget(),
-}))
-@DragSource('TABLE_ROW', rowSource, (connect, monitor) => ({
-  connectDragSource: connect.dragSource(),
-  isDragging: monitor.isDragging(),
-}))
+// @DropTarget('TABLE_ROW', rowTarget, (connect, monitor) => ({
+//   connectDropTarget: connect.dropTarget(),
+// }))
+// @DragSource('TABLE_ROW', rowSource, (connect, monitor) => ({
+//   connectDragSource: connect.dragSource(),
+//   isDragging: monitor.isDragging(),
+// }))
 class TableRow extends Component {
   static propTypes = {
     connectDragSource: PropTypes.func.isRequired,
@@ -328,4 +328,14 @@ class TableRow extends Component {
   }
 }
 
-export default TableRow;
+
+export default DropTarget('TABLE_ROW', rowTarget, (connect, monitor) => ({
+  connectDropTarget: connect.dropTarget(),
+}))(
+  DragSource('TABLE_ROW', rowSource, (connect, monitor) => ({
+    connectDragSource: connect.dragSource(),
+    isDragging: monitor.isDragging(),
+  }))(TableRow)
+);
+
+// export default TableRow;

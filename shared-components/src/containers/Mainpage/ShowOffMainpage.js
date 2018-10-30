@@ -25,7 +25,7 @@ import * as FirebaseStore from '../../firebase/store';
 import { APP_NAME_SHORT, DEFAULT_SETTINGS } from '../../shared/constants';
 import styles from './ShowOffMainpage.css';
 
-@DragDropContext(HTML5Backend)
+
 class Mainpage extends Component {
   state = {
     homepage: appRoutes.CURRENT_TASK,
@@ -153,4 +153,4 @@ class Mainpage extends Component {
   }
 }
 
-export default withRouter(Mainpage);
+export default withRouter(DragDropContext(HTML5Backend)(Mainpage));
