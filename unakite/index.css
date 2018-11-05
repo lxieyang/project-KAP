@@ -1,0 +1,56 @@
+body {
+    padding: 5rem;
+}
+
+a {
+    color: #c1000f;
+}
+
+img {
+    border: 1px solid lightgray;
+    box-shadow: 0 2px 5px 0 rgba(0,0,0,0.16),0 2px 10px 0 rgba(0,0,0,0.12);
+    max-width: 100%;
+    max-height: 100%;
+}
+
+p {
+    margin: 1.5em 0;
+    display: block;
+    -webkit-margin-before: 1em;
+    -webkit-margin-after: 1em;
+    -webkit-margin-start: 0px;
+    -webkit-margin-end: 0px;
+
+}
+
+.column {
+    flex: 33.33%;
+    padding: 5px;
+}
+
+.row {
+    display: flex;
+}
+
+.sidenav {
+    position: fixed;
+    background-color: #f6f6f6;
+}
+
+.sidenav a {
+    padding: 8px 16px 8px 16px;
+    text-decoration: none;
+    font-size: 1.1rem;
+    color: #c1000f;
+    display: block;
+    transition: all 0.1s ease-in;
+}
+
+.sidenav a:hover {
+    /* color: #064579; */
+    text-decoration: underline;
+}
+
+.Publications ul {
+    padding-left: 0px;
+}
