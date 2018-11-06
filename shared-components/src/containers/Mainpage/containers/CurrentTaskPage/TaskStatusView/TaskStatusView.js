@@ -1,9 +1,15 @@
 import React, { Component } from 'react';
 import moment from 'moment';
+import ReactMarkdown from 'react-markdown';
+import ReactTooltip from 'react-tooltip';
+import { Collapse } from 'react-collapse';
 import FontAwesomeIcon from '@fortawesome/react-fontawesome';
 import fasBriefcase from '@fortawesome/fontawesome-free-solid/faBriefcase';
 import fasCircleNotch from '@fortawesome/fontawesome-free-solid/faCircleNotch';
+
+import fasInfoCircle from '@fortawesome/fontawesome-free-solid/faInfoCircle';
 import fasCheck from '@fortawesome/fontawesome-free-solid/faCheck';
+import fasAngleRight from '@fortawesome/fontawesome-free-solid/faAngleRight';
 import fasAngleDown from '@fortawesome/fontawesome-free-solid/faAngleDown';
 import Aux from '../../../../../hoc/Aux/Aux';
 import * as FirebaseStore from '../../../../../firebase/store';
@@ -26,7 +32,21 @@ const activeFinishButtonStyle = {
 class TaskStatusView extends Component {
   state = {
     shouldShowPrompt: false,
-    isEditingTaskName: false
+    isEditingTaskName: false,
+    taskDebriefIsOpen: true,
+    taskDebriefIsEditing: false,
+    // taskDebriefisFocused: false,
+    taskDebiefContent: ''
+  }
+
+  switchTaskDebriefEditingStatus = (toStatus) => {
+    this.setState({taskDebriefIsEditing: toStatus})
+  }
+
+  switchTaskDebriefIsOpenStatus = () => {
+    this.setState(prevState => {
+      return { taskDebriefIsOpen: !prevState.taskDebriefIsOpen };
+    });
   }
 
   componentDidMount() {
@@ -36,6 +56,17 @@ class TaskStatusView extends Component {
       event.target.blur();
       this.setState({shouldShowPrompt: false});
     }, 1500);
+
+    this.updatetaskDebiefContent(this.props.task);
+  }
+
+  UNSAFE_componentWillReceiveProps(nextProps) {
+    this.updatetaskDebiefContent(nextProps.task);
+  }
+
+  updatetaskDebiefContent = (task) => {
+    let debriefContent = task.debrief !== undefined ? task.debrief : '';
+    this.setState({taskDebiefContent: debriefContent});
   }
 
   inputChangedHandler = (event, id) => {
@@ -58,9 +89,35 @@ class TaskStatusView extends Component {
     );
   }
 
+  taskDebriefContentChangedHandler = (event, id) => {
+    let content = event.target.innerText;
+    this.setState({taskDebiefContent: content});
+  }
+
+  taskDebriefEditButtonClicked = (event, id, toStatus) => {
+    console.log('onclick');
+    if (this.state.taskDebriefIsEditing) {
+      FirebaseStore.updateTaskDebrief(id, this.state.taskDebiefContent);
+    } 
+    this.switchTaskDebriefEditingStatus(toStatus);
+    
+  }
+
+  taskDebriefOnFocus = (event, id) => {
+    // this.setState({taskDebriefisFocused: true});
+  }
+
+  taskDebriefOnBlur = (event, id) => {
+    // this.setState({taskDebriefisFocused: false});
+    // FirebaseStore.updateTaskDebrief(id, this.state.taskDebiefContent);
+    FirebaseStore.updateTaskDebrief(id, this.state.taskDebiefContent);
+  }
+
   render () {
     const { task, showoff } = this.props;
-    const taskDebrief = "brief description of task \n \n\n\n\n\n";
+    let { debrief } = task;
+    debrief = debrief !== undefined && debrief.trim() !== '' ? debrief : '';
+
     return (
       <div className={styles.TaskStatusView}>
         <div className={styles.TaskStatusViewWrapper}>
@@ -89,6 +146,27 @@ class TaskStatusView extends Component {
                 : null
               }
 
+            </div>
+            <div 
+              className={styles.TaskDebriefCollapseButton}>
+                <a 
+                  data-tip data-for='toggleTaskDebrief' 
+                  onClick={(event) => this.switchTaskDebriefIsOpenStatus(event)}>
+                  <FontAwesomeIcon icon={this.state.taskDebriefIsOpen ? fasAngleDown : fasAngleRight}/>
+                </a>
+                <ReactTooltip
+                  id='toggleTaskDebrief'
+                  type='dark'
+                  effect='solid'
+                  place={'bottom'}
+                  // globalEventOff='click'
+                  className={styles.EditSaveButtonTooltipContainer}>
+                  {
+                    this.state.taskDebriefIsOpen
+                    ? 'Hide task description'
+                    : 'Show task description'
+                  }
+                </ReactTooltip>
             </div>
           </div>
 
@@ -120,29 +198,51 @@ class TaskStatusView extends Component {
                       task.completionTimestamp !== null && task.completionTimestamp !== undefined ? ` (${moment(task.completionTimestamp).fromNow()})` : null
                     }
                   </div>
-
-                  <div className={styles.Title}>
-                    <div className={styles.Label}>
-                      Task Debrief:
-                    </div>
-                  </div>
-                  <div className={[styles.TaskDebriefContainer].join(' ')}>
-                    <div
-                      title={'Click to edit'}
-                      className={styles.TaskName}
-                      contentEditable={showoff == true}
-                      suppressContentEditableWarning={true}
-                      >
-                      {taskDebrief}
-                    </div>
-                    </div>
-
-
                 </div>
               </div>
           }
 
         </div>
+        <Collapse isOpened={this.state.taskDebriefIsOpen} springConfig={{stiffness: 700, damping: 50}}>
+          <div className={styles.TaskDebriefContainer}>
+            <div className={styles.Title}>
+              <div className={styles.Label}> 
+                <FontAwesomeIcon icon={fasInfoCircle} /> Task Description:
+              </div>
+              <div 
+                style={{display: showoff === true ? 'none' : null}}
+                className={styles.EditSaveButton}
+                onClick={(event) => this.taskDebriefEditButtonClicked(event, task.id, !this.state.taskDebriefIsEditing)}>
+                {
+                  this.state.taskDebriefIsEditing ? 'Save' : 'Edit'
+                }
+              </div>
+            </div>
+            
+            <div className={styles.TaskDebriefViewWrapper}>
+              {
+                this.state.taskDebriefIsEditing
+                ? <div 
+                    className={styles.TaskDebriefEditBox}
+                    contentEditable={this.state.taskDebriefIsEditing === true ? true : false}
+                    placeholder='Add some brief description to this task'
+                    suppressContentEditableWarning={true}
+                    onInput={(event) => this.taskDebriefContentChangedHandler(event, task.id)}
+                    onFocus={(event) => this.taskDebriefOnFocus(event, task.id)}
+                    onBlur={(event) => this.taskDebriefOnBlur(event, task.id)}>
+                    { debrief }
+                  </div>
+                : null
+              }
+              <div 
+                className={styles.MarkdownContent} 
+                style={{flex: this.state.taskDebriefIsEditing ? '50%' : null}}>
+                <ReactMarkdown source={this.state.taskDebiefContent}/>
+              </div>
+            </div>
+          </div>  
+        </Collapse>
+        
       </div>
     )
   }

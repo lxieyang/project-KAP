@@ -147,6 +147,10 @@ export const updateTaskName = async (id, taksName) => {
   tasksRef.child(id).child('name').set(taksName);
 }
 
+export const updateTaskDebrief = async (id, taskDebrief) => {
+  tasksRef.child(id).child('debrief').set(taskDebrief);
+}
+
 export const switchTaskVisibility = async (id, toStatus) => {
   await tasksRef.child(id).child('visibility').set(toStatus);
 }

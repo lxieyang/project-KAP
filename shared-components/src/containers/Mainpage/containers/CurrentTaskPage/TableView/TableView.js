@@ -4,7 +4,7 @@ import React, { Component } from 'react';
 import { findDOMNode } from 'react-dom';
 import { withRouter } from 'react-router-dom';
 import qs from 'query-string';
-import {Collapse} from 'react-collapse';
+import { Collapse } from 'react-collapse';
 import Aux from '../../../../../hoc/Aux/Aux';
 import fasPlusCircle from '@fortawesome/fontawesome-free-solid/faPlusCircle';
 import fasListAlt from '@fortawesome/fontawesome-free-solid/faListAlt';

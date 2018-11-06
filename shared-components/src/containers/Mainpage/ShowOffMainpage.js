@@ -66,6 +66,7 @@ class Mainpage extends Component {
           ? childSnapshot.val().completionTimestamp
           : null,
         displayName: childSnapshot.val().name,
+        debrief: childSnapshot.val().debrief,
         time: childSnapshot.val().timestamp,
         searchQueries: childSnapshot.val().searchQueries,
         showOptionNotes: childSnapshot.val().showOptionNotes,

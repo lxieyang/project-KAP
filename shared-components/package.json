@@ -40,6 +40,7 @@
     "react-dom": "^16.6.0",
     "react-firebaseui": "^3.0.4",
     "react-fontawesome": "^1.6.1",
+    "react-markdown": "^4.0.3",
     "react-motion": "^0.5.2",
     "react-popper": "^1.0.2",
     "react-redux": "^5.0.7",
