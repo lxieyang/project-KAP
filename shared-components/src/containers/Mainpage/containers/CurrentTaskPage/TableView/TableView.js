@@ -1100,8 +1100,15 @@ class TableView extends Component {
             <Collapse isOpened={this.state.tableviewisOpen} springConfig={{stiffness: 700, damping: 50}}>
               <div className={styles.Content}>
                 {writeContent}
-                <div className={styles.Content}>The comparison table above is part of a working progress for representing information related to decisions in programming, to provide feedback or learn more about our project, please visit our &nbsp;
-                <a href="https://docs.google.com/forms/d/1YCBRRyCyt6dGgN74dD18I1OJ3szntC59TTmpcI3Lhe8/" target="_blank">Google form</a>.  </div>
+                {
+                  showoff == true
+                  ? <div className={styles.Content}>
+                      The comparison table above is part of a working progress for representing information related to decisions in programming, to provide feedback or learn more about our project, please visit our &nbsp;
+                      <a href="https://docs.google.com/forms/d/1YCBRRyCyt6dGgN74dD18I1OJ3szntC59TTmpcI3Lhe8/" target="_blank" rel="noopener noreferrer">Google form</a>.  
+                    </div>
+                  : null
+                }
+                
               </div>
 
             </Collapse>
