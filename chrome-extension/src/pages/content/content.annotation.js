@@ -475,21 +475,21 @@ function selectionTimeout() {
         }
         if (shouldShowSelector) {
           ReactDOM.render(
-              <SelectInteraction
-                selectedText={selection.toString()}
-                addPiece={() => displayInteractionBox(SNIPPET_TYPE.SELECTION)}
-                clip={() => ReactDOM.unmountComponentAtNode(popOverAnchor)}/>,
-              popOverAnchor);
-          }
+            <SelectInteraction
+              selectedText={selection.toString()}
+              addPiece={() => displayInteractionBox(SNIPPET_TYPE.SELECTION)}
+              clip={() => ReactDOM.unmountComponentAtNode(popOverAnchor)}/>,
+            popOverAnchor);
+          
+          // adjusting position of popover box after mounting
+          popOverAnchor.style.top = `${rect.top - 5 + window.scrollY - popOverAnchor.clientHeight}px`;
+          let leftPosition = Math.floor(rect.left + rect.width/2 - popOverAnchor.clientWidth/2);
+          leftPosition = leftPosition >= 10 ? leftPosition : 10;
+          popOverAnchor.style.left = `${leftPosition}px`;
+
+        }
       });
     });
-
-
-    // adjusting position of popover box after mounting
-    popOverAnchor.style.top = `${rect.top - 5 + window.scrollY - popOverAnchor.clientHeight}px`;
-    let leftPosition = Math.floor(rect.left + rect.width/2 - popOverAnchor.clientWidth/2);
-    leftPosition = leftPosition >= 10 ? leftPosition : 10;
-    popOverAnchor.style.left = `${leftPosition}px`;
 
     // store range
     justSelectedRange = selection.getRangeAt(0);
