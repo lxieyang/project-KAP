@@ -123,6 +123,9 @@ class TaskStatusView extends Component {
         <div className={styles.TaskStatusViewWrapper}>
           <div className={styles.TaskStatusViewLeft}>
             <div className={styles.Title}>
+              <div className={styles.Label}>
+                Task Name
+              </div>
               <div 
                 className={styles.TaskDebriefCollapseButton}>
                 <a 
@@ -146,9 +149,7 @@ class TaskStatusView extends Component {
                   }
                 </ReactTooltip>
               </div> 
-              <div className={styles.Label}>
-                Task Name
-              </div>
+              
             </div>
             <div className={[styles.TaskNameContainer, this.state.isEditingTaskName ? styles.isEditing : null].join(' ')}>
               <div
@@ -209,7 +210,7 @@ class TaskStatusView extends Component {
           <div className={styles.TaskDebriefContainer}>
             <div className={styles.Title}>
               <div className={[styles.Label, styles.TaskDebriefTitleLabel].join(' ')}> 
-                {/*<FontAwesomeIcon icon={fasInfoCircle} /> */} Task Description
+                {/*<FontAwesomeIcon icon={fasInfoCircle} /> */} Description
               </div>
               <div 
                 style={{display: showoff === true ? 'none' : null}}

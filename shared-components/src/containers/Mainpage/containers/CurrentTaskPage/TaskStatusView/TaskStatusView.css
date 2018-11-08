@@ -25,6 +25,7 @@
 .Label {
   font-weight: 600;
   margin: 10px 0px;
+  font-size: 1.4rem;
 }
 
 .TaskNameContainer {
@@ -75,7 +76,8 @@
 .TaskDebriefCollapseButton {
   cursor: pointer;
 
-  margin-right: 6px;
+  margin: 3px 6px 0px 6px;
+  font-size: 0.8rem;
 }
 
 .TaskDebriefIconOpen {
@@ -123,7 +125,7 @@
 }
 
 .TaskDebriefContainer {
-  margin-left: 64px;
+  margin-left: 56px;
   margin-right: 40px;
 }
 

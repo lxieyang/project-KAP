@@ -598,103 +598,99 @@ class CollectionView extends Component {
 
     return (
       <Aux>
-        <div className={styles.CollectionView}>
-          <div className={styles.Main} id="scrollable-content-container">
-
-
-            <div className={styles.Section}>
-              <Aux>
-                <div className={styles.Header}>
-                  <div className={styles.HeaderNameContainer}
-                      onClick={(event) => this.switchAllSnippetsOpenStatus(event)}
+        <div className={styles.Section}>
+          <div className={styles.CollectionView}>
+            <Aux>
+              <div className={styles.Header}>
+                <div className={styles.HeaderNameContainer}
+                    onClick={(event) => this.switchAllSnippetsOpenStatus(event)}
+                >
+                  <div className={styles.HeaderName}
                   >
-                    <div className={styles.HeaderName}
-                    >
-                      <span>Snippets</span>
+                    <span>Snippets</span>
+                  </div>
+                  {
+                    piecesList.length > 0
+                    ? <div
+                        className={styles.HeaderCollapseButton}>
+                        {
+                          this.state.allSnippetSIsOpen
+                          ? <FontAwesomeIcon icon={fasAngleDown} />
+                          : <FontAwesomeIcon icon={fasAngleRight} />
+                        }
+                      </div>
+                    : null
+                  }
+                </div>
+                <div className={styles.FilterNameContainer}>
+                  <div>
+                    <FontAwesomeIcon icon={fasFilter} className={styles.FilterIcon}/>
+                  </div>
+                  <div className={styles.SectionFilterContainer}>
+                    <div
+                      className={[styles.SectionFilterName,
+                        (
+                          this.state.codeFilterOn === true
+                          ? styles.Active
+                          : null
+                        )
+                      ].join(' ')}
+                      onClick={() => this.switchFilterStatus('code')}>
+                      With Code <FontAwesomeIcon icon={fasCode} />
                     </div>
+                  </div>
+
+                  <div className={styles.SectionFilterContainer}>
+                    <div
+                      className={[styles.SectionFilterName,
+                        (
+                          this.state.notesFilterOn === true
+                          ? styles.Active
+                          : null
+                        )
+                      ].join(' ')}
+                      onClick={() => this.switchFilterStatus('notes')}>
+                      With Notes <FontAwesomeIcon icon={fasStickyNote} />
+                    </div>
+                  </div>
+
+                  <div className={styles.SectionFilterContainer}>
                     {
-                      piecesList.length > 0
+                      unCategorizedCount !== 0
                       ? <div
-                          className={styles.HeaderCollapseButton}>
-                          {
-                            this.state.allSnippetSIsOpen
-                            ? <FontAwesomeIcon icon={fasAngleDown} />
-                            : <FontAwesomeIcon icon={fasAngleRight} />
-                          }
+                          className={[styles.SectionFilterBadge, styles.SectionFilterBadgeDanger].join(' ')}>
+                          {unCategorizedCount}
                         </div>
                       : null
                     }
-                  </div>
-                  <div className={styles.FilterNameContainer}>
-                    <div>
-                      <FontAwesomeIcon icon={fasFilter} className={styles.FilterIcon}/>
-                    </div>
-                    <div className={styles.SectionFilterContainer}>
-                      <div
-                        className={[styles.SectionFilterName,
-                          (
-                            this.state.codeFilterOn === true
-                            ? styles.Active
-                            : null
-                          )
-                        ].join(' ')}
-                        onClick={() => this.switchFilterStatus('code')}>
-                        With Code <FontAwesomeIcon icon={fasCode} />
-                      </div>
-                    </div>
-
-                    <div className={styles.SectionFilterContainer}>
-                      <div
-                        className={[styles.SectionFilterName,
-                          (
-                            this.state.notesFilterOn === true
-                            ? styles.Active
-                            : null
-                          )
-                        ].join(' ')}
-                        onClick={() => this.switchFilterStatus('notes')}>
-                        With Notes <FontAwesomeIcon icon={fasStickyNote} />
-                      </div>
-                    </div>
-
-                    <div className={styles.SectionFilterContainer}>
-                      {
-                        unCategorizedCount !== 0
-                        ? <div
-                            className={[styles.SectionFilterBadge, styles.SectionFilterBadgeDanger].join(' ')}>
-                            {unCategorizedCount}
-                          </div>
-                        : null
-                      }
-                      <div
-                        className={[styles.SectionFilterName,
-                          (
-                            this.state.unCategorizedFilterOn === true
-                            ? styles.Active
-                            : null
-                          )
-                        ].join(' ')}
-                        onClick={() => this.switchFilterStatus('uncat')}>
-                        Uncategorized <FontAwesomeIcon icon={farQuestionCircle} />
-                      </div>
+                    <div
+                      className={[styles.SectionFilterName,
+                        (
+                          this.state.unCategorizedFilterOn === true
+                          ? styles.Active
+                          : null
+                        )
+                      ].join(' ')}
+                      onClick={() => this.switchFilterStatus('uncat')}>
+                      Uncategorized <FontAwesomeIcon icon={farQuestionCircle} />
                     </div>
                   </div>
                 </div>
-              </Aux>
-              {
-                this.state.codeFilterOn || this.state.notesFilterOn || this.state.unCategorizedFilterOn
-                ? filteredPieces
-                : allPieces
-              }
-            </div>
+              </div>
+            </Aux>
             {
-              this.props.shouldDisplayAllPages
-              ? <div className={styles.Section}>
-                  {topPages}
-                </div>
-              : null
+              this.state.codeFilterOn || this.state.notesFilterOn || this.state.unCategorizedFilterOn
+              ? filteredPieces
+              : allPieces
             }
           </div>
+          {
+            this.props.shouldDisplayAllPages
+            ? <div className={styles.Section}>
+                {topPages}
+              </div>
+            : null
+          }
         </div>
         {modal}
 

@@ -584,12 +584,12 @@
 .Section {
   width: 100%;
   /* background-color: rgba(0,0,0,0.1); */
-  margin: 0px 0px;
+  margin-top: 30px;
   padding: 0px;
 }
 
 .Section .Header {
-  font-size: 1.5rem;
+  font-size: 1.4rem;
   display: flex;
   align-items: center;
   padding-left: 2.5rem;
