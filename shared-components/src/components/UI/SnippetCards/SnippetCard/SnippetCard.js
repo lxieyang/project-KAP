@@ -106,7 +106,7 @@ class SnippetCard extends Component {
 
   render () {
     const props = this.props;
-    const { allPieces, options, requirements } = props;
+    const { allPieces, options, requirements, showoff } = props;
 
     let content = null;
     if (props.type === SNIPPET_TYPE.SELECTION) {
@@ -136,11 +136,24 @@ class SnippetCard extends Component {
       <div className={styles.Header}>
         {
           <div className={styles.TitleContainer} >
-            <div 
-              className={styles.Title}
-              onClick={(event) => props.makeInteractionBox(event, props.id)}>
-              {getFirstNWords(10, props.title)}
-            </div>
+            {
+              showoff !== true
+              ? <div 
+                  className={styles.Title}
+                  onClick={(event) => props.makeInteractionBox(event, props.id)}>
+                  {getFirstNWords(10, props.title)}
+                </div>
+              : <div 
+                  className={styles.Title}
+                  >
+                  <a
+                    title={'Visit the source page'}
+                    href={props.link}
+                    target='_blank' rel="noopener noreferrer">
+                    {getFirstNWords(10, props.title)}
+                  </a>
+                </div>
+            }
 
             {
               props.codeUseInfo !== undefined && props.codeUseInfo !== null
@@ -323,18 +336,22 @@ class SnippetCard extends Component {
               {props.name}
             </div>
             <a
-              title={'Open in new tab'}
+              title={'Visit the source page'}
               className={styles.ExternalLink}
               href={props.link}
               target='_blank' rel="noopener noreferrer">
               <FontAwesomeIcon icon={fasShareSquare} className={styles.IconInside}/>
             </a>
-            <div
-              title={'View in detail'}
-              className={styles.ViewIcon}
-              onClick={(event) => props.makeInteractionBox(event, props.id)}>
-              <FontAwesomeIcon icon={fasEye}/>
-            </div>
+            {
+              showoff !== true
+              ? <div
+                  title={'View in detail'}
+                  className={styles.ViewIcon}
+                  onClick={(event) => props.makeInteractionBox(event, props.id)}>
+                  <FontAwesomeIcon icon={fasEye}/>
+                </div>
+              : null
+            }
 
           </div>
         }

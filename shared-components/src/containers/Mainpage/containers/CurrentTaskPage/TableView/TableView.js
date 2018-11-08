@@ -938,6 +938,7 @@ class TableView extends Component {
                               getContent={() => {
                                 return (
                                   <SnippetCard
+                                    showoff={showoff}
                                     id={p.id}
                                     type={p.type}
                                     isInTableView={true}

@@ -80,6 +80,10 @@
   font-size: 0.8rem;
 }
 
+.TaskDebriefCollapseButton:hover {
+  transform: scale(1.05);
+}
+
 .TaskDebriefIconOpen {
   color: inherit;
 }
