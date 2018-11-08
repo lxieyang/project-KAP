@@ -101,7 +101,9 @@ class Mainpage extends Component {
       this.setState({
         currentTaskObj: taskObj,
         tasksLoading: false
-      })
+      });
+
+      document.title += ' - ' + taskObj.displayName;
     });
   }
 
