@@ -73,10 +73,18 @@
 }
 
 .TaskDebriefCollapseButton {
-  margin-left: 15px;
   cursor: pointer;
+
+  margin-right: 6px;
 }
 
+.TaskDebriefIconOpen {
+  color: inherit;
+}
+
+.TaskDebriefIconClosed {
+  color: #9fa5aa;
+}
 
 
 .TaskStatusViewRight {
@@ -115,18 +123,23 @@
 }
 
 .TaskDebriefContainer {
-  margin-left: 40px;
+  margin-left: 64px;
   margin-right: 40px;
+}
+
+.TaskDebriefTitleLabel {
+  font-size: 0.95rem;
 }
 
 .EditSaveButton {
   margin-left: 15px;
   font-size: 0.9rem;
   cursor: pointer;
+  color: #848d95;
 }
 
 .EditSaveButton:hover {
-  text-decoration: underline;
+  color: #252525;
 }
 
 .EditSaveButtonTooltipContainer {
@@ -140,10 +153,17 @@
 .MarkdownContent {
   zoom: 0.8;
   width: auto;
-  background-color: rgb(247, 247, 241);
-  border-radius: 5px;
-  padding-left: 16px;
-  padding-right: 16px; 
+  background-color: #FFF8DC;
+  border: 1px solid #E0DCBF;
+border-radius: 3px;
+  box-shadow: 0 2px 8px rgba(59,64,69,0.1);
+
+  padding-top: 10px;
+  padding-top: 10px;
+  padding-left: 12px;
+  padding-right: 12px; 
+
+  line-height: 1.05rem;
 }
 
 .MarkdownContent h1,

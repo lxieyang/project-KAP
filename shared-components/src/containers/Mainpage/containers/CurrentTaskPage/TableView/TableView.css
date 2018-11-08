@@ -676,6 +676,12 @@ tr:nth-child(even) {background-color: #f2f2f2;} */
 .ModeToggleButton {
   cursor: pointer;
   margin: 0px 10px;
+
+  color: #848d95;
+}
+
+.ModeToggleButton:hover {
+  color: #252525;
 }
 
 .ModeToggleButtonActive {

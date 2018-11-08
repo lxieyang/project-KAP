@@ -713,19 +713,6 @@ class TableView extends Component {
 
   render () {
 
-    // let pieceViewOption = (
-    //   <Aux>
-    //     <div className={styles.Label}>
-    //       <span>View Detailed Pieces</span>
-    //     </div>
-    //     <div className={styles.Slider}>
-    //       <ToggleSwitch
-    //         checked={this.state.isDetailed}
-    //         statusChanged={this.detailedViewChangeHandler}/>
-    //     </div>
-    //   </Aux>
-    // );
-
     const { readModeisOn } = this.state;
     const { showoff } = this.props;
 
@@ -1075,10 +1062,14 @@ class TableView extends Component {
                 ? <div className={styles.ModeToggleButtonsContainer}>
                     <div className={[styles.ModeToggleButton, this.state.readModeisOn === true ? styles.ModeToggleButtonActive : null].join(' ')}
                       onClick={(event) => this.switchTableMode(event, true)}>
-                      View</div> <div>|</div>
+                      view
+                    </div> 
+                    <div>
+                      |
+                    </div>
                     <div className={[styles.ModeToggleButton, this.state.readModeisOn === false ? styles.ModeToggleButtonActive : null].join(' ')}
                     onClick={(event) => this.switchTableMode(event, false)}>
-                      Edit
+                      edit
                     </div>
                   </div>
                 : null
