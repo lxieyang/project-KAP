@@ -1,7 +1,7 @@
 {
   "name": "project-kap",
-  "version": "0.1.4",
-  "description": "Help developers code more effectively.",
+  "version": "0.1.5",
+  "description": "Help developers organizing and structuring information related to programming decisions.",
   "license": "MIT",
   "repository": {
     "type": "git",
