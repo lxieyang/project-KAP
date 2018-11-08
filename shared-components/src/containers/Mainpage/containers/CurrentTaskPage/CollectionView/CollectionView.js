@@ -418,6 +418,11 @@ class CollectionView extends Component {
   render () {
     const { task, showoff } = this.props;
 
+    // hide the snippets collection view on public page --- meeting 11/05/2018
+    if (showoff === true) {
+      return null;
+    }
+
     /* Top pages */
     const { pageCountList } = task;
     let pageList = [];

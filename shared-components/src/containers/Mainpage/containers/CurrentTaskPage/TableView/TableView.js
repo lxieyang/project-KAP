@@ -7,18 +7,11 @@ import qs from 'query-string';
 import { Collapse } from 'react-collapse';
 import Aux from '../../../../../hoc/Aux/Aux';
 import fasPlusCircle from '@fortawesome/fontawesome-free-solid/faPlusCircle';
-import fasListAlt from '@fortawesome/fontawesome-free-solid/faListAlt';
-import fasFlagCheckered from '@fortawesome/fontawesome-free-solid/faFlagCheckered';
-import faPlus from '@fortawesome/fontawesome-free-solid/faPlus';
 import FontAwesomeIcon from '@fortawesome/react-fontawesome';
 import farSquare from '@fortawesome/fontawesome-free-regular/faSquare';
 import farWindowMaximize from '@fortawesome/fontawesome-free-regular/faWindowMaximize';
 import fasICursor from '@fortawesome/fontawesome-free-solid/faICursor';
 import fasCode from '@fortawesome/fontawesome-free-solid/faCode';
-import fasMinusCircle from '@fortawesome/fontawesome-free-solid/faMinusCircle';
-import fasCheckCircle from '@fortawesome/fontawesome-free-solid/faCheckCircle';
-import fasToggleOn from '@fortawesome/fontawesome-free-solid/faToggleOn';
-import fasToggleOff from '@fortawesome/fontawesome-free-solid/faToggleOff';
 import fasAngleDown from '@fortawesome/fontawesome-free-solid/faAngleDown';
 import fasAngleRight from '@fortawesome/fontawesome-free-solid/faAngleRight';
 
@@ -503,15 +496,6 @@ class TableView extends Component {
     this.setState(prevState => {
       return {isDetailed: !prevState.isDetailed};
     });
-  }
-
-  showNotesChangedHandler = (event) => {
-    this.setState(prevState => {
-      return {shouldShowNotes: !prevState.shouldShowNotes};
-    });
-
-    // this.setState({shouldShowNotes:!shouldShowNotes});
-    FirebaseStore.switchShowOptionNotesStatus();
   }
 
   changeAttitude = (optionId, pieceId, originalAttitude, changedAttitude, type) => {
@@ -1071,24 +1055,19 @@ class TableView extends Component {
                 onClick={(event) => this.switchTableIsOpenStatus(event)}>
                   <span>Comparison Table</span>
                 </div>
-                <div className={styles.HeaderCollapseButton}
-                  onClick={(event) => this.switchTableIsOpenStatus(event)}
-                  title={this.state.tableviewisOpen ? 'Collapse the table' : 'Show the table'}>
-                  {
-                    this.state.tableviewisOpen
-                    ? <FontAwesomeIcon icon={fasAngleDown} />
-                    : <FontAwesomeIcon icon={fasAngleRight} />
-                  }
-                </div>
-                { /* The show notes handler was not really working so it is temp. commented out
-                <div onClick={(event) => this.showNotesChangedHandler(event)}>
-                  {
-                    this.state.shouldShowNotes
-                    ? <span>Hide Notes</span>
-                    : <span>Show Notes</span>
-                  }
-                </div>
-                */}
+                {
+                  showoff !== true
+                  ? <div className={styles.HeaderCollapseButton}
+                      onClick={(event) => this.switchTableIsOpenStatus(event)}
+                      title={this.state.tableviewisOpen ? 'Collapse the table' : 'Show the table'}>
+                      {
+                        this.state.tableviewisOpen
+                        ? <FontAwesomeIcon icon={fasAngleDown} />
+                        : <FontAwesomeIcon icon={fasAngleRight} />
+                      }
+                    </div>
+                  : null
+                }
               </div>
 
               {
