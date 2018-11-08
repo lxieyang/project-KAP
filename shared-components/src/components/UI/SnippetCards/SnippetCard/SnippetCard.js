@@ -465,7 +465,7 @@ class SnippetCard extends Component {
                             {pair.starred === true
                               ? <span><FontAwesomeIcon icon={fasStar} /> &nbsp;</span>
                               : null}
-                            {/* ordinal(pair.order+1) */}
+                            {pair.order + 1} &nbsp;
                           </div>
                           <div>
                             {pair.name}
