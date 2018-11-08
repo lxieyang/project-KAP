@@ -1091,7 +1091,7 @@ class TableView extends Component {
                 {
                   showoff == true
                   ? <div className={styles.Content}>
-                      The comparison table above is part of a working progress for representing information related to decisions in programming, to provide feedback or learn more about our project, please visit our &nbsp;
+                      The comparison table above is part of a work in progress for representing information related to decisions in programming, to provide feedback or learn more about our project, please visit our &nbsp;
                       <a href={Surveyurl} target="_blank" rel="noopener noreferrer">Survey</a>.
                     </div>
 
