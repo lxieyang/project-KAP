@@ -1,13 +1,13 @@
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 import qs from 'query-string';
-import Aux from '../../../../hoc/Aux/Aux';
 import FontAwesomeIcon from '@fortawesome/react-fontawesome';
 import fasCopy from '@fortawesome/fontawesome-free-solid/faCopy';
 import TaskStatusView from './TaskStatusView/TaskStatusView';
 import CollectionView from './CollectionView/CollectionView';
 import TableView from './TableView/TableView';
 import styles from './CurrentTaskPage.css';
+import { APP_NAME_SHORT, showoffSurveyUrl, projectIntroPage } from '../../../../shared/constants';
 import * as FirebaseStore from '../../../../firebase/store';
 
 class CurrentTaskPage extends Component {
@@ -200,7 +200,7 @@ class CurrentTaskPage extends Component {
   }
 
   render () {
-    const { showoff } = this.props;
+    const { showoff, task } = this.props;
 
     let content = null;
     if (this.state.specific === true) {
@@ -247,6 +247,29 @@ class CurrentTaskPage extends Component {
       </React.Fragment>
     }
 
+    let showOffContent = null;
+    if (showoff === true) {
+      showOffContent = (
+        <React.Fragment>
+          <div className={styles.ShowOffContent}>
+            <div className={styles.ShowOffWords}>
+              <p>
+                The comparison table above is part of a work in progress for organizing and structuring information related to decisions in programming. 
+                It was generated using the <a href={projectIntroPage} target="_blank" rel="noopener noreferrer">{APP_NAME_SHORT}</a> chrome extension we developed here at <a href="https://www.cmu.edu/research/" target="_blank" rel="noopener noreferrer">Carnegie Mellon University</a> and <a href="https://www.oberlin.edu/" target="_blank" rel="noopener noreferrer">Oberlin College</a>.
+              </p>
+              <p>
+                To provide feedback or learn more about our research project, please consider filling out our <a href={showoffSurveyUrl + task.id } target="_blank" rel="noopener noreferrer">survey</a>.
+              </p>
+              <p>
+                Thank you!
+              </p>
+            </div>
+            
+          </div>
+        </React.Fragment>
+      )
+    }
+
     return (
       <div className={styles.CurrentTaskContainer}>
         <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
@@ -272,6 +295,7 @@ class CurrentTaskPage extends Component {
 
         <div className={styles.Content}>
           {content}
+          {showOffContent}
         </div>
       </div>
     );

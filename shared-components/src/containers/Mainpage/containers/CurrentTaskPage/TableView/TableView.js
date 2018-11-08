@@ -29,7 +29,6 @@ import { debounce, sortBy, reverse } from 'lodash';
 import ReactTooltip from 'react-tooltip';
 import Popover from 'react-tiny-popover';
 import Input from '../../../../../components/UI/Input/Input';
-import { currentTaskIdRef } from '../../../../../firebase/index';
 import * as FirebaseStore from '../../../../../firebase/store';
 
 /* For DnD */
@@ -38,7 +37,6 @@ import update from 'immutability-helper';
 import Snackbar from '../../../../../components/UI/Snackbar/Snackbar';
 
 const inactiveOpacity = 0.2;
-var Surveyurl = "https://oberlin.qualtrics.com/jfe/form/SV_eFqJnCBcw4AO0zb?Source=";
 
 class TableView extends Component {
   state = {
@@ -238,15 +236,6 @@ class TableView extends Component {
     if(this.props.showoff === true) {
       this.setState({readModeisOn: true});
     }
-
-    currentTaskIdRef.on('value', (snapshot) => {
-      this.setState({currentTaskId: snapshot.val()});
-      console.log("CurrentTaskId: " + snapshot.val());
-      var snapshot = snapshot.val();
-      Surveyurl = Surveyurl + snapshot;
-      console.log("Current survey link", Surveyurl);
-
-    });
 
     const { task } = this.props;
     this.transformData(task);
@@ -1080,16 +1069,6 @@ class TableView extends Component {
             <Collapse isOpened={this.state.tableviewisOpen} springConfig={{stiffness: 700, damping: 50}}>
               <div className={styles.Content}>
                 {writeContent}
-                {
-                  showoff == true
-                  ? <div className={styles.Content}>
-                      The comparison table above is part of a work in progress for representing information related to decisions in programming, to provide feedback or learn more about our project, please visit our &nbsp;
-                      <a href={Surveyurl} target="_blank" rel="noopener noreferrer">Survey</a>.
-                    </div>
-
-                  : null
-                }
-
               </div>
 
             </Collapse>
