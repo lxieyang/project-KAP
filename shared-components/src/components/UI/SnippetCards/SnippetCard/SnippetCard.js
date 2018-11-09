@@ -523,7 +523,9 @@ class SnippetCard extends Component {
         // onClick={(event) => this.handleClick(event,props.id)}
         >
         {header}
-        {attitudes}
+        {
+          showoff === true ? null : attitudes 
+        }
         <HorizontalDivider margin="5px" />
         {
           props.notesFilterOn === true
