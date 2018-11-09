@@ -1028,10 +1028,16 @@ class TableView extends Component {
           <div className={styles.TableView}>
             <div className={styles.Header}>
               <div className={styles.HeaderNameContainer}>
-                <div className={styles.HeaderName}
-                onClick={(event) => this.switchTableIsOpenStatus(event)}>
-                  <span>Comparison Table</span>
-                </div>
+                {
+                  showoff === true 
+                  ? null 
+                  : <div 
+                      className={styles.HeaderName}
+                      onClick={(event) => this.switchTableIsOpenStatus(event)}>
+                      <span>Comparison Table</span>
+                    </div>
+                }
+                
                 {
                   showoff !== true
                   ? <div className={styles.HeaderCollapseButton}

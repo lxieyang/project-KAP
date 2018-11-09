@@ -124,32 +124,8 @@ class TaskStatusView extends Component {
           <div className={styles.TaskStatusViewLeft}>
             <div className={styles.Title}>
               <div className={styles.Label}>
-                Task Name
+                { showoff === true ? 'Question:' : 'Task Name' }
               </div>
-              <div 
-                className={styles.TaskDebriefCollapseButton}>
-                <a 
-                  className={this.state.taskDebriefIsOpen ? styles.TaskDebriefIconOpen : styles.TaskDebriefIconClosed }
-                  data-tip data-for='toggleTaskDebrief' 
-                  onClick={(event) => this.switchTaskDebriefIsOpenStatus(event)}>
-                  {/*<FontAwesomeIcon icon={this.state.taskDebriefIsOpen ? fasAngleDown : fasAngleRight}/>*/}
-                  <FontAwesomeIcon icon={fasInfoCircle}/>
-                </a>
-                <ReactTooltip
-                  id='toggleTaskDebrief'
-                  type='dark'
-                  effect='solid'
-                  place={'bottom'}
-                  // globalEventOff='click'
-                  className={styles.EditSaveButtonTooltipContainer}>
-                  {
-                    this.state.taskDebriefIsOpen
-                    ? 'Hide description'
-                    : 'Show description'
-                  }
-                </ReactTooltip>
-              </div> 
-              
             </div>
             <div className={[styles.TaskNameContainer, this.state.isEditingTaskName ? styles.isEditing : null].join(' ')}>
               <div
@@ -169,7 +145,29 @@ class TaskStatusView extends Component {
                   </div>
                 : null
               }
-
+            </div>
+            <div 
+              className={styles.TaskDebriefCollapseButton}>
+              <a 
+                className={this.state.taskDebriefIsOpen ? styles.TaskDebriefIconOpen : styles.TaskDebriefIconClosed }
+                data-tip data-for='toggleTaskDebrief' 
+                onClick={(event) => this.switchTaskDebriefIsOpenStatus(event)}>
+                {/*<FontAwesomeIcon icon={this.state.taskDebriefIsOpen ? fasAngleDown : fasAngleRight}/>*/}
+                <FontAwesomeIcon icon={fasInfoCircle}/>
+              </a>
+              <ReactTooltip
+                id='toggleTaskDebrief'
+                type='dark'
+                effect='solid'
+                place={'bottom'}
+                // globalEventOff='click'
+                className={styles.EditSaveButtonTooltipContainer}>
+                {
+                  this.state.taskDebriefIsOpen
+                  ? 'Hide description'
+                  : 'Show description'
+                }
+              </ReactTooltip>
             </div>
           </div>
 
@@ -209,7 +207,9 @@ class TaskStatusView extends Component {
         <Collapse isOpened={this.state.taskDebriefIsOpen} springConfig={{stiffness: 700, damping: 50}}>
           <div className={styles.TaskDebriefContainer}>
             <div className={styles.Title}>
-              <div className={[styles.Label, styles.TaskDebriefTitleLabel].join(' ')}> 
+              <div 
+                className={[styles.Label, styles.TaskDebriefTitleLabel].join(' ')}
+                style={{display: showoff === true ? 'none' : null}}> 
                 {/*<FontAwesomeIcon icon={fasInfoCircle} /> */} Description
               </div>
               <div 

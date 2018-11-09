@@ -154,6 +154,7 @@
 
 .TaskDebriefViewWrapper {
   display: flex;
+  margin-top: 10px;
 }
 
 .MarkdownContent {
