@@ -1,6 +1,6 @@
 # Project KAP
 
-#### Chrome extension users: help page now available here --> https://lxieyang.github.io/project-KAP/
+#### Chrome extension users: help page now available [`here`](https://lxieyang.github.io/project-KAP/unakite/)
 
 ## To build the app locally for development and debugging:
 
