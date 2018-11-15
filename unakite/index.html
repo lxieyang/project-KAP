@@ -48,6 +48,7 @@
         <a href="#Snippets">Snippets</a>
         <a href="#sampleTables">Example Tables</a>
         <a href="#FAQ">FAQ</a>
+        <a href="#Settings">Settings</a>
       </div>
     </div>
 
@@ -68,7 +69,7 @@
       </div>
 
       <div id='Installation'>
-        <br></br>
+        <br/>
         <h2>Installation </h2>
         <p>
           To install the extension, first log in to your Chrome <i>Browser</i> (note that this is not just logging in to G Suite) with an account that can access the Chrome Web Store.
@@ -79,7 +80,7 @@
       </div>
 
       <div id='Publications'>
-        <br></br>
+        <br/>
         <h2>Publications </h2>
         <div>
           <ul>
@@ -100,20 +101,20 @@
       </div>
 
       <div id='Funding'>
-        <br></br>
+        <br/>
         <h2>Funding </h2>
         <div>
           <img src="nsf_logo.png" alt="NSF" style="margin: 10px; float: left; width:10%">
           <p>
             The Natural Programming Project has been funded in part by the National Science Foundation (under the grant <a href="https://www.nsf.gov/awardsearch/showAward?AWD_ID=1814826" target="_blank">CCF-1814826</a>) and in part by Google (under two Faculty research awards) and Bosch.
-            <br></br>
+            <br/>
             [Please note that any opinions, findings and conclusions or recommendations expressed in this material are those of the author(s) and do not necessarily reflect those of the National Science Foundation, Google, or Bosch.]
           </p>
         </div>
       </div>
 
       <div id='Tasks'>
-        <br></br>
+        <br/>
         <h2>Tasks </h2>
         <br/><h5> What is a Task?</h5>
         As the name suggests, a task can be anything from "How do I resolve a linker command failed with exit code 1 error?" to "How do I undo commits in Git?" to "What resturants are available for dinner?"
@@ -128,7 +129,8 @@
         <img src="newtaskbutton.png" alt="New Task Button Example">
 
         <br/> <br/><h5> How to Change the Name of a Task</h5>
-        <p>At the center of the extension popup is a section for selecting the current task. This box can be edited to change the name of the current task.</p>
+        <p>At the center of the extension popup is a selector for the current task.
+          Text inside the selector box can be edited to change the name of your current task.</p>
         <!-- <img src="changetaskname.png" alt="Change Task Name"> -->
         <p>The current task box on Google search pages provides another way edit the task name </p>
         <!-- <img src="extensionNameChange.png" alt="extensionNameChange"> -->
@@ -142,71 +144,76 @@
         </div>
 
         <br/> <br/><h5> How to Delete a Task</h5>
-        All tasks of your account can be viewed under the KAP mainpage by selecting the <b>All Tasks</b> button. Under this view you can use the trash icons on the top right of the task card to discard any unwanted task.
+        All tasks of your account can be viewed under the UNAKITE mainpage by selecting the <b>All Tasks</b> button. <br/>
+        Under this view you can use the snack bars dropdown on top right of a task card to discard any unwanted task.
         <img src="Deletetask.png" alt="Deletetask">
         <br/> <br/><h5> How to Combine Tasks</h5>
         To combine two tasks, drag one task card onto the other.
         <img src="CombineTasks.gif" alt="Combinetask">
         <br/> <br/><h5> How to Switch to another Task</h5>
         <p>From the extension popup you can use the select dropdown to navigate to another task. </p>
-        The <b>All Tasks</b> view on the KAP mainpage also allows switching to another task when you select a particular task card.
+        The <b>All Tasks</b> view on the UNAKITE mainpage also allows switching to another task when you select a particular task card.
       </div>
       <div id='Options'>
-        <br></br>
+        <br/>
         <h2>Options </h2>
         <br/><h5> What is an Option?</h5>
         Options are the various way that a task or problem may be completed or solved. Options may be created, deleted, starred, or marked as used.
 
-        <br/> <br/><h5> How to Add/Collect an Option</h5>
-        An option may added from the extension popup or the the interaction box when collecting a snippet (see how to collect one in the <i>Snippets</i> section).
+        <br/> <br/><h5> Add or Collect an Option</h5>
+        An option may <strong>added</strong> in the comparison table, the extension popup, or a snippet interaction box (see how to collect one in the <i>Snippets</i> section).
         <div class="row">
-          <div class="column">
+          <div class="column" id="captionedImage">
+            <img src="addOptioninTable.png" alt="Comparison table option" width="100%">
+            <div id="caption">Directly input to table</div>
+          </div>
+          <div class="column" id="captionedImage">
             <img src="popupOption.png" alt="Popup option" style="width:100%">
+            <div id="caption">Add option via extension popup</div>
           </div>
-          <div class="column">
+          <div class="column" id="captionedImage">
             <img src="interaction box.png" alt="Interaction Box" style="width:100%">
+            <div id="caption">Add option when collecting a snippet</div>
           </div>
         </div>
-        Options may be collected from the selection popover or the context menu, which can be accessed via right clicking.
-        <div class="row">
-          <div class="column">
-            <img src="selectOption.png" alt="Select Option" style="width:100%">
-          </div>
-          <div class="column">
-            <img src="context menu.png" alt="Context Menu" style="width:100%">
 
-          </div>
-        </div>
-        <br/> <br/><h5>Edit, Delete, Star or Use an Option</h5>
-        <p>Options can be edited by clicking inside their boxes in the extension popup or comparison table.</p>
-        Options can be deleted from the extension popup using the delete button on the top right of each option.
-        <p>An option can be starred in the popup or from the comparison table on the mainpage.</p>
         <div class="row">
-          <div class="column">
-            <img src="Star in popup.png" alt="Popup Stars" style="width:100%">
-          </div>
-          <div class="column">
-            <img src="Star in comparison table.png" alt="Comparison Table Stars" style="width:100%">
+          <div class="column", id="captionedImage">
+            <img src="selectOption.png" alt="Select Option" style="width:100%">
+            <div style="text-align:center">Options may be <strong>collected</strong> via the selection popover</div>
           </div>
         </div>
-        <p>An option may also be marked as used in the comparison table.</p>
-        <img src="Use an option.png" alt="Use an option" style="width:100%">
+        <br/> <br/><h5>Edit, Delete or Star an Option</h5>
+        <p>Options can be <strong>edited</strong> by clicking inside their boxes in the extension popup or comparison table.</p>
+        They can be <strong>deleted</strong> or <strong>starred</strong> from the snack bar dropdown in the extension popup and comparison table.
+        <div class="row">
+          <div class="column", id="captionedImage">
+            <img src="Star in popup.png" alt="Popup Stars" style="width:100%">
+            <div id="caption">Delete or Star option via Snackbars in extension popup</div>
+          </div>
+          <div class="column" id="captionedImage">
+            <img src="Star in comparison table.png" alt="Comparison Table Stars" style="width:100%">
+            <div id="caption">Snackbars in the comparison table</div>
+          </div>
+        </div>
+        <!-- <p>An option may also be marked as used in the comparison table.</p>
+        <img src="Use an option.png" alt="Use an option" style="width:100%"> -->
       </div>
 
       <div id='Criteria'>
-        <br></br>
+        <br/>
         <h2>Criteria </h2>
         <br/><h5>What is a Criterion?</h5>
         Criteria are characteristics or of an option or potential situations where it would become useful. Often they measure the usefulness of certain option(s).
         <br/> <br/><h5>Edit, Add, Delete, or Star Criteria</h5>
-        Criteria can be edited, added, deleted, and starred in the same ways as options, but they <i>cannot</i> be marked as used.
+        Criteria can be edited, added, deleted, and starred in the same ways as options.
       </div>
       <div id='Snippets'>
-        <br></br>
+        <br/>
         <h2>Snippets and Rating</h2>
         <br/><h5>What is a Snippet?</h5>
         Snippets are chunks of information or code snippets from the web which are relevant to the current task.
-        Snippets may be collected (as opposed to being manually added by user) through the selection popover, context menu, the custom Stack Overflow Snippet button, or the Option + drag tool.
+        Snippets may be collected (as opposed to being manually added by user) through the selection popover, the custom Stack Overflow Snippet button, or the Option + drag tool.
         <br/> <br/><h5>How to Collect a Snippet</h5>
         Like options and criteria, snippets may also be collected through the selection popover and context menu. But to preserve the formatting of code snippets or other html sections, we introduce the custom drag tool.
         To use, simply hold down option key and drag with the mouse to collect a section of html on the web page.
@@ -216,10 +223,10 @@
       </div>
 
       <div id='sampleTables'>
-        <br></br>
+        <br/>
         <h2>Examples of Comparison Tables</h2>
         <br/>
-        Below are some examples comparison tables we have constructed based on information from Stack Overflow posts. Each table is linked to an interative version.
+        Below are some examples comparison tables we have constructed based on information from Stack Overflow posts. Each table is linked to an interative demo of our tool.
 
         <div id='captionedImage'>
           <a href="https://kap-project-nsh-2504.firebaseapp.com/currtask?accessToken=jpAVSBo0TbaROkUvPZBAQUHT1Vp1&taskId=-LP2cCj6y24xdyaFmG8n" target="_blank">
@@ -245,7 +252,7 @@
 
       </div>
       <div id='FAQ'>
-        <br></br>
+        <br/>
         <h2>FAQ</h2>
         <br/><h5>What information does the extension track?</h5>
         If you the user is logged in and actively working on a task, <strong>UNAKITE</strong> will track visited web pages and search queries, in addition to any user inputs into <strong>UNAKITE</strong> (options, criteria, snippets, and notes).
@@ -255,8 +262,20 @@
         Got more questions? Submit them using our <a href="https://oberlin.qualtrics.com/jfe/form/SV_eFqJnCBcw4AO0zb"> survey </a>.
 
       </div>
-      <br></br> <br></br><br></br><br></br><br></br><br></br><br></br><br></br><br></br><br></br>
+      <div id='Settings'>
+        <br/><h2>Settings</h2><br/>
+        Settings can be accessed by clicking on the user icon found on both the extension popup and UNAKITE mainpage.
+        <div class="column" id="captionedImage">
+          <img src="mainpageSettings.png" alt="Mainpage settings" width="100%">
+          <div id="caption">Get to Settings from Mainpage</div>
+        </div>
+        <div class="column" id="captionedImage">
+          <img src="popupSettings.png" alt="Popup settings" width="100%">
+          <div id="caption">Get to Settings from extension popup</div>
+        </div>
+        Inside settings you may choose to turn on the selector, display the UNAKITE mainpage every time a new tab is opened, and keep track of all visited sites during a task.
     </div>
+
   </div>
 </div>
 
