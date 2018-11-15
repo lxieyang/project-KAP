@@ -25,7 +25,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
 
   <!-- Latest compiled JavaScript -->
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script> 
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
 
   <link href="https://fonts.googleapis.com/css?family=Nunito:400,400i,700,700i,800,800i" rel="stylesheet">
   <link rel="stylesheet" type="text/css" href="index.css">
@@ -50,7 +50,7 @@
         <a href="#FAQ">FAQ</a>
       </div>
     </div>
-    
+
     <div class="main col-md-9">
       <div id="Overview">
         <h2>Overview </h2>
@@ -115,19 +115,19 @@
       <div id='Tasks'>
         <br></br>
         <h2>Tasks </h2>
-        <h3> What is a Task?</h3>
+        <br/> <br/><h5> What is a Task?</h5>
         As the name suggests, a task can be anything from "How do I resolve a linker command failed with exit code 1 error?" to "How do I undo commits in Git?" to "What resturants are available for dinner?"
         It doesn't even have to be a question, another task could be "Picking framework for a project".
         <p>
         Tasks can be added, edited, deleted, or combined. You can also mark a task as ongoing or completed.
         </p>
-        <h3> How to Start a Task</h3>
+        <br/> <br/><h5> How to Start a Task</h5>
         <p>A new task can be initiated with the <b>Start as NEW task</b> button next to the search bar on any Google search page</p>
         <img src="startbutton.png" alt="Start Button Example">
         <p>Alternatively, the select popover also has a button to start a new task. Simply highlight some html text and you will see the popover option <b>New Task</b></p>
         <img src="newtaskbutton.png" alt="New Task Button Example">
 
-        <h3> How to Change the Name of a Task</h3>
+        <br/> <br/><h5> How to Change the Name of a Task</h5>
         <p>At the center of the extension popup is a section for selecting the current task. This box can be edited to change the name of the current task.</p>
         <!-- <img src="changetaskname.png" alt="Change Task Name"> -->
         <p>The current task box on Google search pages provides another way edit the task name </p>
@@ -141,22 +141,23 @@
           </div>
         </div>
 
-        <h3> How to Delete a Task</h3>
+        <br/> <br/><h5> How to Delete a Task</h5>
         All tasks of your account can be viewed under the KAP mainpage by selecting the <b>All Tasks</b> button. Under this view you can use the trash icons on the top right of the task card to discard any unwanted task.
         <img src="Deletetask.png" alt="Deletetask">
-        <h3> How to Combine Tasks</h3>
+        <br/> <br/><h5> How to Combine Tasks</h5>
         To combine two tasks, drag one task card onto the other.
         <img src="CombineTasks.gif" alt="Combinetask">
-        <h3> How to Switch to another Task</h3>
+        <br/> <br/><h5> How to Switch to another Task</h5>
         <p>From the extension popup you can use the select dropdown to navigate to another task. </p>
         The <b>All Tasks</b> view on the KAP mainpage also allows switching to another task when you select a particular task card.
       </div>
       <div id='Options'>
         <br></br>
         <h2>Options </h2>
-        <h3> What is an Option?</h3>
+        <br/><h5> What is an Option?</h5>
         Options are the various way that a task or problem may be completed or solved. Options may be created, deleted, starred, or marked as used.
-        <h3> How to Add/Collect an Option</h3>
+
+        <br/> <br/><h5> How to Add/Collect an Option</h5>
         An option may added from the extension popup or the the interaction box when collecting a snippet (see how to collect one in the <i>Snippets</i> section).
         <div class="row">
           <div class="column">
@@ -176,7 +177,7 @@
 
           </div>
         </div>
-        <h3>Edit, Delete, Star or Use an Option</h3>
+        <br/> <br/><h5>Edit, Delete, Star or Use an Option</h5>
         <p>Options can be edited by clicking inside their boxes in the extension popup or comparison table.</p>
         Options can be deleted from the extension popup using the delete button on the top right of each option.
         <p>An option can be starred in the popup or from the comparison table on the mainpage.</p>
@@ -195,18 +196,18 @@
       <div id='Criteria'>
         <br></br>
         <h2>Criteria </h2>
-        <h3>What is a Criterion?</h3>
+        <br/><h5>What is a Criterion?</h5>
         Criteria are characteristics or of an option or potential situations where it would become useful. Often they measure the usefulness of certain option(s).
-        <h3>Edit, Add, Delete, or Star Criteria</h3>
+        <br/> <br/><h5>Edit, Add, Delete, or Star Criteria</h5>
         Criteria can be edited, added, deleted, and starred in the same ways as options, but they <i>cannot</i> be marked as used.
       </div>
       <div id='Snippets'>
         <br></br>
         <h2>Snippets and Rating</h2>
-        <h3>What is a Snippet?</h3>
+        <br/><h5>What is a Snippet?</h5>
         Snippets are chunks of information or code snippets from the web which are relevant to the current task.
         Snippets may be collected (as opposed to being manually added by user) through the selection popover, context menu, the custom Stack Overflow Snippet button, or the Option + drag tool.
-        <h3>How to Collect a Snippet</h3>
+        <br/> <br/><h5>How to Collect a Snippet</h5>
         Like options and criteria, snippets may also be collected through the selection popover and context menu. But to preserve the formatting of code snippets or other html sections, we introduce the custom drag tool.
         To use, simply hold down option key and drag with the mouse to collect a section of html on the web page.
         Each snippet can be titled using the input field at the top of the blue interaction box
@@ -222,11 +223,13 @@
       <div id='FAQ'>
         <br></br>
         <h2>FAQ</h2>
-        <h3>What information does the extension track?</h3>
+        <br/><h5>What information does the extension track?</h5>
         If you the user is logged in and actively working on a task, <strong>UNAKITE</strong> will track visited web pages and search queries, in addition to any user inputs into <strong>UNAKITE</strong> (options, criteria, snippets, and notes).
         Note that you can stop the extension from tracking of all web pages under <i>Settings</i>.
-        Got more questions? Submit them using our <a>Google form</a>.
-        <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSd9S5jJ7qjqLo7QnlzHICMIEN3IiAtGDcPcirCdPtDqISCWpA/viewform?embedded=true" width="640" height="1007" frameborder="0" marginheight="0" marginwidth="0">Loading...</iframe>
+        <br/>
+        <br/>
+        Got more questions? Submit them using our <a href="https://oberlin.qualtrics.com/jfe/form/SV_eFqJnCBcw4AO0zb"> survey </a>.
+
       </div>
       <br></br> <br></br><br></br><br></br><br></br><br></br><br></br><br></br><br></br><br></br>
     </div>
