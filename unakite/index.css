@@ -54,3 +54,8 @@ p {
 .Publications ul {
     padding-left: 0px;
 }
+
+#captionedImage {
+  text-align: center;
+  margin-bottom: 20px;
+}
