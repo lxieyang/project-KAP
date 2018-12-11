@@ -374,7 +374,7 @@ class TableView extends Component {
   }
 
   switchPieceStatus = (event, pieceId) => {
-    console.log(pieceId);
+    // console.log(pieceId);
     let idx = 0;
     let updatedPiece = {};
     for (; idx < this.state.piecesList.length; idx++) {
@@ -441,6 +441,7 @@ class TableView extends Component {
   }
 
   makeInteractionbox = (event, pieceId) => {
+    // console.log("making interaction box through tableview, withpieceId", pieceId);
     // this.setState({modalPieceId: pieceId, showModal: true});
     const query = {
       ...qs.parse(this.props.location.search),
@@ -819,6 +820,7 @@ class TableView extends Component {
     let newTableBody = newOptionsList.filter(op => op.visibility !== false).map((op, idx) => {
       let optionVisibility = true;
       let snippetsSelected = this.state.selectedSnippets;
+      // console.log("tableview props", this.props);
       return (
         <tr key={op.id}>
           <TableRow
@@ -893,6 +895,7 @@ class TableView extends Component {
                   </td>
                 )}
                 else {
+
                   return(
                   <td key={rq.id} style={{
                     opacity: rq.hide === true || op.hide === true ? `${inactiveOpacity}` : '1',
@@ -902,12 +905,15 @@ class TableView extends Component {
                         piecesInThisCell.length > 0 ?
                         piecesInThisCell.map((p, idx) => {
                         let thumb = null;
+
                         switch (p.attitude) {
                           case 'good':  thumb = (<ThumbV1 type='up' />); break;
                           case 'bad':   thumb = (<ThumbV1 type='down' />); break;
                           case 'idk':   thumb = (<QuestionMark />); break;
                           default: break;
                         }
+
+                        var pieceID = p.id;
                         // TODO add onclick to bring up interactionbox for each attitude in table cell
                         return (
                           <Aux key={`${p.id}${op.id}${rq.id}`}>
@@ -916,7 +922,7 @@ class TableView extends Component {
                               data-tip
                               data-for={`${p.id}${op.id}${rq.id}`}
                               >
-                              {thumb}
+                              <div onClick={(event) => this.makeInteractionbox(event, pieceID)} >{thumb}</div>
                             </div>
                             <ReactTooltip
                               place="right"
@@ -1029,15 +1035,15 @@ class TableView extends Component {
             <div className={styles.Header}>
               <div className={styles.HeaderNameContainer}>
                 {
-                  showoff === true 
-                  ? null 
-                  : <div 
+                  showoff === true
+                  ? null
+                  : <div
                       className={styles.HeaderName}
                       onClick={(event) => this.switchTableIsOpenStatus(event)}>
                       <span>Comparison Table</span>
                     </div>
                 }
-                
+
                 {
                   showoff !== true
                   ? <div className={styles.HeaderCollapseButton}
@@ -1059,7 +1065,7 @@ class TableView extends Component {
                     <div className={[styles.ModeToggleButton, this.state.readModeisOn === true ? styles.ModeToggleButtonActive : null].join(' ')}
                       onClick={(event) => this.switchTableMode(event, true)}>
                       view
-                    </div> 
+                    </div>
                     <div>
                       |
                     </div>

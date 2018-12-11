@@ -201,7 +201,7 @@ class CurrentTaskPage extends Component {
 
   render () {
     const { showoff, task } = this.props;
-
+    // console.log("currenttaskpage", this.props);
     let content = null;
     if (this.state.specific === true) {
       if (this.state.specificTask !== null) {
@@ -254,7 +254,7 @@ class CurrentTaskPage extends Component {
           <div className={styles.ShowOffContent}>
             <div className={styles.ShowOffWords}>
               <p>
-                The comparison table above is part of a work in progress for organizing and structuring information related to decisions in programming. 
+                The comparison table above is part of a work in progress for organizing and structuring information related to decisions in programming.
                 It was generated using the <a href={projectIntroPage} target="_blank" rel="noopener noreferrer">{APP_NAME_SHORT}</a> chrome extension we developed here at <a href="https://www.cmu.edu/research/" target="_blank" rel="noopener noreferrer">Carnegie Mellon University</a> and <a href="https://www.oberlin.edu/" target="_blank" rel="noopener noreferrer">Oberlin College</a>.
               </p>
               <p>
@@ -264,7 +264,7 @@ class CurrentTaskPage extends Component {
                 Thank you!
               </p>
             </div>
-            
+
           </div>
         </React.Fragment>
       )
