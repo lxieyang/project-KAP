@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import * as $ from 'jquery'
 import Aux from '../../../../hoc/Aux/Aux';
-
+import { withRouter } from 'react-router-dom';
 import ThumbV1 from '../../../UI/Thumbs/ThumbV1/ThumbV1';
 import QuestionMark from '../../../UI/Thumbs/QuestionMark/QuestionMark';
 import FontAwesomeIcon from '@fortawesome/react-fontawesome';
@@ -31,7 +31,7 @@ import { debounce, reverse, sortBy, last, first } from 'lodash';
 import * as FirebaseStore from '../../../../firebase/store';
 import ordinal from 'ordinal';
 
-
+import { DragSource, DropTarget } from 'react-dnd';
 import Popover from 'react-tiny-popover';
 import fasMore from '@fortawesome/fontawesome-free-solid/faEllipsisV';
 
@@ -46,6 +46,52 @@ const getHTML = (htmls) => {
   return {__html: htmlString};
 }
 
+/* begin drag and drop */
+const cardSource = {
+  beginDrag(props) {
+    console.log("BEGINNING Dragging card [Props: ", props);
+    return {
+      id: props.id
+    }
+  },
+
+  endDrag(props, monitor, component) {
+  }
+}
+
+const cardTarget = {
+  canDrop(props, monitor, component) {
+    if (monitor.getItem().id === props.id) {
+      return false;
+    }
+    return true;
+  },
+
+  drop(props, monitor, component) {
+    const item = monitor.getItem();
+    return {
+      id: props.id
+    }
+  }
+}
+
+const collectDrag = (connect, monitor) => {
+  return {
+    connectDragSource: connect.dragSource(),
+    isDragging: monitor.isDragging(),
+    // known issue that Chrome has offset with initial drag preview https://github.com/react-dnd/react-dnd/issues/552
+    
+  }
+}
+
+const collectDrop = (connect, monitor) => {
+  return {
+    connectDropTarget: connect.dropTarget(),
+    isOver: monitor.isOver(),
+    canDrop: monitor.canDrop()
+  }
+}
+/* end drag and drop */
 class SnippetCard extends Component {
   state = {
     selected: false,
@@ -57,6 +103,15 @@ class SnippetCard extends Component {
       return {isPopoverOpen: !prevState.isPopoverOpen}
     });
   }
+
+  static propTypes = {
+    // Injected by React DnD:
+    connectDragSource: PropTypes.func.isRequired,
+    isDragging: PropTypes.bool.isRequired,
+    connectDropTarget: PropTypes.func.isRequired,
+    isOver: PropTypes.bool.isRequired,
+    canDrop: PropTypes.bool.isRequired
+  };
 
   deleteSnippetWithId = (event, id, name) => {
     this.props.deleteThisSnippet(id, name);
@@ -71,7 +126,6 @@ class SnippetCard extends Component {
     }, 1000);
   }
 
-
   inputChangedHandler = (event) => {
     event.persist();
     this.inputCallback(event);
@@ -83,31 +137,31 @@ class SnippetCard extends Component {
 
   // Hold off this selected feature to the future (after CHI 2019 deadline)
   // TODO: Enable this feature
-  /*
-  handleClick = (event,id) => {
-    this.setState(prevState => {
-      let selected = this.state.selected;
-      selected ? this.props.decrementSelectedSnippetNumber(event) : this.props.incrementSelectedSnippetNumber(event);
-      return {selected:!(prevState.selected)};
-    })
-  }
 
-  handleClickTitle = (event, props) => {
-    this.props.decrementSelectedSnippetNumber(event);
-    this.setState(prevState => {
-      this.state.selected ? props.decrementSelectedSnippetNumber(event) : props.incrementSelectedSnippetNumber(event);
-      return {selected:!(prevState.selected)};
-    })
-    this.props.decrementSelectedSnippetNumber(event);
-    props.makeInteractionBox(event, props.id);
+  // handleClick = (event,id) => {
+  //   this.setState(prevState => {
+  //     let selected = this.state.selected;
+  //     selected ? this.props.decrementSelectedSnippetNumber(event) : this.props.incrementSelectedSnippetNumber(event);
+  //     return {selected:!(prevState.selected)};
+  //   })
+  // }
+  //
+  // handleClickTitle = (event, props) => {
+  //   this.props.decrementSelectedSnippetNumber(event);
+  //   this.setState(prevState => {
+  //     this.state.selected ? props.decrementSelectedSnippetNumber(event) : props.incrementSelectedSnippetNumber(event);
+  //     return {selected:!(prevState.selected)};
+  //   })
+  //   this.props.decrementSelectedSnippetNumber(event);
+  //   props.makeInteractionBox(event, props.id);
+  //
+  // }
 
-  }
-  */
 
   render () {
     const props = this.props;
-    const { allPieces, options, requirements, showoff } = props;
 
+    const { allPieces, options, requirements, showoff, connectDragSource, isDragging, connectDropTarget, canDrop, isOver} = props;
     let content = null;
     if (props.type === SNIPPET_TYPE.SELECTION) {
       content = (
@@ -130,7 +184,7 @@ class SnippetCard extends Component {
           </div>
         </div>
       );
-    } 
+    }
 
     const header = (
       <div className={styles.Header}>
@@ -138,12 +192,12 @@ class SnippetCard extends Component {
           <div className={styles.TitleContainer} >
             {
               showoff !== true
-              ? <div 
+              ? <div
                   className={styles.Title}
                   onClick={(event) => props.makeInteractionBox(event, props.id)}>
                   {getFirstNWords(10, props.title)}
                 </div>
-              : <div 
+              : <div
                   className={styles.Title}
                   >
                   <a
@@ -366,8 +420,8 @@ class SnippetCard extends Component {
               content={(
                 <div className={styles.PopoverContentContainer}>
                   <ul>
-                    
-                    <li 
+
+                    <li
                       onClick={(event) => this.deleteSnippetWithId(event, props.id, props.title)}
                       className={styles.DeleteLi}>
                       <div className={styles.IconBoxInPopover}>
@@ -379,13 +433,13 @@ class SnippetCard extends Component {
                 </div>
               )}
             >
-              <span 
+              <span
                 className={styles.MoreIconContainer}
                 style={{opacity: this.state.isPopoverOpen ? '0.7' : null}}
                 onClick={() => this.switchPopoverOpenStatus()}>
                 <FontAwesomeIcon icon={fasMore}/>
               </span>
-              
+
             </Popover>
         }
 
@@ -508,8 +562,8 @@ class SnippetCard extends Component {
         </div>
       </div>
     );
-    
-    return (
+
+    return connectDropTarget(connectDragSource(
       <div
         className={[styles.SnippetCard, props.status ? null : styles.Hide, props.specificPieceId === props.id ? styles.FamousCard : null].join(' ')}
         style={{
@@ -524,7 +578,7 @@ class SnippetCard extends Component {
         >
         {header}
         {
-          showoff === true ? null : attitudes 
+          showoff === true ? null : attitudes
         }
         <HorizontalDivider margin="5px" />
         {
@@ -537,9 +591,12 @@ class SnippetCard extends Component {
         }
         {footer}
       </div>
-    // ));
-    );
+    ));
+    // );
   }
 }
-
-export default SnippetCard;
+export default withRouter(DropTarget('SNIPPETCARD', cardTarget, collectDrop)(
+  DragSource("SNIPPETCARD", cardSource, collectDrag)(
+    SnippetCard
+  )));
+// export default SnippetCard;

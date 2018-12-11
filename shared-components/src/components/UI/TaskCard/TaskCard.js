@@ -134,8 +134,8 @@ class TaskCard extends Component {
         }}>
         <div className={styles.Header}>
           <div className={styles.Left}>
-            <FontAwesomeIcon 
-              icon={this.props.isStarred ? fasStar : farStar} 
+            <FontAwesomeIcon
+              icon={this.props.isStarred ? fasStar : farStar}
               onClick={(event) => {this.starClicked(event, this.props.id)}}
               className={[styles.StarIcon, (
                 this.props.isStarred
@@ -144,7 +144,7 @@ class TaskCard extends Component {
               )].join(' ')}/>
             {
               this.props.id === this.props.currentTaskId
-              ? <span 
+              ? <span
                   className={styles.CurrentTaskBadge}>
                   Current Task
                 </span>
@@ -170,7 +170,7 @@ class TaskCard extends Component {
                       <div>{this.props.isStarred === true ? 'Remove' : 'Add'} Star</div>
                     </li>
 
-                    <li 
+                    <li
                       onClick={(event) => this.props.deleteTaskHandler(this.props.id, this.props.taskName)}
                       className={styles.DeleteLi}>
                       <div className={styles.IconBoxInPopover}>
@@ -182,17 +182,17 @@ class TaskCard extends Component {
                 </div>
               )}
             >
-              <span 
+              <span
                 className={styles.MoreIconContainer}
                 style={{opacity: this.state.isPopoverOpen ? '0.7' : null}}
                 onClick={() => this.switchPopoverOpenStatus()}>
                 <FontAwesomeIcon icon={fasMore}/>
               </span>
-              
+
             </Popover>
 
 
-            
+
           </div>
         </div>
 
@@ -206,16 +206,16 @@ class TaskCard extends Component {
         <div
           className={styles.TaskOngoingStatusContainer}>
           {
-            this.props.taskOngoing 
-            ? <div 
+            this.props.taskOngoing
+            ? <div
                 title={'In progress...'}
                 className={[styles.TaskOngoingBadge, styles.TaskOngoingTrue].join(' ')}>
                 <FontAwesomeIcon icon={fasCircleNotch}/>
-              </div> 
-            : <div 
+              </div>
+            : <div
                 title={`Completed!${this.props.completionTimestamp !== null ? ` (${moment(this.props.completionTimestamp).fromNow()})` : null}`}
                 className={[styles.TaskOngoingBadge, styles.TaskOngoingFalse].join(' ')}>
-                <FontAwesomeIcon icon={fasCheck}/> 
+                <FontAwesomeIcon icon={fasCheck}/>
               </div>
           }
         </div>

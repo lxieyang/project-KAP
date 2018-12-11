@@ -59,7 +59,6 @@ export const switchShouldDisplayAllPages = (shouldDisplayAllPages) => {
   })
   .then(() => {})
   .catch((error) => console.log(error));
-
 }
 
 // SHOULD SHOW SELECTOR
@@ -97,6 +96,7 @@ export const addTaskFromSearchTerm = async (searchTerm, tabId) => {
     pieces: [],
     taskOngoing: true
   }
+  
   // loop through current tasks to not create a duplicate task
   if (taskList) {
     for (let task of taskList) {

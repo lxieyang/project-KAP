@@ -6,7 +6,6 @@ import { Collapse } from 'react-collapse';
 import FontAwesomeIcon from '@fortawesome/react-fontawesome';
 import fasBriefcase from '@fortawesome/fontawesome-free-solid/faBriefcase';
 import fasCircleNotch from '@fortawesome/fontawesome-free-solid/faCircleNotch';
-
 import fasInfoCircle from '@fortawesome/fontawesome-free-solid/faInfoCircle';
 import fasCheck from '@fortawesome/fontawesome-free-solid/faCheck';
 import fasAngleRight from '@fortawesome/fontawesome-free-solid/faAngleRight';
@@ -98,9 +97,9 @@ class TaskStatusView extends Component {
     console.log('onclick');
     if (this.state.taskDebriefIsEditing) {
       FirebaseStore.updateTaskDebrief(id, this.state.taskDebiefContent);
-    } 
+    }
     this.switchTaskDebriefEditingStatus(toStatus);
-    
+
   }
 
   taskDebriefOnFocus = (event, id) => {
@@ -146,11 +145,11 @@ class TaskStatusView extends Component {
                 : null
               }
             </div>
-            <div 
+            <div
               className={styles.TaskDebriefCollapseButton}>
-              <a 
+              <a
                 className={this.state.taskDebriefIsOpen ? styles.TaskDebriefIconOpen : styles.TaskDebriefIconClosed }
-                data-tip data-for='toggleTaskDebrief' 
+                data-tip data-for='toggleTaskDebrief'
                 onClick={(event) => this.switchTaskDebriefIsOpenStatus(event)}>
                 {/*<FontAwesomeIcon icon={this.state.taskDebriefIsOpen ? fasAngleDown : fasAngleRight}/>*/}
                 <FontAwesomeIcon icon={fasInfoCircle}/>
@@ -207,12 +206,12 @@ class TaskStatusView extends Component {
         <Collapse isOpened={this.state.taskDebriefIsOpen} springConfig={{stiffness: 700, damping: 50}}>
           <div className={styles.TaskDebriefContainer}>
             <div className={styles.Title}>
-              <div 
+              <div
                 className={[styles.Label, styles.TaskDebriefTitleLabel].join(' ')}
-                style={{display: showoff === true ? 'none' : null}}> 
+                style={{display: showoff === true ? 'none' : null}}>
                 {/*<FontAwesomeIcon icon={fasInfoCircle} /> */} Description
               </div>
-              <div 
+              <div
                 style={{display: showoff === true ? 'none' : null}}
                 className={styles.EditSaveButton}
                 onClick={(event) => this.taskDebriefEditButtonClicked(event, task.id, !this.state.taskDebriefIsEditing)}>
@@ -221,11 +220,11 @@ class TaskStatusView extends Component {
                 }
               </div>
             </div>
-            
+
             <div className={styles.TaskDebriefViewWrapper}>
               {
                 this.state.taskDebriefIsEditing
-                ? <div 
+                ? <div
                     className={styles.TaskDebriefEditBox}
                     contentEditable={this.state.taskDebriefIsEditing === true ? true : false}
                     placeholder='Add some brief description to this task'
@@ -237,15 +236,15 @@ class TaskStatusView extends Component {
                   </div>
                 : null
               }
-              <div 
-                className={styles.MarkdownContent} 
+              <div
+                className={styles.MarkdownContent}
                 style={{flex: this.state.taskDebriefIsEditing ? '50%' : null}}>
                 <ReactMarkdown source={this.state.taskDebiefContent}/>
               </div>
             </div>
-          </div>  
+          </div>
         </Collapse>
-        
+
       </div>
     )
   }
