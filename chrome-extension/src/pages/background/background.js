@@ -2,9 +2,13 @@
 import '../../../../shared-components/src/assets/images/icon-128.png';
 import '../../../../shared-components/src/assets/images/icon-34.png';
 import * as actionTypes from '../../../../shared-components/src/shared/actionTypes';
-import { DEFAULT_SETTINGS, APP_NAME_LONG, APP_NAME_SHORT } from '../../../../shared-components/src/shared/constants';
+import {
+  DEFAULT_SETTINGS,
+  APP_NAME_LONG,
+  APP_NAME_SHORT
+} from '../../../../shared-components/src/shared/constants';
 
-import { 
+import {
   // database,
   tasksRef,
   currentTaskIdRef,
@@ -25,14 +29,22 @@ let userProfilePhotoURLCached = localStorage.getItem('userProfilePhotoURL');
 
 const updateBrowserIcon = (isLoggedIn) => {
   if (isLoggedIn) {
-    chrome.browserAction.setIcon({path: 'icon-128.png'});
-    chrome.browserAction.setTitle({title: `${APP_NAME_LONG}`});
+    chrome.browserAction.setIcon({
+      path: 'icon-128.png'
+    });
+    chrome.browserAction.setTitle({
+      title: `${APP_NAME_LONG}`
+    });
   } else {
-    chrome.browserAction.setIcon({path: 'icon-inactive-128.png'});
-    chrome.browserAction.setTitle({title: `${APP_NAME_SHORT} (Please log in)`});
+    chrome.browserAction.setIcon({
+      path: 'icon-inactive-128.png'
+    });
+    chrome.browserAction.setTitle({
+      title: `${APP_NAME_SHORT} (Please log in)`
+    });
   }
 }
-    
+
 if (userIdCached !== null && userIdCached !== 'invalid') {
   setUserIdAndName(userIdCached, userNameCached, userProfilePhotoURLCached);
   updateBrowserIcon(true);
@@ -47,7 +59,7 @@ let tableViewPort;
 let collectionViewPort;
 
 chrome.runtime.onMessage.addListener(
-  function(request, sender, sendResponse) {
+  function (request, sender, sendResponse) {
     if (request.msg === 'RESET_USER_ID') {
       setUserIdAndName(
         request.payload.userId,
@@ -64,7 +76,7 @@ chrome.runtime.onMessage.addListener(
       localStorage.setItem('userId', userId);
       localStorage.setItem('userName', userName);
       localStorage.setItem('userProfilePhotoURL', userProfilePhotoURL);
-      
+
       console.log("USERID: " + request.payload.userId);
       try {
         popPort.postMessage({
@@ -109,14 +121,14 @@ chrome.runtime.onMessage.addListener(
       chrome.tabs.create({
         url: chrome.extension.getURL('newtab.html')
       }, (tab) => {
-          // Tab opened.
+        // Tab opened.
       });
 
     } else if (request.msg === 'OPEN_SETTINGS_PAGE') {
       chrome.tabs.create({
         url: chrome.extension.getURL('options.html')
       }, (tab) => {
-          // Tab opened.
+        // Tab opened.
       });
 
     } else if (request.msg === 'CLOSE_CURRENT_TAB') {
@@ -130,7 +142,7 @@ chrome.runtime.onMessage.addListener(
       }, (tab) => {
         // Tab opened.
       });
-      
+
     }
   }
 );
@@ -140,7 +152,7 @@ chrome.tabs.onActivated.addListener((activeInfo) => {
   console.log(activeInfo);
   chrome.tabs.sendMessage(activeInfo.tabId, {
     msg: 'USER_INFO',
-    payload : {
+    payload: {
       userId,
       userName,
       userProfilePhotoURL
@@ -156,7 +168,9 @@ let shouldOverrideNewtab = DEFAULT_SETTINGS.shouldOverrideNewtab;
 firebase.auth().onAuthStateChanged(() => {
   userPathInFirestore.onSnapshot((doc) => {
     if (doc.exists) {
-      const { userSettings } = doc.data();
+      const {
+        userSettings
+      } = doc.data();
       if (userSettings !== undefined && userSettings.shouldOverrideNewtab !== undefined) {
         shouldOverrideNewtab = userSettings.shouldOverrideNewtab;
       }
@@ -186,7 +200,7 @@ let toDeleteOptionId = null;
 let toDeleteRequirementId = null;
 let toDeletePieceId = null;
 
-chrome.runtime.onConnect.addListener(function(port) {
+chrome.runtime.onConnect.addListener(function (port) {
   console.log(port.name);
   if (port.name === 'FROM_POPUP') {
     console.log('Incomming connections from POPUP...');
@@ -225,7 +239,7 @@ chrome.runtime.onConnect.addListener(function(port) {
         FirebaseStore.deleteRequirementWithId(toDeleteRequirementId);
       }
     });
-  } 
+  }
   if (port.name === 'FROM_OPTIONS') {
     optionsPort = port;
     optionsPort.onMessage.addListener((request) => {
@@ -241,7 +255,7 @@ chrome.runtime.onConnect.addListener(function(port) {
         });
       }
     });
-  } 
+  }
   if (port.name === 'FROM_CONTENT') {
     contentPort = port;
     contentPort.onMessage.addListener((request) => {
@@ -319,7 +333,7 @@ chrome.contextMenus.create({
     chrome.tabs.create({
       url: chrome.extension.getURL('newtab.html')
     }, (tab) => {
-        // Tab opened.
+      // Tab opened.
     });
   }
 });
