@@ -2,14 +2,14 @@
 process.traceDeprecation = true;
 
 var autoprefixer = require('autoprefixer'),
-    webpack = require("webpack"),
-    path = require("path"),
-    fileSystem = require("fs"),
-    env = require("./utils/env"),
-    CleanWebpackPlugin = require("clean-webpack-plugin"),
-    CopyWebpackPlugin = require("copy-webpack-plugin"),
-    HtmlWebpackPlugin = require("html-webpack-plugin"),
-    WriteFilePlugin = require("write-file-webpack-plugin");
+  webpack = require("webpack"),
+  path = require("path"),
+  fileSystem = require("fs"),
+  env = require("./utils/env"),
+  CleanWebpackPlugin = require("clean-webpack-plugin"),
+  CopyWebpackPlugin = require("copy-webpack-plugin"),
+  HtmlWebpackPlugin = require("html-webpack-plugin"),
+  WriteFilePlugin = require("write-file-webpack-plugin");
 
 // load the secrets
 var alias = {};
@@ -24,10 +24,10 @@ if (fileSystem.existsSync(secretsPath)) {
 
 var options = {
   entry: {
-    popup: path.join(__dirname, "src", "pages", "popup", "index.js"),
-    options: path.join(__dirname, "src", "pages", "options","index.js"),
-    background: path.join(__dirname, "src", "pages", "background","background.js"),
-    newtab: path.join(__dirname, "src", "pages", "newtab","index.js"),
+    // popup: path.join(__dirname, "src", "pages", "popup", "index.js"),
+    // options: path.join(__dirname, "src", "pages", "options","index.js"),
+    background: path.join(__dirname, "src", "pages", "background", "background.js"),
+    newtab: path.join(__dirname, "src", "pages", "newtab", "index.js"),
     contentAnnotation: path.join(__dirname, "src", "pages", "content", "content.annotation.js")
   },
   chromeExtensionBoilerplate: {
@@ -38,8 +38,7 @@ var options = {
     filename: "[name].bundle.js"
   },
   module: {
-    rules: [
-      {
+    rules: [{
         test: /\.css$/,
         use: [
           require.resolve('style-loader'),
@@ -76,11 +75,11 @@ var options = {
       {
         test: /\.scss$/,
         use: [{
-            loader: "style-loader" // creates style nodes from JS strings
+          loader: "style-loader" // creates style nodes from JS strings
         }, {
-            loader: "css-loader" // translates CSS into CommonJS
+          loader: "css-loader" // translates CSS into CommonJS
         }, {
-            loader: "sass-loader" // compiles Sass to CSS
+          loader: "sass-loader" // compiles Sass to CSS
         }]
       },
       {
@@ -104,8 +103,8 @@ var options = {
           loader: 'file-loader',
           options: {
             name: '[name].[ext]',
-            outputPath: 'fonts/',    // where the fonts will go
-            publicPath: '../'       // override the default path
+            outputPath: 'fonts/', // where the fonts will go
+            publicPath: '../' // override the default path
           }
         }]
       }
@@ -133,25 +132,25 @@ var options = {
         }))
       }
     }]),
-    new CopyWebpackPlugin([
-      { from: '../shared-components/src/assets/images' },
-    ]),
-    new CopyWebpackPlugin([
-      { from: '../shared-components/src/assets/fonts' },
-    ]),
+    new CopyWebpackPlugin([{
+      from: '../shared-components/src/assets/images'
+    }, ]),
+    new CopyWebpackPlugin([{
+      from: '../shared-components/src/assets/fonts'
+    }, ]),
     new CopyWebpackPlugin([{
       from: "src/pages/content/content.styles.css"
     }]),
-    new HtmlWebpackPlugin({
-      template: path.join(__dirname, "src", "pages", "popup", "index.html"),
-      filename: "popup.html",
-      chunks: ["popup"]
-    }),
-    new HtmlWebpackPlugin({
-      template: path.join(__dirname, "src", "pages", "options", "index.html"),
-      filename: "options.html",
-      chunks: ["options"]
-    }),
+    // new HtmlWebpackPlugin({
+    //   template: path.join(__dirname, "src", "pages", "popup", "index.html"),
+    //   filename: "popup.html",
+    //   chunks: ["popup"]
+    // }),
+    // new HtmlWebpackPlugin({
+    //   template: path.join(__dirname, "src", "pages", "options", "index.html"),
+    //   filename: "options.html",
+    //   chunks: ["options"]
+    // }),
     new HtmlWebpackPlugin({
       template: path.join(__dirname, "src", "pages", "background", "background.html"),
       filename: "background.html",

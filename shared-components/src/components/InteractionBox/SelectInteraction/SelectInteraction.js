@@ -10,7 +10,6 @@ import * as FirebaseStore from '../../../firebase/store';
 import InteractionBox from '../InteractionBox';
 import { SNIPPET_TYPE } from '../../../shared/constants';
 import styles from './SelectInteraction.css';
-import popup from '../../../../../chrome-extension/src/pages/popup/Popup.js';
 import { PageCountHelper, dragElement } from '../../../../../chrome-extension/src/pages/content/content.utility.js';
 import classes from '../../../../../chrome-extension/src/pages/content/content.annotation.css';
 
