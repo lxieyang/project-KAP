@@ -1,0 +1,10 @@
+body {
+  font-family: 'Nunito', sans-serif;
+  font-size: 14px;
+  font-weight: 300;
+  color: #4a4a4a;
+  /* border: 1px dotted black; */
+  height: auto;
+  padding: 0px 25px;
+  margin: 0;
+}

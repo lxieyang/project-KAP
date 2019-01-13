@@ -17,18 +17,15 @@
       }
     }
   },
-  "content_scripts": [{
-    "matches": [
-      "<all_urls>"
-    ],
-    "js": [
-      "contentAnnotation.bundle.js"
-    ],
-    "css": [
-      "content.styles.css"
-    ]
-  }],
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["contentAnnotation.bundle.js"],
+      "css": ["content.styles.css"]
+    }
+  ],
   "web_accessible_resources": [
+    "popup.html",
     "content.styles.css",
     "thumb-down-100.jpg",
     "thumb-up-100.jpg",
@@ -42,9 +39,12 @@
     "128": "icon-128.png"
   },
   "permissions": [
+    "https://*/*",
+    "http://*/*",
     "downloads",
     "contextMenus",
     "tabs",
+    "storage",
     "activeTab",
     "<all_urls>",
     "background"
