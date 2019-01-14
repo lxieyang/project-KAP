@@ -36,9 +36,9 @@ const containerVisibleClass = css({
 
 const containerMinimizedClass = css({
   cursor: 'pointer',
-  transform: 'translateX(96%)',
+  transform: 'translateX(98%)',
   ':hover': {
-    transform: 'translateX(94%)'
+    transform: 'translateX(96%)'
   },
   '& > iframe': {
     pointerEvents: 'none'

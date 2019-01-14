@@ -4,6 +4,8 @@ import { APP_NAME_SHORT } from '../../../../shared-components/src/shared/constan
 //
 //
 //
+//
+//
 /* Enable / Disable Tracking */
 let trackingIsActive = false;
 
@@ -69,8 +71,10 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 //
 //
 //
+//
+//
 /* Choose to shrink body / cover content */
-let shouldShrinkBody = true;
+let shouldShrinkBody = false;
 
 const updateShouldShrinkBodyStatus = () => {
   // toggle tracking status on all tables
