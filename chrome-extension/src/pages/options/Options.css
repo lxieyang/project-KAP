@@ -1,0 +1,18 @@
+.OptionsPageContainer {
+  margin: 10px;
+}
+
+.OptionContainer {
+  margin: 10px 5px 10px 5px;
+  display: flex;
+  align-items: center;
+}
+
+.OptionLabel {
+  font-weight: 600;
+  margin-right: 5px;
+}
+
+.OptionOptions label {
+  margin-right: 5px;
+}

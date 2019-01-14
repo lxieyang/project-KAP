@@ -1,10 +1,9 @@
 /* global chrome */
 import { APP_NAME_SHORT } from '../../../../shared-components/src/shared/constants';
 
-// chrome.storage.local.set({key: value}, function() {
-//   console.log('Value is set to ' + value);
-// });
-
+//
+//
+//
 /* Enable / Disable Tracking */
 let trackingIsActive = false;
 
@@ -49,7 +48,7 @@ chrome.browserAction.onClicked.addListener(function(tab) {
   trackingIsActive = !trackingIsActive;
   updateTrackingStatus();
   // update in chrome storage
-  chrome.storage.local.set({ trackingIsActive: trackingIsActive }, function() {
+  chrome.storage.local.set({ trackingIsActive }, function() {
     //  Data's been saved boys and girls, go on home
     console.log('trackingIsActive has been set to:', trackingIsActive);
   });
@@ -67,9 +66,48 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   }
 });
 
+//
+//
+//
 /* Choose to shrink body / cover content */
 let shouldShrinkBody = true;
+
+const updateShouldShrinkBodyStatus = () => {
+  // toggle tracking status on all tables
+  chrome.tabs.query({}, function(tabs) {
+    for (var i = 0; i < tabs.length; ++i) {
+      chrome.tabs.sendMessage(tabs[i].id, {
+        msg: `TURN_${shouldShrinkBody ? 'ON' : 'OFF'}_BODY_SHRINK`
+      });
+    }
+  });
+};
+
+// check chrome storage to see if should enable shouldShrinkBody
+chrome.storage.sync.get(['shouldShrinkBody'], function(result) {
+  console.log('shouldShrinkBody:', result.shouldShrinkBody);
+  if (result.shouldShrinkBody !== undefined) {
+    shouldShrinkBody = result.shouldShrinkBody;
+  }
+  updateShouldShrinkBodyStatus();
+});
+
+chrome.tabs.onCreated.addListener(tab => {
+  chrome.tabs.sendMessage(tab.id, {
+    msg: `TURN_${shouldShrinkBody ? 'ON' : 'OFF'}_BODY_SHRINK`
+  });
+});
+
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+  if (request.msg === 'SETTINGS_CHANGED_SIDEBAR_BEHAVIOR') {
+    shouldShrinkBody = request.to === 'overlay' ? false : true;
+    updateShouldShrinkBodyStatus();
+    chrome.storage.local.set({ shouldShrinkBody }, function() {
+      //  Data's been saved boys and girls, go on home
+      console.log('shouldShrinkBody has been set to:', shouldShrinkBody);
+    });
+  }
+
   if (request.msg === 'SHOULD_SHRINK_BODY') {
     sendResponse({ SHOULD_SHRINK_BODY: shouldShrinkBody });
   }

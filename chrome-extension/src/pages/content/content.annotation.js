@@ -51,5 +51,9 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     unmountSidebar();
   } else if (request.msg === 'TURN_ON_KAP_TRACKING') {
     mountSidebar();
+  } else if (request.msg === 'TURN_ON_BODY_SHRINK') {
+    shouldShrinkBody = true;
+  } else if (request.msg === 'TURN_OFF_BODY_SHRINK') {
+    shouldShrinkBody = false;
   }
 });
