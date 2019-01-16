@@ -25,7 +25,7 @@ const containerClass = css({
   maxWidth: '400px',
   padding: '3px',
   boxSizing: 'border-box',
-  transform: 'translateX(100%)',
+  transform: 'translateX(102%)',
   transition: 'transform .25s cubic-bezier(0, 0, 0.3, 1)',
   zIndex: 10000
 });
@@ -38,7 +38,7 @@ const containerMinimizedClass = css({
   cursor: 'pointer',
   transform: 'translateX(98%)',
   ':hover': {
-    transform: 'translateX(96%)'
+    transform: 'translateX(94%)'
   },
   '& > iframe': {
     pointerEvents: 'none'

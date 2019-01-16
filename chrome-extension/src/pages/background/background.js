@@ -116,3 +116,58 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     sendResponse({ SHOULD_SHRINK_BODY: shouldShrinkBody });
   }
 });
+
+//
+//
+//
+//
+//
+/* Logging in/out on all tabs*/
+const updateLogInStatus = (idToken, user) => {
+  chrome.tabs.query({}, function(tabs) {
+    for (var i = 0; i < tabs.length; ++i) {
+      chrome.tabs.sendMessage(tabs[i].id, {
+        msg: `USER_LOGIN_STATUS_CHANGED`,
+        idToken
+      });
+    }
+  });
+};
+
+// handle login/out request
+chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+  if (request.msg === 'USER_LOGGED_IN') {
+    localStorage.setItem('idToken', request.credential.idToken);
+    updateLogInStatus(request.credential.idToken);
+  }
+
+  if (request.msg === 'USER_LOGGED_OUT') {
+    localStorage.removeItem('idToken');
+    updateLogInStatus(null);
+  }
+
+  if (request.msg === 'GET_USER_INFO') {
+    sendResponse({
+      idToken: localStorage.getItem('idToken')
+    });
+  }
+});
+
+//
+//
+//
+//
+//
+/* Other Requests */
+chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+  if (request.msg === 'OPEN_SETTINGS_PAGE') {
+    chrome.tabs.create(
+      {
+        url: chrome.extension.getURL('options.html')
+      },
+      tab => {
+        // Tab opened.
+      }
+    );
+  }
+});

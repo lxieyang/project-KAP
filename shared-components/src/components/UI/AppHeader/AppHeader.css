@@ -1,10 +1,12 @@
 .AppHeader {
   margin-bottom: 10px;
-  padding: 8px 10px 8px 10px;
+  height: 36px;
+  padding: 6px 10px 6px 10px;
   display: flex;
   align-items: center;
   background-color: rgba(251, 251, 251, 1);
   box-shadow: 0 2px 6px 0 rgba(60, 64, 67, 0.15);
+  box-sizing: border-box;
 }
 
 .isLoggedIn {
@@ -28,34 +30,10 @@
   align-self: flex-start;
 }
 
-.SignInButtonInline {
+.SignInOutButtonInline {
   color: rgb(194, 40, 27);
   cursor: pointer;
 }
-
-/* .LetterC {
-  color: #4285f4;
-}
-
-.LetterH {
-  color: #ea4335;
-}
-
-.LetterR {
-  color: #fbbc05;
-}
-
-.LetterO {
-  color: #4285f4;
-}
-
-.LetterM {
-  color: #34a853;
-}
-
-.LetterE {
-  color: #ea4335;
-} */
 
 .HeaderIconContainer {
   margin-left: 10px;
@@ -108,8 +86,8 @@
   cursor: pointer;
   margin-left: 30px;
   margin-right: -4px;
-  font-size: 1.1rem;
-  padding: 6px 8px;
+  font-size: 0.9rem;
+  padding: 3px 5px;
   border-radius: 5px;
   transition: all 0.1s ease-in;
 }
@@ -120,9 +98,9 @@
 }
 
 .ProfileImg {
-  width: 30px;
-  height: 30px;
-  margin-right: 10px;
+  width: 18px;
+  height: 18px;
+  margin-right: 5px;
   border: 1px solid grey;
   border-radius: 50%;
   box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);
@@ -132,7 +110,9 @@
   /* background-color: black;
   color: white; */
   background-color: white;
-  font-size: 1rem;
+  color: #666;
+  font-weight: 100;
+  font-size: 0.9rem;
   text-decoration: none;
   box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);
 }

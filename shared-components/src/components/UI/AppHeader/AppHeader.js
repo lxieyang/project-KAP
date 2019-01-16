@@ -64,28 +64,21 @@ class AppHeader extends Component {
             &nbsp;
             <span className={styles.AppVersion}>(v2-beta)</span>
           </div>
-
-          {props.shouldDisplayHeaderButtons === false ? (
-            <div className={styles.SignInButtonInline}>Log in</div>
-          ) : (
-            <div
-              className={styles.HeaderIconContainer}
-              style={{
-                display:
-                  props.shouldDisplayHeaderButtons === false ? 'none' : null
-              }}
-            >
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-around'
+            }}
+          >
+            {props.shouldDisplayHeaderButtons === false ? (
               <div
-                className={styles.HeaderButton}
-                onClick={event => props.openInNewTabClickedHandler()}
+                className={styles.SignInOutButtonInline}
+                onClick={e => this.props.logInClickedHandler()}
               >
-                <FontAwesomeIcon
-                  icon={fasExternalLinkSquareAlt}
-                  className={styles.IconInButton}
-                />
-                <span>Open {APP_NAME_SHORT} Tab</span>
+                Log in
               </div>
-
+            ) : (
               <Popover
                 containerStyle={{ zIndex: '100000' }}
                 containerClassName={styles.LogoutPopoverContainer}
@@ -102,9 +95,7 @@ class AppHeader extends Component {
                     <div className={styles.PopoverContentContainer}>
                       <ul>
                         <li
-                          onClick={event =>
-                            this.openSettingsPageClickedHandler()
-                          }
+                          onClick={e => this.openSettingsPageClickedHandler()}
                         >
                           <div className={styles.IconBoxInPopover}>
                             <FontAwesomeIcon
@@ -112,17 +103,17 @@ class AppHeader extends Component {
                               className={styles.IconInPopover}
                             />
                           </div>
-                          <div>Open Settings</div>
+                          <div>Settings</div>
                         </li>
 
-                        <li onClick={event => this.handleSignOut()}>
+                        <li onClick={e => this.props.logoutClickedHandler()}>
                           <div className={styles.IconBoxInPopover}>
                             <FontAwesomeIcon
                               icon={fasSignOutAlt}
                               className={styles.IconInPopover}
                             />
                           </div>
-                          <div>Sign out</div>
+                          <div>Log out</div>
                         </li>
                       </ul>
                     </div>
@@ -146,8 +137,8 @@ class AppHeader extends Component {
                   <span>{getFirstName(props.userName)}</span>
                 </div>
               </Popover>
-            </div>
-          )}
+            )}
+          </div>
         </div>
       </React.Fragment>
     );
