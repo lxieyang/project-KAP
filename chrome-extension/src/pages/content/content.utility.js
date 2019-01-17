@@ -22,16 +22,18 @@ export class PageCountHelper {
 
 // Make the DIV element draggagle:
 // https://www.w3schools.com/howto/howto_js_draggable.asp
-export const dragElement = (elmnt) => {
-  var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
-  if (document.getElementById(elmnt.id + "-header")) {
+export const dragElement = elmnt => {
+  var pos1 = 0,
+    pos2 = 0,
+    pos3 = 0,
+    pos4 = 0;
+  if (document.getElementById(elmnt.id + '-header')) {
     /* if present, the header is where you move the DIV from:*/
-    document.getElementById(elmnt.id + "-header").onmousedown = dragMouseDown;
-  } 
-  // else {
-  //   /* otherwise, move the DIV from anywhere inside the DIV:*/
-  //   elmnt.onmousedown = dragMouseDown;
-  // }
+    document.getElementById(elmnt.id + '-header').onmousedown = dragMouseDown;
+  } else {
+    /* otherwise, move the DIV from anywhere inside the DIV:*/
+    elmnt.onmousedown = dragMouseDown;
+  }
 
   function dragMouseDown(e) {
     e = e || window.event;
@@ -51,8 +53,8 @@ export const dragElement = (elmnt) => {
     pos3 = e.clientX;
     pos4 = e.clientY;
     // set the element's new position:
-    elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
-    elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
+    elmnt.style.top = elmnt.offsetTop - pos2 + 'px';
+    elmnt.style.left = elmnt.offsetLeft - pos1 + 'px';
   }
 
   function closeDragElement() {
@@ -60,4 +62,4 @@ export const dragElement = (elmnt) => {
     document.onmouseup = null;
     document.onmousemove = null;
   }
-}
+};
