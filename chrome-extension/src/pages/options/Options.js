@@ -2,7 +2,7 @@
 import React, { Component } from 'react';
 import { RadioGroup, Radio } from 'react-radio-group';
 import styles from './Options.css';
-import { DH_CHECK_P_NOT_PRIME } from 'constants';
+import SelectTooltipButton from '../../../../shared-components/src/components/InteractionBox/SelectTooltipButton/SelectTooltipButton';
 
 class Options extends Component {
   state = {
@@ -19,27 +19,32 @@ class Options extends Component {
 
   render() {
     return (
-      <div className={styles.OptionsPageContainer}>
-        <div className={styles.OptionContainer}>
-          <div className={styles.OptionLabel}>Sidebar open behavior:</div>
-          <div className={styles.OptionOptions}>
-            <RadioGroup
-              name="sidebar-behavior"
-              selectedValue={this.state.sidebarBehavior}
-              onChange={this.handleChange}
-            >
-              <label>
-                <Radio value="overlay" />
-                Overlay on the webpage
-              </label>
-              <label>
-                <Radio value="shrinkbody" />
-                Shrink the body of the webpage
-              </label>
-            </RadioGroup>
+      <React.Fragment>
+        <div className={styles.OptionsPageContainer}>
+          <div className={styles.OptionContainer}>
+            <div className={styles.OptionLabel}>Sidebar open behavior:</div>
+            <div className={styles.OptionOptions}>
+              <RadioGroup
+                name="sidebar-behavior"
+                selectedValue={this.state.sidebarBehavior}
+                onChange={this.handleChange}
+              >
+                <label>
+                  <Radio value="overlay" />
+                  Overlay on the webpage
+                </label>
+                <label>
+                  <Radio value="shrinkbody" />
+                  Shrink the body of the webpage
+                </label>
+              </RadioGroup>
+            </div>
           </div>
         </div>
-      </div>
+        {/*<div style={{ marginLeft: '200px' }}>
+          <SelectTooltipButton />
+        </div>*/}
+      </React.Fragment>
     );
   }
 }

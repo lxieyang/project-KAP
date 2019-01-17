@@ -10,7 +10,7 @@ import styles from './Logo.css';
     - size: string ('50px')
 */
 
-const logo = (props) => {
+const logo = props => {
   let src = AppLogo;
 
   if (window.chrome !== undefined && chrome.extension !== undefined) {
@@ -18,8 +18,17 @@ const logo = (props) => {
   }
 
   return (
-    <div className={props.hover ? styles.Logo : null} style={{width: props.size, height: props.size}}>
-      <img className={styles.Img} src={src} alt="KAP Logo" />
+    <div
+      className={props.hover ? styles.Logo : null}
+      style={{
+        ...props.style,
+        width: props.size,
+        height: props.size,
+        position: 'relative',
+        boxSizing: 'border-box'
+      }}
+    >
+      <img className={styles.Img} src={src} alt="APP Logo" />
     </div>
   );
 };
