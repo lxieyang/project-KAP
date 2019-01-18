@@ -3,9 +3,17 @@ import cx from 'classnames';
 import { css } from 'glamor';
 import { node, object, string, number, func } from 'prop-types';
 import { APP_NAME_SHORT } from '../../../../shared-components/src/shared/constants';
+import Logo from '../../../../shared-components/src/components/UI/Logo/Logo';
 import FontAwesomeIcon from '@fortawesome/react-fontawesome';
 import faChevronLeft from '@fortawesome/fontawesome-free-solid/faChevronLeft';
 import faChevronRight from '@fortawesome/fontawesome-free-solid/faChevronRight';
+import styles from './frame.css';
+
+const flexContainer = css({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'space-around'
+});
 
 const iframeClass = css({
   border: 'none',
@@ -45,27 +53,80 @@ const containerMinimizedClass = css({
   }
 });
 
+// const toggleButtonClass = css({
+//   position: 'fixed',
+//   bottom: '40px',
+//   right: '30px',
+//   cursor: 'pointer',
+//   // width: '45px',
+//   padding: '2px 0px',
+//   height: '30px',
+//   display: 'flex',
+//   alignItems: 'center',
+//   justifyContent: 'space-around',
+//   fontSize: '16px',
+//   backgroundColor: 'white',
+//   color: 'rgb(193, 40, 27)',
+//   borderRadius: '6px',
+//   boxShadow: '-1px 1px 8px rgba(0,0,0,.2)',
+//   zIndex: 20000,
+//   opacity: 0.3,
+//   ':hover': {
+//     opacity: 1
+//     // backgroundColor: 'rgb(193, 40, 27)',
+//     // color: 'white'
+//   },
+//   '::after': {
+//     content: '',
+//     transition: 'all 0.1s ease-in'
+//   },
+//   transition: 'all 0.1s ease-in'
+// });
+
+// const toggleButtonOpenClass = css({
+//   ':hover::after': {
+//     content: ` Open ${APP_NAME_SHORT} sidebar`,
+//     marginRight: '5px'
+//   }
+// });
+
+// const toggleButtonCloseClass = css({
+//   ':hover::after': {
+//     content: ` Close ${APP_NAME_SHORT} sidebar`,
+//     marginRight: '5px'
+//   }
+// });
+
 const toggleButtonClass = css({
+  position: 'fixed',
+  bottom: '40px',
+  right: '30px',
+  zIndex: 20000
+});
+
+const toggleButtonInnerClass = css({
   position: 'absolute',
-  top: '3px',
-  left: '-30px',
+  right: '0px',
+  bottom: '0px',
+  width: '45px',
+  height: '35px',
+  boxSizing: 'border-box',
   cursor: 'pointer',
-  width: '30px',
-  height: '40px',
+  padding: '2px 5px',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'space-around',
+  fontSize: '16px',
   backgroundColor: 'white',
   color: 'rgb(193, 40, 27)',
-  borderRadius: '3px',
-  boxShadow: '-1px 1px 8px rgba(0,0,0,.15)',
-  // opacity: 0.7,
+  borderRadius: '6px',
+  boxShadow: '-1px 1px 8px rgba(0,0,0,.2)',
+  transition: 'all 0.3s',
+  opacity: 0.3,
   ':hover': {
-    // opacity: 1,
-    backgroundColor: 'rgb(193, 40, 27)',
-    color: 'white'
-  },
-  transition: 'all 0.1s ease-in'
+    width: '210px',
+    opacity: 1
+  }
 });
 
 const FRAME_TOGGLE_FUNCTION = 'chromeIframeSheetToggle';
@@ -85,7 +146,48 @@ export class Frame extends Component {
     } = this.props;
 
     return (
-      <div>
+      <React.Fragment>
+        <div
+          className={cx({
+            [toggleButtonClass]: true
+            // [toggleButtonCloseClass]: !isMinimized,
+            // [toggleButtonOpenClass]: isMinimized
+          })}
+          title={`${
+            this.state.isMinimized ? 'Open' : 'Hide'
+          } ${APP_NAME_SHORT} Panel`}
+          // onClick={this.toggleMinimizedStatus}
+          onClick={this.onFrameClick}
+        >
+          <div
+            className={cx({
+              [toggleButtonInnerClass]: true
+            })}
+            style={{ margin: '5px' }}
+          >
+            <div
+              style={{
+                overflow: 'hidden',
+                whiteSpace: 'nowrap',
+                display: 'flex',
+                alignItems: 'center'
+              }}
+            >
+              <FontAwesomeIcon
+                icon={this.state.isMinimized ? faChevronLeft : faChevronRight}
+                style={{ marginRight: '5px' }}
+              />
+              <div style={{ width: '20px' }}>
+                <Logo size={'20px'} />
+              </div>
+              <div style={{ marginLeft: '5px' }}>
+                {` ${
+                  this.state.isMinimized ? 'Open' : 'Close'
+                } ${APP_NAME_SHORT} sidebar`}
+              </div>
+            </div>
+          </div>
+        </div>
         <div
           className={cx({
             [containerClass]: true,
@@ -96,20 +198,6 @@ export class Frame extends Component {
           style={containerStyle}
           onClick={this.onFrameClick}
         >
-          <div
-            className={cx({
-              [toggleButtonClass]: true
-            })}
-            title={`${
-              this.state.isMinimized ? 'Open' : 'Hide'
-            } ${APP_NAME_SHORT} Panel`}
-            // onClick={this.toggleMinimizedStatus}
-          >
-            <FontAwesomeIcon
-              icon={this.state.isMinimized ? faChevronLeft : faChevronRight}
-            />
-          </div>
-
           <iframe
             title={'kap-sidebar-iframe'}
             className={cx({
@@ -126,7 +214,7 @@ export class Frame extends Component {
         </div>
 
         {children}
-      </div>
+      </React.Fragment>
     );
   }
 
