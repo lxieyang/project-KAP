@@ -67,6 +67,7 @@
     "sass-loader": "^6.0.7",
     "semantic-ui-css": "^2.4.1",
     "semantic-ui-react": "^0.78.3",
+    "siphon-tools": "file:../local_modules/SiphonTools",
     "styled-components": "^3.4.10",
     "url-loader": "^1.1.2",
     "w3-css": "^4.1.0",

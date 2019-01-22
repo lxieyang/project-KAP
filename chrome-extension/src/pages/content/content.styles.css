@@ -34,6 +34,19 @@
   margin-left: 8px;
 }
 
+.siphon-selection-window {
+  /* position: absolute;
+  border: 1px dashed #888888;
+  z-index: 1000;
+  background-color: transparent; */
+
+  position: absolute;
+  border: 2px dotted rgb(193, 40, 27);
+  border-radius: 2px;
+  z-index: 1000;
+  background-color: rgba(0, 200, 0, 0.05);
+}
+
 .kap-selection-window {
   position: absolute;
   /* border: 2px dashed rgb(0, 200, 0); */

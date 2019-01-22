@@ -53,50 +53,6 @@ const containerMinimizedClass = css({
   }
 });
 
-// const toggleButtonClass = css({
-//   position: 'fixed',
-//   bottom: '40px',
-//   right: '30px',
-//   cursor: 'pointer',
-//   // width: '45px',
-//   padding: '2px 0px',
-//   height: '30px',
-//   display: 'flex',
-//   alignItems: 'center',
-//   justifyContent: 'space-around',
-//   fontSize: '16px',
-//   backgroundColor: 'white',
-//   color: 'rgb(193, 40, 27)',
-//   borderRadius: '6px',
-//   boxShadow: '-1px 1px 8px rgba(0,0,0,.2)',
-//   zIndex: 20000,
-//   opacity: 0.3,
-//   ':hover': {
-//     opacity: 1
-//     // backgroundColor: 'rgb(193, 40, 27)',
-//     // color: 'white'
-//   },
-//   '::after': {
-//     content: '',
-//     transition: 'all 0.1s ease-in'
-//   },
-//   transition: 'all 0.1s ease-in'
-// });
-
-// const toggleButtonOpenClass = css({
-//   ':hover::after': {
-//     content: ` Open ${APP_NAME_SHORT} sidebar`,
-//     marginRight: '5px'
-//   }
-// });
-
-// const toggleButtonCloseClass = css({
-//   ':hover::after': {
-//     content: ` Close ${APP_NAME_SHORT} sidebar`,
-//     marginRight: '5px'
-//   }
-// });
-
 const toggleButtonClass = css({
   position: 'fixed',
   bottom: '40px',
@@ -150,12 +106,10 @@ export class Frame extends Component {
         <div
           className={cx({
             [toggleButtonClass]: true
-            // [toggleButtonCloseClass]: !isMinimized,
-            // [toggleButtonOpenClass]: isMinimized
           })}
           title={`${
             this.state.isMinimized ? 'Open' : 'Hide'
-          } ${APP_NAME_SHORT} Panel`}
+          } ${APP_NAME_SHORT} sidebar`}
           // onClick={this.toggleMinimizedStatus}
           onClick={this.onFrameClick}
         >
@@ -310,20 +264,25 @@ export class Frame extends Component {
     this.toggleFrame();
   };
 
-  toggleFrame = () => {
-    this.setState(prevState => {
-      this.props.shrinkBody(prevState.isMinimized);
-      return { isMinimized: !prevState.isMinimized };
-    });
+  toggleFrame = (to = undefined) => {
+    if (to === undefined) {
+      this.setState(prevState => {
+        this.props.shrinkBody(prevState.isMinimized);
+        return { isMinimized: !prevState.isMinimized };
+      });
+    } else {
+      this.props.shrinkBody(!to);
+      this.setState({ isMinimized: to });
+    }
   };
 
   static isReady() {
     return typeof window[FRAME_TOGGLE_FUNCTION] !== 'undefined';
   }
 
-  static toggle() {
+  static toggle(to = undefined) {
     if (window[FRAME_TOGGLE_FUNCTION]) {
-      window[FRAME_TOGGLE_FUNCTION]();
+      window[FRAME_TOGGLE_FUNCTION](to);
     }
   }
 }
