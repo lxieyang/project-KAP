@@ -1,6 +1,29 @@
 /* global chrome */
 import { APP_NAME_SHORT } from '../../../../shared-components/src/shared/constants';
 
+let showSuccessStatusInIconBadgeTimeout = 0;
+function showSuccessStatusInIconBadge(success = true) {
+  // change to success
+  chrome.browserAction.setBadgeText({ text: success ? '✓' : '✕' });
+  chrome.browserAction.setBadgeBackgroundColor({
+    color: success ? [31, 187, 45, 1] : [251, 11, 32, 1]
+  });
+  clearTimeout(showSuccessStatusInIconBadgeTimeout);
+  showSuccessStatusInIconBadgeTimeout = setTimeout(() => {
+    chrome.browserAction.setBadgeText({ text: '' });
+  }, 6000);
+}
+
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+  if (request.msg === 'SHOW_SUCCESS_STATUS_BADGE') {
+    if (request.success) {
+      showSuccessStatusInIconBadge(true);
+    } else {
+      showSuccessStatusInIconBadge(false);
+    }
+  }
+});
+
 //
 //
 //

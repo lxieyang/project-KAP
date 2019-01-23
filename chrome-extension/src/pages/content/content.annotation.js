@@ -6,7 +6,7 @@ import Frame from './frame';
 import SelectTooltipButton from './SelectTooltipButton/SelectTooltipButton';
 import { dragElement } from './content.utility';
 
-import { PIECE_TYPES } from '../../../../shared-components/src/shared/types';
+import { ANNOTATION_TYPES } from '../../../../shared-components/src/shared/types';
 import SiphonTools from 'siphon-tools';
 import {
   Highlight,
@@ -47,8 +47,8 @@ function displayTooltipButton(rect, props) {
 }
 
 let store = new Store({
-  [PIECE_TYPES.Highlight]: Highlight,
-  [PIECE_TYPES.Snippet]: Snippet
+  [ANNOTATION_TYPES.Highlight]: Highlight,
+  [ANNOTATION_TYPES.Snippet]: Snippet
 });
 store.init();
 
@@ -67,11 +67,11 @@ SiphonTools.initializeSelectors([
   SnippetSelector({
     onTrigger: (cptrWindow, e) => {
       captureWindow = cptrWindow;
-      let bounding = cptrWindow.getBoundingClientRect();
-      displayTooltipButton(bounding, {
+      let rect = cptrWindow.getBoundingClientRect();
+      displayTooltipButton(rect, {
         captureWindow
       });
-      let snippet = new Snippet(bounding);
+      let snippet = new Snippet(rect);
       console.log(snippet);
     }
   })

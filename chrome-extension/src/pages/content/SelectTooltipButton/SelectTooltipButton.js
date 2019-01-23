@@ -1,3 +1,4 @@
+/* global chrome */
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import ReactTooltip from 'react-tooltip';
@@ -10,6 +11,7 @@ import farBookmark from '@fortawesome/fontawesome-free-regular/faBookmark';
 import fasBookmark from '@fortawesome/fontawesome-free-solid/faBookmark';
 import { APP_NAME_SHORT } from '../../../../../shared-components/src/shared/constants';
 import Logo from '../../../../../shared-components/src/components/UI/Logo/Logo';
+import { PIECE_TYPES } from '../../../../../shared-components/src/shared/types';
 import styles from './SelectTooltipButton.css';
 
 class SelectTooltipButton extends Component {
@@ -107,6 +109,15 @@ class SelectTooltipButton extends Component {
     }, 600);
   };
 
+  tooltipButtonClickedHandler = (type = PIECE_TYPES.piece) => {
+    chrome.runtime.sendMessage({
+      msg: 'SHOW_SUCCESS_STATUS_BADGE',
+      success: true
+    });
+    console.log(`should save as a type ${type} piece`);
+    this.removeTooltipButton();
+  };
+
   render() {
     return (
       <React.Fragment>
@@ -115,6 +126,7 @@ class SelectTooltipButton extends Component {
             className={styles.TooltipButton}
             onMouseEnter={e => this.mouseEnterTooltipButton()}
             onMouseLeave={e => this.mouseLeaveTooltipButton()}
+            onClick={e => this.tooltipButtonClickedHandler()}
           >
             <div style={{ display: 'flex', alignItems: 'center' }}>
               <FontAwesomeIcon
@@ -143,7 +155,9 @@ class SelectTooltipButton extends Component {
                 <a
                   data-tip
                   data-for="add_pc"
-                  // onClick={() => this.switchPopoverOpenStatus(false)}
+                  onClick={e =>
+                    this.tooltipButtonClickedHandler(PIECE_TYPES.piece)
+                  }
                   className={styles.DetailedMenuItemIcon}
                   style={{ backgroundColor: 'rgb(193, 40, 27)' }}
                 >
@@ -164,7 +178,9 @@ class SelectTooltipButton extends Component {
                 <a
                   data-tip
                   data-for="add_op"
-                  // onClick={() => this.switchPopoverOpenStatus(false)}
+                  onClick={e =>
+                    this.tooltipButtonClickedHandler(PIECE_TYPES.option)
+                  }
                   className={styles.DetailedMenuItemIcon}
                   style={{ backgroundColor: 'rgb(232, 173, 84)' }}
                 >
@@ -185,7 +201,9 @@ class SelectTooltipButton extends Component {
                 <a
                   data-tip
                   data-for="add_rq"
-                  // onClick={() => this.switchPopoverOpenStatus(false)}
+                  onClick={e =>
+                    this.tooltipButtonClickedHandler(PIECE_TYPES.criterion)
+                  }
                   className={styles.DetailedMenuItemIcon}
                   style={{ backgroundColor: 'rgb(73, 132, 233)' }}
                 >
