@@ -38,7 +38,7 @@ function displayTooltipButton(rect, props) {
   ReactDOM.render(<SelectTooltipButton {...props} />, popOverAnchor);
 
   // adjusting position of popover box after mounting
-  popOverAnchor.style.top = `${rect.bottom + 3 + window.scrollY}px`;
+  popOverAnchor.style.top = `${rect.bottom + 5 + window.scrollY}px`;
   let leftPosition = Math.floor(
     rect.left + rect.width - popOverAnchor.clientWidth
   );
@@ -158,6 +158,7 @@ window.addEventListener('keydown', event => {
       document.querySelector('.siphon-selection-window') !== null
     ) {
       captureWindow.remove();
+      ReactDOM.unmountComponentAtNode(popOverAnchor);
     } else {
       if (shouldUseEscapeKeyToToggleSidebar) {
         // Frame.toggle(true);
