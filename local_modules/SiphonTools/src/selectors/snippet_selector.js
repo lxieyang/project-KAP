@@ -28,7 +28,7 @@ export default function SnippetSelector({
 }) {
   return {
     conditions: function(e) {
-      return trigger(e) && e.mouseDown;
+      return e.mouseDown && trigger(e);
     },
     onSelectionStart: function(e) {
       document.body.style.cursor = "crosshair";

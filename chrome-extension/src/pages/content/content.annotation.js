@@ -85,7 +85,8 @@ window.addEventListener('keydown', event => {
     ) {
       captureWindow.remove();
     } else {
-      Frame.toggle(true);
+      // Frame.toggle(true);
+      Frame.toggle();
     }
   }
 });
