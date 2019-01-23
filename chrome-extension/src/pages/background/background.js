@@ -98,13 +98,24 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 //
 /* Choose to shrink body / cover content */
 let shouldShrinkBody = false;
-
+let shouldUseEscapeKeyToToggleSidebar = true;
 const updateShouldShrinkBodyStatus = () => {
-  // toggle tracking status on all tables
   chrome.tabs.query({}, function(tabs) {
     for (var i = 0; i < tabs.length; ++i) {
       chrome.tabs.sendMessage(tabs[i].id, {
         msg: `TURN_${shouldShrinkBody ? 'ON' : 'OFF'}_BODY_SHRINK`
+      });
+    }
+  });
+};
+
+const updateShouldUseEscapeKeyToToggleSidebarStatus = () => {
+  chrome.tabs.query({}, function(tabs) {
+    for (var i = 0; i < tabs.length; ++i) {
+      chrome.tabs.sendMessage(tabs[i].id, {
+        msg: `TURN_${
+          shouldUseEscapeKeyToToggleSidebar ? 'ON' : 'OFF'
+        }_TOGGLE_SIDEBAR_WITH_ESC_KEY`
       });
     }
   });
@@ -119,9 +130,27 @@ chrome.storage.sync.get(['shouldShrinkBody'], function(result) {
   updateShouldShrinkBodyStatus();
 });
 
+// check chrome storage to see if should enable shouldUseEscapeKeyToToggleSidebar
+chrome.storage.sync.get(['shouldUseEscapeKeyToToggleSidebar'], function(
+  result
+) {
+  console.log(
+    'shouldUseEscapeKeyToToggleSidebar:',
+    result.shouldUseEscapeKeyToToggleSidebar
+  );
+  if (result.shouldUseEscapeKeyToToggleSidebar !== undefined) {
+    shouldUseEscapeKeyToToggleSidebar =
+      result.shouldUseEscapeKeyToToggleSidebar;
+  }
+  updateShouldUseEscapeKeyToToggleSidebarStatus();
+});
+
 chrome.tabs.onCreated.addListener(tab => {
   chrome.tabs.sendMessage(tab.id, {
     msg: `TURN_${shouldShrinkBody ? 'ON' : 'OFF'}_BODY_SHRINK`
+  });
+  chrome.tabs.sendMessage(tab.id, {
+    msg: `TURN_${shouldShrinkBody ? 'ON' : 'OFF'}_TOGGLE_SIDEBAR_WITH_ESC_KEY`
   });
 });
 
@@ -135,8 +164,26 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     });
   }
 
+  if (request.msg === 'SETTINGS_CHANGED_SIDEBAR_ESCAPE_KEY_TOGGLE') {
+    shouldUseEscapeKeyToToggleSidebar = request.to;
+    updateShouldUseEscapeKeyToToggleSidebarStatus();
+    chrome.storage.local.set({ shouldUseEscapeKeyToToggleSidebar }, function() {
+      //  Data's been saved boys and girls, go on home
+      console.log(
+        'shouldUseEscapeKeyToToggleSidebar has been set to:',
+        shouldUseEscapeKeyToToggleSidebar
+      );
+    });
+  }
+
   if (request.msg === 'SHOULD_SHRINK_BODY') {
     sendResponse({ SHOULD_SHRINK_BODY: shouldShrinkBody });
+  }
+
+  if (request.msg === 'SHOULD_TOGGLE_SIDEBAR_WITH_ESC_KEY') {
+    sendResponse({
+      SHOULD_TOGGLE_SIDEBAR_WITH_ESC_KEY: shouldUseEscapeKeyToToggleSidebar
+    });
   }
 });
 

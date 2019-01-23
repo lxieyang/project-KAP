@@ -6,13 +6,22 @@ import SelectTooltipButton from '../../../../shared-components/src/components/In
 
 class Options extends Component {
   state = {
-    sidebarBehavior: 'overlay'
+    sidebarBehavior: 'overlay',
+    sidebarEscapeKeyToggle: true
   };
 
-  handleChange = value => {
+  handleSidebarBehaviorChange = value => {
     this.setState({ sidebarBehavior: value });
     chrome.runtime.sendMessage({
       msg: 'SETTINGS_CHANGED_SIDEBAR_BEHAVIOR',
+      to: value
+    });
+  };
+
+  handleSidebarEscapeKeyToggleChange = value => {
+    this.setState({ sidebarEscapeKeyToggle: value });
+    chrome.runtime.sendMessage({
+      msg: 'SETTINGS_CHANGED_SIDEBAR_ESCAPE_KEY_TOGGLE',
       to: value
     });
   };
@@ -27,7 +36,7 @@ class Options extends Component {
               <RadioGroup
                 name="sidebar-behavior"
                 selectedValue={this.state.sidebarBehavior}
-                onChange={this.handleChange}
+                onChange={this.handleSidebarBehaviorChange}
               >
                 <label>
                   <Radio value="overlay" />
@@ -36,6 +45,26 @@ class Options extends Component {
                 <label>
                   <Radio value="shrinkbody" />
                   Shrink the body of the webpage
+                </label>
+              </RadioGroup>
+            </div>
+          </div>
+
+          <div className={styles.OptionContainer}>
+            <div className={styles.OptionLabel}>Use Esc to toggle sidebar:</div>
+            <div className={styles.OptionOptions}>
+              <RadioGroup
+                name="sidebar-escape-key-toggle"
+                selectedValue={this.state.sidebarEscapeKeyToggle}
+                onChange={this.handleSidebarEscapeKeyToggleChange}
+              >
+                <label>
+                  <Radio value={true} />
+                  True
+                </label>
+                <label>
+                  <Radio value={false} />
+                  False
                 </label>
               </RadioGroup>
             </div>

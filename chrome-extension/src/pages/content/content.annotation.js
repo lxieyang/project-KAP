@@ -61,7 +61,6 @@ SiphonTools.initializeSelectors([
 
       let highlight = new Highlight(range);
       console.log(highlight);
-      // store.saveAnnotation(highlight);
     }
   }),
   SnippetSelector({
@@ -77,31 +76,26 @@ SiphonTools.initializeSelectors([
   })
 ]);
 
-window.addEventListener('keydown', event => {
-  if (event.key === 'Escape') {
-    if (
-      captureWindow !== undefined &&
-      document.querySelector('.siphon-selection-window') !== null
-    ) {
-      captureWindow.remove();
-    } else {
-      // Frame.toggle(true);
-      Frame.toggle();
-    }
-  }
-});
-
 //
 //
 //
 //
 //
 /* Sidebar manager & tracking status manager */
-let shouldShrinkBody = true;
+let shouldShrinkBody = false;
+let shouldUseEscapeKeyToToggleSidebar = true;
 chrome.runtime.sendMessage({ msg: 'SHOULD_SHRINK_BODY' }, response => {
   shouldShrinkBody = response.SHOULD_SHRINK_BODY;
   document.body.style.transition = 'all 0.25s ease-in';
 });
+
+chrome.runtime.sendMessage(
+  { msg: 'SHOULD_TOGGLE_SIDEBAR_WITH_ESC_KEY' },
+  response => {
+    shouldUseEscapeKeyToToggleSidebar =
+      response.SHOULD_TOGGLE_SIDEBAR_WITH_ESC_KEY;
+  }
+);
 
 let sidebarRoot = document.createElement('div');
 document.body.appendChild(sidebarRoot);
@@ -150,5 +144,25 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     shouldShrinkBody = true;
   } else if (request.msg === 'TURN_OFF_BODY_SHRINK') {
     shouldShrinkBody = false;
+  } else if (request.msg === 'TURN_ON_TOGGLE_SIDEBAR_WITH_ESC_KEY') {
+    shouldUseEscapeKeyToToggleSidebar = true;
+  } else if (request.msg === 'TURN_OFF_TOGGLE_SIDEBAR_WITH_ESC_KEY') {
+    shouldUseEscapeKeyToToggleSidebar = false;
+  }
+});
+
+window.addEventListener('keydown', event => {
+  if (event.key === 'Escape') {
+    if (
+      captureWindow !== undefined &&
+      document.querySelector('.siphon-selection-window') !== null
+    ) {
+      captureWindow.remove();
+    } else {
+      if (shouldUseEscapeKeyToToggleSidebar) {
+        // Frame.toggle(true);
+        Frame.toggle();
+      }
+    }
   }
 });
