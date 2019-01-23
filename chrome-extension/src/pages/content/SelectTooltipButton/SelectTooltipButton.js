@@ -1,13 +1,15 @@
 import React, { Component } from 'react';
+import ReactDOM from 'react-dom';
 import ReactTooltip from 'react-tooltip';
+import autobind from 'autobind-decorator';
 import FontAwesomeIcon from '@fortawesome/react-fontawesome';
 import fasListUl from '@fortawesome/fontawesome-free-solid/faListUl';
 import fasFlagCheckered from '@fortawesome/fontawesome-free-solid/faFlagCheckered';
 import fasPuzzlePiece from '@fortawesome/fontawesome-free-solid/faPuzzlePiece';
 import farBookmark from '@fortawesome/fontawesome-free-regular/faBookmark';
 import fasBookmark from '@fortawesome/fontawesome-free-solid/faBookmark';
-import { APP_NAME_SHORT } from '../../../shared/constants';
-import Logo from '../../UI/Logo/Logo';
+import { APP_NAME_SHORT } from '../../../../../shared-components/src/shared/constants';
+import Logo from '../../../../../shared-components/src/components/UI/Logo/Logo';
 import styles from './SelectTooltipButton.css';
 
 class SelectTooltipButton extends Component {
@@ -19,6 +21,34 @@ class SelectTooltipButton extends Component {
     canSubmitRequirement: false,
     shouldDisplaySelectInteraction: false
   };
+
+  componentDidMount() {
+    window.addEventListener('mousedown', this.mouseDown, true);
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('mousedown', this.mouseDown, true);
+  }
+
+  @autobind
+  removeTooltipButton() {
+    if (this.props.captureWindow) {
+      this.props.captureWindow.remove();
+    }
+    ReactDOM.unmountComponentAtNode(ReactDOM.findDOMNode(this).parentNode);
+  }
+
+  @autobind
+  mouseDown(e) {
+    let tooltipButton = ReactDOM.findDOMNode(this);
+    if (tooltipButton.contains(e.target)) {
+      //Ignore mouseup inside the toolbar
+      e.preventDefault();
+      e.stopPropagation();
+      return false;
+    }
+    this.removeTooltipButton();
+  }
 
   // collectButtonClickHandler = btnType => {
   //   const { selectedText, addPiece, clip } = this.props;
