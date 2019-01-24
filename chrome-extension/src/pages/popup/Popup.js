@@ -4,6 +4,7 @@ import FontAwesomeIcon from '@fortawesome/react-fontawesome';
 import fasExternalLinkSquareAlt from '@fortawesome/fontawesome-free-solid/faExternalLinkSquareAlt';
 
 import AppHeader from '../../../../shared-components/src/components/UI/AppHeader/AppHeader';
+import TaskSwitcher from './containers/TaskSwitcher/TaskSwitcher';
 import styles from './Popup.css';
 import { APP_NAME_SHORT } from '../../../../shared-components/src/shared/constants';
 import Spinner from '../../../../shared-components/src/components/UI/Spinner/Spinner';
@@ -166,7 +167,7 @@ class Popup extends Component {
     return (
       <React.Fragment>
         {appTitle}
-        <div
+        {/*<div
           style={{
             width: '100%',
             height: '100px',
@@ -176,7 +177,8 @@ class Popup extends Component {
           }}
         >
           Successfully logged into {APP_NAME_SHORT}.
-        </div>
+        </div>*/}
+        <TaskSwitcher />
       </React.Fragment>
     );
   }

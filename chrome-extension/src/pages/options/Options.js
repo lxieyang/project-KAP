@@ -2,7 +2,7 @@
 import React, { Component } from 'react';
 import { RadioGroup, Radio } from 'react-radio-group';
 import styles from './Options.css';
-import SelectTooltipButton from '../../../../shared-components/src/components/InteractionBox/SelectTooltipButton/SelectTooltipButton';
+import SelectTooltipButton from '../content/SelectTooltipButton/SelectTooltipButton';
 
 class Options extends Component {
   state = {

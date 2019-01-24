@@ -1,0 +1,29 @@
+.DropdownRoot {
+  width: 90%;
+}
+
+.DropdownControl {
+  max-width: 100%;
+  text-overflow: ellipsis;
+}
+
+.DropdownPlaceholder {
+  max-width: 95%;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.DropdownMenu {
+  max-height: 300px;
+  overflow: auto;
+}
+
+.AllTasksButton {
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: all 0.1s ease-in;
+}
+
+.AllTasksButton:hover {
+  transform: scale(1.05);
+}

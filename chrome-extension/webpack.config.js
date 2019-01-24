@@ -62,8 +62,23 @@ var options = {
   },
   module: {
     rules: [
+      // https://medium.com/@vuong.qnguyen10/using-css-module-with-external-ui-library-in-create-react-app-bdd1495615c4
       {
         test: /\.css$/,
+        exclude: [/src/],
+        use: [
+          require.resolve('style-loader'),
+          {
+            loader: require.resolve('css-loader'),
+            options: {
+              importLoaders: 1
+            }
+          }
+        ]
+      },
+      {
+        test: /\.css$/,
+        exclude: [/node_modules/],
         use: [
           require.resolve('style-loader'),
           {
