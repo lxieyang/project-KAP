@@ -5,6 +5,8 @@ import fasExternalLinkSquareAlt from '@fortawesome/fontawesome-free-solid/faExte
 
 import AppHeader from '../../../../shared-components/src/components/UI/AppHeader/AppHeader';
 import TaskSwitcher from './containers/TaskSwitcher/TaskSwitcher';
+import Structure from './containers/Structure/Strusture';
+import Pieces from './containers/Pieces/Pieces';
 import styles from './Popup.css';
 import { APP_NAME_SHORT } from '../../../../shared-components/src/shared/constants';
 import Spinner from '../../../../shared-components/src/components/UI/Spinner/Spinner';
@@ -179,6 +181,8 @@ class Popup extends Component {
           Successfully logged into {APP_NAME_SHORT}.
         </div>*/}
         <TaskSwitcher />
+        <Structure />
+        <Pieces />
       </React.Fragment>
     );
   }

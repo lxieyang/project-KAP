@@ -73,6 +73,7 @@ const toggleButtonInnerClass = css({
   alignItems: 'center',
   justifyContent: 'space-around',
   fontSize: '16px',
+  fontFamily: 'arial',
   backgroundColor: 'white',
   color: 'rgb(193, 40, 27)',
   borderRadius: '6px',
