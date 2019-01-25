@@ -1,40 +1,55 @@
-import BaseAnnotation from './base_annotation'
-import XPath from 'xpath-dom'
-import {compact, uniq, sortBy, first} from 'lodash'
-import {computedStyleToInlineStyle, resolveHangingTags} from '../inline-style'
+import BaseAnnotation from "./base_annotation";
+import XPath from "xpath-dom";
+import { compact, uniq, sortBy, first } from "lodash";
+import {
+  computedStyleToInlineStyle,
+  resolveHangingTags
+} from "../inline-style";
+
+function visible(elem) {
+  return !!(
+    elem.offsetWidth ||
+    elem.offsetHeight ||
+    elem.getClientRects().length
+  );
+}
 
 export default class AnchoredAnnotation extends BaseAnnotation {
   constructor(anchor) {
     super();
-    if (anchor) { //Ack a bit of a shortcut for highlights :(
-      this.anchor = anchor
+    if (anchor) {
+      //Ack a bit of a shortcut for highlights :(
+      this.anchor = anchor;
       this.anchorPath = XPath.getUniqueXPath(this.anchor, document.body);
-      this.text = anchor.innerText
-      this.refreshAnchorCoordinates()
+      this.text = anchor.innerText;
+      this.refreshAnchorCoordinates();
     }
   }
 
   serialize() {
-    let save = super.serialize()
-    Object.assign(save, {anchorPath: this.anchorPath, text: this.text});
+    let save = super.serialize();
+    Object.assign(save, { anchorPath: this.anchorPath, text: this.text });
     return save;
   }
 
   deserialize(serialized) {
-    super.deserialize(serialized)
-    this.anchorPath = serialized.anchorPath
-    this.text = serialized.text
+    super.deserialize(serialized);
+    this.anchorPath = serialized.anchorPath;
+    this.text = serialized.text;
   }
 
   rehydrate() {
     this.anchor = XPath.find(this.anchorPath, document.body);
-    return !!this.anchor
+    return !!this.anchor;
   }
 
   refreshAnchorCoordinates() {
     if (this.anchor) {
-      let rect = this.anchor.getBoundingClientRect()
-      this.anchorCoordinates = {x: rect.x + window.scrollX, y: rect.y + window.scrollY}
+      let rect = this.anchor.getBoundingClientRect();
+      this.anchorCoordinates = {
+        x: rect.x + window.scrollX,
+        y: rect.y + window.scrollY
+      };
     }
   }
 
@@ -56,46 +71,58 @@ export default class AnchoredAnnotation extends BaseAnnotation {
 
   static closest(num, arr) {
     let curr = arr[0];
-    let diff = Math.abs (num - curr);
+    let diff = Math.abs(num - curr);
     arr.forEach(elem => {
-      let rect = elem.getBoundingClientRect()
-      let val = rect.right - (rect.width / 2)
-      let newdiff = Math.abs (num - val);
+      let rect = elem.getBoundingClientRect();
+      let val = rect.right - rect.width / 2;
+      let newdiff = Math.abs(num - val);
       if (newdiff < diff) {
         diff = newdiff;
         curr = val;
       }
-    })
+    });
     return curr;
   }
 
-  static filterLeafNodes({top, left, bottom, right}, includePadding = false) {
-
-    let traverse = (parent) => {
+  static filterLeafNodes({ top, left, bottom, right }, includePadding = false) {
+    let traverse = parent => {
       var nodes = [];
-      Array.from(parent.children).forEach((elem) => {
+      Array.from(parent.children).forEach(elem => {
         if (elem.children.length > 0) {
           nodes = nodes.concat(traverse(elem));
         } else {
           //Only use block level elements and ignore "display none" elements
           let style = window.getComputedStyle(elem);
-          if (elem.className.indexOf && elem.className.indexOf("siphon-") >= 0 )
+          if (elem.className.indexOf && elem.className.indexOf("siphon-") >= 0)
             return;
 
-          while(style.display.indexOf("inline") >= 0) {
+          while (style.display.indexOf("inline") >= 0) {
             let rect = this.getAdjustedRect(elem, style, includePadding);
 
             //Ignore empty elems
             let areaChild = rect.width * rect.height;
-            if (areaChild <= 0)
-              return;
+            if (areaChild <= 0) return;
 
             let areaSelection = (bottom - top) * (right - left);
             //Calculate intersection + union of leaf (@see https://stackoverflow.com/questions/9324339/how-much-do-two-rectangles-overlap)
-            let SI = Math.max(0, Math.min(rect.right, right) - Math.max(rect.left, left)) * Math.max(0, Math.min(rect.bottom, bottom) - Math.max(rect.top, top));
+            let SI =
+              Math.max(
+                0,
+                Math.min(rect.right, right) - Math.max(rect.left, left)
+              ) *
+              Math.max(
+                0,
+                Math.min(rect.bottom, bottom) - Math.max(rect.top, top)
+              );
             //let SU = areaChild + areaSelection - SI;
-            if (SI > 0) //Just get any elements where there is an intersection
-              nodes.push({elem: elem, intersection: SI, areaChild: areaChild, style: style});
+            if (SI > 0)
+              //Just get any elements where there is an intersection
+              nodes.push({
+                elem: elem,
+                intersection: SI,
+                areaChild: areaChild,
+                style: style
+              });
 
             elem = elem.parentElement;
             style = window.getComputedStyle(elem);
@@ -105,45 +132,64 @@ export default class AnchoredAnnotation extends BaseAnnotation {
 
           //Ignore empty elems
           let areaChild = rect.width * rect.height;
-          if (areaChild <= 0)
-            return;
+          if (areaChild <= 0) return;
 
           let areaSelection = (bottom - top) * (right - left);
           //Calculate intersection + union of leaf (@see https://stackoverflow.com/questions/9324339/how-much-do-two-rectangles-overlap)
-          let SI = Math.max(0, Math.min(rect.right, right) - Math.max(rect.left, left)) * Math.max(0, Math.min(rect.bottom, bottom) - Math.max(rect.top, top));
+          let SI =
+            Math.max(
+              0,
+              Math.min(rect.right, right) - Math.max(rect.left, left)
+            ) *
+            Math.max(
+              0,
+              Math.min(rect.bottom, bottom) - Math.max(rect.top, top)
+            );
           //let SU = areaChild + areaSelection - SI;
-          if (SI > 0) //Just get any elements where there is an intersection
-            nodes.push({elem: elem, intersection: SI, areaChild: areaChild, style: style});
+          if (SI > 0)
+            //Just get any elements where there is an intersection
+            nodes.push({
+              elem: elem,
+              intersection: SI,
+              areaChild: areaChild,
+              style: style
+            });
         }
-      })
+      });
       return nodes;
-    }
+    };
     let touchingNodes = traverse(document.body);
     var threshold = 0.9;
     var filteredNodes = [];
     if (touchingNodes.length) {
       //Remove any nodes who are fixed or their parent element is fixed (usually header / interactive elements)
       touchingNodes = touchingNodes.filter(node => {
-        node = node.elem
-        while(node) {
+        node = node.elem;
+        while (node) {
           let style = window.getComputedStyle(node);
           if (style.position == "fixed") {
-            return false
+            return false;
           }
-          node = node.parentElement
+          node = node.parentElement;
         }
-        return true
-      })
-      while((filteredNodes.length < 1 || filteredNodes.filter((e) => e.style.display.indexOf("inline") >= 0).length > 0 )
-             && threshold > 0.5) { //So while we have a no good matching nodes OR those nodes are only inline elements
-                                   // And we're below our threshold, we keep expanding our search radius (aka fuzziness of overlapping area of intersection + area)
-        filteredNodes = touchingNodes.filter(node => node.intersection / node.areaChild >= threshold)
+        return true;
+      });
+      while (
+        (filteredNodes.length < 1 ||
+          filteredNodes.filter(e => e.style.display.indexOf("inline") >= 0)
+            .length > 0) &&
+        threshold > 0.5
+      ) {
+        //So while we have a no good matching nodes OR those nodes are only inline elements
+        // And we're below our threshold, we keep expanding our search radius (aka fuzziness of overlapping area of intersection + area)
+        filteredNodes = touchingNodes.filter(
+          node => node.intersection / node.areaChild >= threshold
+        );
         threshold -= 0.05;
       }
     }
-    return uniq(filteredNodes.map((node) => node.elem));
+    return uniq(filteredNodes.map(node => node.elem));
   }
-
 
   //Assume Child nodes will fill 90% of the area of their optimal parents
   static findOptimalParents(leafNodes) {
@@ -154,7 +200,7 @@ export default class AnchoredAnnotation extends BaseAnnotation {
       let parent = elem.parentElement;
       let style = window.getComputedStyle(parent);
       //Ensure we have a block level parent
-      while(style.display.indexOf("inline") >= 0) {
+      while (style.display.indexOf("inline") >= 0) {
         parent = parent.parentElement;
         style = window.getComputedStyle(parent);
       }
@@ -172,31 +218,30 @@ export default class AnchoredAnnotation extends BaseAnnotation {
     //Determine how much of the parent's area the child is covering
     parents.forEach((children, parent) => {
       //If would be nice to use a more flexible area formula, but weird padding and margin values can mess this up
-  //    let style = window.getComputedStyle(parent);
-  //    let parentRect = getAdjustedRect(parent, style);
-  //    let parentArea = parentRect.height * parentRect.width;
-  //
-  //    let childrenArea = children.reduce((totalArea, child) => {
-  //      let childRect = child.getBoundingClientRect();
-  //      return totalArea + (childRect.width * childRect.height);
-  //    }, 0);
-  //
-  //    //If we explain 90% of the parent's area, then we accept this parent
-  //    if (childrenArea / parentArea >= 0.9) {
+      //    let style = window.getComputedStyle(parent);
+      //    let parentRect = getAdjustedRect(parent, style);
+      //    let parentArea = parentRect.height * parentRect.width;
+      //
+      //    let childrenArea = children.reduce((totalArea, child) => {
+      //      let childRect = child.getBoundingClientRect();
+      //      return totalArea + (childRect.width * childRect.height);
+      //    }, 0);
+      //
+      //    //If we explain 90% of the parent's area, then we accept this parent
+      //    if (childrenArea / parentArea >= 0.9) {
       //Sadly the above doesn't work in cases with odd padding values -- might still be better in most cases?
 
       //Only include visible children
-      if (Array.from(parent.children).filter(elem => elem.offsetParent).length == children.length) {
+      if (
+        Array.from(parent.children).filter(elem => visible(elem)).length ==
+        children.length
+      ) {
         foundNewParent = true;
         newSet.push(parent);
-      }
-      else
-        newSet = newSet.concat(children);
+      } else newSet = newSet.concat(children);
     });
-    if (foundNewParent)
-      return this.findOptimalParents(newSet);
-    else
-      return leafNodes;
+    if (foundNewParent) return this.findOptimalParents(newSet);
+    else return leafNodes;
   }
 
   //Get an adjusted rectangle that accounts for scroll, padding and borders
@@ -205,12 +250,14 @@ export default class AnchoredAnnotation extends BaseAnnotation {
     let rect = elem.getBoundingClientRect();
 
     if (includePadding) {
-      return {top: rect.top + window.scrollY,
-             bottom: rect.bottom + window.scrollY,
-             left: rect.left + window.scrollX,
-             right: rect.right + window.scrollX,
-             width: rect.width,
-             height: rect.height}
+      return {
+        top: rect.top + window.scrollY,
+        bottom: rect.bottom + window.scrollY,
+        left: rect.left + window.scrollX,
+        right: rect.right + window.scrollX,
+        width: rect.width,
+        height: rect.height
+      };
     }
 
     var borderLeft = parseInt(style.borderLeftWidth) || 0;
@@ -223,12 +270,14 @@ export default class AnchoredAnnotation extends BaseAnnotation {
     var paddingTop = parseInt(style.paddingTop) || 0;
     var paddingBottom = parseInt(style.paddingBottom) || 0;
 
-    return {top: rect.top + window.scrollY + paddingTop + borderTop,
-           bottom: rect.bottom + window.scrollY - paddingBottom - borderBottom,
-           left: rect.left + window.scrollX + paddingLeft + borderLeft,
-           right: rect.right + window.scrollX - paddingRight - borderRight,
-           width: rect.width - paddingLeft - paddingRight - borderLeft - borderRight,
-           height: rect.height - paddingTop - paddingBottom - borderTop - borderBottom}
+    return {
+      top: rect.top + window.scrollY + paddingTop + borderTop,
+      bottom: rect.bottom + window.scrollY - paddingBottom - borderBottom,
+      left: rect.left + window.scrollX + paddingLeft + borderLeft,
+      right: rect.right + window.scrollX - paddingRight - borderRight,
+      width: rect.width - paddingLeft - paddingRight - borderLeft - borderRight,
+      height:
+        rect.height - paddingTop - paddingBottom - borderTop - borderBottom
+    };
   }
-
 }
