@@ -1,8 +1,6 @@
 import firebase from '../firebase';
+import { db, getCurrentUserId } from '../firestore_wrapper';
 const uuid = require('uuid/v4');
-
-let db = firebase.firestore();
-const getCurrentUserId = () => firebase.auth().currentUser.uid;
 
 export const getCurrentUserCreatedTasks = () => {
   return db.collection('tasks').where('creator', '==', getCurrentUserId());
