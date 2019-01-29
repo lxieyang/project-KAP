@@ -12,11 +12,15 @@ import { APP_NAME_SHORT } from '../../../../shared-components/src/shared/constan
 import Spinner from '../../../../shared-components/src/components/UI/Spinner/Spinner';
 import firebase from '../../../../shared-components/src/firebase/firebase';
 
+import * as firestoreManager from '../../../../shared-components/src/firebase/firestore_wrapper';
+
 class Popup extends Component {
   state = {
     userId: null,
     userName: null,
     userProfilePhotoURL: null,
+
+    currentTaskId: null,
 
     loadingUserInfo: true
   };
@@ -50,6 +54,7 @@ class Popup extends Component {
             userProfilePhotoURL: user.photoURL,
             loadingUserInfo: false
           });
+          // console.log(firestoreManager.getCurrentUserId());
         })
         .catch(error => {
           console.log(error);
@@ -106,6 +111,11 @@ class Popup extends Component {
     chrome.runtime.sendMessage({
       msg: 'OPEN_SETTINGS_PAGE'
     });
+  };
+
+  setCurrentTaskId = taskId => {
+    this.setState({ currentTaskId: taskId });
+    console.log(taskId);
   };
 
   render() {
@@ -180,7 +190,7 @@ class Popup extends Component {
         >
           Successfully logged into {APP_NAME_SHORT}.
         </div>*/}
-        <TaskSwitcher />
+        <TaskSwitcher setCurrentTaskId={this.setCurrentTaskId} />
         <Structure />
         <Pieces />
       </React.Fragment>

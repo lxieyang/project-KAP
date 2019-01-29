@@ -4,6 +4,8 @@ import Dropdown from 'react-dropdown'; // https://github.com/fraserxu/react-drop
 import 'react-dropdown/style.css';
 import FontAwesomeIcon from '@fortawesome/react-fontawesome';
 import fasTh from '@fortawesome/fontawesome-free-solid/faTh';
+import firebase from '../../../../../../shared-components/src/firebase/firebase';
+import * as FirestoreManager from '../../../../../../shared-components/src/firebase/firestore_wrapper';
 
 import styles from './TaskSwitcher.css';
 
@@ -28,43 +30,91 @@ const VariousButton = styled.div`
   align-items: center;
 `;
 
+const createNewTaskOption = {
+  value: 'create-new-task',
+  label: 'Create a new task',
+  className: styles.CreateNewClassName
+};
+
 class TaskSwitcher extends Component {
   state = {
-    options: [
-      {
-        value: 'create-new-task',
-        label: 'Create a new task'
-      },
-      {
-        value: 'task-id-1',
-        label: 'This is a really really long task name'
-      },
-      {
-        value: 'task-id-2',
-        label: 'Task 2'
-      },
-      {
-        value: 'task-id-3',
-        label: 'How to store information in chrome extensions'
-      }
-    ],
-    currentOptionId: 'task-id-1'
+    options: [createNewTaskOption],
+    currentOptionId: createNewTaskOption.value
   };
 
   componentDidMount() {
-    setTimeout(() => {
-      let options = [...this.state.options];
-      options.push({ value: 'task-id-4', label: 'Another task' });
-      this.setState({ options: options });
-    }, 3000);
+    this.unsubscribeUserCreatedTasksListener = FirestoreManager.getCurrentUserCreatedTasks()
+      .orderBy('updateDate', 'desc')
+      .onSnapshot(querySnapshot => {
+        let tasks = [createNewTaskOption];
+        querySnapshot.forEach(function(doc) {
+          tasks.push({
+            value: doc.id,
+            label: doc.data().name
+          });
+        });
+        this.setState({ options: tasks });
+      });
+
+    // set up current task listener
+    this.unsubscribeUserCurrentTaskIdListener = FirestoreManager.getCurrentUserCurrentTaskId().onSnapshot(
+      doc => {
+        if (doc.exists) {
+          let taskId = doc.data().id;
+          this.setState({ currentOptionId: taskId });
+          this.props.setCurrentTaskId(taskId);
+        }
+      },
+      error => {
+        console.log(error);
+      }
+    );
+  }
+
+  componentWillUnmount() {
+    this.unsubscribeUserCreatedTasksListener();
+    this.unsubscribeUserCurrentTaskIdListener();
   }
 
   _onSelect = selectedTask => {
-    console.log(selectedTask);
-    this.setState({ currentOptionId: selectedTask.value });
-    if (selectedTask.value === 'create-new-task') {
+    let prevTaskId = this.state.currentOptionId;
+    if (selectedTask.value === createNewTaskOption.value) {
       let taskName = prompt('New task name:');
-      console.log(taskName);
+      if (taskName === null) {
+        // cancel button pressed
+        setTimeout(() => {
+          this.setState({ currentOptionId: prevTaskId });
+        }, 5);
+      } else if (taskName !== '') {
+        // successfully created
+        setTimeout(() => {
+          // for rendering purposes, do not touch before figuring out a good solution
+          this.setState({
+            options: [
+              ...this.state.options,
+              { value: 'new-task', label: taskName }
+            ],
+            currentOptionId: 'new-task'
+          });
+        }, 5);
+
+        FirestoreManager.createTaskWithName(taskName)
+          .then(docRef => {
+            // this.setState({ currentOptionId: docRef.id });
+            FirestoreManager.updateCurrentUserCurrentTaskId(docRef.id);
+          })
+          .catch(error => {
+            console.log(error);
+            alert(error);
+          });
+      } else {
+        setTimeout(() => {
+          this.setState({ currentOptionId: prevTaskId });
+        }, 5);
+      }
+    } else {
+      // this.setState({ currentOptionId: selectedTask.value });
+      FirestoreManager.updateCurrentUserCurrentTaskId(selectedTask.value);
     }
   };
 
@@ -84,7 +134,7 @@ class TaskSwitcher extends Component {
                 return op.value === this.state.currentOptionId;
               })[0]
             }
-            placeholder="Select an option"
+            placeholder="Select a task"
           />
           <VariousButtonsContainer>
             <VariousButton title={'All Tasks'}>

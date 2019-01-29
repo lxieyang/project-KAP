@@ -18,6 +18,17 @@
   overflow: auto;
 }
 
+.CreateNewClassName {
+  background-color: rgb(192, 240, 192);
+  font-style: italic;
+  transition: all 0.1s ease-in;
+}
+
+.CreateNewClassName:hover {
+  background-color: rgb(192, 240, 192) !important;
+  font-weight: 600;
+}
+
 .AllTasksButton {
   font-size: 1.1rem;
   cursor: pointer;

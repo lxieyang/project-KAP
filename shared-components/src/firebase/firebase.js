@@ -9,4 +9,12 @@ if (!firebase.apps.length) {
   firebase.initializeApp(config);
 }
 
+// Initialize Cloud Firestore through Firebase
+let db = firebase.firestore();
+
+// Disable deprecated features
+db.settings({
+  timestampsInSnapshots: true
+});
+
 export default firebase;
