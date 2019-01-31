@@ -12,7 +12,7 @@ import { APP_NAME_SHORT } from '../../../../shared-components/src/shared/constan
 import Spinner from '../../../../shared-components/src/components/UI/Spinner/Spinner';
 import firebase from '../../../../shared-components/src/firebase/firebase';
 
-import * as firestoreManager from '../../../../shared-components/src/firebase/firestore_wrapper';
+import * as FirestoreManager from '../../../../shared-components/src/firebase/firestore_wrapper';
 
 class Popup extends Component {
   state = {

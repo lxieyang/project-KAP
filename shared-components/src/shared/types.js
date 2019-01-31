@@ -4,7 +4,7 @@ export const ANNOTATION_TYPES = {
 };
 
 export const PIECE_TYPES = {
-  piece: 1,
+  snippet: 1,
   option: 2,
   criterion: 3
 };

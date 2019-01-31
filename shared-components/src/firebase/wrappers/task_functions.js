@@ -1,31 +1,22 @@
 import firebase from '../firebase';
-import { db, getCurrentUserId } from '../firestore_wrapper';
+import {
+  db,
+  getCurrentUserId,
+  getCurrentUserCurrentTaskId
+} from '../firestore_wrapper';
 const uuid = require('uuid/v4');
 
 export const getCurrentUserCreatedTasks = () => {
   return db.collection('tasks').where('creator', '==', getCurrentUserId());
 };
 
-export const getCurrentUserCurrentTaskId = () => {
-  return db
-    .collection('users')
-    .doc(getCurrentUserId())
-    .collection('TaskManagement')
-    .doc('currentTask');
-};
-
 export const updateCurrentUserCurrentTaskId = taskId => {
-  return db
-    .collection('users')
-    .doc(getCurrentUserId())
-    .collection('TaskManagement')
-    .doc('currentTask')
-    .set(
-      {
-        id: taskId
-      },
-      { merge: true }
-    );
+  return getCurrentUserCurrentTaskId().set(
+    {
+      id: taskId
+    },
+    { merge: true }
+  );
 };
 
 export const createTaskWithName = newTaskName => {

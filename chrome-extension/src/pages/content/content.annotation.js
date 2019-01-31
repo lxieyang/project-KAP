@@ -2,11 +2,12 @@
 import $ from 'jquery';
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { dragElement } from './content.utility';
+import firebase from '../../../../shared-components/src/firebase/firebase';
+import * as FirestoreManager from '../../../../shared-components/src/firebase/firestore_wrapper';
+import { ANNOTATION_TYPES } from '../../../../shared-components/src/shared/types';
 import Frame from './frame';
 import SelectTooltipButton from './SelectTooltipButton/SelectTooltipButton';
-import { dragElement } from './content.utility';
-
-import { ANNOTATION_TYPES } from '../../../../shared-components/src/shared/types';
 import SiphonTools from 'siphon-tools';
 import {
   Highlight,
@@ -25,6 +26,11 @@ link.type = 'text/css';
 link.rel = 'stylesheet';
 document.head.appendChild(link);
 
+//
+//
+//
+//
+//
 /* Set up popover box anchor */
 const popOverAnchor = document.body.appendChild(document.createElement('div'));
 popOverAnchor.style.zIndex = '33333';
@@ -46,18 +52,18 @@ function displayTooltipButton(rect, props) {
   popOverAnchor.style.left = `${leftPosition}px`;
 }
 
-let store = new Store({
-  [ANNOTATION_TYPES.Highlight]: Highlight,
-  [ANNOTATION_TYPES.Snippet]: Snippet
-});
-store.init();
+// TODO: enable store functionality later
+// let store = new Store({
+//   [ANNOTATION_TYPES.Highlight]: Highlight,
+//   [ANNOTATION_TYPES.Snippet]: Snippet
+// });
+// store.init();
 
-let captureWindow;
-
+// init selectors
 SiphonTools.initializeSelectors([
   HighlightSelector({
     onTrigger: (range, e) => {
-      displayTooltipButton(range.getBoundingClientRect());
+      displayTooltipButton(range.getBoundingClientRect(), {});
 
       let highlight = new Highlight(range);
       console.log(highlight);
@@ -75,6 +81,60 @@ SiphonTools.initializeSelectors([
     }
   })
 ]);
+
+//
+//
+//
+//
+//
+/* log in / out */
+// check id token from background
+chrome.runtime.sendMessage({ msg: 'GET_USER_INFO' }, response => {
+  signInOutUserWithCredential(response.idToken);
+});
+// authenticate upon signin
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+  if (request.msg === 'USER_LOGIN_STATUS_CHANGED') {
+    signInOutUserWithCredential(request.idToken);
+  }
+});
+
+const signInOutUserWithCredential = idToken => {
+  if (idToken !== null) {
+    // logged in
+    firebase
+      .auth()
+      .signInAndRetrieveDataWithCredential(
+        firebase.auth.GoogleAuthProvider.credential(idToken)
+      )
+      .then(result => {
+        console.log(
+          `[CONTENT_ANNOTATION] User ${result.user.displayName} (${
+            result.user.uid
+          }) logged in.`
+        );
+
+        SiphonTools.enable();
+      })
+      .catch(error => {
+        console.log(error);
+      });
+  } else {
+    // logged out
+    firebase
+      .auth()
+      .signOut()
+      .then(() => {
+        console.log('[CONTENT_ANNOTATION] User logged out.');
+        SiphonTools.disable();
+      })
+      .catch(error => {
+        console.log(error);
+      });
+  }
+};
+
+let captureWindow;
 
 //
 //
@@ -152,18 +212,20 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 });
 
 window.addEventListener('keydown', event => {
-  if (event.key === 'Escape') {
+  if (event.key === 'Escape' && !event.ctrlKey) {
     if (
       captureWindow !== undefined &&
       document.querySelector('.siphon-selection-window') !== null
     ) {
       captureWindow.remove();
       ReactDOM.unmountComponentAtNode(popOverAnchor);
-    } else {
-      if (shouldUseEscapeKeyToToggleSidebar) {
-        // Frame.toggle(true);
-        Frame.toggle();
-      }
+    }
+  }
+
+  if (event.ctrlKey && event.key === 'Escape') {
+    if (shouldUseEscapeKeyToToggleSidebar) {
+      // Frame.toggle(true);
+      Frame.toggle();
     }
   }
 });

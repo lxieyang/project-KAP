@@ -6,12 +6,13 @@ import autobind from 'autobind-decorator';
 import FontAwesomeIcon from '@fortawesome/react-fontawesome';
 import fasListUl from '@fortawesome/fontawesome-free-solid/faListUl';
 import fasFlagCheckered from '@fortawesome/fontawesome-free-solid/faFlagCheckered';
-import fasPuzzlePiece from '@fortawesome/fontawesome-free-solid/faPuzzlePiece';
-import farBookmark from '@fortawesome/fontawesome-free-regular/faBookmark';
 import fasBookmark from '@fortawesome/fontawesome-free-solid/faBookmark';
 import { APP_NAME_SHORT } from '../../../../../shared-components/src/shared/constants';
 import Logo from '../../../../../shared-components/src/components/UI/Logo/Logo';
 import { PIECE_TYPES } from '../../../../../shared-components/src/shared/types';
+import firebase from '../../../../../shared-components/src/firebase/firebase';
+import * as FirestoreManager from '../../../../../shared-components/src/firebase/firestore_wrapper';
+
 import styles from './SelectTooltipButton.css';
 
 class SelectTooltipButton extends Component {
