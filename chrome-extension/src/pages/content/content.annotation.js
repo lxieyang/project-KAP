@@ -37,7 +37,7 @@ popOverAnchor.style.zIndex = '33333';
 popOverAnchor.style.position = 'absolute';
 popOverAnchor.setAttribute('id', 'popover-box');
 
-function displayTooltipButton(rect, props) {
+function displayTooltipButtonBasedOnRectPosition(rect, props) {
   popOverAnchor.top = '0px';
   popOverAnchor.style.left = `0px`;
 
@@ -63,21 +63,27 @@ function displayTooltipButton(rect, props) {
 SiphonTools.initializeSelectors([
   HighlightSelector({
     onTrigger: (range, e) => {
-      displayTooltipButton(range.getBoundingClientRect(), {});
+      let rect = range.getBoundingClientRect();
+      displayTooltipButtonBasedOnRectPosition(rect, {
+        annotationType: ANNOTATION_TYPES.Highlight,
+        range
+      });
 
-      let highlight = new Highlight(range);
-      console.log(highlight);
+      // let highlight = new Highlight(range);
+      // console.log(highlight);
     }
   }),
   SnippetSelector({
     onTrigger: (cptrWindow, e) => {
       captureWindow = cptrWindow;
       let rect = cptrWindow.getBoundingClientRect();
-      displayTooltipButton(rect, {
+      displayTooltipButtonBasedOnRectPosition(rect, {
+        annotationType: ANNOTATION_TYPES.Snippet,
         captureWindow
       });
-      let snippet = new Snippet(rect);
-      console.log(snippet);
+
+      // let snippet = new Snippet(rect);
+      // console.log(snippet);
     }
   })
 ]);

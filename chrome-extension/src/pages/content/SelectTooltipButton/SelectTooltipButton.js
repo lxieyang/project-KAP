@@ -10,23 +10,34 @@ import fasBookmark from '@fortawesome/fontawesome-free-solid/faBookmark';
 import { APP_NAME_SHORT } from '../../../../../shared-components/src/shared/constants';
 import Logo from '../../../../../shared-components/src/components/UI/Logo/Logo';
 import { PIECE_TYPES } from '../../../../../shared-components/src/shared/types';
+import { Highlight, Snippet } from 'siphon-tools';
 import firebase from '../../../../../shared-components/src/firebase/firebase';
 import * as FirestoreManager from '../../../../../shared-components/src/firebase/firestore_wrapper';
-
+import { ANNOTATION_TYPES } from '../../../../../shared-components/src/shared/types';
 import styles from './SelectTooltipButton.css';
 
 class SelectTooltipButton extends Component {
   state = {
     displayDetailedMenu: false,
 
-    canSubmitTask: false,
-    canSubmitOption: false,
-    canSubmitRequirement: false,
-    shouldDisplaySelectInteraction: false
+    userId: FirestoreManager.getCurrentUserId(),
+    annotation: {}
   };
 
   componentDidMount() {
     window.addEventListener('mousedown', this.mouseDown, true);
+
+    this.setState({ userId: FirestoreManager.getCurrentUserId() });
+    let annotation;
+    if (this.props.annotationType === ANNOTATION_TYPES.Highlight) {
+      annotation = new Highlight(this.props.range);
+    } else if (this.props.annotationType === ANNOTATION_TYPES.Snippet) {
+      annotation = new Snippet(
+        this.props.captureWindow.getBoundingClientRect()
+      );
+    }
+    console.log(annotation);
+    this.setState({ annotation });
   }
 
   componentWillUnmount() {
@@ -110,7 +121,14 @@ class SelectTooltipButton extends Component {
     }, 600);
   };
 
-  tooltipButtonClickedHandler = (type = PIECE_TYPES.piece) => {
+  tooltipButtonClickedHandler = (type = PIECE_TYPES.snippet) => {
+    FirestoreManager.createPiece(
+      this.state.annotation,
+      { url: window.location.href },
+      this.props.annotationType,
+      type
+    );
+
     chrome.runtime.sendMessage({
       msg: 'SHOW_SUCCESS_STATUS_BADGE',
       success: true
@@ -157,7 +175,7 @@ class SelectTooltipButton extends Component {
                   data-tip
                   data-for="add_pc"
                   onClick={e =>
-                    this.tooltipButtonClickedHandler(PIECE_TYPES.piece)
+                    this.tooltipButtonClickedHandler(PIECE_TYPES.snippet)
                   }
                   className={styles.DetailedMenuItemIcon}
                   style={{ backgroundColor: 'rgb(193, 40, 27)' }}
@@ -230,145 +248,3 @@ class SelectTooltipButton extends Component {
 }
 
 export default SelectTooltipButton;
-
-// <div className={styles.SelectInteractionContainer}>
-//   <div className={styles.TitleContainer}>
-//     <div className={styles.Title}>
-//       <div className={styles.LogoContainer}>
-//         <Logo size="20px" />
-//       </div>{' '}
-//       &nbsp; Collect as:
-//     </div>
-//   </div>
-//   <div className={styles.ButtonContainer}>
-//     {/* Task Button begins */}
-//     <div
-//       className={styles.Button}
-//       style={{ width: '42px' }}
-//       onClick={event => this.collectButtonClickHandler('task')}
-//     >
-//       <div>
-//         <div
-//           className={[
-//             styles.ButtonContentWrapper,
-//             this.state.canSubmitTask ? styles.ButtonTextDisappear : null
-//           ].join(' ')}
-//         >
-//           <div className={styles.ButtonIconWrapper}>
-//             <FontAwesomeIcon
-//               icon={fasBriefcase}
-//               className={styles.ButtonIcon}
-//             />
-//           </div>
-//           <div className={styles.ButtonText}>New Task</div>
-//         </div>
-//       </div>
-//       <div className={styles.CheckmarkContainer}>
-//         <div
-//           className={[
-//             styles.AddedSomething,
-//             this.state.canSubmitTask ? null : styles.TextAppear
-//           ].join(' ')}
-//         >
-//           Started New Task
-//         </div>
-//       </div>
-//     </div>
-
-//     {/* Option Button begins */}
-//     <div
-//       className={styles.Button}
-//       style={{ width: '42px' }}
-//       onClick={event => this.collectButtonClickHandler('option')}
-//     >
-//       <div className={styles.ButtonOption}>
-//         <div
-//           className={[
-//             styles.ButtonContentWrapper,
-//             this.state.canSubmitOption ? styles.ButtonTextDisappear : null
-//           ].join(' ')}
-//         >
-//           <div className={styles.ButtonIconWrapper}>
-//             <FontAwesomeIcon
-//               icon={fasListUl}
-//               className={styles.ButtonIcon}
-//             />
-//           </div>
-//           <div className={styles.ButtonText}>Option</div>
-//         </div>
-//         <div className={styles.CheckmarkContainer}>
-//           <div
-//             className={[
-//               styles.AddedSomething,
-//               this.state.canSubmitOption ? null : styles.TextAppear
-//             ].join(' ')}
-//           >
-//             Added Option
-//           </div>
-//         </div>
-//       </div>
-//     </div>
-
-//     {/*
-//       Criterion Button begins
-//       */}
-//     <div
-//       className={styles.Button}
-//       style={{ width: '42px' }}
-//       onClick={event => this.collectButtonClickHandler('requirement')}
-//     >
-//       <div className={styles.ButtonRequirement}>
-//         <div
-//           className={[
-//             styles.ButtonContentWrapper,
-//             this.state.canSubmitRequirement
-//               ? styles.ButtonTextDisappear
-//               : null
-//           ].join(' ')}
-//         >
-//           <div className={styles.ButtonIconWrapper}>
-//             <FontAwesomeIcon
-//               icon={fasFlagCheckered}
-//               className={styles.ButtonIcon}
-//             />
-//           </div>
-//           <div className={styles.ButtonText}>Criterion</div>
-//         </div>
-//       </div>
-//       <div className={styles.CheckmarkContainer}>
-//         <div
-//           className={[
-//             styles.AddedSomething,
-//             this.state.canSubmitRequirement ? null : styles.TextAppear
-//           ].join(' ')}
-//         >
-//           Added Criterion
-//         </div>
-//       </div>
-//     </div>
-
-//     {/*
-//       Snippet Button begins
-//       */}
-//     <div
-//       className={styles.Button}
-//       style={{ width: '42px' }}
-//       onClick={event => this.collectButtonClickHandler('snippet')}
-//     >
-//       <div>
-//         <div className={[styles.ButtonContentWrapper].join(' ')}>
-//           <div className={styles.ButtonIconWrapper}>
-//             <FontAwesomeIcon
-//               icon={fasPuzzlePiece}
-//               className={styles.ButtonIcon}
-//             />
-//           </div>
-//           <div className={styles.ButtonText}>Snippet</div>
-//         </div>
-//       </div>
-//     </div>
-//     {/*
-//       End of snippet button
-//       */}
-//   </div>
-// </div>

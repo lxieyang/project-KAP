@@ -13,7 +13,7 @@ const xss = new xssFilter({
 
 export const createPiece = async (
   data,
-  metadata,
+  { url, taskId },
   annotationType,
   pieceType
 ) => {
@@ -31,16 +31,18 @@ export const createPiece = async (
     creationDate: firebase.firestore.FieldValue.serverTimestamp(),
     updateDate: firebase.firestore.FieldValue.serverTimestamp(),
     references: {
-      page: metadata.url ? encode(metadata.url) : false,
-      task: (metadata.taskId ? metadata.taskId : currentTaskId) || false
+      url: url ? url : false,
+      page: url ? encode(url) : false,
+      task: taskId ? taskId : currentTaskId
     }
   };
 
   switch (annotationType) {
     case ANNOTATION_TYPES.Highlight:
       piece.text = data.text.trim();
-      piece.html = null;
+      piece.html = data.html;
       if (piece.html) piece.html = xss.filter(data.html) || null;
+      piece.anchorCoordinates = data.anchorCoordinates || {};
       piece.initialDimensions = data.initialDimensions || {};
       piece.contextText = data.contextText || '';
       piece.contextHtml = piece.html;
@@ -51,6 +53,7 @@ export const createPiece = async (
     case ANNOTATION_TYPES.Snippet:
       piece.text = data.text.trim() || '';
       piece.html = data.html.map(html => xss.filter(html)) || null;
+      piece.anchorCoordinates = data.anchorCoordinates || {};
       piece.initialDimensions = data.initialDimensions || {};
       piece.subTitle = data.subTitle || null;
       piece.paths = data.paths || [];
