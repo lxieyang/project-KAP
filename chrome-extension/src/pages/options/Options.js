@@ -51,7 +51,9 @@ class Options extends Component {
           </div>
 
           <div className={styles.OptionContainer}>
-            <div className={styles.OptionLabel}>Use Esc to toggle sidebar:</div>
+            <div className={styles.OptionLabel}>
+              Use <u>Ctrl + Esc</u> to toggle sidebar:
+            </div>
             <div className={styles.OptionOptions}>
               <RadioGroup
                 name="sidebar-escape-key-toggle"

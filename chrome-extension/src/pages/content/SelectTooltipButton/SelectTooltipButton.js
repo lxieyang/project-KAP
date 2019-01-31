@@ -127,12 +127,21 @@ class SelectTooltipButton extends Component {
       { url: window.location.href },
       this.props.annotationType,
       type
-    );
+    )
+      .then(() => {
+        chrome.runtime.sendMessage({
+          msg: 'SHOW_SUCCESS_STATUS_BADGE',
+          success: true
+        });
+      })
+      .catch(error => {
+        console.log(error);
+        chrome.runtime.sendMessage({
+          msg: 'SHOW_SUCCESS_STATUS_BADGE',
+          success: false
+        });
+      });
 
-    chrome.runtime.sendMessage({
-      msg: 'SHOW_SUCCESS_STATUS_BADGE',
-      success: true
-    });
     console.log(`should save as a type ${type} piece`);
     this.removeTooltipButton();
   };

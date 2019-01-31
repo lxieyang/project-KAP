@@ -11,6 +11,10 @@ const xss = new xssFilter({
   matchStyleTag: false
 });
 
+export const getAllPiecesInTask = taskId => {
+  return db.collection('pieces').where('references.task', '==', taskId);
+};
+
 export const createPiece = async (
   data,
   { url, taskId },
@@ -19,7 +23,7 @@ export const createPiece = async (
 ) => {
   let currentUserId = getCurrentUserId();
   let currentTaskId = (await getCurrentUserCurrentTaskId().get()).data().id;
-  data.key = data.key || db.collection('notes').doc().id;
+  data.key = data.key || db.collection('pieces').doc().id;
   let ref = db.collection('pieces').doc(data.key);
 
   // construct piece

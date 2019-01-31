@@ -115,7 +115,7 @@ class Popup extends Component {
 
   setCurrentTaskId = taskId => {
     this.setState({ currentTaskId: taskId });
-    console.log(taskId);
+    // console.log(taskId);
   };
 
   render() {
