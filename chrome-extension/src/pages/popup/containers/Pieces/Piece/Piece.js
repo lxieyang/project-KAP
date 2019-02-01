@@ -6,7 +6,10 @@ import fasBookmark from '@fortawesome/fontawesome-free-solid/faBookmark';
 import * as FirestoreManager from '../../../../../../../shared-components/src/firebase/firestore_wrapper';
 import LinesEllipsis from 'react-lines-ellipsis';
 import { PIECE_TYPES } from '../../../../../../../shared-components/src/shared/types';
-import styles from './Piece.css';
+import { PIECE_COLOR } from '../../../../../../../shared-components/src/shared/theme';
+import classes from './Piece.css';
+
+import Card from '@material-ui/core/Card';
 
 class Piece extends Component {
   state = {
@@ -16,20 +19,20 @@ class Piece extends Component {
 
   render() {
     let { piece } = this.props;
-    let color = styles.SnippetColor;
+    let color = classes.SnippetColor;
     let icon = fasBookmark;
 
     switch (piece.pieceType) {
       case PIECE_TYPES.snippet:
-        color = styles.SnippetColor;
+        color = PIECE_COLOR.snippet;
         icon = fasBookmark;
         break;
       case PIECE_TYPES.option:
-        color = styles.OptionColor;
+        color = PIECE_COLOR.option;
         icon = fasListUl;
         break;
       case PIECE_TYPES.criterion:
-        color = styles.CriterionColor;
+        color = PIECE_COLOR.criterion;
         icon = fasFlagCheckered;
         break;
       default:
@@ -38,11 +41,14 @@ class Piece extends Component {
 
     return (
       <React.Fragment>
-        <div className={styles.PieceContainer}>
-          <div className={[styles.PieceLeftDragHandle, color].join(' ')}>
+        <Card className={classes.PieceContainer}>
+          <div
+            className={classes.PieceLeftDragHandle}
+            style={{ backgroundColor: color }}
+          >
             <FontAwesomeIcon icon={icon} />
           </div>
-          <div className={styles.PieceRightContentBox}>
+          <div className={classes.PieceRightContentBox}>
             <LinesEllipsis
               text={piece.text}
               maxLine="2"
@@ -51,7 +57,7 @@ class Piece extends Component {
               basedOn="letters"
             />
           </div>
-        </div>
+        </Card>
       </React.Fragment>
     );
   }

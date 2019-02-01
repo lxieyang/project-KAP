@@ -1,8 +1,9 @@
 .PieceContainer {
-  border: 1px solid black;
+  /* border: 1px solid black; */
   border-radius: 5px;
-  box-sizing: border-box;
-  margin-top: 5px;
+  /* box-sizing: border-box; */
+  margin-top: 10px;
+  padding: 0px;
   display: flex;
   height: 46px;
 }
@@ -15,12 +16,15 @@
 
   border-top-left-radius: 4px;
   border-bottom-left-radius: 4px;
+  box-sizing: border-box;
+  /* border: 1px solid white; */
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
-.SnippetColor {
+/* original color theme (before material ui color) */
+/* .SnippetColor {
   background-color: rgb(193, 40, 27);
 }
 
@@ -30,7 +34,7 @@
 
 .CriterionColor {
   background-color: rgb(73, 132, 233);
-}
+} */
 
 .PieceRightContentBox {
   flex: 1;

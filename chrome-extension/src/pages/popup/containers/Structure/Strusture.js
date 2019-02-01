@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import styled from 'styled-components';
 
 const TableContainer = styled.div`
-  background-color: #eee;
+  background-color: #ddd;
   margin: 5px 0px;
   box-sizing: border-box;
   width: 100%;

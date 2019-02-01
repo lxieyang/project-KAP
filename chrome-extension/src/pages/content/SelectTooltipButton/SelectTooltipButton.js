@@ -10,6 +10,7 @@ import fasBookmark from '@fortawesome/fontawesome-free-solid/faBookmark';
 import { APP_NAME_SHORT } from '../../../../../shared-components/src/shared/constants';
 import Logo from '../../../../../shared-components/src/components/UI/Logo/Logo';
 import { PIECE_TYPES } from '../../../../../shared-components/src/shared/types';
+import { PIECE_COLOR } from '../../../../../shared-components/src/shared/theme';
 import { Highlight, Snippet } from 'siphon-tools';
 import firebase from '../../../../../shared-components/src/firebase/firebase';
 import * as FirestoreManager from '../../../../../shared-components/src/firebase/firestore_wrapper';
@@ -64,47 +65,10 @@ class SelectTooltipButton extends Component {
     this.removeTooltipButton();
   }
 
-  // collectButtonClickHandler = btnType => {
-  //   const { selectedText, addPiece, clip } = this.props;
-  //   if (btnType === 'task') {
-  //     // console.log('task option clicked');
-  //     FirebaseStore.addTaskFromSearchTerm(selectedText);
-  //     this.setState({ canSubmitTask: true });
-  //     if (clip !== undefined) {
-  //       setTimeout(() => {
-  //         clip();
-  //       }, 900);
-  //     }
-  //   } else if (btnType === 'option') {
-  //     // console.log('add option clicked');
-  //     FirebaseStore.addAnOptionForCurrentTask(selectedText);
-  //     this.setState({ canSubmitOption: true });
-  //     if (clip !== undefined) {
-  //       setTimeout(() => {
-  //         clip();
-  //       }, 900);
-  //     }
-  //   } else if (btnType === 'requirement') {
-  //     FirebaseStore.addARequirementForCurrentTask(selectedText);
-  //     this.setState({ canSubmitRequirement: true });
-  //     if (clip !== undefined) {
-  //       setTimeout(() => {
-  //         clip();
-  //       }, 900);
-  //     }
-  //   } else if (btnType === 'snippet') {
-  //     if (addPiece !== undefined) {
-  //       setTimeout(() => {
-  //         addPiece();
-  //       }, 10);
-  //     }
-  //   }
-  // };
-
   mouseEnterTooltipButton = () => {
     this.tooltipButtonHoverTimeout = setTimeout(() => {
       this.setState({ displayDetailedMenu: true });
-    }, 600);
+    }, 300);
   };
 
   mouseLeaveTooltipButton = () => {
@@ -118,7 +82,7 @@ class SelectTooltipButton extends Component {
   mouseLeaveDetailedMenu = () => {
     this.detailedMenuHoverTimeout = setTimeout(() => {
       this.setState({ displayDetailedMenu: false });
-    }, 600);
+    }, 300);
   };
 
   tooltipButtonClickedHandler = (type = PIECE_TYPES.snippet) => {
@@ -187,7 +151,7 @@ class SelectTooltipButton extends Component {
                     this.tooltipButtonClickedHandler(PIECE_TYPES.snippet)
                   }
                   className={styles.DetailedMenuItemIcon}
-                  style={{ backgroundColor: 'rgb(193, 40, 27)' }}
+                  style={{ backgroundColor: PIECE_COLOR.snippet }}
                 >
                   <FontAwesomeIcon icon={fasBookmark} />
                 </a>
@@ -210,7 +174,7 @@ class SelectTooltipButton extends Component {
                     this.tooltipButtonClickedHandler(PIECE_TYPES.option)
                   }
                   className={styles.DetailedMenuItemIcon}
-                  style={{ backgroundColor: 'rgb(232, 173, 84)' }}
+                  style={{ backgroundColor: PIECE_COLOR.option }}
                 >
                   <FontAwesomeIcon icon={fasListUl} />
                 </a>
@@ -233,7 +197,7 @@ class SelectTooltipButton extends Component {
                     this.tooltipButtonClickedHandler(PIECE_TYPES.criterion)
                   }
                   className={styles.DetailedMenuItemIcon}
-                  style={{ backgroundColor: 'rgb(73, 132, 233)' }}
+                  style={{ backgroundColor: PIECE_COLOR.criterion }}
                 >
                   <FontAwesomeIcon icon={fasFlagCheckered} />
                 </a>

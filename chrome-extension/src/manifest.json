@@ -46,9 +46,11 @@
     "contextMenus",
     "tabs",
     "storage",
+    "unlimitedStorage",
     "activeTab",
     "<all_urls>",
-    "background"
+    "background",
+    "chrome://favicon/"
   ],
   "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAoKT+gdJ2p51k/Hz+EdDAFqm2W6DQIQTq8UurRmg8tWC92j5GkPt1Qz806i/VKks2nGigQDR/rtJmKIeMF695nKc/IRleXYRgE62cLPaBRvu5ni9wQ85IpNNCuHQeC+vJtUGdJTyvDa5rx6Wqz0SFDEVgVgn1o4pvZS3mlwHcmhCF7YlucakQoAF2Uo2LQKj+uXChDED/Tjg++fWveNlv5pfa0QvtNMX8UciK5EuElooqr9NYzb2yX+DP7+7IesIr8bcuVptVJWMqzNz2DXUh1ys4QN5CaIbDiqnGK96JcDKMosd7AWzIa3yXIReoOWN1CXBoO0UOv42G7L8P+/Ia9QIDAQAB",
   "manifest_version": 2,

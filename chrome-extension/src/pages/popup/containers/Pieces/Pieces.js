@@ -4,7 +4,7 @@ import Piece from './Piece/Piece';
 import * as FirestoreManager from '../../../../../../shared-components/src/firebase/firestore_wrapper';
 
 const PiecesContainer = styled.div`
-  /* background-color: #eee; */
+  /* background-color: rgb(242, 242, 242); */
   margin: 5px 0px;
   box-sizing: border-box;
   width: 100%;
@@ -56,7 +56,6 @@ class Pieces extends Component {
     let { pieces } = this.state;
     return (
       <React.Fragment>
-        {/*<PiecesContainer>Pieces go here</PiecesContainer>*/}
         <PiecesContainer>
           <PiecesUL>
             {pieces.map((p, idx) => {
