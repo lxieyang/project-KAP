@@ -5,6 +5,7 @@ import fasFlagCheckered from '@fortawesome/fontawesome-free-solid/faFlagCheckere
 import fasBookmark from '@fortawesome/fontawesome-free-solid/faBookmark';
 import * as FirestoreManager from '../../../../../../../shared-components/src/firebase/firestore_wrapper';
 import LinesEllipsis from 'react-lines-ellipsis';
+import ClampLines from 'react-clamp-lines';
 import { PIECE_TYPES } from '../../../../../../../shared-components/src/shared/types';
 import { PIECE_COLOR } from '../../../../../../../shared-components/src/shared/theme';
 import classes from './Piece.css';
@@ -49,13 +50,7 @@ class Piece extends Component {
             <FontAwesomeIcon icon={icon} />
           </div>
           <div className={classes.PieceRightContentBox}>
-            <LinesEllipsis
-              text={piece.text}
-              maxLine="2"
-              ellipsis="..."
-              trimRight
-              basedOn="letters"
-            />
+            <ClampLines text={piece.text} lines="2" buttons={false} />
           </div>
         </Card>
       </React.Fragment>
