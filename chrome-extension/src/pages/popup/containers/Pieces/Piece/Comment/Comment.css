@@ -1,0 +1,20 @@
+.CommentBox {
+  padding: 0px;
+}
+
+.CommentListContainer {
+  padding: 0px;
+  background-color: rgb(248, 248, 248);
+}
+.CommentItem {
+  margin: 4px 1px 2px 6px;
+  display: flex;
+  align-items: center;
+}
+
+.CommentContent {
+  font-size: 12px;
+  font-weight: 300;
+  color: black;
+  padding-left: 4px;
+}

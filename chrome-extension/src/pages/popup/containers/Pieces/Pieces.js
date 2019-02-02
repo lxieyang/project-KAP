@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import ReactHoverObserver from 'react-hover-observer';
 import styled from 'styled-components';
 import Piece from './Piece/Piece';
 import * as FirestoreManager from '../../../../../../shared-components/src/firebase/firestore_wrapper';
@@ -9,7 +10,7 @@ const PiecesContainer = styled.div`
   box-sizing: border-box;
   width: 100%;
   height: 600px;
-  padding: 0px 10px;
+  padding: 0px 6px;
   /* display: flex;
   justify-content: space-around;
   align-items: center; */
@@ -63,7 +64,9 @@ class Pieces extends Component {
             {pieces.map((p, idx) => {
               return (
                 <PieceLI key={idx}>
-                  <Piece piece={p} />
+                  <ReactHoverObserver>
+                    <Piece piece={p} />
+                  </ReactHoverObserver>
                 </PieceLI>
               );
             })}
