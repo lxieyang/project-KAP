@@ -2,25 +2,78 @@
   /* border: 1px solid black; */
   border-radius: 5px;
   /* box-sizing: border-box; */
-  margin-top: 10px;
+  margin-top: 8px;
   padding: 0px;
-  display: flex;
-  height: 46px;
 }
 
-.PieceLeftDragHandle {
-  flex: 0 0 24px;
-  cursor: move;
-  height: 100%;
-  color: white;
-
-  border-top-left-radius: 4px;
-  border-bottom-left-radius: 4px;
-  box-sizing: border-box;
-  /* border: 1px solid white; */
+.Avatar {
   display: flex;
   justify-content: center;
   align-items: center;
+
+  margin-top: 5px;
+  margin-left: 5px;
+}
+
+.IconInsideAvatar {
+  font-size: 16px;
+}
+
+.PieceContentBox {
+  display: flex;
+  align-items: flex-start;
+  padding-top: 5px;
+  padding-left: 8px;
+  /* padding-right: 6px; */
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.InfoActionBar {
+  width: 100%;
+  box-sizing: border-box;
+  padding-left: 8px;
+  padding-right: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.SiteIcon {
+  width: 14px;
+  /* border-radius: 3px; */
+  background: transparent;
+  /* box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.16), 0 1px 5px 0 rgba(0, 0, 0, 0.12); */
+}
+
+.Moment {
+  margin-left: 6px;
+  font-size: 12px;
+  color: rgb(155, 155, 155);
+  font-weight: 300;
+}
+
+.OriginalContentContainer {
+  max-width: 100%;
+  padding: 4px 8px;
+  max-height: 400px;
+  overflow: auto;
+  /* opacity: 0.8; */
+  font-size: 1rem;
+  /* background: rgb(228, 228, 228); */
+  transition: all 0.1s ease-in;
+}
+
+/* .OriginalContentContainer:hover {
+  opacity: 1.0;
+} */
+
+.HTMLPreview {
+  font-size: 0.9rem;
+}
+
+.HTMLPreview:focus {
+  outline: none;
 }
 
 /* original color theme (before material ui color) */
@@ -35,10 +88,3 @@
 .CriterionColor {
   background-color: rgb(73, 132, 233);
 } */
-
-.PieceRightContentBox {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  padding-left: 4px;
-}

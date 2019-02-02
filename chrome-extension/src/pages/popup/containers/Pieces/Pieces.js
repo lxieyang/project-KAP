@@ -36,13 +36,15 @@ class Pieces extends Component {
         let currentTaskId = doc.data().id;
         this.unsubscribeAllPieces = FirestoreManager.getAllPiecesInTask(
           currentTaskId
-        ).onSnapshot(querySnapshot => {
-          let pieces = [];
-          querySnapshot.forEach(doc => {
-            pieces.push({ id: doc.id, ...doc.data() });
+        )
+          .orderBy('updateDate', 'desc')
+          .onSnapshot(querySnapshot => {
+            let pieces = [];
+            querySnapshot.forEach(doc => {
+              pieces.push({ id: doc.id, ...doc.data() });
+            });
+            this.setState({ pieces });
           });
-          this.setState({ pieces });
-        });
       }
     );
   }
