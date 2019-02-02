@@ -1,15 +1,25 @@
 import React, { Component } from 'react';
-
+import { withStyles } from '@material-ui/core/styles';
 import Avatar from '@material-ui/core/Avatar';
-import Divider from '@material-ui/core/Divider';
 import LinesEllipsis from 'react-lines-ellipsis';
 import IconButton from '@material-ui/core/IconButton';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
+import TextField from '@material-ui/core/TextField';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import { PencilCircleOutline, DeleteCircleOutline } from 'mdi-material-ui';
 import classesInCSS from './Comment.css';
 import moment from 'moment';
+import Textarea from 'react-textarea-autosize';
+
+const styles = theme => ({
+  textField: {
+    marginLeft: theme.spacing.unit,
+    marginRight: theme.spacing.unit,
+    width: '95%',
+    boxSizing: 'border-box'
+  }
+});
 
 const fakeComments = [
   {
@@ -44,7 +54,13 @@ const options = [
 ];
 
 class Comment extends Component {
-  state = { anchorEl: null };
+  state = { anchorEl: null, editCommentValue: '' };
+
+  handleInputChange = event => {
+    this.setState({
+      editCommentValue: event.target.value
+    });
+  };
 
   handleClick = event => {
     this.setState({ anchorEl: event.currentTarget });
@@ -60,7 +76,7 @@ class Comment extends Component {
   };
 
   render() {
-    const { expanded } = this.props;
+    const { expanded, classes } = this.props;
     const { anchorEl } = this.state;
     const open = Boolean(anchorEl);
 
@@ -189,7 +205,16 @@ class Comment extends Component {
       <React.Fragment>
         <div>
           <div className={classesInCSS.CommentBox}>{CommentList}</div>
-          <div>Add/Edit Comment</div>
+          <div className={classesInCSS.EditCommentBox}>
+            <Textarea
+              inputRef={tag => (this.textarea = tag)}
+              minRows={3}
+              maxRows={6}
+              defaultValue="Just a single line..."
+              value={this.state.editCommentValue}
+              onChange={e => this.handleInputChange(e)}
+            />
+          </div>
         </div>
       </React.Fragment>
     );
@@ -198,4 +223,4 @@ class Comment extends Component {
   }
 }
 
-export default Comment;
+export default withStyles(styles)(Comment);
