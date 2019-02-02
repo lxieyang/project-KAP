@@ -107,7 +107,7 @@ const getHTML = htmls => {
 
 class Piece extends Component {
   state = {
-    expanded: false,
+    expanded: true,
     anchorEl: null
   };
 
@@ -278,7 +278,11 @@ class Piece extends Component {
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center' }}>
                   <Tooltip title="Open the original page" placement={'top'}>
-                    <a href={piece.references.url} target="__blank">
+                    <a
+                      href={piece.references.url}
+                      target="__blank"
+                      className={classesInCSS.SiteIcon}
+                    >
                       <img
                         src={GET_FAVICON_URL_PREFIX + piece.references.url}
                         alt={'favicon'}

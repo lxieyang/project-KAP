@@ -191,7 +191,7 @@ class Popup extends Component {
           Successfully logged into {APP_NAME_SHORT}.
         </div>*/}
         <TaskSwitcher setCurrentTaskId={this.setCurrentTaskId} />
-        <Structure />
+        {/*<Structure />*/}
         <Pieces />
       </React.Fragment>
     );

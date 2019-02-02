@@ -9,19 +9,24 @@ import MenuItem from '@material-ui/core/MenuItem';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import { PencilCircleOutline, DeleteCircleOutline } from 'mdi-material-ui';
 import classesInCSS from './Comment.css';
+import moment from 'moment';
 
 const fakeComments = [
   {
     authorId: 'author-01',
+    authorName: 'Barack Obama',
+    updateDate: new Date(),
     authorAvatarURL:
       'http://d28fo5khwixgu6.cloudfront.net/blog/wp-content/uploads/2013/01/president-barack-obama-square.png',
     content: `This is a good deal, grab it before it\'s gone. This is a good deal, grab it before it\'s gone.`
   },
   {
     authorId: 'author-02',
+    authorName: 'George Bush',
+    updateDate: new Date(),
     authorAvatarURL:
       'http://barryyeoman.com/wp-content/uploads/2004/04/George-W-Bush-square.jpg',
-    content: `This is a NOT good deal, DO NOT grab it. This is a NOT good deal, DO NOT grab it.`
+    content: `This is a NOT good deal, DO NOT grab it. This is a NOT good deal, DO NOT grab it. This is a NOT good deal, DO NOT grab it. This is a NOT good deal, DO NOT grab it. This is a NOT good deal, DO NOT grab it. This is a NOT good deal, DO NOT grab it. This is a NOT good deal, DO NOT grab it. This is a NOT good deal, DO NOT grab it.`
   }
 ];
 
@@ -59,111 +64,131 @@ class Comment extends Component {
     const { anchorEl } = this.state;
     const open = Boolean(anchorEl);
 
-    let compactView = (
-      <React.Fragment>
-        <div className={classesInCSS.CommentBox}>
-          <div className={classesInCSS.CommentListContainer}>
-            {fakeComments.map((item, idx) => {
-              return (
-                <React.Fragment key={idx}>
-                  <div className={classesInCSS.CommentItem}>
-                    <div>
-                      <Avatar
-                        aria-label="avatar"
-                        style={{
-                          width: '24px',
-                          height: '24px'
-                        }}
-                        className={classesInCSS.Avatar}
-                      >
-                        <img
-                          src={item.authorAvatarURL}
-                          alt={item.authorId}
-                          style={{ width: '100%', height: '100%' }}
-                        />
-                      </Avatar>
+    let CommentList = (
+      <div className={classesInCSS.CommentListContainer}>
+        {fakeComments.map((item, idx) => {
+          return (
+            <React.Fragment key={idx}>
+              <div
+                className={[
+                  classesInCSS.CommentItem,
+                  expanded
+                    ? classesInCSS.CommentItemExpanded
+                    : classesInCSS.CommentItemCompact
+                ].join(' ')}
+              >
+                <div>
+                  <Avatar
+                    aria-label="avatar"
+                    style={{
+                      width: expanded ? '30px' : '24px',
+                      height: expanded ? '30px' : '24px'
+                    }}
+                    className={classesInCSS.Avatar}
+                  >
+                    <img
+                      src={item.authorAvatarURL}
+                      alt={item.authorId}
+                      style={{ width: '100%', height: '100%' }}
+                    />
+                  </Avatar>
+                </div>
+                <div
+                  style={{
+                    flex: '1'
+                  }}
+                >
+                  {!expanded ? (
+                    <div className={classesInCSS.CommentContentCompact}>
+                      <LinesEllipsis
+                        text={item.content}
+                        maxLine={1}
+                        ellipsis="..."
+                        trimRight
+                        basedOn="words"
+                      />
                     </div>
-                    <div
-                      style={{
-                        flex: '1'
-                      }}
-                    >
+                  ) : (
+                    <div className={classesInCSS.CommentContentExpanded}>
+                      <div className={classesInCSS.CommentInfoBar}>
+                        <span className={classesInCSS.CommentAuthor}>
+                          {item.authorName}
+                        </span>
+                        <span className={classesInCSS.CommentMoment}>
+                          {moment(item.updateDate).fromNow()}
+                        </span>
+                      </div>
                       <div className={classesInCSS.CommentContent}>
-                        <LinesEllipsis
-                          text={item.content}
-                          maxLine={1}
-                          ellipsis="..."
-                          trimRight
-                          basedOn="words"
-                        />
+                        {item.content}
                       </div>
                     </div>
-                    <div
-                      style={{
-                        flexBasis: '28px',
-                        marginLeft: 'auto',
-                        order: '3',
-                        paddingTop: '3px'
-                      }}
-                    >
-                      <Menu
-                        id="long-menu"
-                        anchorEl={anchorEl}
-                        open={open}
-                        onClose={this.handleClose}
-                        style={{ padding: '2px' }}
-                        PaperProps={{
-                          style: {
-                            maxHeight: 24 * 4.5,
-                            width: 70
-                          }
+                  )}
+                </div>
+                <div
+                  style={{
+                    flexBasis: '28px',
+                    marginLeft: 'auto',
+                    order: '3',
+                    paddingTop: '3px'
+                  }}
+                >
+                  <Menu
+                    id="long-menu"
+                    anchorEl={anchorEl}
+                    open={open}
+                    onClose={this.handleClose}
+                    style={{ padding: '2px' }}
+                    PaperProps={{
+                      style: {
+                        maxHeight: 24 * 4.5,
+                        width: 70
+                      }
+                    }}
+                  >
+                    {options.map(option => (
+                      <MenuItem
+                        key={option.text}
+                        selected={false}
+                        onClick={() => this.handleAction(option.action)}
+                        style={{
+                          padding: '4px 4px',
+                          fontSize: '12px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          opacity: '0.8'
                         }}
                       >
-                        {options.map(option => (
-                          <MenuItem
-                            key={option.text}
-                            selected={false}
-                            onClick={() => this.handleAction(option.action)}
-                            style={{
-                              padding: '4px 4px',
-                              fontSize: '12px',
-                              display: 'flex',
-                              alignItems: 'center',
-                              opacity: '0.8'
-                            }}
-                          >
-                            {option.icon} &nbsp; {option.text}
-                          </MenuItem>
-                        ))}
-                      </Menu>
-                      <IconButton
-                        aria-label="More"
-                        aria-owns={open ? 'long-menu' : undefined}
-                        aria-haspopup="true"
-                        style={{ padding: '6px' }}
-                        onClick={this.handleClick}
-                      >
-                        <MoreVertIcon
-                          style={{ width: '16px', height: '16px' }}
-                        />
-                      </IconButton>
-                    </div>
-                  </div>
-                  {/*{idx === fakeComments.length - 1 ? null : (
-                    <Divider variant="middle" />
-                  )}*/}
-                </React.Fragment>
-              );
-            })}
-          </div>
-        </div>
+                        {option.icon} &nbsp; {option.text}
+                      </MenuItem>
+                    ))}
+                  </Menu>
+                  <IconButton
+                    aria-label="More"
+                    aria-owns={open ? 'long-menu' : undefined}
+                    aria-haspopup="true"
+                    style={{ padding: '6px' }}
+                    onClick={this.handleClick}
+                  >
+                    <MoreVertIcon style={{ width: '16px', height: '16px' }} />
+                  </IconButton>
+                </div>
+              </div>
+            </React.Fragment>
+          );
+        })}
+      </div>
+    );
+
+    let compactView = (
+      <React.Fragment>
+        <div className={classesInCSS.CommentBox}>{CommentList}</div>
       </React.Fragment>
     );
 
     let expandedView = (
       <React.Fragment>
         <div>
-          <div>Comment List</div>
+          <div className={classesInCSS.CommentBox}>{CommentList}</div>
           <div>Add/Edit Comment</div>
         </div>
       </React.Fragment>
