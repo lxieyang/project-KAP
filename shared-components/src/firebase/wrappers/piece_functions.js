@@ -15,6 +15,26 @@ export const getAllPiecesInTask = taskId => {
   return db.collection('pieces').where('references.task', '==', taskId);
 };
 
+export const removePieceById = pieceId => {
+  return db
+    .collection('pieces')
+    .doc(pieceId)
+    .delete();
+};
+
+export const addScreenshotToPieceById = async (pieceId, imageDataUrl) => {
+  return db
+    .collection('screenshots')
+    .doc(pieceId)
+    .set({
+      imageDataUrl
+    });
+};
+
+export const getScreenshotByPieceId = pieceId => {
+  return db.collection('screenshots').doc(pieceId);
+};
+
 export const createPiece = async (
   data,
   { url, taskId },

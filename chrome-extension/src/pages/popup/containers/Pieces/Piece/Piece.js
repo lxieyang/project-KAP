@@ -108,7 +108,8 @@ const getHTML = htmls => {
 class Piece extends Component {
   state = {
     expanded: true,
-    anchorEl: null
+    anchorEl: null,
+    screenshot: null
   };
 
   handleTypeAvatarClick = event => {
@@ -120,18 +121,22 @@ class Piece extends Component {
   };
 
   componentDidMount() {
-    loadCSS(
-      'https://use.fontawesome.com/releases/v5.1.0/css/all.css',
-      document.querySelector('#insertion-point-jss')
-    );
+    FirestoreManager.getScreenshotByPieceId(this.props.piece.id)
+      .get()
+      .then(doc => {
+        if (doc.exists) {
+          this.setState({ screenshot: doc.data().imageDataUrl });
+        }
+      });
   }
 
   handleExpandClick = () => {
     this.setState(prevState => ({ expanded: !prevState.expanded }));
   };
 
-  pieceTypeAvatarClickedHandler = () => {
-    console.log('type clicked');
+  deletePieceById = pieceId => {
+    console.log('should delete', pieceId);
+    FirestoreManager.removePieceById(pieceId);
   };
 
   render() {
@@ -271,6 +276,7 @@ class Piece extends Component {
                     <IconButton
                       aria-label="Delete"
                       className={classes.iconButtons}
+                      onClick={() => this.deletePieceById(piece.id)}
                     >
                       <DeleteIcon className={classes.iconInIconButtons} />
                     </IconButton>

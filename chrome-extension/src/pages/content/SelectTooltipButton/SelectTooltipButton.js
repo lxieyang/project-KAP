@@ -37,7 +37,7 @@ class SelectTooltipButton extends Component {
         this.props.captureWindow.getBoundingClientRect()
       );
     }
-    console.log(annotation);
+    // console.log(annotation);
     this.setState({ annotation });
   }
 
@@ -46,11 +46,24 @@ class SelectTooltipButton extends Component {
   }
 
   @autobind
-  removeTooltipButton() {
+  removeTooltipButton(status, pieceId) {
+    let rect;
     if (this.props.captureWindow) {
+      rect = this.props.captureWindow.getBoundingClientRect();
       this.props.captureWindow.remove();
     }
     ReactDOM.unmountComponentAtNode(ReactDOM.findDOMNode(this).parentNode);
+
+    setTimeout(() => {
+      if (status === 'success') {
+        chrome.runtime.sendMessage({
+          msg: 'SCREENSHOT_WITH_COORDINATES',
+          rect,
+          windowSize: this.props.windowSize,
+          pieceId
+        });
+      }
+    }, 5);
   }
 
   @autobind
@@ -92,11 +105,12 @@ class SelectTooltipButton extends Component {
       this.props.annotationType,
       type
     )
-      .then(() => {
+      .then(data => {
         chrome.runtime.sendMessage({
           msg: 'SHOW_SUCCESS_STATUS_BADGE',
           success: true
         });
+        this.removeTooltipButton('success', this.state.annotation.key);
       })
       .catch(error => {
         console.log(error);
@@ -104,10 +118,10 @@ class SelectTooltipButton extends Component {
           msg: 'SHOW_SUCCESS_STATUS_BADGE',
           success: false
         });
+        this.removeTooltipButton('failed', null);
       });
 
-    console.log(`should save as a type ${type} piece`);
-    this.removeTooltipButton();
+    // console.log(`should save as a type ${type} piece`);
   };
 
   render() {

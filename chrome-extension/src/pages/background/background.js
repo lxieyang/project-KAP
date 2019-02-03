@@ -1,5 +1,12 @@
 /* global chrome */
 import { APP_NAME_SHORT } from '../../../../shared-components/src/shared/constants';
+import firebase from '../../../../shared-components/src/firebase/firebase';
+import * as FirestoreManager from '../../../../shared-components/src/firebase/firestore_wrapper';
+import imageClipper from './image-clipper.js';
+import {
+  getImageDimensions,
+  makeScreenshotWithCoordinates
+} from './captureScreenshot';
 
 let showSuccessStatusInIconBadgeTimeout = 0;
 function showSuccessStatusInIconBadge(success = true) {
@@ -192,8 +199,38 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 //
 //
 //
+/* Log in / out */
+const signInOutUserWithCredential = idToken => {
+  if (idToken !== null) {
+    // logged in
+    firebase
+      .auth()
+      .signInAndRetrieveDataWithCredential(
+        firebase.auth.GoogleAuthProvider.credential(idToken)
+      )
+      .then(result => {
+        console.log(`[BACKGROUND] User ${result.user.displayName} logged in.`);
+      })
+      .catch(error => {
+        console.log(error);
+      });
+  } else {
+    // logged out
+    firebase
+      .auth()
+      .signOut()
+      .then(() => {
+        console.log('[BACKGROUND] User logged out.');
+      })
+      .catch(error => {
+        console.log(error);
+      });
+  }
+};
+
 /* Logging in/out on all tabs*/
 const updateLogInStatus = (idToken, user) => {
+  signInOutUserWithCredential(idToken);
   chrome.tabs.query({}, function(tabs) {
     for (var i = 0; i < tabs.length; ++i) {
       chrome.tabs.sendMessage(tabs[i].id, {
@@ -223,6 +260,8 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
   }
 });
 
+signInOutUserWithCredential(localStorage.getItem('idToken'));
+
 //
 //
 //
@@ -239,5 +278,39 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
         // Tab opened.
       }
     );
+  } else if (request.msg === 'SCREENSHOT_WITH_COORDINATES') {
+    let rect = request.rect;
+    let windowSize = request.windowSize;
+    chrome.tabs.captureVisibleTab(function(screenshotUrl) {
+      getImageDimensions(screenshotUrl).then(imageDimensions => {
+        let scale = imageDimensions.w / windowSize.width;
+        rect.x = Math.floor(rect.x * scale);
+        rect.y = Math.floor(rect.y * scale);
+        rect.width = Math.floor(rect.width * scale);
+        rect.height = Math.floor(rect.height * scale);
+
+        imageClipper(screenshotUrl, function() {
+          this.crop(rect.x, rect.y, rect.width, rect.height).toDataURL(function(
+            dataUrl
+          ) {
+            FirestoreManager.addScreenshotToPieceById(request.pieceId, dataUrl);
+            chrome.tabs.create(
+              {
+                url: dataUrl
+              },
+              tab => {
+                // Tab opened.
+              }
+            );
+          });
+        });
+      });
+    });
+
+    // makeScreenshotWithCoordinates(
+    //   request.rect,
+    //   request.windowSize,
+    //   sendResponse
+    // );
   }
 });

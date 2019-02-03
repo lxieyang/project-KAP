@@ -16,7 +16,8 @@ function getBGColor(el) {
     (b === "transparent" ||
       b === "rgba(0, 0, 0, 0)" ||
       b === "rgba(255,255,255,0)") &&
-    e.parentNode !== null
+    e.parentNode !== null &&
+    e.parentNode !== document
   )
     b = getBGColor(e.parentNode);
   return b;

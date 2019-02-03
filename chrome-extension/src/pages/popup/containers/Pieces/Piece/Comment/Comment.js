@@ -35,7 +35,7 @@ const fakeComments = [
     authorName: 'George Bush',
     updateDate: new Date(),
     authorAvatarURL:
-      'http://barryyeoman.com/wp-content/uploads/2004/04/George-W-Bush-square.jpg',
+      'https://www.abc.net.au/radionational/image/7174982-1x1-700x700.jpg',
     content: `This is a NOT good deal, DO NOT grab it. This is a NOT good deal, DO NOT grab it. This is a NOT good deal, DO NOT grab it. This is a NOT good deal, DO NOT grab it. This is a NOT good deal, DO NOT grab it. This is a NOT good deal, DO NOT grab it. This is a NOT good deal, DO NOT grab it. This is a NOT good deal, DO NOT grab it.`
   }
 ];
@@ -210,7 +210,7 @@ class Comment extends Component {
               inputRef={tag => (this.textarea = tag)}
               minRows={3}
               maxRows={6}
-              defaultValue="Just a single line..."
+              placeholder={'Add a comment'}
               value={this.state.editCommentValue}
               onChange={e => this.handleInputChange(e)}
             />

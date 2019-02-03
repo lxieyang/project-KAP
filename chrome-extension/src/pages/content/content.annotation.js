@@ -79,7 +79,8 @@ SiphonTools.initializeSelectors([
       let rect = cptrWindow.getBoundingClientRect();
       displayTooltipButtonBasedOnRectPosition(rect, {
         annotationType: ANNOTATION_TYPES.Snippet,
-        captureWindow
+        captureWindow,
+        windowSize: { width: window.innerWidth, height: window.innerHeight }
       });
 
       // let snippet = new Snippet(rect);
