@@ -3,9 +3,9 @@ import { withStyles } from '@material-ui/core/styles';
 import Avatar from '@material-ui/core/Avatar';
 import LinesEllipsis from 'react-lines-ellipsis';
 import IconButton from '@material-ui/core/IconButton';
+import Button from '@material-ui/core/Button';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
-import TextField from '@material-ui/core/TextField';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import { PencilCircleOutline, DeleteCircleOutline } from 'mdi-material-ui';
 import classesInCSS from './Comment.css';
@@ -13,6 +13,13 @@ import moment from 'moment';
 import Textarea from 'react-textarea-autosize';
 
 const styles = theme => ({
+  button: {
+    marginTop: 0,
+    marginBottom: 0,
+    marginRight: 8,
+    padding: '1px 4px 1px 4px',
+    fontSize: 12
+  },
   textField: {
     marginLeft: theme.spacing.unit,
     marginRight: theme.spacing.unit,
@@ -206,14 +213,26 @@ class Comment extends Component {
         <div>
           <div className={classesInCSS.CommentBox}>{CommentList}</div>
           <div className={classesInCSS.EditCommentBox}>
-            <Textarea
-              inputRef={tag => (this.textarea = tag)}
-              minRows={3}
-              maxRows={6}
-              placeholder={'Add a comment'}
-              value={this.state.editCommentValue}
-              onChange={e => this.handleInputChange(e)}
-            />
+            <div className={classesInCSS.TextAreaContainer}>
+              <Textarea
+                inputRef={tag => (this.textarea = tag)}
+                minRows={1}
+                maxRows={3}
+                placeholder={'Add a comment'}
+                value={this.state.editCommentValue}
+                onChange={e => this.handleInputChange(e)}
+                className={classesInCSS.Textarea}
+              />
+            </div>
+            <div className={classesInCSS.TextareaActionBar}>
+              <Button color="primary" className={classes.button}>
+                Save
+              </Button>
+
+              <Button color="secondary" className={classes.button}>
+                Cancel
+              </Button>
+            </div>
           </div>
         </div>
       </React.Fragment>

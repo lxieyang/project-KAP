@@ -65,7 +65,7 @@ class Pieces extends Component {
               return (
                 <PieceLI key={idx + p.id}>
                   <ReactHoverObserver>
-                    <Piece piece={p} />
+                    <Piece piece={p} idx={idx} />
                   </ReactHoverObserver>
                 </PieceLI>
               );

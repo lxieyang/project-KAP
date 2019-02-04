@@ -111,7 +111,7 @@ const getHTML = htmls => {
 
 class Piece extends Component {
   state = {
-    expanded: true,
+    expanded: this.props.idx + 1 <= 2 ? true : false,
     anchorEl: null,
     maxScreenshotHeight: 300,
     screenshot: null,
@@ -385,9 +385,8 @@ class Piece extends Component {
               )}
             </div>
           </Collapse>
-          {/* Comment Section */}
-          {/* temporarily disable commenting feature
 
+          {/* Comment Section */}
           {this.state.expanded ? (
             <div>
               <Comment expanded={true} />
@@ -399,8 +398,6 @@ class Piece extends Component {
               </Collapse>
             </div>
           )}
-
-          */}
         </Card>
       </React.Fragment>
     );
