@@ -4,7 +4,9 @@ import { encode, decode } from '../utilities/firebase_encode_decode.js';
 import {
   db,
   getCurrentUserId,
-  getCurrentUserCurrentTaskId
+  getCurrentUserCurrentTaskId,
+  updateTaskUpdateTime,
+  updateCurrentTaskUpdateTime
 } from '../firestore_wrapper';
 const xssFilter = require('xssfilter');
 const xss = new xssFilter({
@@ -12,16 +14,26 @@ const xss = new xssFilter({
 });
 
 export const getAllPiecesInTask = taskId => {
-  return db.collection('pieces').where('references.task', '==', taskId);
+  return db
+    .collection('pieces')
+    .where('references.task', '==', taskId)
+    .where('transhed', '==', false);
 };
 
 export const removePieceById = pieceId => {
+  updateCurrentTaskUpdateTime();
+  // set 'trashed' to true
   db.collection('pieces')
     .doc(pieceId)
-    .delete();
+    .update({
+      trashed: true
+    });
+  // set 'trashed' to true
   db.collection('screenshots')
     .doc(pieceId)
-    .delete();
+    .update({
+      trashed: true
+    });
 };
 
 export const addScreenshotToPieceById = async (
@@ -29,12 +41,14 @@ export const addScreenshotToPieceById = async (
   imageDataUrl,
   { dimensions }
 ) => {
+  updateCurrentTaskUpdateTime();
   return db
     .collection('screenshots')
     .doc(pieceId)
     .set({
       creator: getCurrentUserId(),
       creationDate: firebase.firestore.FieldValue.serverTimestamp(),
+      trashed: false,
       imageDataUrl,
       dimensions
     });
@@ -74,6 +88,7 @@ export const createPiece = async (
   switch (annotationType) {
     case ANNOTATION_TYPES.Highlight:
       piece.text = data.text.trim();
+      piece.name = data.text.trim();
       piece.html = data.html;
       if (piece.html) piece.html = xss.filter(data.html) || null;
       piece.anchorCoordinates = data.anchorCoordinates || {};
@@ -86,6 +101,7 @@ export const createPiece = async (
       break;
     case ANNOTATION_TYPES.Snippet:
       piece.text = data.text.trim() || '';
+      piece.name = data.text.trim() || '';
       piece.html = data.html.map(html => xss.filter(html)) || null;
       piece.anchorCoordinates = data.anchorCoordinates || {};
       piece.initialDimensions = data.initialDimensions || {};
@@ -95,6 +111,8 @@ export const createPiece = async (
     default:
       return; //In this case, we don't recognize the type
   }
+
+  updateTaskUpdateTime(piece.references.task);
 
   return ref.set(piece);
 };

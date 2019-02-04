@@ -233,6 +233,7 @@ function mountSidebar() {
     />
   );
   ReactDOM.render(App, sidebarRoot);
+  Frame.toggle();
   SiphonTools.enable();
 }
 

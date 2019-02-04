@@ -4,6 +4,7 @@ import Dropdown from 'react-dropdown'; // https://github.com/fraserxu/react-drop
 import 'react-dropdown/style.css';
 import FontAwesomeIcon from '@fortawesome/react-fontawesome';
 import fasTh from '@fortawesome/fontawesome-free-solid/faTh';
+import Button from '@material-ui/core/Button';
 import firebase from '../../../../../../shared-components/src/firebase/firebase';
 import * as FirestoreManager from '../../../../../../shared-components/src/firebase/firestore_wrapper';
 
@@ -36,10 +37,24 @@ const createNewTaskOption = {
   className: styles.CreateNewClassName
 };
 
+const TaskCreatePrompt = styled.div`
+  /* background-color: #ccc; */
+  box-sizing: border-box;
+  width: 100%;
+  height: 100px;
+  padding: 0px 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
 class TaskSwitcher extends Component {
   state = {
     options: [createNewTaskOption],
-    currentOptionId: createNewTaskOption.value
+    currentOptionId: createNewTaskOption.value,
+
+    taskCount: 0,
+    tasksLoading: true
   };
 
   componentDidMount() {
@@ -47,13 +62,15 @@ class TaskSwitcher extends Component {
       .orderBy('updateDate', 'desc')
       .onSnapshot(querySnapshot => {
         let tasks = [createNewTaskOption];
+        let taskCount = 0;
         querySnapshot.forEach(function(doc) {
           tasks.push({
             value: doc.id,
             label: doc.data().name
           });
+          taskCount += 1;
         });
-        this.setState({ options: tasks });
+        this.setState({ options: tasks, taskCount, tasksLoading: false });
       });
 
     // set up current task listener
@@ -100,7 +117,6 @@ class TaskSwitcher extends Component {
 
         FirestoreManager.createTaskWithName(taskName)
           .then(docRef => {
-            // this.setState({ currentOptionId: docRef.id });
             FirestoreManager.updateCurrentUserCurrentTaskId(docRef.id);
           })
           .catch(error => {
@@ -115,6 +131,32 @@ class TaskSwitcher extends Component {
     } else {
       // this.setState({ currentOptionId: selectedTask.value });
       FirestoreManager.updateCurrentUserCurrentTaskId(selectedTask.value);
+    }
+  };
+
+  createNewTaskButtonClickedHandler = () => {
+    let taskName = prompt('New task name:');
+    if (taskName !== null && taskName !== '') {
+      // successfully created
+      setTimeout(() => {
+        // for rendering purposes, do not touch before figuring out a good solution
+        this.setState({
+          options: [
+            ...this.state.options,
+            { value: 'new-task', label: taskName }
+          ],
+          currentOptionId: 'new-task'
+        });
+      }, 5);
+
+      FirestoreManager.createTaskWithName(taskName)
+        .then(docRef => {
+          FirestoreManager.updateCurrentUserCurrentTaskId(docRef.id);
+        })
+        .catch(error => {
+          console.log(error);
+          alert(error);
+        });
     }
   };
 
@@ -142,6 +184,21 @@ class TaskSwitcher extends Component {
             </VariousButton>
           </VariousButtonsContainer>
         </TaskSwitcherContainer>
+        {!this.state.tasksLoading && this.state.taskCount === 0 ? (
+          <TaskCreatePrompt>
+            <div>
+              Please start by
+              <Button
+                color="primary"
+                onClick={e => this.createNewTaskButtonClickedHandler()}
+              >
+                creating a new task
+              </Button>{' '}
+              with a name that indicates what you'll be working on in the next
+              few minutes.
+            </div>
+          </TaskCreatePrompt>
+        ) : null}
       </React.Fragment>
     );
   }

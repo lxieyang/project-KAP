@@ -7,7 +7,10 @@ import {
 const uuid = require('uuid/v4');
 
 export const getCurrentUserCreatedTasks = () => {
-  return db.collection('tasks').where('creator', '==', getCurrentUserId());
+  return db
+    .collection('tasks')
+    .where('creator', '==', getCurrentUserId())
+    .where('trashed', '==', false);
 };
 
 export const updateCurrentUserCurrentTaskId = taskId => {
@@ -17,6 +20,46 @@ export const updateCurrentUserCurrentTaskId = taskId => {
     },
     { merge: true }
   );
+};
+
+export const updateTaskName = (taskId, newTaskName) => {
+  db.collection('tasks')
+    .doc(taskId)
+    .update({
+      name: newTaskName
+    });
+  updateTaskUpdateTime();
+};
+
+export const deleteTaskById = taskId => {
+  db.collection('tasks')
+    .doc(taskId)
+    .update({
+      trashed: true
+    })
+    .then(() => {
+      // automatically switch to the last task that got updated
+      getCurrentUserCreatedTasks()
+        .orderBy('updateDate', 'desc')
+        .limit(1)
+        .get()
+        .then(querySnapshot => {
+          updateCurrentUserCurrentTaskId(querySnapshot.docs[0].id);
+        });
+    });
+};
+
+export const updateTaskUpdateTime = taskId => {
+  db.collection('tasks')
+    .doc(taskId)
+    .update({
+      updateDate: firebase.firestore.FieldValue.serverTimestamp()
+    });
+};
+
+export const updateCurrentTaskUpdateTime = async () => {
+  let currentTaskId = (await getCurrentUserCurrentTaskId().get()).data().id;
+  updateTaskUpdateTime(currentTaskId);
 };
 
 export const createTaskWithName = newTaskName => {
@@ -31,6 +74,7 @@ export const createTaskWithName = newTaskName => {
     name: newTaskName,
     users,
     creator: currentUserId,
+    trashed: false,
     creationDate: firebase.firestore.FieldValue.serverTimestamp(),
     updateDate: firebase.firestore.FieldValue.serverTimestamp(),
     isStarred: false,

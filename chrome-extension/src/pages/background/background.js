@@ -104,7 +104,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 //
 //
 /* Choose to shrink body / cover content */
-let shouldShrinkBody = false;
+let shouldShrinkBody = true;
 let shouldUseEscapeKeyToToggleSidebar = true;
 const updateShouldShrinkBodyStatus = () => {
   chrome.tabs.query({}, function(tabs) {

@@ -7,8 +7,8 @@ const SCREENSHOT_MODAL_TOGGLE_OPEN = 'screenshotModalToggleOpen';
 const SCREENSHOT_MODAL_SET_SOURCE = 'screenshotModalSetSource';
 
 function getModalStyle() {
-  const top = 50;
-  const left = 40;
+  const top = 40;
+  const left = 30;
 
   return {
     top: `${top}%`,
@@ -20,7 +20,7 @@ function getModalStyle() {
 const styles = theme => ({
   paper: {
     position: 'absolute',
-    width: '80%',
+    width: '70%',
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
