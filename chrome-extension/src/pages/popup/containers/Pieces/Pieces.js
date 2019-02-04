@@ -63,7 +63,7 @@ class Pieces extends Component {
           <PiecesUL>
             {pieces.map((p, idx) => {
               return (
-                <PieceLI key={idx}>
+                <PieceLI key={idx + p.id}>
                   <ReactHoverObserver>
                     <Piece piece={p} />
                   </ReactHoverObserver>

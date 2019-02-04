@@ -106,8 +106,6 @@ class SelectTooltipButton extends Component {
       ? this.props.captureWindow.getBoundingClientRect()
       : this.props.range.getBoundingClientRect();
 
-    console.log(rect);
-
     FirestoreManager.createPiece(
       this.state.annotation,
       {

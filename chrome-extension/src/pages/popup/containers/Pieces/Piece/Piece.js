@@ -6,7 +6,10 @@ import fasBookmark from '@fortawesome/fontawesome-free-solid/faBookmark';
 import * as FirestoreManager from '../../../../../../../shared-components/src/firebase/firestore_wrapper';
 import ClampLines from 'react-clamp-lines';
 import LinesEllipsis from 'react-lines-ellipsis';
-import { PIECE_TYPES } from '../../../../../../../shared-components/src/shared/types';
+import {
+  PIECE_TYPES,
+  ANNOTATION_TYPES
+} from '../../../../../../../shared-components/src/shared/types';
 import { PIECE_COLOR } from '../../../../../../../shared-components/src/shared/theme';
 import Comment from './Comment/Comment';
 import classesInCSS from './Piece.css';
@@ -34,6 +37,7 @@ import purple from '@material-ui/core/colors/purple';
 import Tooltip from '@material-ui/core/Tooltip';
 import Divider from '@material-ui/core/Divider';
 import { GET_FAVICON_URL_PREFIX } from '../../../../../../../shared-components/src/shared/constants';
+import Spinner from '../../../../../../../shared-components/src/components/UI/Spinner/Spinner';
 
 import moment from 'moment';
 
@@ -109,7 +113,12 @@ class Piece extends Component {
   state = {
     expanded: true,
     anchorEl: null,
-    screenshot: null
+    maxScreenshotHeight: 300,
+    screenshot: null,
+    screenshotLoading: true,
+    displayingScreenshot:
+      this.props.piece.shouldUseScreenshot &&
+      this.props.piece.annotationType === ANNOTATION_TYPES.Snippet
   };
 
   handleTypeAvatarClick = event => {
@@ -125,7 +134,9 @@ class Piece extends Component {
       .get()
       .then(doc => {
         if (doc.exists) {
-          this.setState({ screenshot: doc.data().imageDataUrl });
+          this.setState({ screenshot: doc.data(), screenshotLoading: false });
+        } else {
+          this.setState({ screenshot: null, screenshotLoading: false });
         }
       });
   }
@@ -141,7 +152,13 @@ class Piece extends Component {
 
   render() {
     let { piece, classes, isHovering } = this.props;
-    const { anchorEl } = this.state;
+    const {
+      anchorEl,
+      maxScreenshotHeight,
+      screenshot,
+      screenshotLoading,
+      displayingScreenshot
+    } = this.state;
     const open = Boolean(anchorEl);
 
     let color = PIECE_COLOR.snippet;
@@ -324,18 +341,53 @@ class Piece extends Component {
               </IconButton>
             </div>
           </CardContent>
+
           {/* Original content in collapse */}
           <Collapse in={this.state.expanded} timeout="auto" unmountOnExit>
             <div className={classesInCSS.CollapseContainer}>
-              <div className={classesInCSS.OriginalContentContainer}>
-                <div
-                  className={classesInCSS.HTMLPreview}
-                  dangerouslySetInnerHTML={getHTML(piece.html)}
-                />
-              </div>
+              {displayingScreenshot ? (
+                screenshotLoading ? (
+                  <div
+                    style={{
+                      width: '100%',
+                      height: '200px',
+                      display: 'flex',
+                      justifyContent: 'space-around',
+                      alignItems: 'center'
+                    }}
+                  >
+                    <Spinner size={'30px'} />
+                  </div>
+                ) : (
+                  <div
+                    className={classesInCSS.OriginalScreenshotContainer}
+                    style={{ maxHeight: `${maxScreenshotHeight}px` }}
+                  >
+                    <img
+                      alt={piece.id}
+                      src={screenshot.imageDataUrl}
+                      style={{
+                        height: `${Math.min(
+                          Math.floor(screenshot.dimensions.rectHeight),
+                          maxScreenshotHeight
+                        )}px`
+                      }}
+                    />
+                  </div>
+                )
+              ) : (
+                <div className={classesInCSS.OriginalContentContainer}>
+                  <div
+                    className={classesInCSS.HTMLPreview}
+                    dangerouslySetInnerHTML={getHTML(piece.html)}
+                  />
+                </div>
+              )}
             </div>
           </Collapse>
           {/* Comment Section */}
+          {/* temporarily disable commenting feature
+
           {this.state.expanded ? (
             <div>
               <Comment expanded={true} />
@@ -347,6 +399,8 @@ class Piece extends Component {
               </Collapse>
             </div>
           )}
+
+          */}
         </Card>
       </React.Fragment>
     );

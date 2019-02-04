@@ -75,6 +75,12 @@
   outline: none;
 }
 
+.OriginalScreenshotContainer {
+  max-width: 100%;
+  padding: 2px 8px;
+  overflow: auto;
+}
+
 /* original color theme (before material ui color) */
 /* .SnippetColor {
   background-color: rgb(193, 40, 27);
