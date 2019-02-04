@@ -1,3 +1,4 @@
+/* global chrome */
 import React, { Component } from 'react';
 import FontAwesomeIcon from '@fortawesome/react-fontawesome';
 import fasListUl from '@fortawesome/fontawesome-free-solid/faListUl';
@@ -31,7 +32,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
 // import CommentIcon from '@material-ui/icons/Comment';
-import { Chat } from 'mdi-material-ui';
+import { Chat, GoogleChrome } from 'mdi-material-ui';
 import Badge from '@material-ui/core/Badge';
 import purple from '@material-ui/core/colors/purple';
 import Tooltip from '@material-ui/core/Tooltip';
@@ -121,6 +122,14 @@ class Piece extends Component {
       this.props.piece.annotationType === ANNOTATION_TYPES.Snippet
   };
 
+  handleModalOpen = () => {
+    this.setState({ screenshotModalOpen: true });
+  };
+
+  handleModalClose = () => {
+    this.setState({ screenshotModalOpen: false });
+  };
+
   handleTypeAvatarClick = event => {
     this.setState({ anchorEl: event.currentTarget });
   };
@@ -148,6 +157,15 @@ class Piece extends Component {
   deletePieceById = pieceId => {
     console.log('should delete', pieceId);
     FirestoreManager.removePieceById(pieceId);
+  };
+
+  screenshotImageClickedHandler = pieceId => {
+    console.log('should display screenshot for', pieceId);
+    chrome.runtime.sendMessage({
+      msg: 'SCREENSHOT_MODAL_SHOULD_DISPLAY',
+      pieceId,
+      imageDataUrl: this.state.screenshot.imageDataUrl
+    });
   };
 
   render() {
@@ -359,21 +377,26 @@ class Piece extends Component {
                     <Spinner size={'30px'} />
                   </div>
                 ) : (
-                  <div
-                    className={classesInCSS.OriginalScreenshotContainer}
-                    style={{ maxHeight: `${maxScreenshotHeight}px` }}
-                  >
-                    <img
-                      alt={piece.id}
-                      src={screenshot.imageDataUrl}
-                      style={{
-                        height: `${Math.min(
-                          Math.floor(screenshot.dimensions.rectHeight),
-                          maxScreenshotHeight
-                        )}px`
-                      }}
-                    />
-                  </div>
+                  <React.Fragment>
+                    <div
+                      className={classesInCSS.OriginalScreenshotContainer}
+                      style={{ maxHeight: `${maxScreenshotHeight}px` }}
+                    >
+                      <img
+                        alt={piece.id}
+                        src={screenshot.imageDataUrl}
+                        style={{
+                          height: `${Math.min(
+                            Math.floor(screenshot.dimensions.rectHeight),
+                            maxScreenshotHeight
+                          )}px`
+                        }}
+                        onClick={() =>
+                          this.screenshotImageClickedHandler(piece.id)
+                        }
+                      />
+                    </div>
+                  </React.Fragment>
                 )
               ) : (
                 <div className={classesInCSS.OriginalContentContainer}>

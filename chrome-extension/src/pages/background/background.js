@@ -322,3 +322,19 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     });
   }
 });
+
+//
+//
+//
+//
+//
+/* screenshot modal support */
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+  if (request.msg === 'SCREENSHOT_MODAL_SHOULD_DISPLAY') {
+    chrome.tabs.sendMessage(sender.tab.id, {
+      msg: `SCREENSHOT_MODAL_SHOULD_DISPLAY`,
+      pieceId: request.pieceId,
+      imageDataUrl: request.imageDataUrl
+    });
+  }
+});

@@ -3,6 +3,7 @@ import $ from 'jquery';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { dragElement } from './content.utility';
+import ScreenshotModal from './components/ScreenshotModal';
 import firebase from '../../../../shared-components/src/firebase/firebase';
 import * as FirestoreManager from '../../../../shared-components/src/firebase/firestore_wrapper';
 import { ANNOTATION_TYPES } from '../../../../shared-components/src/shared/types';
@@ -16,6 +17,7 @@ import {
   SnippetSelector,
   Store
 } from 'siphon-tools';
+
 /** Inject Fontawesome stylesheet
  * Previous using: https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css
  */
@@ -25,8 +27,32 @@ link.type = 'text/css';
 link.rel = 'stylesheet';
 document.head.appendChild(link);
 
-let MathJaxUsed = false;
+//
+//
+//
+//
+//
+/* Set up screenshot modal */
+const screenshotModalAnchor = document.body.appendChild(
+  document.createElement('div')
+);
+screenshotModalAnchor.setAttribute('id', 'kap-modal-anchor');
+ReactDOM.render(<ScreenshotModal />, screenshotModalAnchor);
 
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+  if (request.msg === 'SCREENSHOT_MODAL_SHOULD_DISPLAY') {
+    ScreenshotModal.setDataSource(request.imageDataUrl);
+    ScreenshotModal.toggleModalOpen();
+  }
+});
+
+//
+//
+//
+//
+//
+/* special fix for Cynthia's textbook */
+let MathJaxUsed = false;
 function injectScript(file, node) {
   var th = document.getElementsByTagName(node)[0];
   var s = document.createElement('script');
@@ -44,6 +70,8 @@ window.addEventListener('message', function(event) {
     MathJaxUsed = event.data.status;
   }
 });
+
+// ScreenshotModal.toggleModalOpen();
 
 //
 //
