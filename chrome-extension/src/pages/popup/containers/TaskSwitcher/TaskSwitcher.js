@@ -4,11 +4,32 @@ import Dropdown from 'react-dropdown'; // https://github.com/fraserxu/react-drop
 import 'react-dropdown/style.css';
 import FontAwesomeIcon from '@fortawesome/react-fontawesome';
 import fasTh from '@fortawesome/fontawesome-free-solid/faTh';
+
+import { withStyles } from '@material-ui/core/styles';
+import IconButton from '@material-ui/core/IconButton';
+import DeleteIcon from '@material-ui/icons/Delete';
+import EditIcon from '@material-ui/icons/Edit';
+import { ViewGrid, Star } from 'mdi-material-ui';
+import Tooltip from '@material-ui/core/Tooltip';
 import Button from '@material-ui/core/Button';
+
+import { THEME_COLOR } from '../../../../../../shared-components/src/shared/theme';
+
 import firebase from '../../../../../../shared-components/src/firebase/firebase';
 import * as FirestoreManager from '../../../../../../shared-components/src/firebase/firestore_wrapper';
 
-import styles from './TaskSwitcher.css';
+import classesInCSS from './TaskSwitcher.css';
+
+const styles = theme => ({
+  iconButtons: {
+    padding: '5px'
+  },
+  iconInIconButtons: {
+    width: '20px',
+    height: '20px',
+    color: 'rgb(200, 200, 200)'
+  }
+});
 
 const TaskSwitcherContainer = styled.div`
   /* background-color: #ccc; */
@@ -23,18 +44,16 @@ const TaskSwitcherContainer = styled.div`
 const VariousButtonsContainer = styled.div`
   display: flex;
   align-items: center;
-`;
-
-const VariousButton = styled.div`
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
+  margin-left: '4px';
 `;
 
 const createNewTaskOption = {
   value: 'create-new-task',
   label: 'Create a new task',
-  className: styles.CreateNewClassName
+  className: styles.CreateNewClassName,
+  data: {
+    isStarred: false
+  }
 };
 
 const TaskCreatePrompt = styled.div`
@@ -66,7 +85,10 @@ class TaskSwitcher extends Component {
         querySnapshot.forEach(function(doc) {
           tasks.push({
             value: doc.id,
-            label: doc.data().name
+            label: doc.data().name,
+            data: {
+              ...doc.data()
+            }
           });
           taskCount += 1;
         });
@@ -161,27 +183,52 @@ class TaskSwitcher extends Component {
   };
 
   render() {
+    let { classes } = this.props;
+    let currentTask = this.state.options.filter(op => {
+      return op.value === this.state.currentOptionId;
+    })[0];
+
     return (
       <React.Fragment>
         <TaskSwitcherContainer>
           <Dropdown
-            className={styles.DropdownRoot}
-            controlClassName={styles.DropdownControl}
-            placeholderClassName={styles.DropdownPlaceholder}
-            menuClassName={styles.DropdownMenu}
+            className={classesInCSS.DropdownRoot}
+            controlClassName={classesInCSS.DropdownControl}
+            placeholderClassName={classesInCSS.DropdownPlaceholder}
+            menuClassName={classesInCSS.DropdownMenu}
             options={this.state.options}
             onChange={this._onSelect}
-            value={
-              this.state.options.filter(op => {
-                return op.value === this.state.currentOptionId;
-              })[0]
-            }
+            value={currentTask}
             placeholder="Select a task"
           />
           <VariousButtonsContainer>
-            <VariousButton title={'All Tasks'}>
-              <FontAwesomeIcon icon={fasTh} className={styles.AllTasksButton} />
-            </VariousButton>
+            <Tooltip title="Star this task" placement={'top'}>
+              <IconButton aria-label="Star" className={classes.iconButtons}>
+                <Star
+                  className={classes.iconInIconButtons}
+                  style={{
+                    color: currentTask.data.isStarred
+                      ? THEME_COLOR.starColor
+                      : null
+                  }}
+                />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Edit task name" placement={'top'}>
+              <IconButton aria-label="Edit" className={classes.iconButtons}>
+                <EditIcon className={classes.iconInIconButtons} />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Delete this task" placement={'top'}>
+              <IconButton aria-label="Delete" className={classes.iconButtons}>
+                <DeleteIcon className={classes.iconInIconButtons} />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="All tasks" placement={'top'}>
+              <IconButton aria-label="Grid" className={classes.iconButtons}>
+                <ViewGrid className={classes.iconInIconButtons} />
+              </IconButton>
+            </Tooltip>
           </VariousButtonsContainer>
         </TaskSwitcherContainer>
         {!this.state.tasksLoading && this.state.taskCount === 0 ? (
@@ -204,4 +251,4 @@ class TaskSwitcher extends Component {
   }
 }
 
-export default TaskSwitcher;
+export default withStyles(styles)(TaskSwitcher);

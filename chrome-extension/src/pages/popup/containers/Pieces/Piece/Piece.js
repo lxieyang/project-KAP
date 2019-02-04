@@ -16,7 +16,6 @@ import Comment from './Comment/Comment';
 import classesInCSS from './Piece.css';
 
 import classnames from 'classnames';
-import { loadCSS } from 'fg-loadcss/src/loadCSS';
 import { withStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
@@ -32,7 +31,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
 // import CommentIcon from '@material-ui/icons/Comment';
-import { Chat, GoogleChrome } from 'mdi-material-ui';
+import { Chat } from 'mdi-material-ui';
 import Badge from '@material-ui/core/Badge';
 import purple from '@material-ui/core/colors/purple';
 import Tooltip from '@material-ui/core/Tooltip';
