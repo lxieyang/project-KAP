@@ -32,20 +32,24 @@ export default class FragmentAnnotation extends AnchoredAnnotation {
     );
     this.text = this.nodes.map(elem => elem.innerText).join("\n");
 
-    this.renderedDimensions = nodes
-      .map(node => node.getBoundingClientRect())
-      .reduce((finalRect, currRect) => {
-        return {
-          top: Math.min(finalRect.top, currRect.top),
-          left: Math.min(finalRect.left, currRect.left),
-          bottom: Math.max(finalRect.bottom, currRect.bottom),
-          right: Math.max(finalRect.right, currRect.right)
-        };
-      });
-    this.renderedDimensions.width =
-      this.renderedDimensions.right - this.renderedDimensions.left;
-    this.renderedDimensions.height =
-      this.renderedDimensions.bottom - this.renderedDimensions.top;
+    try {
+      this.renderedDimensions = nodes
+        .map(node => node.getBoundingClientRect())
+        .reduce((finalRect, currRect) => {
+          return {
+            top: Math.min(finalRect.top, currRect.top),
+            left: Math.min(finalRect.left, currRect.left),
+            bottom: Math.max(finalRect.bottom, currRect.bottom),
+            right: Math.max(finalRect.right, currRect.right)
+          };
+        });
+      this.renderedDimensions.width =
+        this.renderedDimensions.right - this.renderedDimensions.left;
+      this.renderedDimensions.height =
+        this.renderedDimensions.bottom - this.renderedDimensions.top;
+    } catch (err) {
+      console.log(err);
+    }
 
     //Inline the styles to html
     let resolvedStyles = "";

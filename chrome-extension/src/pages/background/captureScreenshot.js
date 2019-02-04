@@ -1,11 +1,9 @@
-/* global chrome */
-
-export function getImageDimensions(file) {
+export const getImageDimensions = file => {
   return new Promise(function(resolved, rejected) {
-    var i = new Image();
-    i.onload = function() {
-      resolved({ w: i.width, h: i.height });
+    var img = new Image();
+    img.onload = function() {
+      resolved({ w: img.width, h: img.height });
     };
-    i.src = file;
+    img.src = file;
   });
-}
+};

@@ -198,6 +198,11 @@ var options = {
         from: 'src/pages/content/content.styles.css'
       }
     ]),
+    new CopyWebpackPlugin([
+      {
+        from: 'src/pages/content/injects/inject.js'
+      }
+    ]),
     new HtmlWebpackPlugin({
       template: path.join(__dirname, 'src', 'pages', 'popup', 'index.html'),
       filename: 'popup.html',

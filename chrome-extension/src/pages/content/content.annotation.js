@@ -16,7 +16,6 @@ import {
   SnippetSelector,
   Store
 } from 'siphon-tools';
-
 /** Inject Fontawesome stylesheet
  * Previous using: https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css
  */
@@ -25,6 +24,26 @@ link.href = 'https://use.fontawesome.com/releases/v5.0.8/css/all.css';
 link.type = 'text/css';
 link.rel = 'stylesheet';
 document.head.appendChild(link);
+
+let MathJaxUsed = false;
+
+function injectScript(file, node) {
+  var th = document.getElementsByTagName(node)[0];
+  var s = document.createElement('script');
+  s.setAttribute('type', 'text/javascript');
+  s.setAttribute('src', file);
+  th.appendChild(s);
+}
+injectScript(chrome.extension.getURL('inject.js'), 'body');
+
+window.addEventListener('message', function(event) {
+  if (event.source !== window) return;
+
+  if (event.data.type && event.data.type === 'FROM_PAGE_MATHJAX_STATUS') {
+    // console.log('Content script received message: ' + event.data.status);
+    MathJaxUsed = event.data.status;
+  }
+});
 
 //
 //
@@ -41,7 +60,14 @@ function displayTooltipButtonBasedOnRectPosition(rect, props) {
   popOverAnchor.top = '0px';
   popOverAnchor.style.left = `0px`;
 
-  ReactDOM.render(<SelectTooltipButton {...props} />, popOverAnchor);
+  ReactDOM.render(
+    <SelectTooltipButton
+      MathJaxUsed={MathJaxUsed}
+      windowSize={{ width: window.innerWidth, height: window.innerHeight }}
+      {...props}
+    />,
+    popOverAnchor
+  );
 
   // adjusting position of popover box after mounting
   popOverAnchor.style.top = `${rect.bottom + 5 + window.scrollY}px`;
@@ -68,9 +94,6 @@ SiphonTools.initializeSelectors([
         annotationType: ANNOTATION_TYPES.Highlight,
         range
       });
-
-      // let highlight = new Highlight(range);
-      // console.log(highlight);
     }
   }),
   SnippetSelector({
@@ -79,12 +102,8 @@ SiphonTools.initializeSelectors([
       let rect = cptrWindow.getBoundingClientRect();
       displayTooltipButtonBasedOnRectPosition(rect, {
         annotationType: ANNOTATION_TYPES.Snippet,
-        captureWindow,
-        windowSize: { width: window.innerWidth, height: window.innerHeight }
+        captureWindow
       });
-
-      // let snippet = new Snippet(rect);
-      // console.log(snippet);
     }
   })
 ]);

@@ -16,18 +16,27 @@ export const getAllPiecesInTask = taskId => {
 };
 
 export const removePieceById = pieceId => {
-  return db
-    .collection('pieces')
+  db.collection('pieces')
+    .doc(pieceId)
+    .delete();
+  db.collection('screenshots')
     .doc(pieceId)
     .delete();
 };
 
-export const addScreenshotToPieceById = async (pieceId, imageDataUrl) => {
+export const addScreenshotToPieceById = async (
+  pieceId,
+  imageDataUrl,
+  { dimensions }
+) => {
   return db
     .collection('screenshots')
     .doc(pieceId)
     .set({
-      imageDataUrl
+      creator: getCurrentUserId(),
+      creationDate: firebase.firestore.FieldValue.serverTimestamp(),
+      imageDataUrl,
+      dimensions
     });
 };
 
@@ -37,7 +46,7 @@ export const getScreenshotByPieceId = pieceId => {
 
 export const createPiece = async (
   data,
-  { url, taskId },
+  { url, taskId, shouldUseScreenshot },
   annotationType,
   pieceType
 ) => {
@@ -52,6 +61,7 @@ export const createPiece = async (
     trashed: false,
     annotationType: annotationType,
     pieceType: pieceType || PIECE_TYPES.snippet,
+    shouldUseScreenshot: shouldUseScreenshot,
     creationDate: firebase.firestore.FieldValue.serverTimestamp(),
     updateDate: firebase.firestore.FieldValue.serverTimestamp(),
     references: {

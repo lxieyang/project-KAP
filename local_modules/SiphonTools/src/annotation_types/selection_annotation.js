@@ -1,14 +1,13 @@
-import rangyClassApplier from 'rangy/lib/rangy-classapplier';
-import rangyTextRange from 'rangy/lib/rangy-textrange'
-import rangy from 'rangy/lib/rangy-core.js';
+import rangyClassApplier from "rangy/lib/rangy-classapplier";
+import rangyTextRange from "rangy/lib/rangy-textrange";
+import rangy from "rangy/lib/rangy-core.js";
 
-import {computedStyleToInlineStyle} from '../inline-style'
-import AnchoredAnnotation from './anchored_annotation'
-import * as XPath from 'xpath-range'
-import {last} from 'lodash'
+import { computedStyleToInlineStyle } from "../inline-style";
+import AnchoredAnnotation from "./anchored_annotation";
+import * as XPath from "xpath-range";
+import { last } from "lodash";
 
 export default class SelectionAnnotation extends AnchoredAnnotation {
-
   constructor(range) {
     super();
     this.range = new rangy.WrappedRange(range);
@@ -16,9 +15,18 @@ export default class SelectionAnnotation extends AnchoredAnnotation {
     this.selection = XPath.fromRange(this.range, window.document.body);
 
     //Get the actual HTML
-    this.range.getNodes([1]).forEach(node => computedStyleToInlineStyle(node, {recursive: true}).element);
-    let elem = document.createElement('div');
-    elem.appendChild(this.range.cloneContents())
+    try {
+      this.range
+        .getNodes([1])
+        .forEach(
+          node => computedStyleToInlineStyle(node, { recursive: true }).element
+        );
+    } catch (error) {
+      console.log(error);
+    }
+
+    let elem = document.createElement("div");
+    elem.appendChild(this.range.cloneContents());
     this.html = elem.innerHTML;
 
     //Finally, expand the range to grab some surrounding context
@@ -48,13 +56,13 @@ export default class SelectionAnnotation extends AnchoredAnnotation {
     this.initialDimensions = {
       width: rect.width,
       height: rect.height
-    }
-    rect = context.getBoundingClientRect()
+    };
+    rect = context.getBoundingClientRect();
     this.renderedDimensions = {
       width: rect.width,
       height: rect.height
-    }
-    this.refreshAnchorCoordinates()
+    };
+    this.refreshAnchorCoordinates();
   }
 
   deserialize(serialized) {
@@ -63,32 +71,53 @@ export default class SelectionAnnotation extends AnchoredAnnotation {
   }
 
   serialize() {
-    let save = super.serialize()
-    Object.assign(save, {selection: this.selection, contextHtml: this.contextHTML, contextText: this.contextText,
-                        html: this.html, initialDimensions: this.initialDimensions, renderedDimensions: this.renderedDimensions})
+    let save = super.serialize();
+    Object.assign(save, {
+      selection: this.selection,
+      contextHtml: this.contextHTML,
+      contextText: this.contextText,
+      html: this.html,
+      initialDimensions: this.initialDimensions,
+      renderedDimensions: this.renderedDimensions
+    });
     return save;
   }
 
   rehydrate() {
-    let {start = '/html/body/', startOffset = 0, end = '/html/body/', endOffset = 0} = this.selection
+    let {
+      start = "/html/body/",
+      startOffset = 0,
+      end = "/html/body/",
+      endOffset = 0
+    } = this.selection;
     try {
-      this.range = XPath.toRange(start, startOffset, end, endOffset, window.document.body);
+      this.range = XPath.toRange(
+        start,
+        startOffset,
+        end,
+        endOffset,
+        window.document.body
+      );
       this.range = new rangy.WrappedRange(this.range); //Wrap this to turn it into a Rangy range
-      if (this.range.toString().trim() != this.text) { //We can't rely on the range -- fallback to text search
-        throw 'Different content in range than highlight'
+      if (this.range.toString().trim() != this.text) {
+        //We can't rely on the range -- fallback to text search
+        throw "Different content in range than highlight";
       }
-      this.refreshAnchorCoordinates()
+      this.refreshAnchorCoordinates();
     } catch (e) {
       this.range = null;
       //this.markInstance = new Mark(document.body);
     }
-    return !!this.range
+    return !!this.range;
   }
 
   refreshAnchorCoordinates() {
     if (this.range) {
-      let rect = this.range.nativeRange.getBoundingClientRect()
-      this.anchorCoordinates = {x: rect.x + window.scrollX, y: rect.y + window.scrollY}
+      let rect = this.range.nativeRange.getBoundingClientRect();
+      this.anchorCoordinates = {
+        x: rect.x + window.scrollX,
+        y: rect.y + window.scrollY
+      };
     }
   }
 }

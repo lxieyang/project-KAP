@@ -22,23 +22,33 @@ class SelectTooltipButton extends Component {
     displayDetailedMenu: false,
 
     userId: FirestoreManager.getCurrentUserId(),
-    annotation: {}
+    annotation: null,
+    shouldUseScreenshot: false
   };
 
   componentDidMount() {
     window.addEventListener('mousedown', this.mouseDown, true);
 
     this.setState({ userId: FirestoreManager.getCurrentUserId() });
-    let annotation;
-    if (this.props.annotationType === ANNOTATION_TYPES.Highlight) {
-      annotation = new Highlight(this.props.range);
-    } else if (this.props.annotationType === ANNOTATION_TYPES.Snippet) {
-      annotation = new Snippet(
-        this.props.captureWindow.getBoundingClientRect()
-      );
-    }
-    // console.log(annotation);
-    this.setState({ annotation });
+
+    setTimeout(() => {
+      // check if MathJax is present
+      if (this.props.MathJaxUsed) {
+        this.setState({ shouldUseScreenshot: true });
+      }
+
+      // extract annotation
+      let annotation;
+      if (this.props.annotationType === ANNOTATION_TYPES.Highlight) {
+        annotation = new Highlight(this.props.range);
+      } else if (this.props.annotationType === ANNOTATION_TYPES.Snippet) {
+        annotation = new Snippet(
+          this.props.captureWindow.getBoundingClientRect()
+        );
+      }
+      // console.log(annotation);
+      this.setState({ annotation });
+    }, 5);
   }
 
   componentWillUnmount() {
@@ -46,24 +56,11 @@ class SelectTooltipButton extends Component {
   }
 
   @autobind
-  removeTooltipButton(status, pieceId) {
-    let rect;
+  removeTooltipButton() {
     if (this.props.captureWindow) {
-      rect = this.props.captureWindow.getBoundingClientRect();
       this.props.captureWindow.remove();
     }
     ReactDOM.unmountComponentAtNode(ReactDOM.findDOMNode(this).parentNode);
-
-    setTimeout(() => {
-      if (status === 'success') {
-        chrome.runtime.sendMessage({
-          msg: 'SCREENSHOT_WITH_COORDINATES',
-          rect,
-          windowSize: this.props.windowSize,
-          pieceId
-        });
-      }
-    }, 5);
   }
 
   @autobind
@@ -99,9 +96,24 @@ class SelectTooltipButton extends Component {
   };
 
   tooltipButtonClickedHandler = (type = PIECE_TYPES.snippet) => {
+    if (this.state.annotation === null) {
+      // make sure annotation is collected
+      return false;
+    }
+
+    // preserve client rect
+    let rect = this.props.captureWindow
+      ? this.props.captureWindow.getBoundingClientRect()
+      : this.props.range.getBoundingClientRect();
+
+    console.log(rect);
+
     FirestoreManager.createPiece(
       this.state.annotation,
-      { url: window.location.href },
+      {
+        url: window.location.href,
+        shouldUseScreenshot: this.state.shouldUseScreenshot
+      },
       this.props.annotationType,
       type
     )
@@ -110,7 +122,6 @@ class SelectTooltipButton extends Component {
           msg: 'SHOW_SUCCESS_STATUS_BADGE',
           success: true
         });
-        this.removeTooltipButton('success', this.state.annotation.key);
       })
       .catch(error => {
         console.log(error);
@@ -118,9 +129,21 @@ class SelectTooltipButton extends Component {
           msg: 'SHOW_SUCCESS_STATUS_BADGE',
           success: false
         });
-        this.removeTooltipButton('failed', null);
       });
+    this.removeTooltipButton();
 
+    // take screenshot
+    setTimeout(() => {
+      chrome.runtime.sendMessage(
+        {
+          msg: 'SCREENSHOT_WITH_COORDINATES',
+          rect,
+          windowSize: this.props.windowSize,
+          pieceId: this.state.annotation.key
+        },
+        response => {}
+      );
+    }, 5);
     // console.log(`should save as a type ${type} piece`);
   };
 

@@ -260,7 +260,9 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
   }
 });
 
-signInOutUserWithCredential(localStorage.getItem('idToken'));
+setTimeout(() => {
+  signInOutUserWithCredential(localStorage.getItem('idToken'));
+}, 5000);
 
 //
 //
@@ -284,33 +286,39 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     chrome.tabs.captureVisibleTab(function(screenshotUrl) {
       getImageDimensions(screenshotUrl).then(imageDimensions => {
         let scale = imageDimensions.w / windowSize.width;
-        rect.x = Math.floor(rect.x * scale);
-        rect.y = Math.floor(rect.y * scale);
-        rect.width = Math.floor(rect.width * scale);
-        rect.height = Math.floor(rect.height * scale);
-
+        let x = Math.floor(rect.x * scale);
+        let y = Math.floor(rect.y * scale);
+        let width = Math.floor(rect.width * scale);
+        let height = Math.floor(rect.height * scale);
         imageClipper(screenshotUrl, function() {
-          this.crop(rect.x, rect.y, rect.width, rect.height).toDataURL(function(
-            dataUrl
-          ) {
-            FirestoreManager.addScreenshotToPieceById(request.pieceId, dataUrl);
-            chrome.tabs.create(
-              {
-                url: dataUrl
-              },
-              tab => {
-                // Tab opened.
-              }
-            );
+          this.crop(x, y, width, height).toDataURL(dataUrl => {
+            getImageDimensions(dataUrl).then(croppedImageDimensions => {
+              let dimensions = {
+                trueWidth: croppedImageDimensions.w,
+                trueHeight: croppedImageDimensions.h,
+                rectWidth: rect.width,
+                rectHeight: rect.height,
+                rectX: rect.x,
+                rectY: rect.y
+              };
+              FirestoreManager.addScreenshotToPieceById(
+                request.pieceId,
+                dataUrl,
+                { dimensions }
+              );
+            });
+            // // see for yourself the screenshot during testing
+            // chrome.tabs.create(
+            //   {
+            //     url: dataUrl
+            //   },
+            //   tab => {
+            //     // Tab opened.
+            //   }
+            // );
           });
         });
       });
     });
-
-    // makeScreenshotWithCoordinates(
-    //   request.rect,
-    //   request.windowSize,
-    //   sendResponse
-    // );
   }
 });

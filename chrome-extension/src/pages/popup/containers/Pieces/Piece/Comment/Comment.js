@@ -22,22 +22,22 @@ const styles = theme => ({
 });
 
 const fakeComments = [
-  {
-    authorId: 'author-01',
-    authorName: 'Barack Obama',
-    updateDate: new Date(),
-    authorAvatarURL:
-      'http://d28fo5khwixgu6.cloudfront.net/blog/wp-content/uploads/2013/01/president-barack-obama-square.png',
-    content: `This is a good deal, grab it before it\'s gone. This is a good deal, grab it before it\'s gone.`
-  },
-  {
-    authorId: 'author-02',
-    authorName: 'George Bush',
-    updateDate: new Date(),
-    authorAvatarURL:
-      'https://www.abc.net.au/radionational/image/7174982-1x1-700x700.jpg',
-    content: `This is a NOT good deal, DO NOT grab it. This is a NOT good deal, DO NOT grab it. This is a NOT good deal, DO NOT grab it. This is a NOT good deal, DO NOT grab it. This is a NOT good deal, DO NOT grab it. This is a NOT good deal, DO NOT grab it. This is a NOT good deal, DO NOT grab it. This is a NOT good deal, DO NOT grab it.`
-  }
+  // {
+  //   authorId: 'author-01',
+  //   authorName: 'Barack Obama',
+  //   updateDate: new Date(),
+  //   authorAvatarURL:
+  //     'https://radioviceonline.com/wp-content/uploads/2012/05/square-obama-halo.png',
+  //   content: `This is a good deal, grab it before it\'s gone. This is a good deal, grab it before it\'s gone.`
+  // },
+  // {
+  //   authorId: 'author-02',
+  //   authorName: 'George Bush',
+  //   updateDate: new Date(),
+  //   authorAvatarURL:
+  //     'https://www.abc.net.au/radionational/image/7174982-1x1-700x700.jpg',
+  //   content: `This is a NOT good deal, DO NOT grab it. This is a NOT good deal, DO NOT grab it. This is a NOT good deal, DO NOT grab it. This is a NOT good deal, DO NOT grab it. This is a NOT good deal, DO NOT grab it. This is a NOT good deal, DO NOT grab it. This is a NOT good deal, DO NOT grab it. This is a NOT good deal, DO NOT grab it.`
+  // }
 ];
 
 const options = [
