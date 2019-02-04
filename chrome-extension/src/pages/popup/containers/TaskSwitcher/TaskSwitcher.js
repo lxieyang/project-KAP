@@ -182,6 +182,13 @@ class TaskSwitcher extends Component {
     }
   };
 
+  updateTaskName = (taskId, currentName) => {
+    let taskName = prompt('Change task name to:', currentName);
+    if (taskName !== null && taskName !== '') {
+      FirestoreManager.updateTaskName(taskId, taskName);
+    }
+  };
+
   toggleTaskStarStatus = (taskId, currentStarStatus) => {
     FirestoreManager.toggleTaskStarStatus(taskId, !currentStarStatus);
   };
@@ -203,7 +210,7 @@ class TaskSwitcher extends Component {
             options={this.state.options}
             onChange={this._onSelect}
             value={currentTask}
-            placeholder="Select a task"
+            placeholder="No active task"
           />
           <VariousButtonsContainer>
             <Tooltip
@@ -233,7 +240,13 @@ class TaskSwitcher extends Component {
               </IconButton>
             </Tooltip>
             <Tooltip title="Edit task name" placement={'bottom'}>
-              <IconButton aria-label="Edit" className={classes.iconButtons}>
+              <IconButton
+                aria-label="Edit"
+                className={classes.iconButtons}
+                onClick={e =>
+                  this.updateTaskName(currentTask.value, currentTask.label)
+                }
+              >
                 <EditIcon className={classes.iconInIconButtons} />
               </IconButton>
             </Tooltip>
