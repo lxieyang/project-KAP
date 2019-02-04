@@ -27,8 +27,21 @@ export const updateTaskName = (taskId, newTaskName) => {
     .doc(taskId)
     .update({
       name: newTaskName
+    })
+    .then(() => {
+      updateCurrentTaskUpdateTime();
     });
-  updateTaskUpdateTime();
+};
+
+export const toggleTaskStarStatus = (taskId, to) => {
+  db.collection('tasks')
+    .doc(taskId)
+    .update({
+      isStarred: to
+    })
+    .then(() => {
+      updateCurrentTaskUpdateTime();
+    });
 };
 
 export const deleteTaskById = taskId => {
@@ -46,6 +59,8 @@ export const deleteTaskById = taskId => {
         .then(querySnapshot => {
           updateCurrentUserCurrentTaskId(querySnapshot.docs[0].id);
         });
+
+      updateCurrentTaskUpdateTime();
     });
 };
 

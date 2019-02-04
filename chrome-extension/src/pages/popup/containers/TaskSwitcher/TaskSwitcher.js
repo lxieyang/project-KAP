@@ -182,6 +182,10 @@ class TaskSwitcher extends Component {
     }
   };
 
+  toggleTaskStarStatus = (taskId, currentStarStatus) => {
+    FirestoreManager.toggleTaskStarStatus(taskId, !currentStarStatus);
+  };
+
   render() {
     let { classes } = this.props;
     let currentTask = this.state.options.filter(op => {
@@ -202,8 +206,22 @@ class TaskSwitcher extends Component {
             placeholder="Select a task"
           />
           <VariousButtonsContainer>
-            <Tooltip title="Star this task" placement={'top'}>
-              <IconButton aria-label="Star" className={classes.iconButtons}>
+            <Tooltip
+              title={`${
+                currentTask.data.isStarred ? 'Unstar' : 'Star'
+              } this task`}
+              placement={'bottom'}
+            >
+              <IconButton
+                aria-label="Star"
+                className={classes.iconButtons}
+                onClick={e =>
+                  this.toggleTaskStarStatus(
+                    currentTask.value,
+                    currentTask.data.isStarred
+                  )
+                }
+              >
                 <Star
                   className={classes.iconInIconButtons}
                   style={{
@@ -214,17 +232,17 @@ class TaskSwitcher extends Component {
                 />
               </IconButton>
             </Tooltip>
-            <Tooltip title="Edit task name" placement={'top'}>
+            <Tooltip title="Edit task name" placement={'bottom'}>
               <IconButton aria-label="Edit" className={classes.iconButtons}>
                 <EditIcon className={classes.iconInIconButtons} />
               </IconButton>
             </Tooltip>
-            <Tooltip title="Delete this task" placement={'top'}>
+            <Tooltip title="Delete this task" placement={'bottom'}>
               <IconButton aria-label="Delete" className={classes.iconButtons}>
                 <DeleteIcon className={classes.iconInIconButtons} />
               </IconButton>
             </Tooltip>
-            <Tooltip title="All tasks" placement={'top'}>
+            <Tooltip title="All tasks" placement={'bottom'}>
               <IconButton aria-label="Grid" className={classes.iconButtons}>
                 <ViewGrid className={classes.iconInIconButtons} />
               </IconButton>
