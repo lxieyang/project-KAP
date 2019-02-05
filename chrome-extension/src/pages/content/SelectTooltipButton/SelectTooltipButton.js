@@ -110,6 +110,9 @@ class SelectTooltipButton extends Component {
       this.state.annotation,
       {
         url: window.location.href,
+        hostname: window.location.hostname,
+        pathname: window.location.pathname,
+        pageTitle: document.title,
         shouldUseScreenshot: this.state.shouldUseScreenshot
       },
       this.props.annotationType,

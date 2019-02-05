@@ -129,7 +129,7 @@ export const updatePieceName = (pieceId, newName) => {
 /* create a piece */
 export const createPiece = async (
   data,
-  { url, taskId, shouldUseScreenshot },
+  { url, hostname, pathname, pageTitle, taskId, shouldUseScreenshot },
   annotationType,
   pieceType
 ) => {
@@ -150,6 +150,9 @@ export const createPiece = async (
     references: {
       url: url ? url : false,
       page: url ? encode(url) : false,
+      hostname: hostname ? hostname : false,
+      pathname: pathname ? pathname : false,
+      pageTitle: pageTitle ? pageTitle : false,
       task: taskId ? taskId : currentTaskId
     }
   };

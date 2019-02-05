@@ -429,7 +429,10 @@ class Piece extends Component {
                   </Tooltip>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center' }}>
-                  <Tooltip title="Open the original page" placement={'top'}>
+                  <Tooltip
+                    title={`${piece.references.pageTitle}  ---  Click to open`}
+                    placement={'top'}
+                  >
                     <a
                       href={piece.references.url}
                       target="__blank"
