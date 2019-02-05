@@ -20,7 +20,14 @@
   "options_page": "options.html",
   "content_scripts": [
     {
-      "matches": ["<all_urls>"],
+      "matches": ["http://*/*", "https://*/*", "<all_urls>"],
+      "exclude_matches": [
+        "*://localhost/*",
+        "*://*.facebook.com/*",
+        "*://*.qualtrics.com/*",
+        "*://*.overleaf.com/*",
+        "*://*.google.com/signin/oauth/*"
+      ],
       "js": ["contentAnnotation.bundle.js"],
       "css": ["content.styles.css"]
     }

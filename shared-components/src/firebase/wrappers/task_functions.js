@@ -64,8 +64,20 @@ export const deleteTaskById = taskId => {
     });
 };
 
-export const updateTaskUpdateTime = taskId => {
+export const reviveTaskById = taskId => {
   db.collection('tasks')
+    .doc(taskId)
+    .update({
+      trashed: false
+    })
+    .then(() => {
+      updateCurrentUserCurrentTaskId(taskId);
+    });
+};
+
+export const updateTaskUpdateTime = taskId => {
+  return db
+    .collection('tasks')
     .doc(taskId)
     .update({
       updateDate: firebase.firestore.FieldValue.serverTimestamp()
@@ -74,7 +86,7 @@ export const updateTaskUpdateTime = taskId => {
 
 export const updateCurrentTaskUpdateTime = async () => {
   let currentTaskId = (await getCurrentUserCurrentTaskId().get()).data().id;
-  updateTaskUpdateTime(currentTaskId);
+  return updateTaskUpdateTime(currentTaskId);
 };
 
 export const createTaskWithName = newTaskName => {

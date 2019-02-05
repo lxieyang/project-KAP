@@ -12,6 +12,8 @@ import EditIcon from '@material-ui/icons/Edit';
 import { ViewGrid, Star } from 'mdi-material-ui';
 import Tooltip from '@material-ui/core/Tooltip';
 import Button from '@material-ui/core/Button';
+import Snackbar from '@material-ui/core/Snackbar';
+import CloseIcon from '@material-ui/icons/Close';
 
 import { THEME_COLOR } from '../../../../../../shared-components/src/shared/theme';
 
@@ -28,6 +30,9 @@ const styles = theme => ({
     width: '20px',
     height: '20px',
     color: 'rgb(200, 200, 200)'
+  },
+  close: {
+    padding: theme.spacing.unit / 2
   }
 });
 
@@ -73,13 +78,19 @@ class TaskSwitcher extends Component {
     currentOptionId: createNewTaskOption.value,
 
     taskCount: 0,
-    tasksLoading: true
+    tasksLoading: true,
+
+    // snackbar
+    open: false,
+    toDeleteTaskId: '',
+    toDeleteTaskLabel: ''
   };
 
   componentDidMount() {
     this.unsubscribeUserCreatedTasksListener = FirestoreManager.getCurrentUserCreatedTasks()
       .orderBy('updateDate', 'desc')
       .onSnapshot(querySnapshot => {
+        // this.setState({ tasksLoading: true });
         let tasks = [createNewTaskOption];
         let taskCount = 0;
         querySnapshot.forEach(function(doc) {
@@ -125,18 +136,6 @@ class TaskSwitcher extends Component {
           this.setState({ currentOptionId: prevTaskId });
         }, 5);
       } else if (taskName !== '') {
-        // successfully created
-        setTimeout(() => {
-          // for rendering purposes, do not touch before figuring out a good solution
-          this.setState({
-            options: [
-              ...this.state.options,
-              { value: 'new-task', label: taskName }
-            ],
-            currentOptionId: 'new-task'
-          });
-        }, 5);
-
         FirestoreManager.createTaskWithName(taskName)
           .then(docRef => {
             FirestoreManager.updateCurrentUserCurrentTaskId(docRef.id);
@@ -159,18 +158,6 @@ class TaskSwitcher extends Component {
   createNewTaskButtonClickedHandler = () => {
     let taskName = prompt('New task name:');
     if (taskName !== null && taskName !== '') {
-      // successfully created
-      setTimeout(() => {
-        // for rendering purposes, do not touch before figuring out a good solution
-        this.setState({
-          options: [
-            ...this.state.options,
-            { value: 'new-task', label: taskName }
-          ],
-          currentOptionId: 'new-task'
-        });
-      }, 5);
-
       FirestoreManager.createTaskWithName(taskName)
         .then(docRef => {
           FirestoreManager.updateCurrentUserCurrentTaskId(docRef.id);
@@ -183,7 +170,7 @@ class TaskSwitcher extends Component {
   };
 
   updateTaskName = (taskId, currentName) => {
-    let taskName = prompt('Change task name to:', currentName);
+    let taskName = prompt('Change the task name to:', currentName);
     if (taskName !== null && taskName !== '') {
       FirestoreManager.updateTaskName(taskId, taskName);
     }
@@ -193,11 +180,41 @@ class TaskSwitcher extends Component {
     FirestoreManager.toggleTaskStarStatus(taskId, !currentStarStatus);
   };
 
+  // snackbar stuff
+  handleDeleteButtonClicked = (taskId, taskName) => {
+    this.setState({ open: true });
+
+    this.setState({ toDeleteTaskId: taskId, toDeleteTaskLabel: taskName });
+    FirestoreManager.deleteTaskById(taskId);
+  };
+
+  handleClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    this.setState({ open: false });
+  };
+
+  undoButtonClickedHandler = () => {
+    this.setState({ open: false });
+
+    FirestoreManager.reviveTaskById(this.state.toDeleteTaskId);
+    setTimeout(() => {
+      this.setState({ toDeleteTaskId: '', toDeleteTaskLabel: '' });
+    }, 500);
+  };
+
   render() {
     let { classes } = this.props;
-    let currentTask = this.state.options.filter(op => {
+    let { tasksLoading } = this.state;
+    let matchingTasks = this.state.options.filter(op => {
       return op.value === this.state.currentOptionId;
-    })[0];
+    });
+    let currentTask =
+      !tasksLoading && matchingTasks.length !== 0
+        ? matchingTasks[0]
+        : this.state.options[0];
 
     return (
       <React.Fragment>
@@ -251,7 +268,16 @@ class TaskSwitcher extends Component {
               </IconButton>
             </Tooltip>
             <Tooltip title="Delete this task" placement={'bottom'}>
-              <IconButton aria-label="Delete" className={classes.iconButtons}>
+              <IconButton
+                aria-label="Delete"
+                className={classes.iconButtons}
+                onClick={e =>
+                  this.handleDeleteButtonClicked(
+                    currentTask.value,
+                    currentTask.label
+                  )
+                }
+              >
                 <DeleteIcon className={classes.iconInIconButtons} />
               </IconButton>
             </Tooltip>
@@ -277,6 +303,40 @@ class TaskSwitcher extends Component {
             </div>
           </TaskCreatePrompt>
         ) : null}
+        <Snackbar
+          anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'left'
+          }}
+          open={this.state.open}
+          autoHideDuration={8000}
+          onClose={this.handleClose}
+          ContentProps={{
+            'aria-describedby': 'message-id'
+          }}
+          message={
+            <span id="message-id">{this.state.toDeleteTaskLabel} deleted!</span>
+          }
+          action={[
+            <Button
+              key="undo"
+              color="secondary"
+              size="small"
+              onClick={e => this.undoButtonClickedHandler()}
+            >
+              UNDO
+            </Button>,
+            <IconButton
+              key="close"
+              aria-label="Close"
+              color="inherit"
+              className={classes.close}
+              onClick={this.handleClose}
+            >
+              <CloseIcon />
+            </IconButton>
+          ]}
+        />
       </React.Fragment>
     );
   }

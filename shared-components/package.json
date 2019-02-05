@@ -45,6 +45,7 @@
     "react-dnd": "^2.6.0",
     "react-dnd-html5-backend": "^2.6.0",
     "react-dom": "^16.6.0",
+    "react-dropdown": "^1.6.4",
     "react-firebaseui": "^3.0.4",
     "react-fontawesome": "^1.6.1",
     "react-hover-observer": "^2.1.1",
