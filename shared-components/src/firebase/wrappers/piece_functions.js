@@ -17,7 +17,7 @@ export const getAllPiecesInTask = taskId => {
   return db
     .collection('pieces')
     .where('references.task', '==', taskId)
-    .where('transhed', '==', false);
+    .where('trashed', '==', false);
 };
 
 export const removePieceById = pieceId => {

@@ -28,13 +28,15 @@ const PieceLI = styled.li`
 
 class Pieces extends Component {
   state = {
-    pieces: []
+    pieces: [],
+    currentTaskId: ''
   };
 
   componentDidMount() {
     this.unsubscribeCurrentTaskId = FirestoreManager.getCurrentUserCurrentTaskId().onSnapshot(
       doc => {
         let currentTaskId = doc.data().id;
+        this.setState({ currentTaskId });
         this.unsubscribeAllPieces = FirestoreManager.getAllPiecesInTask(
           currentTaskId
         )
@@ -56,7 +58,7 @@ class Pieces extends Component {
   }
 
   render() {
-    let { pieces } = this.state;
+    let { pieces, currentTaskId } = this.state;
     return (
       <React.Fragment>
         <PiecesContainer>
@@ -65,7 +67,7 @@ class Pieces extends Component {
               return (
                 <PieceLI key={idx + p.id}>
                   <ReactHoverObserver>
-                    <Piece piece={p} idx={idx} />
+                    <Piece piece={p} idx={idx} currentTaskId={currentTaskId} />
                   </ReactHoverObserver>
                 </PieceLI>
               );
