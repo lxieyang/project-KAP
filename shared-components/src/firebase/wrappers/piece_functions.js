@@ -13,6 +13,10 @@ const xss = new xssFilter({
   matchStyleTag: false
 });
 
+//
+//
+//
+/* getters */
 export const getAllPiecesInTask = taskId => {
   return db
     .collection('pieces')
@@ -24,6 +28,13 @@ export const getPieceById = pieceId => {
   return db.collection('pieces').doc(pieceId);
 };
 
+export const getScreenshotById = pieceId => {
+  return db.collection('screenshots').doc(pieceId);
+};
+
+//
+//
+//
 export const updateTaskUpdateTimeUponPieceManipulation = pieceId => {
   getPieceById(pieceId)
     .get()
@@ -35,42 +46,40 @@ export const updateTaskUpdateTimeUponPieceManipulation = pieceId => {
     });
 };
 
-/* remove piece by id */
+//
+//
+//
+/* remove/revive piece by id */
 export const deletePieceById = pieceId => {
   // set 'trashed' to true
-  db.collection('pieces')
-    .doc(pieceId)
+  getPieceById(pieceId)
     .update({
       trashed: true
     })
     .then(() => {
-      // set 'trashed' to true
-      db.collection('screenshots')
-        .doc(pieceId)
-        .update({
-          trashed: true
-        });
+      getScreenshotById(pieceId).update({
+        trashed: true
+      });
       updateTaskUpdateTimeUponPieceManipulation(pieceId);
     });
 };
 
 export const revivePieceById = pieceId => {
-  db.collection('pieces')
-    .doc(pieceId)
+  getPieceById(pieceId)
     .update({
       trashed: false
     })
     .then(() => {
-      // set 'trashed' to true
-      db.collection('screenshots')
-        .doc(pieceId)
-        .update({
-          trashed: false
-        });
+      getScreenshotById(pieceId).update({
+        trashed: false
+      });
       updateTaskUpdateTimeUponPieceManipulation(pieceId);
     });
 };
 
+//
+//
+//
 /* screenshot */
 export const addScreenshotToPieceById = async (
   pieceId,
@@ -78,26 +87,22 @@ export const addScreenshotToPieceById = async (
   { dimensions }
 ) => {
   updateCurrentTaskUpdateTime();
-  return db
-    .collection('screenshots')
-    .doc(pieceId)
-    .set({
-      creator: getCurrentUserId(),
-      creationDate: firebase.firestore.FieldValue.serverTimestamp(),
-      trashed: false,
-      imageDataUrl,
-      dimensions
-    });
+  return getScreenshotById(pieceId).set({
+    creator: getCurrentUserId(),
+    creationDate: firebase.firestore.FieldValue.serverTimestamp(),
+    trashed: false,
+    imageDataUrl,
+    dimensions
+  });
 };
 
-export const getScreenshotByPieceId = pieceId => {
-  return db.collection('screenshots').doc(pieceId);
-};
-
+//
+//
+//
+/* piece type */
 export const switchPieceType = (pieceId, originalType, newType) => {
   if (originalType !== newType) {
-    db.collection('pieces')
-      .doc(pieceId)
+    getPieceById(pieceId)
       .update({
         pieceType: newType
       })
@@ -105,6 +110,20 @@ export const switchPieceType = (pieceId, originalType, newType) => {
         updateTaskUpdateTimeUponPieceManipulation(pieceId);
       });
   }
+};
+
+//
+//
+//
+/* piece name */
+export const updatePieceName = (pieceId, newName) => {
+  getPieceById(pieceId)
+    .update({
+      name: newName
+    })
+    .then(() => {
+      updateTaskUpdateTimeUponPieceManipulation(pieceId);
+    });
 };
 
 /* create a piece */

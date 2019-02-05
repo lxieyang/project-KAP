@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+
 import { withStyles } from '@material-ui/core/styles';
 import Avatar from '@material-ui/core/Avatar';
 import LinesEllipsis from 'react-lines-ellipsis';
@@ -8,9 +9,11 @@ import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import { PencilCircleOutline, DeleteCircleOutline } from 'mdi-material-ui';
+
+import Textarea from 'react-textarea-autosize';
+
 import classesInCSS from './Comment.css';
 import moment from 'moment';
-import Textarea from 'react-textarea-autosize';
 
 const styles = theme => ({
   button: {
@@ -19,12 +22,6 @@ const styles = theme => ({
     marginRight: 8,
     padding: '1px 4px 1px 4px',
     fontSize: 12
-  },
-  textField: {
-    marginLeft: theme.spacing.unit,
-    marginRight: theme.spacing.unit,
-    width: '95%',
-    boxSizing: 'border-box'
   }
 });
 
@@ -59,6 +56,16 @@ const options = [
     action: 'delete'
   }
 ];
+
+const ActionButton = withStyles({
+  root: {
+    minWidth: '0',
+    padding: '0px 4px'
+  },
+  label: {
+    textTransform: 'capitalize'
+  }
+})(Button);
 
 class Comment extends Component {
   state = { anchorEl: null, editCommentValue: '' };
@@ -225,13 +232,13 @@ class Comment extends Component {
               />
             </div>
             <div className={classesInCSS.TextareaActionBar}>
-              <Button color="primary" className={classes.button}>
+              <ActionButton color="primary" className={classes.button}>
                 Save
-              </Button>
+              </ActionButton>
 
-              <Button color="secondary" className={classes.button}>
+              <ActionButton color="secondary" className={classes.button}>
                 Cancel
-              </Button>
+              </ActionButton>
             </div>
           </div>
         </div>

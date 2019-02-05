@@ -1,5 +1,6 @@
 /* global chrome */
 import React, { Component } from 'react';
+import classNames from 'classnames';
 import FontAwesomeIcon from '@fortawesome/react-fontawesome';
 import fasListUl from '@fortawesome/fontawesome-free-solid/faListUl';
 import fasFlagCheckered from '@fortawesome/fontawesome-free-solid/faFlagCheckered';
@@ -26,6 +27,7 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import Button from '@material-ui/core/Button';
 import Icon from '@material-ui/core/Icon';
+import SaveIcon from '@material-ui/icons/Save';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import DeleteIcon from '@material-ui/icons/Delete';
@@ -36,6 +38,9 @@ import Badge from '@material-ui/core/Badge';
 import purple from '@material-ui/core/colors/purple';
 import Tooltip from '@material-ui/core/Tooltip';
 import Divider from '@material-ui/core/Divider';
+
+import Textarea from 'react-textarea-autosize';
+
 import { GET_FAVICON_URL_PREFIX } from '../../../../../../../shared-components/src/shared/constants';
 import Spinner from '../../../../../../../shared-components/src/components/UI/Spinner/Spinner';
 
@@ -78,8 +83,23 @@ const styles = theme => ({
   },
   close: {
     padding: theme.spacing.unit / 2
+  },
+  iconSmall: {
+    fontSize: 20
   }
 });
+
+const ActionButton = withStyles({
+  root: {
+    minWidth: '0',
+    padding: '0px 4px',
+    display: 'block',
+    margin: 'auto'
+  },
+  label: {
+    textTransform: 'capitalize'
+  }
+})(Button);
 
 const options = [
   {
@@ -118,6 +138,11 @@ class Piece extends Component {
 
     anchorEl: null,
 
+    // edit piece name
+    editingPieceName: false,
+    pieceName: this.props.piece.name,
+    originalExpandedStatus: false,
+
     // screenshot control
     maxScreenshotHeight: 300,
     screenshot: null,
@@ -125,6 +150,37 @@ class Piece extends Component {
     displayingScreenshot:
       this.props.piece.shouldUseScreenshot &&
       this.props.piece.annotationType === ANNOTATION_TYPES.Snippet
+  };
+
+  editPieceNameClickedHandler = () => {
+    let expanded = this.state.expanded;
+    this.setState({
+      editingPieceName: true,
+      expanded: true,
+      originalExpandedStatus: expanded
+    });
+    setTimeout(() => {
+      this.textarea.focus();
+      this.textarea.setSelectionRange(0, 0);
+      this.textarea.scrollTo(0, 0);
+    }, 100);
+  };
+
+  handlePieceNameInputChange = event => {
+    this.setState({
+      pieceName: event.target.value
+    });
+  };
+
+  savePieceNameClickedHandler = () => {
+    let expanded = this.state.originalExpandedStatus;
+    this.setState({ editingPieceName: false, expanded });
+    FirestoreManager.updatePieceName(this.props.piece.id, this.state.pieceName);
+  };
+
+  cancelPieceNameEditClickedHandler = () => {
+    let expanded = this.state.originalExpandedStatus;
+    this.setState({ editingPieceName: false, expanded });
   };
 
   handleModalOpen = () => {
@@ -149,7 +205,7 @@ class Piece extends Component {
   };
 
   componentDidMount() {
-    FirestoreManager.getScreenshotByPieceId(this.props.piece.id)
+    FirestoreManager.getScreenshotById(this.props.piece.id)
       .get()
       .then(doc => {
         if (doc.exists) {
@@ -182,22 +238,27 @@ class Piece extends Component {
       screenshotLoading,
       displayingScreenshot
     } = this.state;
+
     const open = Boolean(anchorEl);
 
     let color = PIECE_COLOR.snippet;
     let icon = fasBookmark;
+    let typeText = 'snippet';
     switch (piece.pieceType) {
       case PIECE_TYPES.snippet:
         color = PIECE_COLOR.snippet;
         icon = fasBookmark;
+        typeText = 'snippet';
         break;
       case PIECE_TYPES.option:
         color = PIECE_COLOR.option;
         icon = fasListUl;
+        typeText = 'option';
         break;
       case PIECE_TYPES.criterion:
         color = PIECE_COLOR.criterion;
         icon = fasFlagCheckered;
+        typeText = 'criterion';
         break;
       default:
         break;
@@ -285,15 +346,48 @@ class Piece extends Component {
                 flex: '1'
               }}
             >
-              <div className={classesInCSS.PieceContentBox}>
-                <LinesEllipsis
-                  text={piece.name}
-                  maxLine={this.state.expanded ? 1 : 2}
-                  ellipsis="..."
-                  trimRight
-                  basedOn="words"
-                />
-              </div>
+              {' '}
+              {this.state.editingPieceName ? (
+                <div className={classesInCSS.PieceNameEditContainer}>
+                  <div className={classesInCSS.TextAreaContainer}>
+                    <Textarea
+                      inputRef={tag => (this.textarea = tag)}
+                      minRows={1}
+                      maxRows={3}
+                      placeholder={'Add a name'}
+                      value={this.state.pieceName}
+                      onChange={e => this.handlePieceNameInputChange(e)}
+                      className={classesInCSS.Textarea}
+                    />
+                  </div>
+                  <div className={classesInCSS.TextareaActionSection}>
+                    <ActionButton
+                      color="secondary"
+                      size="small"
+                      onClick={() => this.cancelPieceNameEditClickedHandler()}
+                    >
+                      Cancel
+                    </ActionButton>
+                    <ActionButton
+                      color="primary"
+                      size="small"
+                      onClick={() => this.savePieceNameClickedHandler()}
+                    >
+                      Save
+                    </ActionButton>
+                  </div>
+                </div>
+              ) : (
+                <div className={classesInCSS.PieceContentBox}>
+                  <LinesEllipsis
+                    text={piece.name}
+                    maxLine={this.state.expanded ? 1 : 2}
+                    ellipsis="..."
+                    trimRight
+                    basedOn="words"
+                  />
+                </div>
+              )}
               <div className={classesInCSS.InfoActionBar}>
                 <div
                   style={{
@@ -302,7 +396,7 @@ class Piece extends Component {
                     alignItems: 'center'
                   }}
                 >
-                  <Tooltip title="Comment" placement={'top'}>
+                  <Tooltip title="Make a comment" placement={'top'}>
                     <IconButton
                       aria-label="Comment"
                       className={classes.iconButtons}
@@ -310,15 +404,16 @@ class Piece extends Component {
                       <Chat className={classes.iconInIconButtons} />
                     </IconButton>
                   </Tooltip>
-                  <Tooltip title="Edit" placement={'top'}>
+                  <Tooltip title={`Edit ${typeText} name`} placement={'top'}>
                     <IconButton
                       aria-label="Edit"
                       className={classes.iconButtons}
+                      onClick={() => this.editPieceNameClickedHandler()}
                     >
                       <EditIcon className={classes.iconInIconButtons} />
                     </IconButton>
                   </Tooltip>
-                  <Tooltip title="Delete" placement={'top'}>
+                  <Tooltip title={`Delete this ${typeText}`} placement={'top'}>
                     <IconButton
                       aria-label="Delete"
                       className={classes.iconButtons}

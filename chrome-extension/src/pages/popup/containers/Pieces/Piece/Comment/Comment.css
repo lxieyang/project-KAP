@@ -80,6 +80,8 @@
   display: block;
   box-sizing: border-box;
   width: 97%;
+  resize: none;
+  overflow: auto;
 
   font-size: 13px;
   padding: 6px 8px;
