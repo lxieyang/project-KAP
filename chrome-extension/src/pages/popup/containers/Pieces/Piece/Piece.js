@@ -75,6 +75,9 @@ const styles = theme => ({
   },
   badge: {
     padding: '3px'
+  },
+  close: {
+    padding: theme.spacing.unit / 2
   }
 });
 
@@ -111,8 +114,11 @@ const getHTML = htmls => {
 
 class Piece extends Component {
   state = {
-    expanded: this.props.idx + 1 <= 2 ? true : false,
+    expanded: false, // this.props.idx + 1 <= 1 ? true : false,
+
     anchorEl: null,
+
+    // screenshot control
     maxScreenshotHeight: 300,
     screenshot: null,
     screenshotLoading: true,
@@ -137,6 +143,11 @@ class Piece extends Component {
     this.setState({ anchorEl: null });
   };
 
+  switchPieceTypeClickedHandler = (pieceId, originalType, newType) => {
+    FirestoreManager.switchPieceType(pieceId, originalType, newType);
+    this.handleTypeAvatarClose();
+  };
+
   componentDidMount() {
     FirestoreManager.getScreenshotByPieceId(this.props.piece.id)
       .get()
@@ -151,11 +162,6 @@ class Piece extends Component {
 
   handleExpandClick = () => {
     this.setState(prevState => ({ expanded: !prevState.expanded }));
-  };
-
-  deletePieceById = pieceId => {
-    console.log('should delete', pieceId);
-    FirestoreManager.removePieceById(pieceId);
   };
 
   screenshotImageClickedHandler = pieceId => {
@@ -222,7 +228,7 @@ class Piece extends Component {
                 />
               </Avatar>
               <Menu
-                id="long-menu"
+                id={`long-menu-${piece.id}`}
                 anchorEl={anchorEl}
                 open={open}
                 onClose={this.handleTypeAvatarClose}
@@ -237,7 +243,13 @@ class Piece extends Component {
                   <MenuItem
                     key={option.text}
                     selected={piece.pieceType === option.type}
-                    onClick={this.handleTypeAvatarClose}
+                    onClick={e =>
+                      this.switchPieceTypeClickedHandler(
+                        piece.id,
+                        piece.pieceType,
+                        option.type
+                      )
+                    }
                     style={{
                       padding: '4px 4px',
                       fontSize: '12px',
@@ -275,7 +287,7 @@ class Piece extends Component {
             >
               <div className={classesInCSS.PieceContentBox}>
                 <LinesEllipsis
-                  text={piece.text}
+                  text={piece.name}
                   maxLine={this.state.expanded ? 1 : 2}
                   ellipsis="..."
                   trimRight
@@ -310,7 +322,12 @@ class Piece extends Component {
                     <IconButton
                       aria-label="Delete"
                       className={classes.iconButtons}
-                      onClick={() => this.deletePieceById(piece.id)}
+                      onClick={() =>
+                        this.props.handleDeleteButtonClicked(
+                          piece.id,
+                          piece.name
+                        )
+                      }
                     >
                       <DeleteIcon className={classes.iconInIconButtons} />
                     </IconButton>

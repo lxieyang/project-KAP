@@ -20,22 +20,58 @@ export const getAllPiecesInTask = taskId => {
     .where('trashed', '==', false);
 };
 
-export const removePieceById = pieceId => {
-  updateCurrentTaskUpdateTime();
+export const getPieceById = pieceId => {
+  return db.collection('pieces').doc(pieceId);
+};
+
+export const updateTaskUpdateTimeUponPieceManipulation = pieceId => {
+  getPieceById(pieceId)
+    .get()
+    .then(docRef => {
+      updateTaskUpdateTime(docRef.data().references.task);
+    })
+    .catch(e => {
+      console.log(e);
+    });
+};
+
+/* remove piece by id */
+export const deletePieceById = pieceId => {
   // set 'trashed' to true
   db.collection('pieces')
     .doc(pieceId)
     .update({
       trashed: true
-    });
-  // set 'trashed' to true
-  db.collection('screenshots')
-    .doc(pieceId)
-    .update({
-      trashed: true
+    })
+    .then(() => {
+      // set 'trashed' to true
+      db.collection('screenshots')
+        .doc(pieceId)
+        .update({
+          trashed: true
+        });
+      updateTaskUpdateTimeUponPieceManipulation(pieceId);
     });
 };
 
+export const revivePieceById = pieceId => {
+  db.collection('pieces')
+    .doc(pieceId)
+    .update({
+      trashed: false
+    })
+    .then(() => {
+      // set 'trashed' to true
+      db.collection('screenshots')
+        .doc(pieceId)
+        .update({
+          trashed: false
+        });
+      updateTaskUpdateTimeUponPieceManipulation(pieceId);
+    });
+};
+
+/* screenshot */
 export const addScreenshotToPieceById = async (
   pieceId,
   imageDataUrl,
@@ -58,6 +94,20 @@ export const getScreenshotByPieceId = pieceId => {
   return db.collection('screenshots').doc(pieceId);
 };
 
+export const switchPieceType = (pieceId, originalType, newType) => {
+  if (originalType !== newType) {
+    db.collection('pieces')
+      .doc(pieceId)
+      .update({
+        pieceType: newType
+      })
+      .then(() => {
+        updateTaskUpdateTimeUponPieceManipulation(pieceId);
+      });
+  }
+};
+
+/* create a piece */
 export const createPiece = async (
   data,
   { url, taskId, shouldUseScreenshot },

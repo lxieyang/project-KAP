@@ -15,6 +15,8 @@ import Button from '@material-ui/core/Button';
 import Snackbar from '@material-ui/core/Snackbar';
 import CloseIcon from '@material-ui/icons/Close';
 
+import Countdown from 'react-countdown-now';
+
 import { THEME_COLOR } from '../../../../../../shared-components/src/shared/theme';
 
 import firebase from '../../../../../../shared-components/src/firebase/firebase';
@@ -82,6 +84,7 @@ class TaskSwitcher extends Component {
 
     // snackbar
     open: false,
+    timeoutDuration: 10000,
     toDeleteTaskId: '',
     toDeleteTaskLabel: ''
   };
@@ -271,7 +274,7 @@ class TaskSwitcher extends Component {
               <IconButton
                 aria-label="Delete"
                 className={classes.iconButtons}
-                onClick={e =>
+                onClick={() =>
                   this.handleDeleteButtonClicked(
                     currentTask.value,
                     currentTask.label
@@ -305,17 +308,19 @@ class TaskSwitcher extends Component {
         ) : null}
         <Snackbar
           anchorOrigin={{
-            vertical: 'bottom',
+            vertical: 'top',
             horizontal: 'left'
           }}
           open={this.state.open}
           autoHideDuration={8000}
           onClose={this.handleClose}
           ContentProps={{
-            'aria-describedby': 'message-id'
+            'aria-describedby': `message-id-task-switcher`
           }}
           message={
-            <span id="message-id">{this.state.toDeleteTaskLabel} deleted!</span>
+            <span id={`message-id-task-switcher`}>
+              {this.state.toDeleteTaskLabel} deleted!
+            </span>
           }
           action={[
             <Button
@@ -324,7 +329,16 @@ class TaskSwitcher extends Component {
               size="small"
               onClick={e => this.undoButtonClickedHandler()}
             >
-              UNDO
+              UNDO in{' '}
+              <span style={{ margin: '0 0.25rem 0 0.25rem' }}>
+                <Countdown
+                  date={Date.now() + this.state.timeoutDuration}
+                  intervalDelay={0}
+                  precision={0}
+                  renderer={props => <div>{props.seconds}</div>}
+                />
+              </span>
+              seconds
             </Button>,
             <IconButton
               key="close"
