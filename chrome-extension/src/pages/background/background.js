@@ -210,6 +210,7 @@ const signInOutUserWithCredential = idToken => {
       )
       .then(result => {
         console.log(`[BACKGROUND] User ${result.user.displayName} logged in.`);
+        FirestoreManager.updateUserProfile();
       })
       .catch(error => {
         console.log(error);

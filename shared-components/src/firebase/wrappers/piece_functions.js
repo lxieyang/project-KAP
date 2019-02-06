@@ -6,7 +6,8 @@ import {
   getCurrentUserId,
   getCurrentUserCurrentTaskId,
   updateTaskUpdateTime,
-  updateCurrentTaskUpdateTime
+  updateCurrentTaskUpdateTime,
+  getCurrentUser
 } from '../firestore_wrapper';
 const xssFilter = require('xssfilter');
 const xss = new xssFilter({
@@ -32,6 +33,13 @@ export const getScreenshotById = pieceId => {
   return db.collection('screenshots').doc(pieceId);
 };
 
+export const getAllCommentsToPiece = pieceId => {
+  return db
+    .collection('pieces')
+    .doc(pieceId)
+    .collection('comments');
+};
+
 //
 //
 //
@@ -54,7 +62,8 @@ export const deletePieceById = pieceId => {
   // set 'trashed' to true
   getPieceById(pieceId)
     .update({
-      trashed: true
+      trashed: true,
+      updateDate: firebase.firestore.FieldValue.serverTimestamp()
     })
     .then(() => {
       getScreenshotById(pieceId).update({
@@ -67,7 +76,8 @@ export const deletePieceById = pieceId => {
 export const revivePieceById = pieceId => {
   getPieceById(pieceId)
     .update({
-      trashed: false
+      trashed: false,
+      updateDate: firebase.firestore.FieldValue.serverTimestamp()
     })
     .then(() => {
       getScreenshotById(pieceId).update({
@@ -107,6 +117,9 @@ export const switchPieceType = (pieceId, originalType, newType) => {
         pieceType: newType
       })
       .then(() => {
+        getPieceById(pieceId).update({
+          updateDate: firebase.firestore.FieldValue.serverTimestamp()
+        });
         updateTaskUpdateTimeUponPieceManipulation(pieceId);
       });
   }
@@ -119,8 +132,60 @@ export const switchPieceType = (pieceId, originalType, newType) => {
 export const updatePieceName = (pieceId, newName) => {
   getPieceById(pieceId)
     .update({
-      name: newName
+      name: newName,
+      updateDate: firebase.firestore.FieldValue.serverTimestamp()
     })
+    .then(() => {
+      updateTaskUpdateTimeUponPieceManipulation(pieceId);
+    });
+};
+
+//
+//
+//
+/* commenting */
+export const addCommentToAPieceById = (pieceId, newCommentContent) => {
+  getPieceById(pieceId)
+    .collection('comments')
+    .add({
+      content: newCommentContent,
+      creationDate: firebase.firestore.FieldValue.serverTimestamp(),
+      updateDate: firebase.firestore.FieldValue.serverTimestamp(),
+      authorId: getCurrentUserId(),
+      authorName: getCurrentUser().displayName,
+      authorAvatarURL: getCurrentUser().photoURL
+    })
+    .then(() => {
+      getPieceById(pieceId).update({
+        updateDate: firebase.firestore.FieldValue.serverTimestamp()
+      });
+      updateTaskUpdateTimeUponPieceManipulation(pieceId);
+    });
+};
+
+export const updateCommentById = (pieceId, commentId, newCommentContent) => {
+  getPieceById(pieceId)
+    .collection('comments')
+    .doc(commentId)
+    .update({
+      content: newCommentContent,
+      authorName: getCurrentUser().displayName,
+      authorAvatarURL: getCurrentUser().photoURL,
+      updateDate: firebase.firestore.FieldValue.serverTimestamp()
+    })
+    .then(() => {
+      getPieceById(pieceId).update({
+        updateDate: firebase.firestore.FieldValue.serverTimestamp()
+      });
+      updateTaskUpdateTimeUponPieceManipulation(pieceId);
+    });
+};
+
+export const deleteCommentById = (pieceId, commentId) => {
+  return getPieceById(pieceId)
+    .collection('comments')
+    .doc(commentId)
+    .delete()
     .then(() => {
       updateTaskUpdateTimeUponPieceManipulation(pieceId);
     });

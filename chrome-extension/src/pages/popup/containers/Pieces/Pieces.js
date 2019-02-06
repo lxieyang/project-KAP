@@ -86,10 +86,11 @@ class Pieces extends Component {
         this.unsubscribeAllPieces = FirestoreManager.getAllPiecesInTask(
           currentTaskId
         )
-          .orderBy('updateDate', 'desc')
+          .orderBy('creationDate', 'desc')
           .onSnapshot(querySnapshot => {
             let pieces = [];
             querySnapshot.forEach(doc => {
+              console.log(doc.metadata.hasPendingWrites);
               pieces.push({ id: doc.id, ...doc.data() });
             });
             this.setState({ pieces });

@@ -32,7 +32,6 @@ import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
-// import CommentIcon from '@material-ui/icons/Comment';
 import { Chat } from 'mdi-material-ui';
 import Badge from '@material-ui/core/Badge';
 import purple from '@material-ui/core/colors/purple';
@@ -150,8 +149,23 @@ class Piece extends Component {
     displayingScreenshot:
       this.props.piece.shouldUseScreenshot &&
       this.props.piece.annotationType === ANNOTATION_TYPES.Snippet
+
+    // comment
   };
 
+  componentDidMount() {
+    FirestoreManager.getScreenshotById(this.props.piece.id)
+      .get()
+      .then(doc => {
+        if (doc.exists) {
+          this.setState({ screenshot: doc.data(), screenshotLoading: false });
+        } else {
+          this.setState({ screenshot: null, screenshotLoading: false });
+        }
+      });
+  }
+
+  // piece name
   editPieceNameClickedHandler = () => {
     let expanded = this.state.expanded;
     this.setState({
@@ -183,14 +197,7 @@ class Piece extends Component {
     this.setState({ editingPieceName: false, expanded });
   };
 
-  handleModalOpen = () => {
-    this.setState({ screenshotModalOpen: true });
-  };
-
-  handleModalClose = () => {
-    this.setState({ screenshotModalOpen: false });
-  };
-
+  // piece type
   handleTypeAvatarClick = event => {
     this.setState({ anchorEl: event.currentTarget });
   };
@@ -204,22 +211,12 @@ class Piece extends Component {
     this.handleTypeAvatarClose();
   };
 
-  componentDidMount() {
-    FirestoreManager.getScreenshotById(this.props.piece.id)
-      .get()
-      .then(doc => {
-        if (doc.exists) {
-          this.setState({ screenshot: doc.data(), screenshotLoading: false });
-        } else {
-          this.setState({ screenshot: null, screenshotLoading: false });
-        }
-      });
-  }
-
+  // expand
   handleExpandClick = () => {
     this.setState(prevState => ({ expanded: !prevState.expanded }));
   };
 
+  // screenshot
   screenshotImageClickedHandler = pieceId => {
     console.log('should display screenshot for', pieceId);
     chrome.runtime.sendMessage({
@@ -228,6 +225,15 @@ class Piece extends Component {
       imageDataUrl: this.state.screenshot.imageDataUrl
     });
   };
+
+  // comment
+  addCommentClickedHandler = () => {
+    this.setState({
+      expanded: true
+    });
+  };
+
+  finishComment = () => {};
 
   render() {
     let { piece, classes, isHovering } = this.props;
@@ -396,14 +402,18 @@ class Piece extends Component {
                     alignItems: 'center'
                   }}
                 >
-                  <Tooltip title="Make a comment" placement={'top'}>
-                    <IconButton
-                      aria-label="Comment"
-                      className={classes.iconButtons}
-                    >
-                      <Chat className={classes.iconInIconButtons} />
-                    </IconButton>
-                  </Tooltip>
+                  {!this.state.expanded ? (
+                    <Tooltip title="Make a comment" placement={'top'}>
+                      <IconButton
+                        aria-label="Comment"
+                        className={classes.iconButtons}
+                        onClick={() => this.addCommentClickedHandler()}
+                      >
+                        <Chat className={classes.iconInIconButtons} />
+                      </IconButton>
+                    </Tooltip>
+                  ) : null}
+
                   <Tooltip title={`Edit ${typeText} name`} placement={'top'}>
                     <IconButton
                       aria-label="Edit"
@@ -447,7 +457,7 @@ class Piece extends Component {
                   </Tooltip>
 
                   <div className={classesInCSS.Moment}>
-                    {moment(new Date(piece.updateDate.toDate())).fromNow()}
+                    {moment(piece.updateDate.toDate()).fromNow()}
                   </div>
                 </div>
               </div>
@@ -475,7 +485,7 @@ class Piece extends Component {
           </CardContent>
 
           {/* Original content in collapse */}
-          <Collapse in={this.state.expanded} timeout="auto" unmountOnExit>
+          <Collapse in={this.state.expanded} timeout="auto">
             <div className={classesInCSS.CollapseContainer}>
               {displayingScreenshot ? (
                 screenshotLoading ? (
@@ -526,12 +536,16 @@ class Piece extends Component {
           {/* Comment Section */}
           {this.state.expanded ? (
             <div>
-              <Comment expanded={true} />
+              <Comment
+                expanded={true}
+                pieceId={piece.id}
+                finishComment={this.finishComment}
+              />
             </div>
           ) : (
             <div>
-              <Collapse in={isHovering} timeout="auto" unmountOnExit>
-                <Comment expanded={false} />
+              <Collapse in={isHovering} timeout="auto">
+                <Comment expanded={false} pieceId={piece.id} />
               </Collapse>
             </div>
           )}

@@ -54,7 +54,6 @@ class Popup extends Component {
             userProfilePhotoURL: user.photoURL,
             loadingUserInfo: false
           });
-          // console.log(firestoreManager.getCurrentUserId());
         })
         .catch(error => {
           console.log(error);

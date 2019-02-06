@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 
+import * as FirestoreManager from '../../../../../../../../shared-components/src/firebase/firestore_wrapper';
+
 import { withStyles } from '@material-ui/core/styles';
 import Avatar from '@material-ui/core/Avatar';
 import LinesEllipsis from 'react-lines-ellipsis';
@@ -68,7 +70,33 @@ const ActionButton = withStyles({
 })(Button);
 
 class Comment extends Component {
-  state = { anchorEl: null, editCommentValue: '' };
+  state = {
+    comments: [],
+
+    anchorEl: null,
+    editCommentValue: ''
+  };
+
+  componentDidMount() {
+    this.unsubscribeComments = FirestoreManager.getAllCommentsToPiece(
+      this.props.pieceId
+    )
+      .orderBy('creationDate', 'desc')
+      .onSnapshot(querySnapshot => {
+        let comments = [];
+        querySnapshot.forEach(snapshot => {
+          comments.push({
+            id: snapshot.id,
+            ...snapshot.data()
+          });
+        });
+        this.setState({ comments });
+      });
+  }
+
+  componentWillUnmount() {
+    this.unsubscribeComments();
+  }
 
   handleInputChange = event => {
     this.setState({
@@ -84,19 +112,34 @@ class Comment extends Component {
     this.setState({ anchorEl: null });
   };
 
-  handleAction = action => {
-    console.log(action);
+  handleAction = (action, commentId, content) => {
+    if (action === 'delete') {
+      FirestoreManager.deleteCommentById(this.props.pieceId, commentId);
+    } else if (action === 'edit') {
+    }
     this.handleClose();
+  };
+
+  saveEditClickedHandler = () => {
+    let comment = this.state.editCommentValue;
+    if (comment !== '' && comment) {
+      FirestoreManager.addCommentToAPieceById(this.props.pieceId, comment);
+    }
+  };
+
+  cancelEditClickedHandler = () => {
+    this.setState({ editCommentValue: '' });
+    this.props.finishComment();
   };
 
   render() {
     const { expanded, classes } = this.props;
-    const { anchorEl } = this.state;
+    const { anchorEl, comments } = this.state;
     const open = Boolean(anchorEl);
 
     let CommentList = (
       <div className={classesInCSS.CommentListContainer}>
-        {fakeComments.map((item, idx) => {
+        {comments.map((item, idx) => {
           return (
             <React.Fragment key={idx}>
               <div
@@ -145,7 +188,7 @@ class Comment extends Component {
                           {item.authorName}
                         </span>
                         <span className={classesInCSS.CommentMoment}>
-                          {moment(item.updateDate).fromNow()}
+                          {moment(item.updateDate.toDate()).fromNow()}
                         </span>
                       </div>
                       <div className={classesInCSS.CommentContent}>
@@ -162,45 +205,57 @@ class Comment extends Component {
                     paddingTop: '3px'
                   }}
                 >
-                  <Menu
-                    id="long-menu"
-                    anchorEl={anchorEl}
-                    open={open}
-                    onClose={this.handleClose}
-                    style={{ padding: '2px' }}
-                    PaperProps={{
-                      style: {
-                        maxHeight: 24 * 4.5,
-                        width: 70
-                      }
-                    }}
-                  >
-                    {options.map(option => (
-                      <MenuItem
-                        key={option.text}
-                        selected={false}
-                        onClick={() => this.handleAction(option.action)}
-                        style={{
-                          padding: '4px 4px',
-                          fontSize: '12px',
-                          display: 'flex',
-                          alignItems: 'center',
-                          opacity: '0.8'
+                  {item.authorId === FirestoreManager.getCurrentUserId() ? (
+                    <React.Fragment>
+                      <Menu
+                        id="long-menu"
+                        anchorEl={anchorEl}
+                        open={open}
+                        onClose={this.handleClose}
+                        style={{ padding: '2px' }}
+                        PaperProps={{
+                          style: {
+                            maxHeight: 24 * 4.5,
+                            width: 70
+                          }
                         }}
                       >
-                        {option.icon} &nbsp; {option.text}
-                      </MenuItem>
-                    ))}
-                  </Menu>
-                  <IconButton
-                    aria-label="More"
-                    aria-owns={open ? 'long-menu' : undefined}
-                    aria-haspopup="true"
-                    style={{ padding: '6px' }}
-                    onClick={this.handleClick}
-                  >
-                    <MoreVertIcon style={{ width: '16px', height: '16px' }} />
-                  </IconButton>
+                        {options.map(option => (
+                          <MenuItem
+                            key={option.text}
+                            selected={false}
+                            onClick={() =>
+                              this.handleAction(
+                                option.action,
+                                item.id,
+                                item.content
+                              )
+                            }
+                            style={{
+                              padding: '4px 4px',
+                              fontSize: '12px',
+                              display: 'flex',
+                              alignItems: 'center',
+                              opacity: '0.8'
+                            }}
+                          >
+                            {option.icon} &nbsp; {option.text}
+                          </MenuItem>
+                        ))}
+                      </Menu>
+                      <IconButton
+                        aria-label="More"
+                        aria-owns={open ? 'long-menu' : undefined}
+                        aria-haspopup="true"
+                        style={{ padding: '6px' }}
+                        onClick={this.handleClick}
+                      >
+                        <MoreVertIcon
+                          style={{ width: '16px', height: '16px' }}
+                        />
+                      </IconButton>
+                    </React.Fragment>
+                  ) : null}
                 </div>
               </div>
             </React.Fragment>
@@ -222,6 +277,7 @@ class Comment extends Component {
           <div className={classesInCSS.EditCommentBox}>
             <div className={classesInCSS.TextAreaContainer}>
               <Textarea
+                autoFocus
                 inputRef={tag => (this.textarea = tag)}
                 minRows={1}
                 maxRows={3}
@@ -232,11 +288,19 @@ class Comment extends Component {
               />
             </div>
             <div className={classesInCSS.TextareaActionBar}>
-              <ActionButton color="primary" className={classes.button}>
+              <ActionButton
+                color="primary"
+                className={classes.button}
+                onClick={() => this.saveEditClickedHandler()}
+              >
                 Save
               </ActionButton>
 
-              <ActionButton color="secondary" className={classes.button}>
+              <ActionButton
+                color="secondary"
+                className={classes.button}
+                onClick={() => this.cancelEditClickedHandler()}
+              >
                 Cancel
               </ActionButton>
             </div>
