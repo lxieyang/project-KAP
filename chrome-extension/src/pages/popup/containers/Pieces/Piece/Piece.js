@@ -457,7 +457,9 @@ class Piece extends Component {
                   </Tooltip>
 
                   <div className={classesInCSS.Moment}>
-                    {moment(piece.updateDate.toDate()).fromNow()}
+                    {piece.creationDate
+                      ? moment(piece.creationDate.toDate()).fromNow()
+                      : null}
                   </div>
                 </div>
               </div>

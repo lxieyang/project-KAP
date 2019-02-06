@@ -114,12 +114,10 @@ export const switchPieceType = (pieceId, originalType, newType) => {
   if (originalType !== newType) {
     getPieceById(pieceId)
       .update({
-        pieceType: newType
+        pieceType: newType,
+        updateDate: firebase.firestore.FieldValue.serverTimestamp()
       })
       .then(() => {
-        getPieceById(pieceId).update({
-          updateDate: firebase.firestore.FieldValue.serverTimestamp()
-        });
         updateTaskUpdateTimeUponPieceManipulation(pieceId);
       });
   }

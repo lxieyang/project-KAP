@@ -90,7 +90,6 @@ class Pieces extends Component {
           .onSnapshot(querySnapshot => {
             let pieces = [];
             querySnapshot.forEach(doc => {
-              console.log(doc.metadata.hasPendingWrites);
               pieces.push({ id: doc.id, ...doc.data() });
             });
             this.setState({ pieces });

@@ -27,24 +27,24 @@ const styles = theme => ({
   }
 });
 
-const fakeComments = [
-  {
-    authorId: 'author-01',
-    authorName: 'Barack Obama',
-    updateDate: new Date(),
-    authorAvatarURL:
-      'https://radioviceonline.com/wp-content/uploads/2012/05/square-obama-halo.png',
-    content: `This is a good deal, grab it before it\'s gone. This is a good deal, grab it before it\'s gone.`
-  },
-  {
-    authorId: 'author-02',
-    authorName: 'George Bush',
-    updateDate: new Date(),
-    authorAvatarURL:
-      'https://www.abc.net.au/radionational/image/7174982-1x1-700x700.jpg',
-    content: `This is a NOT good deal, DO NOT grab it. This is a NOT good deal, DO NOT grab it. This is a NOT good deal, DO NOT grab it. This is a NOT good deal, DO NOT grab it. This is a NOT good deal, DO NOT grab it. This is a NOT good deal, DO NOT grab it. This is a NOT good deal, DO NOT grab it. This is a NOT good deal, DO NOT grab it.`
-  }
-];
+// const fakeComments = [
+//   {
+//     authorId: 'author-01',
+//     authorName: 'Barack Obama',
+//     updateDate: new Date(),
+//     authorAvatarURL:
+//       'https://radioviceonline.com/wp-content/uploads/2012/05/square-obama-halo.png',
+//     content: `This is a good deal, grab it before it\'s gone. This is a good deal, grab it before it\'s gone.`
+//   },
+//   {
+//     authorId: 'author-02',
+//     authorName: 'George Bush',
+//     updateDate: new Date(),
+//     authorAvatarURL:
+//       'https://www.abc.net.au/radionational/image/7174982-1x1-700x700.jpg',
+//     content: `This is a NOT good deal, DO NOT grab it. This is a NOT good deal, DO NOT grab it. This is a NOT good deal, DO NOT grab it. This is a NOT good deal, DO NOT grab it. This is a NOT good deal, DO NOT grab it. This is a NOT good deal, DO NOT grab it. This is a NOT good deal, DO NOT grab it. This is a NOT good deal, DO NOT grab it.`
+//   }
+// ];
 
 const options = [
   {
@@ -78,10 +78,11 @@ class Comment extends Component {
   };
 
   componentDidMount() {
+    this.keyPress = this.keyPress.bind(this);
     this.unsubscribeComments = FirestoreManager.getAllCommentsToPiece(
       this.props.pieceId
     )
-      .orderBy('creationDate', 'desc')
+      .orderBy('creationDate', 'asc')
       .onSnapshot(querySnapshot => {
         let comments = [];
         querySnapshot.forEach(snapshot => {
@@ -92,6 +93,13 @@ class Comment extends Component {
         });
         this.setState({ comments });
       });
+  }
+
+  // also allow Cmd / Ctrl + Enter to submit
+  keyPress(e) {
+    if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
+      this.saveEditClickedHandler();
+    }
   }
 
   componentWillUnmount() {
@@ -124,6 +132,8 @@ class Comment extends Component {
     let comment = this.state.editCommentValue;
     if (comment !== '' && comment) {
       FirestoreManager.addCommentToAPieceById(this.props.pieceId, comment);
+      this.setState({ editCommentValue: '' });
+      this.textarea.blur();
     }
   };
 
@@ -188,7 +198,9 @@ class Comment extends Component {
                           {item.authorName}
                         </span>
                         <span className={classesInCSS.CommentMoment}>
-                          {moment(item.updateDate.toDate()).fromNow()}
+                          {item.creationDate
+                            ? moment(item.creationDate.toDate()).fromNow()
+                            : null}
                         </span>
                       </div>
                       <div className={classesInCSS.CommentContent}>
@@ -283,6 +295,7 @@ class Comment extends Component {
                 maxRows={3}
                 placeholder={'Add a comment'}
                 value={this.state.editCommentValue}
+                onKeyDown={this.keyPress}
                 onChange={e => this.handleInputChange(e)}
                 className={classesInCSS.Textarea}
               />
