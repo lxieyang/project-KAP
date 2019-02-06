@@ -12,7 +12,10 @@ import {
   PIECE_TYPES,
   ANNOTATION_TYPES
 } from '../../../../../../../shared-components/src/shared/types';
-import { PIECE_COLOR } from '../../../../../../../shared-components/src/shared/theme';
+import {
+  PIECE_COLOR,
+  THEME_COLOR
+} from '../../../../../../../shared-components/src/shared/theme';
 import Comment from './Comment/Comment';
 import classesInCSS from './Piece.css';
 
@@ -148,9 +151,10 @@ class Piece extends Component {
     screenshotLoading: true,
     displayingScreenshot:
       this.props.piece.shouldUseScreenshot &&
-      this.props.piece.annotationType === ANNOTATION_TYPES.Snippet
+      this.props.piece.annotationType === ANNOTATION_TYPES.Snippet,
 
     // comment
+    commentCount: 0
   };
 
   componentDidMount() {
@@ -163,6 +167,15 @@ class Piece extends Component {
           this.setState({ screenshot: null, screenshotLoading: false });
         }
       });
+    this.unsubscribeAllComments = FirestoreManager.getAllCommentsToPiece(
+      this.props.piece.id
+    ).onSnapshot(querySnapshot => {
+      this.setState({ commentCount: querySnapshot.docs.length });
+    });
+  }
+
+  componentWillUnmount() {
+    this.unsubscribeAllComments();
   }
 
   // piece name
@@ -242,7 +255,8 @@ class Piece extends Component {
       maxScreenshotHeight,
       screenshot,
       screenshotLoading,
-      displayingScreenshot
+      displayingScreenshot,
+      commentCount
     } = this.state;
 
     const open = Boolean(anchorEl);
@@ -403,15 +417,23 @@ class Piece extends Component {
                   }}
                 >
                   {!this.state.expanded ? (
-                    <Tooltip title="Make a comment" placement={'top'}>
-                      <IconButton
-                        aria-label="Comment"
-                        className={classes.iconButtons}
-                        onClick={() => this.addCommentClickedHandler()}
+                    <div style={{ position: 'relative' }}>
+                      <Tooltip title="Make a comment" placement={'top'}>
+                        <IconButton
+                          aria-label="Comment"
+                          className={classes.iconButtons}
+                          onClick={() => this.addCommentClickedHandler()}
+                        >
+                          <Chat className={classes.iconInIconButtons} />
+                        </IconButton>
+                      </Tooltip>
+                      <span
+                        style={{ color: THEME_COLOR.badgeColor }}
+                        className={classesInCSS.CommentCount}
                       >
-                        <Chat className={classes.iconInIconButtons} />
-                      </IconButton>
-                    </Tooltip>
+                        {commentCount > 0 ? commentCount : null}
+                      </span>
+                    </div>
                   ) : null}
 
                   <Tooltip title={`Edit ${typeText} name`} placement={'top'}>

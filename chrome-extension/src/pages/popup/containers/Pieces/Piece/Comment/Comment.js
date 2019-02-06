@@ -164,8 +164,8 @@ class Comment extends Component {
                   <Avatar
                     aria-label="avatar"
                     style={{
-                      width: expanded ? '30px' : '24px',
-                      height: expanded ? '30px' : '24px'
+                      width: expanded ? '24px' : '20px',
+                      height: expanded ? '24px' : '20px'
                     }}
                     className={classesInCSS.Avatar}
                   >
