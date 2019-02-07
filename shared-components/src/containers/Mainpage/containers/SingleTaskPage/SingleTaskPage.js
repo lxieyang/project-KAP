@@ -1,17 +1,15 @@
 import React, { Component } from 'react';
+import styled from 'styled-components';
 import { withRouter } from 'react-router-dom';
 import { matchPath } from 'react-router';
-import qs from 'query-string';
 import FontAwesomeIcon from '@fortawesome/react-fontawesome';
 import fasCopy from '@fortawesome/fontawesome-free-solid/faCopy';
-import TaskStatusView from './TaskStatusView/TaskStatusView';
 import styles from './SingleTaskPage.css';
 import {
   APP_NAME_SHORT,
   showoffSurveyUrl,
   projectIntroPage
 } from '../../../../shared/constants';
-import * as FirebaseStore from '../../../../firebase/store';
 import * as FirestoreManager from '../../../../firebase/firestore_wrapper';
 
 class SingleTaskPage extends Component {

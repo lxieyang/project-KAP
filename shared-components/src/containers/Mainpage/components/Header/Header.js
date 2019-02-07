@@ -270,7 +270,7 @@ class Header extends Component {
     }
 
     return (
-      <Aux>
+      <React.Fragment>
         <header className={styles.Header}>
           <div>
             <div className={styles.LogoBox}>
@@ -282,6 +282,7 @@ class Header extends Component {
             <NavigationItems
               thereIsTask={this.props.thereIsTask}
               tasksLoading={this.props.tasksLoading}
+              currentTaskId={this.props.currentTaskId}
               currentTask={this.props.taskName}
             />
           </nav>
@@ -376,7 +377,7 @@ class Header extends Component {
             </Popover>
           </div>
         </header>
-      </Aux>
+      </React.Fragment>
     );
   }
 }

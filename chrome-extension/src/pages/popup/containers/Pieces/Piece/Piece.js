@@ -231,7 +231,7 @@ class Piece extends Component {
 
   // screenshot
   screenshotImageClickedHandler = pieceId => {
-    console.log('should display screenshot for', pieceId);
+    // console.log('should display screenshot for', pieceId);
     chrome.runtime.sendMessage({
       msg: 'SCREENSHOT_MODAL_SHOULD_DISPLAY',
       pieceId,
@@ -568,9 +568,9 @@ class Piece extends Component {
             </div>
           ) : (
             <div>
-              <Collapse in={isHovering} timeout="auto">
-                <Comment expanded={false} pieceId={piece.id} />
-              </Collapse>
+              {/*<Collapse in={isHovering} timeout="auto">*/}
+              <Comment expanded={false} pieceId={piece.id} />
+              {/*</Collapse>*/}
             </div>
           )}
         </Card>

@@ -34,7 +34,7 @@ const containerClass = css({
   padding: '3px',
   boxSizing: 'border-box',
   borderRadius: '3px',
-  transform: 'translateX(110%)',
+  transform: 'translateX(115%)',
   transition: 'transform .25s cubic-bezier(0, 0, 0.3, 1)',
   zIndex: 10000
 });
