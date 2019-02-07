@@ -29,7 +29,7 @@ export const updateTaskName = (taskId, newTaskName) => {
       name: newTaskName
     })
     .then(() => {
-      updateCurrentTaskUpdateTime();
+      updateTaskUpdateTime(taskId);
     });
 };
 
@@ -40,7 +40,7 @@ export const toggleTaskStarStatus = (taskId, to) => {
       isStarred: to
     })
     .then(() => {
-      updateCurrentTaskUpdateTime();
+      updateTaskUpdateTime(taskId);
     });
 };
 
@@ -60,7 +60,7 @@ export const deleteTaskById = taskId => {
           updateCurrentUserCurrentTaskId(querySnapshot.docs[0].id);
         });
 
-      updateCurrentTaskUpdateTime();
+      updateTaskUpdateTime(taskId);
     });
 };
 

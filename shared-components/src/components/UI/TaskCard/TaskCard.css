@@ -1,91 +1,14 @@
-.TaskCard {
-  z-index: 999;
-  font-size: 1.15rem;
-  width: 220px;
-  height: auto;
-  margin: 20px 15px;
-  border-radius: 4px;
-  box-shadow: rgba(60, 64, 67, 0.3) 0 1px 2px 0, rgba(60, 64, 67, 0.15) 0 1px 3px 1px;
-  transition: all 0.06s ease-in;
-}
-
-.Header {
-  display: flex;
-  align-items: center;
-  font-size: 0.80rem;
-  padding: 3px 6px;
-  justify-content: space-between;
-}
-
-.Header .Left {
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-}
-
-.CurrentTaskBadge {
-  margin-left: 15px;
-  background-color: #f0ad4e;
-  display: inline;
-  padding: 1px 6px;
-  font-size: 11px;
-  border-radius: 4px;
-  font-weight: 500;
-  color: #fff;
-  text-align: center;
-  white-space: nowrap;
-  cursor: default;
-}
-
-.Header .Right {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-}
-
-.Header .StarIcon {
-  cursor: pointer;
-}
-
-.Header .Starred {
-  color: #ffeb3b;
-}
-
-.Header .Time {
-  font-size: 0.70rem;
-  opacity: 0.7;
-}
-
-.Header .MoreIcon {
-  opacity: 0.7;
-  margin-left: 8px;
-  cursor: pointer;
-}
-
-.DeleteTaskIcon {
-  margin-left: 8px;
-  opacity: 0.3;
-  transition: all 0.1s ease-in;
-  cursor: pointer;
-}
-
-.DeleteTaskIcon:hover {
+.TaskCard:hover .Footer {
   opacity: 1;
 }
 
-
 .TaskName {
-  width: 70%;
-  font-size: 1.2rem;
-  font-weight: 600;
-  padding: 5px 15px;
-
   cursor: pointer;
   transition: all 0.05s ease-in;
 }
 
 .TaskName:hover {
-  transform: scale(1.02);
+  text-decoration: underline;
 }
 
 .TaskOngoingStatusContainer {
@@ -107,7 +30,7 @@
 
 .TaskOngoingTrue {
   color: #fff;
-  background-color: #4CAF50;
+  background-color: #4caf50;
 }
 
 .TaskOngoingFalse {
@@ -116,79 +39,32 @@
 }
 
 .Footer {
-  font-size: 0.80rem;
-  opacity: 0.8;
+  font-size: 0.8rem;
+  opacity: 0.5;
+  transition: all 0.1s ease-in;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.Avatar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-right: 4px;
+}
+
+.IconInsideAvatar {
+  font-size: 10px;
 }
 
 .MetaInfo {
-  padding: 0px 10px;
+  padding: 0px 5px;
   margin-bottom: 3px;
+  display: flex;
+  align-items: center;
 }
 
 .MetaInfo .Icon {
   margin-right: 10px;
-}
-
-
-
-.MoreIconContainer {
-  margin-left: 2px;
-  margin-right: -4px;
-  width: 15px;
-  display: flex;
-  justify-content: space-around;
-  font-size: 0.8rem;
-  cursor: pointer;
-  transition: all 0.1s ease-in-out;
-  opacity: 0.4;
-}
-
-.MoreIconContainer:hover {
-  opacity: 0.7;
-}
-
-.PopoverContainer {
-  border-radius: 2px;
-  border-width: 0;
-  background-color: #fff;
-  box-shadow: 0 0 4px rgba(0,0,0,0.2);
-  z-index: 99999;
-}
-
-.PopoverContentContainer {
-  
-}
-
-.PopoverContentContainer ul {
-  list-style-type: none;
-  padding: 0;
-  margin: 0;
-}
-
-.PopoverContentContainer ul li {
-  display: flex;
-  align-items: center;
-  padding: 5px 10px 5px 6px;
-  cursor: pointer;
-  transition: all 0.1s ease-in;
-}
-
-.PopoverContentContainer ul li:hover {
-  background-color: #ddd;
-}
-
-.DeleteLi:hover {
-  background-color: red !important;
-  color: #fff;
-}
-
-.IconBoxInPopover {
-  width: 25px;
-  display: flex;
-  align-items: center;
-  justify-content: space-around;
-}
-
-.IconInPopover {
-  
 }

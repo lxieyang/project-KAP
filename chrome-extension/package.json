@@ -27,7 +27,7 @@
     "chrome-tab-identifier": "0.0.1",
     "classnames": "^2.2.6",
     "fg-loadcss": "^2.1.0",
-    "firebase": "^5.5.5",
+    "firebase": "^5.8.2",
     "firebaseui": "^2.7.0",
     "fixed-data-table-2": "^0.8.16",
     "font-awesome": "^4.7.0",

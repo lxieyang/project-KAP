@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 
 import * as FirestoreManager from '../../../../../../../../shared-components/src/firebase/firestore_wrapper';
+import { getFirstName } from '../../../../../../../../shared-components/src/shared/utilities';
 
 import { withStyles } from '@material-ui/core/styles';
 import Avatar from '@material-ui/core/Avatar';
@@ -195,7 +196,7 @@ class Comment extends Component {
                     <div className={classesInCSS.CommentContentExpanded}>
                       <div className={classesInCSS.CommentInfoBar}>
                         <span className={classesInCSS.CommentAuthor}>
-                          {item.authorName}
+                          {getFirstName(item.authorName)}
                         </span>
                         <span className={classesInCSS.CommentMoment}>
                           {item.creationDate

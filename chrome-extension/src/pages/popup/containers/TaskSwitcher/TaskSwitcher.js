@@ -174,7 +174,7 @@ class TaskSwitcher extends Component {
 
   updateTaskName = (taskId, currentName) => {
     let taskName = prompt('Change the task name to:', currentName);
-    if (taskName !== null && taskName !== '') {
+    if (taskName !== null && taskName !== '' && taskName !== currentName) {
       FirestoreManager.updateTaskName(taskId, taskName);
     }
   };

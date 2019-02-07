@@ -35,7 +35,7 @@ class Header extends Component {
     tasksUpdated: true,
     searchContentForTasks: null,
     searchContentForPiecesInCurrentTask: null
-  }
+  };
 
   componentDidMount() {
     this.unlisten = this.props.history.listen((location, action) => {
@@ -45,115 +45,142 @@ class Header extends Component {
       });
     });
 
-    database.ref(`/users/${this.props.userId}/tasksUpdated`).on('value', (snapshot) => {
-      this.setState({tasksUpdated: snapshot.val()});
-    });
-
+    database
+      .ref(`/users/${this.props.userId}/tasksUpdated`)
+      .on('value', snapshot => {
+        this.setState({ tasksUpdated: snapshot.val() });
+      });
   }
 
   componentWillUnmount() {
     this.unlisten();
   }
 
-  static getDerivedStateFromProps (nextProps, prevState) {
+  static getDerivedStateFromProps(nextProps, prevState) {
     if (nextProps.currentTaskId !== prevState.currentTaskId) {
       return {
         currentTaskId: nextProps.currentTaskId,
         searchContentForPiecesInCurrentTask: null
-      }
+      };
     }
 
     return {
       currentTaskId: nextProps.currentTaskId
     };
-
   }
 
   switchPopoverOpenStatus = () => {
     this.setState(prevState => {
-      return {popoverOpen: !prevState.popoverOpen}
+      return { popoverOpen: !prevState.popoverOpen };
     });
-  }
+  };
 
   handleClose(e) {
-    this.setState({popoverOpen: false});
+    this.setState({ popoverOpen: false });
   }
 
-  inputChangedHandler = (event) => {
-    this.setState({userId: event.target.value});
-  }
+  inputChangedHandler = event => {
+    this.setState({ userId: event.target.value });
+  };
 
-  searchBlurHandler = (event) => {
+  searchBlurHandler = event => {
     this.setState({
       searchFocused: false
     });
-  }
+  };
 
-  searchFocusHandler = (event) => {
-    this.setState({searchFocused: true});
+  searchFocusHandler = event => {
+    this.setState({ searchFocused: true });
 
     if (this.props.location.pathname === appRoutes.ALL_TASKS) {
-      if (this.state.tasksUpdated === true || this.state.searchContentForTasks === null) {
-        this.setState({searchLoading: true});
-        database.ref(`/users/${this.props.userId}/tasksUpdated`).set(false).then(() => {
-          axios.get('https://us-central1-kap-project-nsh-2504.cloudfunctions.net/getSearchableTaskInfo', {
-            params: {
-              userId: this.props.userId
-            }
-          }).then((response) => {
-            this.setState({
-              searchContentForTasks: response.data,
-              searchLoading: false
-            });
-          }).catch((error) => {
-            console.log(error);
-            this.setState({
-              searchLoading: false
-            });
+      if (
+        this.state.tasksUpdated === true ||
+        this.state.searchContentForTasks === null
+      ) {
+        this.setState({ searchLoading: true });
+        database
+          .ref(`/users/${this.props.userId}/tasksUpdated`)
+          .set(false)
+          .then(() => {
+            axios
+              .get(
+                'https://us-central1-kap-project-nsh-2504.cloudfunctions.net/getSearchableTaskInfo',
+                {
+                  params: {
+                    userId: this.props.userId
+                  }
+                }
+              )
+              .then(response => {
+                this.setState({
+                  searchContentForTasks: response.data,
+                  searchLoading: false
+                });
+              })
+              .catch(error => {
+                console.log(error);
+                this.setState({
+                  searchLoading: false
+                });
+              });
           });
-        });
       }
     } else if (this.props.location.pathname === appRoutes.CURRENT_TASK) {
-      if (this.state.tasksUpdated === true || this.state.searchContentForTasks === null) {
-        this.setState({searchLoading: true});
-        database.ref(`/users/${this.props.userId}/tasksUpdated`).set(false).then(() => {
-          axios.get('https://us-central1-kap-project-nsh-2504.cloudfunctions.net/getSearchablePiecesInThisTaskInfo', {
-            params: {
-              userId: this.props.userId,
-              taskId: this.props.currentTaskId
-            }
-          }).then((response) => {
-            this.setState({
-              searchContentForPiecesInCurrentTask: response.data,
-              searchLoading: false
-            });
-          }).catch((error) => {
-            console.log(error);
-            this.setState({
-              searchLoading: false
-            });
+      if (
+        this.state.tasksUpdated === true ||
+        this.state.searchContentForTasks === null
+      ) {
+        this.setState({ searchLoading: true });
+        database
+          .ref(`/users/${this.props.userId}/tasksUpdated`)
+          .set(false)
+          .then(() => {
+            axios
+              .get(
+                'https://us-central1-kap-project-nsh-2504.cloudfunctions.net/getSearchablePiecesInThisTaskInfo',
+                {
+                  params: {
+                    userId: this.props.userId,
+                    taskId: this.props.currentTaskId
+                  }
+                }
+              )
+              .then(response => {
+                this.setState({
+                  searchContentForPiecesInCurrentTask: response.data,
+                  searchLoading: false
+                });
+              })
+              .catch(error => {
+                console.log(error);
+                this.setState({
+                  searchLoading: false
+                });
+              });
           });
-        });
       }
     }
-  }
+  };
 
-  searchInputHandler = (event) => {
-    const doSearchWith = (source) => {
+  searchInputHandler = event => {
+    const doSearchWith = source => {
       var options = {
-        keys: ['content'],
+        keys: ['content']
         // id: 'id'
       };
 
       let fuse = new Fuse(source, options);
       let results = fuse.search(this.state.searchString.trim());
-      this.setState({searchResults: results});
+      this.setState({ searchResults: results });
     };
 
-    this.setState({searchString: event.target.value});
+    this.setState({ searchString: event.target.value });
     // console.log(this.state.searchString);
     if (this.props.location.pathname === appRoutes.ALL_TASKS) {
-      if (this.state.searchContentForTasks !== null && this.state.searchLoading === false) {
+      if (
+        this.state.searchContentForTasks !== null &&
+        this.state.searchLoading === false
+      ) {
         // do the search using library: Fuse.js
         doSearchWith(this.state.searchContentForTasks);
       } else {
@@ -170,7 +197,10 @@ class Header extends Component {
         }, 100);
       }
     } else if (this.props.location.pathname === appRoutes.CURRENT_TASK) {
-      if (this.state.searchContentForPiecesInCurrentTask !== null && this.state.searchLoading === false) {
+      if (
+        this.state.searchContentForPiecesInCurrentTask !== null &&
+        this.state.searchLoading === false
+      ) {
         // do the search using library: Fuse.js
         doSearchWith(this.state.searchContentForPiecesInCurrentTask);
       } else {
@@ -187,11 +217,11 @@ class Header extends Component {
         }, 100);
       }
     }
-  }
+  };
 
-  clearSearchHandler = (event) => {
-    this.setState({searchString: ''});
-  }
+  clearSearchHandler = event => {
+    this.setState({ searchString: '' });
+  };
 
   itemInSearchResultsClickedHandler = (event, id, isTask) => {
     if (isTask) {
@@ -208,8 +238,7 @@ class Header extends Component {
         search: qs.stringify(query)
       });
     }
-    
-  }
+  };
 
   openSettingsPageClickedHandler = () => {
     this.switchPopoverOpenStatus();
@@ -218,22 +247,18 @@ class Header extends Component {
         msg: 'OPEN_SETTINGS_PAGE'
       });
     }, 300);
-  }
+  };
 
-  render () {
-    const { userName, userProfilePhotoURL, authenticated, location } = this.props;
+  render() {
+    const {
+      userName,
+      userProfilePhotoURL,
+      authenticated,
+      location
+    } = this.props;
 
     if (!authenticated) {
-      return (
-        <Aux>
-          <div style={{position: 'fixed', top: '0', left: '0', width: '100%'}}>
-            <AppHeader 
-              logoSize='38px' hover={false} 
-              shouldDisplayHeaderButtons={false}
-              openInNewTabClickedHandler={() => console.log("Don't open new tab")}/>
-          </div>
-        </Aux>
-      )
+      return <div />; // no header
     }
 
     let searchBarPlaceHolder = '';
@@ -248,76 +273,105 @@ class Header extends Component {
       <Aux>
         <header className={styles.Header}>
           <div>
-            <div 
-              className={styles.LogoBox}>
-              <Logo 
-                hover={true} size='38px'/>
+            <div className={styles.LogoBox}>
+              <Logo hover={true} size="38px" />
             </div>
           </div>
-          
-          
+
           <nav>
-            <NavigationItems 
+            <NavigationItems
               thereIsTask={this.props.thereIsTask}
               tasksLoading={this.props.tasksLoading}
-              currentTask={this.props.taskName}/>
+              currentTask={this.props.taskName}
+            />
           </nav>
-  
-  
+
           <div className={styles.ToTheRight}>
             <div className={styles.SearchBox}>
               <SearchBar
-                isInAllTasksRoute={this.props.location.pathname === appRoutes.ALL_TASKS}
+                isInAllTasksRoute={
+                  this.props.location.pathname === appRoutes.ALL_TASKS
+                }
                 searchFocused={this.state.searchFocused}
                 searchString={this.state.searchString}
                 searchLoading={this.state.searchLoading}
-                searchResults={this.state.searchString.trim() !== '' ? this.state.searchResults : []}
+                searchResults={
+                  this.state.searchString.trim() !== ''
+                    ? this.state.searchResults
+                    : []
+                }
                 placeholder={searchBarPlaceHolder}
                 searchBlurHandler={this.searchBlurHandler}
                 searchFocusHandler={this.searchFocusHandler}
                 searchInputHandler={this.searchInputHandler}
                 clearSearchHandler={this.clearSearchHandler}
-                itemInSearchResultsClickedHandler={this.itemInSearchResultsClickedHandler}/>
+                itemInSearchResultsClickedHandler={
+                  this.itemInSearchResultsClickedHandler
+                }
+              />
             </div>
-            
+
             <Popover
-              containerStyle={{zIndex: '100000'}}
+              containerStyle={{ zIndex: '100000' }}
               containerClassName={styles.LogoutPopoverContainer}
               isOpen={this.state.popoverOpen}
-              position={'bottom'} 
+              position={'bottom'}
               align={'end'}
               onClickOutside={this.handleClose.bind(this)}
-              content={(
+              content={
                 <div className={styles.PopoverContentContainer}>
                   <ul>
-                    <li onClick={(event) => this.openSettingsPageClickedHandler()}>
+                    {/*
+                    <li
+                      onClick={event => this.openSettingsPageClickedHandler()}
+                    >
                       <div className={styles.IconBoxInPopover}>
-                        <FontAwesomeIcon icon={fasCog} className={styles.IconInPopover}/>
+                        <FontAwesomeIcon
+                          icon={fasCog}
+                          className={styles.IconInPopover}
+                        />
                       </div>
                       <div>Open Settings</div>
                     </li>
-
+                    */}
                     <li onClick={this.handleClose.bind(this)}>
-                      <NavLink 
-                        style={{color: 'inherit', textDecoration: 'none', display: 'flex'}}
+                      <NavLink
+                        style={{
+                          color: 'inherit',
+                          textDecoration: 'none',
+                          display: 'flex'
+                        }}
                         to={appRoutes.LOG_OUT}
-                        exact>
+                        exact
+                      >
                         <div className={styles.IconBoxInPopover}>
-                          <FontAwesomeIcon icon={fasSignOutAlt} className={styles.IconInPopover}/>
+                          <FontAwesomeIcon
+                            icon={fasSignOutAlt}
+                            className={styles.IconInPopover}
+                          />
                         </div>
                         <div>Sign out</div>
                       </NavLink>
                     </li>
                   </ul>
                 </div>
-              )}
+              }
             >
-              <div 
+              <div
                 title={'More...'}
                 className={styles.Profile}
-                onClick={() => this.switchPopoverOpenStatus()}>
-                <img src={userProfilePhotoURL !== null ? userProfilePhotoURL : ProfileImg} alt="" className={styles.ProfileImg}/> 
-                <span>{ getFirstName(userName) }</span>
+                onClick={() => this.switchPopoverOpenStatus()}
+              >
+                <img
+                  src={
+                    userProfilePhotoURL !== null
+                      ? userProfilePhotoURL
+                      : ProfileImg
+                  }
+                  alt=""
+                  className={styles.ProfileImg}
+                />
+                <span>{getFirstName(userName)}</span>
               </div>
             </Popover>
           </div>

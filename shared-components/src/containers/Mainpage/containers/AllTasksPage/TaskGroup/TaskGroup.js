@@ -11,14 +11,13 @@ import styles from './TaskGroup.css';
 class TaskGroup extends Component {
   state = {
     category: this.props.category
-  }
+  };
 
-  render () {
-    
+  render() {
     const { category } = this.state;
     let { tasks } = this.props;
-    tasks = reverse(sortBy(tasks, ['time']));
-    
+    tasks = reverse(sortBy(tasks, ['updateDate']));
+
     let title = (
       <div className={styles.Header}>
         <FontAwesomeIcon
@@ -26,7 +25,7 @@ class TaskGroup extends Component {
           className={styles.ConfigureIcon}
         />
         <span className={styles.HeaderName}>
-          { category === 'starred' ? 'Starred Tasks' : 'All Tasks' }
+          {category === 'starred' ? 'Starred Tasks' : 'All Tasks'}
         </span>
       </div>
     );
@@ -34,27 +33,21 @@ class TaskGroup extends Component {
     if (tasks && tasks.length > 0) {
       taskCards = (
         <div className={styles.TaskCards}>
-          { tasks.filter(t => t.visibility !== false).map((task, idx) => {
+          {tasks.map((task, idx) => {
             return (
-              <TaskCard 
-                currentTaskId={this.props.currentTaskId}
-                deleteTaskHandler={this.props.deleteTaskHandler}
-                combineSourceTaskWithTargetTask={this.props.combineSourceTaskWithTargetTask}
-                id={task.id}
-                visibility={task.visibility}
-                taskOngoing={task.taskOngoing}
-                completionTimestamp={task.completionTimestamp}
-                isStarred={task.isStarred}
-                key={task.id}
-                taskName={task.displayName}
-                time={task.time}
-                numPieces={Object.keys(task.pieces).length}
-                numOptions={Object.keys(task.options).length}
-                numRequirements={Object.keys(task.requirements).length} />
+              <div key={`${task.id}-${idx}`}>
+                <TaskCard
+                  task={task}
+                  currentTaskId={this.props.currentTaskId}
+                  handleDeleteButtonClicked={
+                    this.props.handleDeleteButtonClicked
+                  }
+                />
+              </div>
             );
           })}
         </div>
-      )
+      );
     }
 
     return (

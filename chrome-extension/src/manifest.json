@@ -26,7 +26,8 @@
         "*://*.facebook.com/*",
         "*://*.qualtrics.com/*",
         "*://*.overleaf.com/*",
-        "*://*.google.com/signin/oauth/*"
+        "*://*.google.com/signin/oauth/*",
+        "*://kap-project-nsh-2504.firebaseapp.com/*"
       ],
       "js": ["contentAnnotation.bundle.js"],
       "css": ["content.styles.css"]
