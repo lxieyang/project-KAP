@@ -6,6 +6,10 @@ import {
 } from '../firestore_wrapper';
 const uuid = require('uuid/v4');
 
+export const getTaskById = taskId => {
+  return db.collection('tasks').doc(taskId);
+};
+
 export const getCurrentUserCreatedTasks = () => {
   return db
     .collection('tasks')

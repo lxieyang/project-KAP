@@ -1,0 +1,227 @@
+.CollectionView {
+  margin: 10px 0px;
+  width: 95%;
+}
+
+.SideNav {
+  height: 100%;
+  width: 180px;
+  position: fixed;
+  z-index: 1;
+  top: 116px;
+  left: 40px;
+  overflow-x: hidden;
+  padding-top: 20px;
+}
+
+.Current {
+  color: black;
+  font-weight: 600;
+}
+
+.Main {
+  /* margin-left: 200px; */
+}
+
+.Section {
+  width: 100%;
+  /* background-color: rgba(0,0,0,0.1); */
+  margin-top: 30px;
+  padding: 0px;
+}
+
+.Section .Header {
+  font-size: 1.4rem;
+  display: flex;
+  align-items: center;
+  padding-left: 2.5rem;
+}
+
+.HeaderNameContainer {
+  display: flex;
+  align-items: center;
+}
+
+.HeaderName {
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.HeaderCollapseButton {
+  margin-left: 15px;
+  cursor: pointer;
+}
+
+.Section .FilterNameContainer ,
+.Section .DisplayNumberContainer {
+  margin-left: 40px;
+  display: flex;
+  align-items: center;
+}
+
+.Section .FilterName,
+.Section .DisplayNumber {
+  opacity: 0.2;
+  cursor: pointer;
+  margin: 0px 10px;
+  transition: all 0.10s ease-in;
+}
+
+.Section .FilterName.Active,
+.Section .DisplayNumber.Active,
+.Section .DisplayNumber:hover {
+  opacity: 0.9;
+}
+
+.FilterIcon {
+  margin-left: 40px;
+  margin-right: 15px;
+  opacity: 0.5;
+}
+
+.Section .SectionFilterContainer {
+  /* position: relative; */
+  margin: 0px 20px;
+  display: flex;
+  align-items: center;
+}
+
+.SectionFilterBadge {
+  /* position: absolute;
+  top: -8px;
+  left: -8px; */
+  margin-right: 2px;
+  font-size: 12px;
+  font-weight: 600;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
+
+.SectionFilterBadgeDanger {
+  color: white;
+  background-color: #d9534f;
+}
+
+.Section .SectionFilterName {
+  font-size: 1.2rem;
+  opacity: 0.2;
+  cursor: pointer;
+  padding: 2px 7px;
+  transition: all 0.10s ease-in;
+}
+
+.Section .SectionFilterName.Active {
+  opacity: 0.9;
+  color: white;
+  background: #5cb85c;
+  border-radius: 5px;
+}
+
+.ConfigureIcon {
+  margin-right: 10px;
+}
+
+.Section .Content {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  margin: 0px 40px;
+}
+
+/* .ResponsiveColumn {
+  flex: 20%;
+} */
+
+/* @media (max-width: 1600px) {
+  .ResponsiveColumn {
+      flex: 20%;
+  }
+}
+
+@media (max-width: 1220px) {
+  .ResponsiveColumn {
+      flex: 33%;
+  }
+}
+
+@media (max-width: 900px) {
+  .ResponsiveColumn {
+      flex: 50%;
+  }
+}
+
+@media (max-width: 630px) {
+  .ResponsiveColumn {
+      flex: 100%;
+  }
+} */
+
+
+
+
+
+
+
+
+
+/* Modal */
+.BackDrop {
+  z-index: 9999;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: black;
+  opacity: 0.8;
+}
+
+.ModalContentBackground {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 10000;
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  color: inherit;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
+
+
+
+
+
+/* snackbar */
+.SnackbarLeft {
+  max-width: 300px;
+}
+
+.SnackbarRight {
+  margin-left: 40px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.UndoButton {
+  font-size: 1.0rem;
+  font-weight: 600;
+  border-radius: 5px;
+  cursor: pointer;
+  background-color: #eee
+}
+
+.UndoButton:hover {
+  background-color: #fff;
+}
+
+.UndoButton:focus {
+  outline: none;
+}

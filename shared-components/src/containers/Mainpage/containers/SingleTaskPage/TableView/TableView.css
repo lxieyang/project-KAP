@@ -1,0 +1,719 @@
+.TableView {
+  margin: 0px 0px;
+  /* width: 95%; */
+}
+
+.AddButtons {
+  padding-left: 1rem;
+  padding-top: 0rem;
+  vertical-align: middle;
+  align-items: right;
+
+  position: relative;
+}
+
+.WhenNothingInTable {
+  width: 100px;
+  height: 100px;
+}
+
+.AddButton {
+  font-size: 1.5rem;
+  border-radius: 50%;
+  cursor: pointer;
+  opacity: 0.5;
+  transition: all 0.1s ease-in;
+}
+
+.AddButton:hover {
+  transform: scale(1.05);
+  opacity: 1.0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.12);
+}
+
+.AddRequirementButtonContainer {
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  width: 50%;
+  height: 70%;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
+
+.AddRequirementButton {
+  color: #4E8EF9;
+}
+
+.AddOptionButtonContainer {
+  position: absolute;
+  bottom: 0px;
+  left: 0px;
+  width: 70%;
+  height: 50%;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
+
+.AddOptionButton {
+  color: #f0ad4e;
+}
+
+.AddTooltipContainer {
+  padding: 3px 5px !important;
+}
+
+.AddPopoverContainer {
+  border-radius: 2px;
+  border-width: 0;
+  background-color: #fff;
+  box-shadow: 0 0 16px rgba(0,0,0,0.4);
+  z-index: 66666;
+}
+
+.AddPopoverContentContainer {
+  min-width: 200px;
+  padding: 10px 1px 2px 10px;
+  display: flex;
+  flex-flow: column;
+  justify-items: center;
+}
+
+.PromptToHitEnter {
+  font-size: 0.8rem;
+  color: inherit;
+  opacity: 0.8;
+  margin-left: 5px;
+}
+
+
+
+
+/* .addCriterion {
+  color: #4E8EF9;
+  /* position: absolute;
+  left: 0;
+  top: 0;
+} */
+
+.addOption {
+  color: orange;
+} */
+
+.Active {
+  opacity: 1;
+}
+
+
+.Attitude {
+  font-size: 1.8rem;
+  margin-right: 5px;
+  width: 40px;
+  height: 40px;
+  transition: all 0.1s ease-in;
+}
+
+.Attitude:hover {
+  z-index: 300;
+  transform: scale(1.05);
+}
+
+
+.AttitudeSwitchContainer {
+  opacity: 1 !important;
+  background-color: white !important;
+  pointer-events: auto !important;
+}
+
+/* .AttitudeSwitchContainer:hover {
+  visibility: visible !important;
+  opacity: 1 !important;
+} */
+
+.AttitudeSwitcher {
+  cursor: pointer;
+  font-size: 1.8rem;
+  width: 40px;
+  height: 40px;
+  margin: 8px 0px;
+  transition: all 0.1s ease-in;
+}
+
+.InactiveAttitude {
+  filter: grayscale(100%);
+  opacity: 0.5;
+}
+
+.ActiveAttitude {
+  filter: grayscale(0%) !important;
+  opacity: 1 !important;
+}
+
+.AttitudeSwitcher:hover {
+  filter: grayscale(0%);
+  opacity: 1;
+}
+
+.Inactive {
+  opacity: 0.3;
+}
+
+
+.Bullet {
+  margin-right: 4px;
+  opacity:0.5;
+}
+
+.BackDrop {
+  z-index: 100;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: black;
+  opacity: 0.8;
+}
+.ConfigureRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.ConfigurationLine {
+  padding-right: 20px;
+  font-size: 1.0rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.Content {
+  display: table;
+  margin: 0px 50px;
+}
+
+.HeaderCollapseButton {
+  margin-left: 15px;
+  cursor: pointer;
+}
+
+.HeaderNameContainer {
+  display: flex;
+  align-items: center;
+}
+.Label {
+  margin: 0px 20px;
+}
+
+.HeaderName {
+  font-weight: 600;
+  cursor: pointer;
+}
+.Label {
+
+}
+.OptionList {
+  margin-top: 10px;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.Option span {
+  margin: 0px 10px;
+  color: black;
+  font-weight: 300;
+  font-family: 'Encode Sans Semi Expanded', sans-serif;
+  background-color: #E4E5E7;
+  padding: 3px 8px;
+  border-radius: 5px;
+  box-sizing: border-box;
+  cursor: pointer;
+  transition: all 0.05s ease-in;
+}
+
+.PieceConfigure {
+  display: flex;
+  align-items: center;
+}
+
+.PieceNameContainer {
+  display: flex;
+  align-items: flex-start;
+  overflow: hidden;
+  font-size: 1.1rem;
+  text-overflow: ellipsis;
+  max-height: 220px;
+  max-width: 250px;
+  overflow: auto;
+  cursor: pointer;
+  transition: all 0.1s ease-in;
+}
+
+.PieceNameContainer:hover {
+  z-index: 99999;
+  transform: scale(1.05);
+}
+
+.InactivePiece {
+  opacity: 0.1;
+}
+
+.InactiveOption {
+  opacity: 0.1;
+}
+
+.ShowHidePieceContainer {
+  color: inherit;
+  z-index: 900;
+}
+
+.ShowHidePiece {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+}
+
+.ShowHidePieceIcon {
+  cursor: pointer;
+  opacity: 0.05;
+  font-size: 1.0rem;
+  transition: all 0.1s ease-in;
+}
+
+.ShowHidePieceIcon:hover {
+  opacity: 0.8;
+}
+
+.ShowHideRequirementContainer {
+  color: inherit;
+  z-index: 900;
+}
+
+.ShowHideRequirement {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+}
+
+.ShowHideRequirementIcon {
+  cursor: pointer;
+  opacity: 0.05;
+  font-size: 1.0rem;
+  transition: all 0.1s ease-in;
+}
+
+.ShowHideRequirementIcon:hover {
+  opacity: 0.8;
+}
+
+.RequirementNameContainer {
+  display: flex;
+  align-items: flex-start;
+  overflow: hidden;
+  font-size: 1.1rem;
+  text-overflow: ellipsis;
+  max-height: 220px;
+  max-width: 250px;
+  overflow: auto;
+  cursor: pointer;
+  transition: all 0.1s ease-in;
+}
+
+.RequirementNameContainer:hover {
+  z-index: 99999;
+  transform: scale(1.05);
+}
+
+.InactiveRequirement {
+  opacity: 0.1;
+}
+
+.AttitudeThumbInTableCellContainer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+}
+
+.AttitudeInTableCell {
+  font-size: 1.8rem;
+  margin-right: 5px;
+  width: 40px;
+  height: 40px;
+  transition: all 0.1s ease-in;
+  border-radius: 50%;
+  border: 2px solid transparent;
+}
+
+/* .AttitudeInTableCellIsShowing, */
+.AttitudeInTableCell:hover {
+  /* border: 2px solid red; */
+  transform: scale(1.1);
+  box-shadow: 0 4px 10px 0 rgba(0,0,0,0.2),0 4px 20px 0 rgba(0,0,0,0.19);
+  z-index: 9999999;
+  cursor: pointer;
+}
+
+.TooltipOverAttitude {
+  /* overflow: auto; */
+  max-width: 320px;
+  margin: 0px 0px !important;
+  padding: 0px 0px !important;
+  /* margin: 0 !important; */
+  /* box-shadow: 0 4px 10px 0 rgba(0,0,0,0.2),0 4px 20px 0 rgba(0,0,0,0.19); */
+  opacity: 1 !important;
+  background-color: white !important;
+  pointer-events: auto !important;
+  z-index: 10000 !important;
+}
+
+.TooltipOverAttitude:hover {
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+
+.showHideOption {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+}
+
+.Input {
+  font-size: 1rem;
+  border: 1px transparent #ddd;
+
+}
+
+.PieceNameBadgeContainer {
+  margin-right: 8px;
+}
+
+.RequirementAttitudeContainer {
+  font-size: 1.8rem;
+  width: 40px;
+  height: 40px;
+  transition: all 0.1s ease-in;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  display: inline;
+  margin: auto;
+  padding-left: 10px;
+}
+
+.RequirementAttitudeThumbContainer {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  margin: 5px;
+  cursor: pointer;
+  opacity: 0.50;
+  filter: grayscale(100%);
+  transition: all 0.1s ease-in;
+}
+
+.RequirementAttitudeThumbContainer:hover {
+  transform: scale(1.5);
+  filter: grayscale(0%);
+  opacity: 1;
+}
+
+.RequirementAttitude {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+
+  width: 20px;
+  height: 20px;
+  margin: 0px 0px;
+}
+
+.BadgeIcon {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  width: 18px;
+  height: 18px;
+  font-size: 14px;
+  padding: 3px;
+  margin: 8px 3px;
+  border-radius: 3px;
+  background-color: rgb(252, 246, 227);
+  box-shadow: 0 1px 1px 0 rgba(0,0,0,0.2), 0 1px 3px 0 #00000030;
+}
+
+.PieceNameContent {
+  font-size: 1.1rem;
+  overflow: hidden;
+  word-wrap: break-word;
+  display: block;
+}
+
+.SelectionText {
+  background-color: rgb(178, 215, 255);
+  padding: 1px 3px;
+}
+
+.TableCellContainer {
+  display: flex;
+  align-items: center;
+  min-width: 150px;
+  margin: 0px 20px;
+  position: relative;
+}
+
+.OptionNameContainer {
+  display: block;
+  overflow: hidden;
+  /* font-weight: 600; */
+  font-weight: 300;
+  text-overflow: ellipsis;
+  max-width: 250px;
+  max-height: 150px;
+  padding-right: 30px;
+  transition: all 0.1s ease-in;
+}
+
+.OptionText:focus {
+  outline: none;
+}
+
+.ModalContentBackground {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 10000;
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  color: inherit;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
+
+.NotMarkedRelated {
+  background-color: rgb(242,242,242);
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.Note {
+  font-size: 0.80rem;
+  max-width: 130px;
+}
+
+.Overlay {
+  border-collapse: collapse;
+  border-spacing: 0px;
+  margin: 0px;
+
+}
+.Overlay th {
+  font-weight: 500;
+  position: sticky;
+  top: 0;
+  background-color: rgba(255,255,255,1);
+  vertical-align: bottom;
+  z-index: 32;
+}
+
+.Overlay td {
+  padding: 3px 3px;
+  text-align: left;
+  vertical-align: middle;
+}
+
+.PieceGroupNameContainer {
+  text-shadow: 1px 1px 1px rgba(0,0,0,0.15);
+  width: 90%;
+  padding-left: 8px;
+}
+
+.PieceGroupNameContainer textarea {
+  height: 100%;
+  width: 100%;
+  border: none;
+  background-color: inherit;
+  font-size: 12px;
+  resize: none;
+}
+
+.PieceGroupNameContainer textarea:focus {
+  outline: none;
+}
+
+.PieceGroupListContainer {
+  font-size: 0.80rem;
+}
+
+.PieceGroupListContainer ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.PieceGroupListContainer ul li {
+  margin: 5px 0px;
+  display: flex;
+  align-items: center;
+  width: 95%;
+}
+
+.PieceContainerInPieceGroup {
+
+}
+
+.PieceTitle {
+  max-width: 93%;
+  background-color: rgb(252, 240, 212);
+  border-radius: 3px;
+  padding: 0px 5px;
+  border: 1px solid lightgray;
+  word-wrap: break-word;
+}
+
+
+.Section {
+  width: 100%;
+  /* background-color: rgba(0,0,0,0.1); */
+  margin-top: 30px;
+  padding: 0px;
+}
+
+.Section .Header {
+  font-size: 1.4rem;
+  display: flex;
+  align-items: center;
+  padding-left: 2.5rem;
+  /* position: fixed; */
+}
+
+.SliderIcon {
+  font-size: 1.1rem;
+  cursor: pointer;
+}
+
+.SliderOn {
+  color: #5cb85c;
+}
+
+.Tooltip {
+  max-width: 350px;
+  min-width: 250px;
+  overflow: auto;
+  padding: 5px 5px !important;
+  /* margin: 0 !important; */
+  box-shadow: 0 4px 10px 0 rgba(0,0,0,0.2),0 4px 20px 0 rgba(0,0,0,0.19);
+  opacity: 1 !important;
+  background-color: white !important;
+  pointer-events: auto !important;
+}
+
+.Tooltip:hover {
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+span {
+  white-space: pre-wrap;
+}
+
+table.ComparisonTable {
+  border-collapse: collapse;
+  margin: 0px 0px;
+
+}
+
+
+.ComparisonTable th {
+  font-weight: 500;
+  position: sticky;
+  top: 0;
+  background-color: #fff;
+  vertical-align: bottom;
+  z-index: 44;
+}
+
+.ComparisonTable tr {
+  border-bottom: 1px solid #ddd;
+}
+
+/* .ComparisonTable th, */
+.ComparisonTable td {
+  padding: 3px 3px;
+  text-align: left;
+
+}
+
+
+
+/*
+tr:nth-child(even) {background-color: #f2f2f2;} */
+
+.stickyCol {
+  padding: 0px;
+  text-align: left;
+  display: table-column-group;
+  float:left;
+  z-index: 5;
+}
+
+.ModeToggleButtonsContainer {
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  margin-left: 15px;
+}
+
+.ModeToggleButton {
+  cursor: pointer;
+  margin: 0px 10px;
+
+  color: #848d95;
+}
+
+.ModeToggleButton:hover {
+  color: #252525;
+}
+
+.ModeToggleButtonActive {
+  font-weight: 600;
+}
+
+
+
+/* snackbar */
+.SnackbarLeft {
+  max-width: 300px;
+}
+
+.SnackbarRight {
+  margin-left: 40px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.UndoButton {
+  font-size: 1.0rem;
+  font-weight: 600;
+  border-radius: 5px;
+  cursor: pointer;
+  background-color: #eee
+}
+
+.UndoButton:hover {
+  background-color: #fff;
+}
+
+.UndoButton:focus {
+  outline: none;
+}

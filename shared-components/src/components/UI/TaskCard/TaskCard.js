@@ -154,9 +154,8 @@ class TaskCard extends Component {
   };
 
   titleClickedHandler = taskId => {
-    console.log(`should jump to task ${taskId}`);
     // rerouting
-    // this.props.history.push(appRoutes.CURRENT_TASK);
+    this.props.history.push(`/tasks/${taskId}`);
   };
 
   toggleTaskStarStatus = (taskId, to) => {
