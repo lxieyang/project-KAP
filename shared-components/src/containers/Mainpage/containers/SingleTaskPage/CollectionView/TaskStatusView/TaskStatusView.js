@@ -101,22 +101,9 @@ class TaskStatusView extends Component {
     return (
       <React.Fragment>
         <div className={styles.TaskStatusViewContainer}>
-          <div className={styles.TaskNameContainer}>
-            <Textarea
-              inputRef={tag => (this.textarea = tag)}
-              minRows={1}
-              maxRows={6}
-              placeholder={'Add a name'}
-              value={taskNameEdit}
-              onBlur={() => this.updateTaskName()}
-              onKeyDown={this.keyPress}
-              onChange={e => this.handleTaskNameChange(e)}
-              className={styles.Textarea}
-            />
-          </div>
           <div className={styles.VariousButtonsContainer}>
             <Tooltip
-              title={`${task.isStarred ? 'Unstar' : 'Star'} this task`}
+              title={`${task.isStarred ? 'Unstar' : 'Star'}`}
               placement={'bottom'}
             >
               <IconButton
@@ -138,6 +125,19 @@ class TaskStatusView extends Component {
                 )}
               </IconButton>
             </Tooltip>
+          </div>
+          <div className={styles.TaskNameContainer}>
+            <Textarea
+              inputRef={tag => (this.textarea = tag)}
+              minRows={1}
+              maxRows={6}
+              placeholder={'Add a name'}
+              value={taskNameEdit}
+              onBlur={() => this.updateTaskName()}
+              onKeyDown={this.keyPress}
+              onChange={e => this.handleTaskNameChange(e)}
+              className={styles.Textarea}
+            />
           </div>
         </div>
       </React.Fragment>
