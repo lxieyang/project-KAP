@@ -1,24 +1,14 @@
-/* global chrome */
 import React, { Component } from 'react';
+import { withRouter } from 'react-router-dom';
+import styled from 'styled-components';
+import moment from 'moment';
+import classnames from 'classnames';
 import FontAwesomeIcon from '@fortawesome/react-fontawesome';
 import fasListUl from '@fortawesome/fontawesome-free-solid/faListUl';
 import fasFlagCheckered from '@fortawesome/fontawesome-free-solid/faFlagCheckered';
 import fasBookmark from '@fortawesome/fontawesome-free-solid/faBookmark';
-import * as FirestoreManager from '../../../../../../../shared-components/src/firebase/firestore_wrapper';
-import ClampLines from 'react-clamp-lines';
 import LinesEllipsis from 'react-lines-ellipsis';
-import {
-  PIECE_TYPES,
-  ANNOTATION_TYPES
-} from '../../../../../../../shared-components/src/shared/types';
-import {
-  PIECE_COLOR,
-  THEME_COLOR
-} from '../../../../../../../shared-components/src/shared/theme';
-import Comment from './Comment/Comment';
-import classesInCSS from './Piece.css';
 
-import classnames from 'classnames';
 import { withStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
@@ -35,17 +25,24 @@ import MenuItem from '@material-ui/core/MenuItem';
 import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
 import { Chat } from 'mdi-material-ui';
+import Badge from '@material-ui/core/Badge';
+import purple from '@material-ui/core/colors/purple';
 import Tooltip from '@material-ui/core/Tooltip';
 import Divider from '@material-ui/core/Divider';
 
 import Textarea from 'react-textarea-autosize';
 
-import { GET_FAVICON_URL_PREFIX } from '../../../../../../../shared-components/src/shared/constants';
-import Spinner from '../../../../../../../shared-components/src/components/UI/Spinner/Spinner';
+import * as FirestoreManager from '../../../../../../../firebase/firestore_wrapper';
+import {
+  PIECE_TYPES,
+  ANNOTATION_TYPES
+} from '../../../../../../../shared/types';
+import { PIECE_COLOR, THEME_COLOR } from '../../../../../../../shared/theme';
+import { GET_FAVICON_URL_PREFIX } from '../../../../../../../shared/constants';
+import Spinner from '../../../../../../../components/UI/Spinner/Spinner';
+import classesInCSS from './PieceItem.css';
 
-import moment from 'moment';
-
-const styles = theme => ({
+const materialStyles = theme => ({
   card: {
     borderRadius: '5px',
     border: '1px solid rgba(223, 225, 228, 1)',
@@ -100,27 +97,6 @@ const ActionButton = withStyles({
   }
 })(Button);
 
-const options = [
-  {
-    type: PIECE_TYPES.snippet,
-    text: 'Snippet',
-    icon: fasBookmark,
-    color: PIECE_COLOR.snippet
-  },
-  {
-    type: PIECE_TYPES.option,
-    text: 'Option',
-    icon: fasListUl,
-    color: PIECE_COLOR.option
-  },
-  {
-    type: PIECE_TYPES.criterion,
-    text: 'Criterion',
-    icon: fasFlagCheckered,
-    color: PIECE_COLOR.criterion
-  }
-];
-
 const getHTML = htmls => {
   let htmlString = ``;
   if (htmls !== undefined) {
@@ -131,11 +107,9 @@ const getHTML = htmls => {
   return { __html: htmlString };
 };
 
-class Piece extends Component {
+class PieceItem extends Component {
   state = {
-    expanded: false, // this.props.idx + 1 <= 1 ? true : false,
-
-    anchorEl: null,
+    expanded: false,
 
     // edit piece name
     editingPieceName: false,
@@ -184,52 +158,6 @@ class Piece extends Component {
     }
   }
 
-  // piece name
-  editPieceNameClickedHandler = () => {
-    let expanded = this.state.expanded;
-    this.setState({
-      editingPieceName: true,
-      expanded: true,
-      originalExpandedStatus: expanded
-    });
-    setTimeout(() => {
-      this.textarea.focus();
-      this.textarea.setSelectionRange(0, 0);
-      this.textarea.scrollTo(0, 0);
-    }, 100);
-  };
-
-  handlePieceNameInputChange = event => {
-    this.setState({
-      pieceName: event.target.value
-    });
-  };
-
-  savePieceNameClickedHandler = () => {
-    let expanded = this.state.originalExpandedStatus;
-    this.setState({ editingPieceName: false, expanded });
-    FirestoreManager.updatePieceName(this.props.piece.id, this.state.pieceName);
-  };
-
-  cancelPieceNameEditClickedHandler = () => {
-    let expanded = this.state.originalExpandedStatus;
-    this.setState({ editingPieceName: false, expanded });
-  };
-
-  // piece type
-  handleTypeAvatarClick = event => {
-    this.setState({ anchorEl: event.currentTarget });
-  };
-
-  handleTypeAvatarClose = () => {
-    this.setState({ anchorEl: null });
-  };
-
-  switchPieceTypeClickedHandler = (pieceId, originalType, newType) => {
-    FirestoreManager.switchPieceType(pieceId, originalType, newType);
-    this.handleTypeAvatarClose();
-  };
-
   // expand
   handleExpandClick = () => {
     this.setState(prevState => ({ expanded: !prevState.expanded }));
@@ -239,37 +167,15 @@ class Piece extends Component {
     this.setState({ expanded: true });
   };
 
-  // screenshot
-  screenshotImageClickedHandler = pieceId => {
-    // console.log('should display screenshot for', pieceId);
-    chrome.runtime.sendMessage({
-      msg: 'SCREENSHOT_MODAL_SHOULD_DISPLAY',
-      pieceId,
-      imageDataUrl: this.state.screenshot.imageDataUrl
-    });
-  };
-
-  // comment
-  addCommentClickedHandler = () => {
-    this.setState({
-      expanded: true
-    });
-  };
-
-  finishComment = () => {};
-
   render() {
     let { piece, classes, isHovering } = this.props;
     const {
-      anchorEl,
       maxScreenshotHeight,
       screenshot,
       screenshotLoading,
       displayingScreenshot,
       commentCount
     } = this.state;
-
-    const open = Boolean(anchorEl);
 
     let color = PIECE_COLOR.snippet;
     let icon = fasBookmark;
@@ -311,64 +217,12 @@ class Piece extends Component {
                   color: 'white'
                 }}
                 className={classesInCSS.Avatar}
-                onClick={this.handleTypeAvatarClick}
               >
                 <FontAwesomeIcon
                   icon={icon}
                   className={classesInCSS.IconInsideAvatar}
                 />
               </Avatar>
-              <Menu
-                id={`long-menu-${piece.id}`}
-                anchorEl={anchorEl}
-                open={open}
-                onClose={this.handleTypeAvatarClose}
-                PaperProps={{
-                  style: {
-                    maxHeight: 120,
-                    width: 90
-                  }
-                }}
-              >
-                {options.map(option => (
-                  <MenuItem
-                    key={option.text}
-                    selected={piece.pieceType === option.type}
-                    onClick={e =>
-                      this.switchPieceTypeClickedHandler(
-                        piece.id,
-                        piece.pieceType,
-                        option.type
-                      )
-                    }
-                    style={{
-                      padding: '4px 4px',
-                      fontSize: '12px',
-                      display: 'flex',
-                      alignItems: 'center'
-                    }}
-                  >
-                    <Avatar
-                      aria-label="type"
-                      style={{
-                        backgroundColor: option.color,
-                        width: '24px',
-                        height: '24px',
-                        color: 'white',
-                        display: 'flex',
-                        justifyContent: 'center',
-                        alignItems: 'center'
-                      }}
-                    >
-                      <FontAwesomeIcon
-                        icon={option.icon}
-                        style={{ fontSize: '12px' }}
-                      />
-                    </Avatar>
-                    &nbsp; {option.text}
-                  </MenuItem>
-                ))}
-              </Menu>
             </div>
 
             <div
@@ -412,7 +266,7 @@ class Piece extends Component {
                 <div className={classesInCSS.PieceContentBox}>
                   <LinesEllipsis
                     text={piece.name}
-                    maxLine={this.state.expanded ? 1 : 2}
+                    maxLine={2}
                     ellipsis="..."
                     trimRight
                     basedOn="words"
@@ -572,20 +426,10 @@ class Piece extends Component {
               )}
             </div>
           </Collapse>
-
-          <div>
-            <Comment
-              expanded={this.state.expanded}
-              expandPiece={this.expandPiece}
-              pieceId={piece.id}
-              isHovering={isHovering}
-              finishComment={this.finishComment}
-            />
-          </div>
         </Card>
       </React.Fragment>
     );
   }
 }
 
-export default withStyles(styles)(Piece);
+export default withRouter(withStyles(materialStyles)(PieceItem));

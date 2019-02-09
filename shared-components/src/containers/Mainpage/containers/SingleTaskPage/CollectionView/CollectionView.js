@@ -8,6 +8,7 @@ import styles from './CollectionView.css';
 import Divider from '@material-ui/core/Divider';
 
 import TaskStatusView from './TaskStatusView/TaskStatusView';
+import PiecesView from './PiecesView/PiecesView';
 
 class CollectionView extends Component {
   render() {
@@ -15,6 +16,7 @@ class CollectionView extends Component {
       <React.Fragment>
         <TaskStatusView />
         <Divider light />
+        <PiecesView />
       </React.Fragment>
     );
   }
