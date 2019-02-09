@@ -102,35 +102,38 @@ class TaskStatusView extends Component {
       <React.Fragment>
         <div className={styles.TaskStatusViewContainer}>
           <div className={styles.VariousButtonsContainer}>
-            <Tooltip
-              title={`${task.isStarred ? 'Unstar' : 'Star'}`}
-              placement={'bottom'}
-            >
-              <IconButton
-                aria-label="Star"
-                className={classes.iconButtons}
-                onClick={e =>
-                  this.toggleTaskStarStatus(task.id, task.isStarred)
-                }
+            {editAccess ? (
+              <Tooltip
+                title={`${task.isStarred ? 'Unstar' : 'Star'}`}
+                placement={'bottom'}
               >
-                {task.isStarred ? (
-                  <Star
-                    className={classes.iconInIconButtons}
-                    style={{
-                      color: THEME_COLOR.starColor
-                    }}
-                  />
-                ) : (
-                  <StarOutline className={classes.iconInIconButtons} />
-                )}
-              </IconButton>
-            </Tooltip>
+                <IconButton
+                  aria-label="Star"
+                  className={classes.iconButtons}
+                  onClick={e =>
+                    this.toggleTaskStarStatus(task.id, task.isStarred)
+                  }
+                >
+                  {task.isStarred ? (
+                    <Star
+                      className={classes.iconInIconButtons}
+                      style={{
+                        color: THEME_COLOR.starColor
+                      }}
+                    />
+                  ) : (
+                    <StarOutline className={classes.iconInIconButtons} />
+                  )}
+                </IconButton>
+              </Tooltip>
+            ) : null}
           </div>
           <div className={styles.TaskNameContainer}>
             <Textarea
               inputRef={tag => (this.textarea = tag)}
               minRows={1}
               maxRows={6}
+              disabled={!editAccess}
               placeholder={'Add a name'}
               value={taskNameEdit}
               onBlur={() => this.updateTaskName()}

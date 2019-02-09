@@ -4,6 +4,9 @@ import { withRouter } from 'react-router-dom';
 import { matchPath } from 'react-router';
 import * as FirestoreManager from '../../../../../firebase/firestore_wrapper';
 import styles from './CollectionView.css';
+
+import Divider from '@material-ui/core/Divider';
+
 import TaskStatusView from './TaskStatusView/TaskStatusView';
 
 class CollectionView extends Component {
@@ -11,6 +14,7 @@ class CollectionView extends Component {
     return (
       <React.Fragment>
         <TaskStatusView />
+        <Divider light />
       </React.Fragment>
     );
   }

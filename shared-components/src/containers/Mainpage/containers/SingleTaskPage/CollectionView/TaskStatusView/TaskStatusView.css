@@ -1,5 +1,6 @@
 .TaskStatusViewContainer {
-  margin-top: 6px;
+  margin-top: 8px;
+  margin-bottom: 6px;
   font-size: 16px;
   box-sizing: border-box;
   width: 100%;
@@ -19,6 +20,7 @@
   width: 100%;
   resize: none;
   font-size: inherit;
+  font-weight: 500;
   overflow: auto;
 
   padding: 6px 8px;
