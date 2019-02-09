@@ -112,7 +112,7 @@ class CommentItem extends Component {
 
   handleAction = (action, commentId, content, event) => {
     if (action === 'delete') {
-      if (window.confirm(`Do you really want to delete "${content}"?`)) {
+      if (window.confirm(`Are you sure you want to delete "${content}"?`)) {
         FirestoreManager.deleteCommentById(this.props.pieceId, commentId);
       }
     } else if (action === 'edit') {

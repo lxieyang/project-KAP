@@ -185,10 +185,12 @@ class TaskSwitcher extends Component {
 
   // snackbar stuff
   handleDeleteButtonClicked = (taskId, taskName) => {
-    this.setState({ open: true });
+    if (window.confirm(`Are you sure you want to delete "${taskName}"?`)) {
+      this.setState({ open: true });
 
-    this.setState({ toDeleteTaskId: taskId, toDeleteTaskLabel: taskName });
-    FirestoreManager.deleteTaskById(taskId);
+      this.setState({ toDeleteTaskId: taskId, toDeleteTaskLabel: taskName });
+      FirestoreManager.deleteTaskById(taskId);
+    }
   };
 
   handleClose = (event, reason) => {
@@ -329,7 +331,8 @@ class TaskSwitcher extends Component {
               size="small"
               onClick={e => this.undoButtonClickedHandler()}
             >
-              UNDO in{' '}
+              UNDO{' '}
+              {/*in{' '}
               <span style={{ margin: '0 0.25rem 0 0.25rem' }}>
                 <Countdown
                   date={Date.now() + this.state.timeoutDuration}
@@ -338,7 +341,7 @@ class TaskSwitcher extends Component {
                   renderer={props => <div>{props.seconds}</div>}
                 />
               </span>
-              seconds
+              seconds*/}
             </Button>,
             <IconButton
               key="close"

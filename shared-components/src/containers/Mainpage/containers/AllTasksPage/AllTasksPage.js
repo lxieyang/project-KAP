@@ -36,10 +36,12 @@ class AllTasksPage extends Component {
   };
 
   handleDeleteButtonClicked = (taskId, taskName) => {
-    this.setState({ open: true });
+    if (window.confirm(`Are you sure you want to delete "${taskName}"?`)) {
+      this.setState({ open: true });
 
-    this.setState({ toDeleteTaskId: taskId, toDeleteTaskName: taskName });
-    FirestoreManager.deleteTaskById(taskId);
+      this.setState({ toDeleteTaskId: taskId, toDeleteTaskName: taskName });
+      FirestoreManager.deleteTaskById(taskId);
+    }
   };
 
   handleSnackbarClose = (event, reason) => {
@@ -144,7 +146,8 @@ class AllTasksPage extends Component {
               size="small"
               onClick={e => this.undoButtonClickedHandler()}
             >
-              UNDO in{' '}
+              UNDO{' '}
+              {/*in{' '}
               <span style={{ margin: '0 0.25rem 0 0.25rem' }}>
                 <Countdown
                   date={Date.now() + this.state.timeoutDuration}
@@ -153,7 +156,7 @@ class AllTasksPage extends Component {
                   renderer={props => <div>{props.seconds}</div>}
                 />
               </span>
-              seconds
+            seconds*/}
             </Button>,
             <IconButton
               key="close"

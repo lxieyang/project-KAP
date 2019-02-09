@@ -55,10 +55,12 @@ class Pieces extends Component {
   };
 
   handleDeleteButtonClicked = (pieceId, pieceName) => {
-    this.setState({ open: true });
+    if (window.confirm(`Are you sure you want to delete "${pieceName}"?`)) {
+      this.setState({ open: true });
 
-    this.setState({ toDeletePieceId: pieceId, toDeletePieceName: pieceName });
-    FirestoreManager.deletePieceById(pieceId);
+      this.setState({ toDeletePieceId: pieceId, toDeletePieceName: pieceName });
+      FirestoreManager.deletePieceById(pieceId);
+    }
   };
 
   handleSnackbarClose = (event, reason) => {
@@ -161,7 +163,8 @@ class Pieces extends Component {
               size="small"
               onClick={e => this.undoButtonClickedHandler()}
             >
-              UNDO in{' '}
+              UNDO{' '}
+              {/*in{' '}
               <span style={{ margin: '0 0.25rem 0 0.25rem' }}>
                 <Countdown
                   date={Date.now() + this.state.timeoutDuration}
@@ -170,7 +173,7 @@ class Pieces extends Component {
                   renderer={props => <div>{props.seconds}</div>}
                 />
               </span>
-              seconds
+              seconds*/}
             </Button>,
             <IconButton
               key="close"
