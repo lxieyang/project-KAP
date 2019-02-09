@@ -1,67 +1,10 @@
 .CommentBox {
   padding: 0px;
+  transition: all 0.1s ease-in;
 }
 
 .CommentListContainer {
   padding: 0px;
-}
-.CommentItem {
-  margin: 4px 0px 2px 0px;
-  padding-left: 4px;
-  padding-right: 0px;
-  padding-bottom: 3px;
-  display: flex;
-  align-items: center;
-}
-
-.CommentItemExpanded {
-  align-items: flex-start;
-  padding-top: 4px;
-}
-
-.CommentItemCompact {
-  align-items: center;
-}
-
-.CommentItem:nth-child(odd) {
-  background-color: rgb(236, 236, 236);
-}
-
-.CommentItem:nth-child(even) {
-  background-color: white;
-}
-
-.CommentContentCompact {
-  font-size: 12px;
-  font-weight: 300;
-  color: black;
-  padding-left: 4px;
-}
-
-.CommentContentExpanded {
-  padding-left: 4px;
-}
-
-.CommentInfoBar {
-}
-
-.CommentAuthor {
-  font-weight: 500;
-  font-size: 13px;
-  color: black;
-}
-
-.CommentMoment {
-  margin-left: 6px;
-  font-size: 11px;
-  color: rgb(155, 155, 155);
-  font-weight: 300;
-}
-
-.CommentContent {
-  font-size: 12px;
-  font-weight: 300;
-  color: black;
 }
 
 .EditCommentBox {

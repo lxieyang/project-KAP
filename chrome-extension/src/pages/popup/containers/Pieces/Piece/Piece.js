@@ -51,7 +51,7 @@ import moment from 'moment';
 const styles = theme => ({
   card: {
     borderRadius: '5px',
-    border: '1px solid rgba(151, 151, 151, 0.8)',
+    border: '1px solid rgba(223, 225, 228, 1)',
     boxShadow: '0 0 1px 1px rgba(0,0,0,0.05)',
     padding: '0px',
     marginBottom: '8px'
@@ -227,6 +227,10 @@ class Piece extends Component {
   // expand
   handleExpandClick = () => {
     this.setState(prevState => ({ expanded: !prevState.expanded }));
+  };
+
+  expandPiece = () => {
+    this.setState({ expanded: true });
   };
 
   // screenshot
@@ -408,7 +412,12 @@ class Piece extends Component {
                   />
                 </div>
               )}
-              <div className={classesInCSS.InfoActionBar}>
+              <div
+                className={classesInCSS.InfoActionBar}
+                style={{
+                  opacity: !this.state.expanded && isHovering ? '1' : '0.5'
+                }}
+              >
                 <div
                   style={{
                     fontSize: '12px',
@@ -557,22 +566,15 @@ class Piece extends Component {
             </div>
           </Collapse>
 
-          {/* Comment Section */}
-          {this.state.expanded ? (
-            <div>
-              <Comment
-                expanded={true}
-                pieceId={piece.id}
-                finishComment={this.finishComment}
-              />
-            </div>
-          ) : (
-            <div>
-              {/*<Collapse in={isHovering} timeout="auto">*/}
-              <Comment expanded={false} pieceId={piece.id} />
-              {/*</Collapse>*/}
-            </div>
-          )}
+          <div>
+            <Comment
+              expanded={this.state.expanded}
+              expandPiece={this.expandPiece}
+              pieceId={piece.id}
+              isHovering={isHovering}
+              finishComment={this.finishComment}
+            />
+          </div>
         </Card>
       </React.Fragment>
     );

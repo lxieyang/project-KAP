@@ -70,6 +70,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  transition: all 0.1s ease-in;
 }
 
 .CommentCount {
