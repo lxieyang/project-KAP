@@ -75,9 +75,10 @@ class Comment extends Component {
       });
   }
 
-  // also allow Cmd / Ctrl + Enter to submit
+  // also allow Enter to submit
   keyPress(e) {
-    if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
+    // if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
+    if (e.key === 'Enter' && !e.shiftKey) {
       this.saveEditClickedHandler();
     }
   }

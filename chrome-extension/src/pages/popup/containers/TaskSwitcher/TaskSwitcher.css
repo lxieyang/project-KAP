@@ -28,13 +28,3 @@
   background-color: rgb(192, 240, 192) !important;
   font-weight: 600;
 }
-
-.AllTasksButton {
-  font-size: 1.1rem;
-  cursor: pointer;
-  transition: all 0.1s ease-in;
-}
-
-.AllTasksButton:hover {
-  transform: scale(1.05);
-}

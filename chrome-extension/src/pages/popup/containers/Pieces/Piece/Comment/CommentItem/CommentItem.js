@@ -64,9 +64,10 @@ class CommentItem extends Component {
     this.keyPress = this.keyPress.bind(this);
   }
 
-  // also allow Cmd / Ctrl + Enter to submit
+  // also Enter to submit
   keyPress(e) {
-    if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
+    // if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
+    if (e.key === 'Enter' && !e.shiftKey) {
       this.saveCommentItemClickedHandler(this.props.item.id);
     }
   }

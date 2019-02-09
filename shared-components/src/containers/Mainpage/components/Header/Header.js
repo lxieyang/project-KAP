@@ -289,6 +289,7 @@ class Header extends Component {
 
           <div className={styles.ToTheRight}>
             <div className={styles.SearchBox}>
+              {/*
               <SearchBar
                 isInAllTasksRoute={
                   this.props.location.pathname === appRoutes.ALL_TASKS
@@ -310,6 +311,7 @@ class Header extends Component {
                   this.itemInSearchResultsClickedHandler
                 }
               />
+              */}
             </div>
 
             <Popover

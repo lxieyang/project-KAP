@@ -1,0 +1,47 @@
+.TaskStatusViewContainer {
+  margin-top: 6px;
+  font-size: 16px;
+  box-sizing: border-box;
+  width: 100%;
+  padding: 0px 5px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.TaskNameContainer {
+  flex: 1;
+}
+
+.Textarea {
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  resize: none;
+  font-size: inherit;
+  overflow: auto;
+
+  padding: 6px 8px;
+
+  border: 1px solid transparent;
+  border-radius: 8px;
+  color: #000;
+  background: transparent !important;
+}
+
+.Textarea:hover {
+  border-color: rgb(226, 226, 226);
+}
+
+.Textarea:focus {
+  color: #35383a;
+  background-color: #fff;
+  border-color: rgb(17, 100, 224);
+  outline: none;
+}
+
+.VariousButtonsContainer {
+  display: flex;
+  align-items: center;
+  margin-left: '4px';
+}

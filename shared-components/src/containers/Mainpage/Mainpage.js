@@ -37,7 +37,7 @@ class Mainpage extends Component {
 
     this.removeAuthListerner = firebase.auth().onAuthStateChanged(user => {
       if (user !== null) {
-        console.log('User token: ' + user.uid);
+        // console.log('User token: ' + user.uid);
 
         this.setState({
           authenticated: true,

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
 import { withRouter } from 'react-router-dom';
-import { matchPath } from 'react-router';
+import { getTaskIdFromPath } from './matchPath';
 import FontAwesomeIcon from '@fortawesome/react-fontawesome';
 import fasCopy from '@fortawesome/fontawesome-free-solid/faCopy';
 import styles from './SingleTaskPage.css';
@@ -12,39 +12,37 @@ import {
 } from '../../../../shared/constants';
 import * as FirestoreManager from '../../../../firebase/firestore_wrapper';
 
-import TaskStatusView from './TaskStatusView/TaskStatusView';
+import CollectionView from './CollectionView/CollectionView';
 
 class SingleTaskPage extends Component {
-  state = {
-    taskId: null
-  };
+  state = {};
 
   componentDidMount() {
-    const taskMatch = matchPath(this.props.history.location.pathname, {
-      path: '/tasks/:taskId',
-      exact: true,
-      strict: false
-    });
+    let taskId = getTaskIdFromPath(this.props.history.location.pathname);
 
-    let taskId = taskMatch.params.taskId;
-
-    this.setState({ taskId: taskId });
-    FirestoreManager.getTaskById(taskId)
-      .get()
-      .then(doc => {
-        if (doc.exists) {
-          let taskName = doc.data().name;
+    this.unsubscribeTaskId = FirestoreManager.getTaskById(taskId).onSnapshot(
+      snapshot => {
+        if (snapshot.exists) {
+          let taskName = snapshot.data().name;
           this.props.setDisplayingTaskIdAndName(taskId, taskName);
         }
-      });
+      }
+    );
+  }
+
+  componentWillUnmount() {
+    this.unsubscribeTaskId();
   }
 
   render() {
-    const { taskId } = this.state;
     return (
       <React.Fragment>
-        <div className={styles.TaskStatusViewContainer} />
-        <TaskStatusView />
+        <div className={styles.SingleTaskPageContainer}>
+          <div className={styles.LeftPane}>
+            <CollectionView />
+          </div>
+          <div className={styles.RightPane}>Right</div>
+        </div>
       </React.Fragment>
     );
   }

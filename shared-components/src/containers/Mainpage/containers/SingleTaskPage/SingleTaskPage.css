@@ -1,3 +1,15 @@
-.TaskStatusViewContainer {
+.SingleTaskPageContainer {
   width: 100%;
+  height: 100%;
+}
+
+.LeftPane {
+  position: fixed;
+  height: 100%;
+  /* background: rgb(236, 236, 236); */
+  width: 400px;
+}
+
+.RightPane {
+  margin-left: 400px;
 }

@@ -158,6 +158,7 @@ class Piece extends Component {
   };
 
   componentDidMount() {
+    this.keyPress = this.keyPress.bind(this);
     FirestoreManager.getScreenshotById(this.props.piece.id)
       .get()
       .then(doc => {
@@ -176,6 +177,14 @@ class Piece extends Component {
 
   componentWillUnmount() {
     this.unsubscribeAllComments();
+  }
+
+  // also allow Enter to submit
+  keyPress(e) {
+    // if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      this.savePieceNameClickedHandler();
+    }
   }
 
   // piece name
@@ -380,6 +389,7 @@ class Piece extends Component {
                       maxRows={3}
                       placeholder={'Add a name'}
                       value={this.state.pieceName}
+                      onKeyDown={this.keyPress}
                       onChange={e => this.handlePieceNameInputChange(e)}
                       className={classesInCSS.Textarea}
                     />

@@ -22,6 +22,7 @@ import Card from '@material-ui/core/Card';
 import CardHeader from '@material-ui/core/CardHeader';
 import CardContent from '@material-ui/core/CardContent';
 import StarIcon from '@material-ui/icons/Star';
+import { Star, StarOutline } from 'mdi-material-ui';
 import Avatar from '@material-ui/core/Avatar';
 import IconButton from '@material-ui/core/IconButton';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
@@ -178,9 +179,15 @@ class TaskCard extends Component {
                 this.toggleTaskStarStatus(task.id, !task.isStarred)
               }
             >
-              <StarIcon
-                style={{ color: task.isStarred ? THEME_COLOR.starColor : null }}
-              />
+              {task.isStarred ? (
+                <Star
+                  style={{
+                    color: THEME_COLOR.starColor
+                  }}
+                />
+              ) : (
+                <StarOutline />
+              )}
             </IconButton>
           }
           action={
