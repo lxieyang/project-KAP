@@ -12,10 +12,11 @@ import {
 } from '../../../../shared/constants';
 import * as FirestoreManager from '../../../../firebase/firestore_wrapper';
 
+import TaskStatusView from './TaskStatusView/TaskStatusView';
+
 class SingleTaskPage extends Component {
   state = {
-    taskId: null,
-    taskName: null
+    taskId: null
   };
 
   componentDidMount() {
@@ -33,17 +34,17 @@ class SingleTaskPage extends Component {
       .then(doc => {
         if (doc.exists) {
           let taskName = doc.data().name;
-          this.setState({ taskName: taskName });
           this.props.setDisplayingTaskIdAndName(taskId, taskName);
         }
       });
   }
 
   render() {
-    const { taskId, taskName } = this.state;
+    const { taskId } = this.state;
     return (
       <React.Fragment>
-        <div>navigated to task: {taskName}</div>
+        <div className={styles.TaskStatusViewContainer} />
+        <TaskStatusView />
       </React.Fragment>
     );
   }
