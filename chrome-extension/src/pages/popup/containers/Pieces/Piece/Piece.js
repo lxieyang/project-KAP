@@ -383,14 +383,16 @@ class Piece extends Component {
                     <Textarea
                       inputRef={tag => (this.textarea = tag)}
                       minRows={1}
-                      maxRows={3}
+                      maxRows={4}
                       placeholder={'Add a name'}
                       value={this.state.pieceName}
                       onKeyDown={this.keyPress}
+                      onBlur={() => this.savePieceNameClickedHandler()}
                       onChange={e => this.handlePieceNameInputChange(e)}
                       className={classesInCSS.Textarea}
                     />
                   </div>
+                  {/*
                   <div className={classesInCSS.TextareaActionSection}>
                     <ActionButton
                       color="secondary"
@@ -406,10 +408,14 @@ class Piece extends Component {
                     >
                       Save
                     </ActionButton>
-                  </div>
+                  </div>*/}
                 </div>
               ) : (
-                <div className={classesInCSS.PieceContentBox}>
+                <div
+                  title={`Edit ${typeText} name`}
+                  className={classesInCSS.PieceContentBox}
+                  onClick={() => this.editPieceNameClickedHandler()}
+                >
                   <LinesEllipsis
                     text={piece.name}
                     maxLine={2}
