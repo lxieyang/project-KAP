@@ -1,19 +1,19 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
-import { BrowserRouter } from 'react-router-dom';
-import registerServiceWorker from './registerServiceWorker';
+import React from "react";
+import ReactDOM from "react-dom";
+import "./index.css";
+import App from "./App";
+import { BrowserRouter } from "react-router-dom";
+import registerServiceWorker from "./registerServiceWorker";
 
-if (window.top !== window.self) { 
-  document.body.style.zoom = '0.75';
+if (window.top !== window.self) {
+  document.body.style.zoom = "0.75";
 }
 
 const app = (
   <BrowserRouter>
     <App />
   </BrowserRouter>
-)
+);
 
-ReactDOM.render(app, document.getElementById('root'));
+ReactDOM.render(app, document.getElementById("root"));
 registerServiceWorker();

@@ -38,7 +38,7 @@ const PiecesUL = styled.div`
   width: 100%;
   height: 100%;
   overflow: auto;
-  padding-right: 15px;
+  /* padding-right: 15px; */
 `;
 
 const PieceLI = styled.div`

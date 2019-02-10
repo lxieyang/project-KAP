@@ -1,6 +1,6 @@
 .Header {
   font-size: 1.2rem;
-  height: 56px;
+  height: 40px;
   width: 100%;
   position: fixed;
   top: 0;
@@ -52,6 +52,7 @@
 .ToTheRight {
   display: flex;
   align-items: center;
+  transform: scale(0.7);
 }
 
 .SearchBox {

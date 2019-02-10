@@ -12,7 +12,10 @@ import {
 } from '../../../../shared/constants';
 import * as FirestoreManager from '../../../../firebase/firestore_wrapper';
 
+import SplitPane from 'react-split-pane';
+import './SplitPane.css';
 import CollectionView from './CollectionView/CollectionView';
+import WorkspaceView from './WorkspaceView/WorkspaceView';
 
 class SingleTaskPage extends Component {
   state = {};
@@ -38,10 +41,28 @@ class SingleTaskPage extends Component {
     return (
       <React.Fragment>
         <div className={styles.SingleTaskPageContainer}>
+          <SplitPane
+            split="vertical"
+            minSize={200}
+            defaultSize={320}
+            maxSize={420}
+            pane2Style={{ width: '100%' }}
+          >
+            <div className={styles.LeftPane}>
+              <CollectionView />
+            </div>
+            <div className={styles.RightPane}>
+              <WorkspaceView />
+            </div>
+          </SplitPane>
+          {/*
           <div className={styles.LeftPane}>
             <CollectionView />
           </div>
-          <div className={styles.RightPane}>Right</div>
+          <div className={styles.RightPane}>
+            <WorkspaceView />
+          </div>
+      */}
         </div>
       </React.Fragment>
     );

@@ -274,7 +274,7 @@ class Header extends Component {
         <header className={styles.Header}>
           <div>
             <div className={styles.LogoBox}>
-              <Logo hover={true} size="38px" />
+              <Logo hover={true} size="24px" />
             </div>
           </div>
 

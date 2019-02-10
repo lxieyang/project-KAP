@@ -4,12 +4,13 @@
 }
 
 .LeftPane {
-  position: fixed;
   height: 100%;
-  /* background: rgb(236, 236, 236); */
-  width: 400px;
+  margin-right: 10px;
+  /* border-right: 1px solid rgb(230, 230, 230); */
 }
 
 .RightPane {
-  margin-left: 400px;
+  height: 100%;
+  width: 100%;
+  overflow: auto;
 }
