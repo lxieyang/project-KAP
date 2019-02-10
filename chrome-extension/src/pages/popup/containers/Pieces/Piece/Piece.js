@@ -140,6 +140,7 @@ class Piece extends Component {
     // edit piece name
     editingPieceName: false,
     pieceName: this.props.piece.name,
+    pieceNameBeforeStartEditing: this.props.piece.name,
     originalExpandedStatus: false,
 
     // screenshot control
@@ -187,9 +188,11 @@ class Piece extends Component {
   // piece name
   editPieceNameClickedHandler = () => {
     let expanded = this.state.expanded;
+    let pieceNameBeforeStartEditing = this.state.pieceName;
     this.setState({
       editingPieceName: true,
       expanded: true,
+      pieceNameBeforeStartEditing,
       originalExpandedStatus: expanded
     });
     setTimeout(() => {
@@ -207,8 +210,14 @@ class Piece extends Component {
 
   savePieceNameClickedHandler = () => {
     let expanded = this.state.originalExpandedStatus;
+    let pieceNameBeforeStartEditing = this.state.pieceNameBeforeStartEditing;
     this.setState({ editingPieceName: false, expanded });
-    FirestoreManager.updatePieceName(this.props.piece.id, this.state.pieceName);
+    if (pieceNameBeforeStartEditing !== this.state.pieceName) {
+      FirestoreManager.updatePieceName(
+        this.props.piece.id,
+        this.state.pieceName
+      );
+    }
   };
 
   cancelPieceNameEditClickedHandler = () => {

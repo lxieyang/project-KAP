@@ -115,6 +115,7 @@ class PieceItem extends Component {
     // edit piece name
     editingPieceName: false,
     pieceName: this.props.piece.name,
+    pieceNameBeforeStartEditing: this.props.piece.name,
     originalExpandedStatus: false,
 
     // screenshot control
@@ -167,9 +168,11 @@ class PieceItem extends Component {
   // piece name
   editPieceNameClickedHandler = () => {
     let expanded = this.state.expanded;
+    let pieceNameBeforeStartEditing = this.state.pieceName;
     this.setState({
       editingPieceName: true,
       expanded: true,
+      pieceNameBeforeStartEditing,
       originalExpandedStatus: expanded
     });
     setTimeout(() => {
@@ -187,13 +190,14 @@ class PieceItem extends Component {
 
   savePieceNameClickedHandler = () => {
     let expanded = this.state.originalExpandedStatus;
+    let pieceNameBeforeStartEditing = this.state.pieceNameBeforeStartEditing;
     this.setState({ editingPieceName: false, expanded });
-    FirestoreManager.updatePieceName(this.props.piece.id, this.state.pieceName);
-  };
-
-  cancelPieceNameEditClickedHandler = () => {
-    let expanded = this.state.originalExpandedStatus;
-    this.setState({ editingPieceName: false, expanded });
+    if (pieceNameBeforeStartEditing !== this.state.pieceName) {
+      FirestoreManager.updatePieceName(
+        this.props.piece.id,
+        this.state.pieceName
+      );
+    }
   };
 
   // expand
@@ -283,23 +287,6 @@ class PieceItem extends Component {
                       className={classesInCSS.Textarea}
                     />
                   </div>
-                  {/*
-                  <div className={classesInCSS.TextareaActionSection}>
-                    <ActionButton
-                      color="secondary"
-                      size="small"
-                      onClick={() => this.cancelPieceNameEditClickedHandler()}
-                    >
-                      Cancel
-                    </ActionButton>
-                    <ActionButton
-                      color="primary"
-                      size="small"
-                      onClick={() => this.savePieceNameClickedHandler()}
-                    >
-                      Save
-                    </ActionButton>
-                  </div>*/}
                 </div>
               ) : (
                 <div
