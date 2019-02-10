@@ -1,14 +1,13 @@
 import React, { Component } from 'react';
-import CommentItem from './CommentItem/CommentItem';
-
-import * as FirestoreManager from '../../../../../../../../shared-components/src/firebase/firestore_wrapper';
 
 import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 
 import Textarea from 'react-textarea-autosize';
 
-import classesInCSS from './Comment.css';
+import * as FirestoreManager from '../../../../../../../../firebase/firestore_wrapper';
+import CommentItem from './CommentItem/CommentItem';
+import classesInCSS from './Comments.css';
 
 const styles = theme => ({
   button: {
@@ -20,25 +19,6 @@ const styles = theme => ({
   }
 });
 
-// const fakeComments = [
-//   {
-//     authorId: 'author-01',
-//     authorName: 'Barack Obama',
-//     updateDate: new Date(),
-//     authorAvatarURL:
-//       'https://radioviceonline.com/wp-content/uploads/2012/05/square-obama-halo.png',
-//     content: `This is a good deal, grab it before it\'s gone.`
-//   },
-//   {
-//     authorId: 'author-02',
-//     authorName: 'George Bush',
-//     updateDate: new Date(),
-//     authorAvatarURL:
-//       'https://www.abc.net.au/radionational/image/7174982-1x1-700x700.jpg',
-//     content: `This is a NOT good deal, DO NOT grab it.`
-//   }
-// ];
-
 const ActionButton = withStyles({
   root: {
     minWidth: '0',
@@ -49,7 +29,7 @@ const ActionButton = withStyles({
   }
 })(Button);
 
-class Comment extends Component {
+class Comments extends Component {
   state = {
     comments: [],
 
@@ -181,4 +161,4 @@ class Comment extends Component {
   }
 }
 
-export default withStyles(styles)(Comment);
+export default withStyles(styles)(Comments);

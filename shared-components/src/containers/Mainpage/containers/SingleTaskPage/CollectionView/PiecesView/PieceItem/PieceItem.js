@@ -41,6 +41,7 @@ import {
 import { PIECE_COLOR, THEME_COLOR } from '../../../../../../../shared/theme';
 import { GET_FAVICON_URL_PREFIX } from '../../../../../../../shared/constants';
 import Spinner from '../../../../../../../components/UI/Spinner/Spinner';
+import Comments from './Comments/Comments';
 import classesInCSS from './PieceItem.css';
 
 const materialStyles = theme => ({
@@ -198,6 +199,13 @@ class PieceItem extends Component {
         this.state.pieceName
       );
     }
+  };
+
+  // comment
+  addCommentClickedHandler = () => {
+    this.setState({
+      expanded: true
+    });
   };
 
   // expand
@@ -457,6 +465,16 @@ class PieceItem extends Component {
               )}
             </div>
           </Collapse>
+
+          <div>
+            <Comments
+              expanded={this.state.expanded}
+              expandPiece={this.expandPiece}
+              pieceId={piece.id}
+              isHovering={isHovering}
+              finishComment={this.finishComment}
+            />
+          </div>
         </Card>
       </React.Fragment>
     );

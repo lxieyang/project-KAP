@@ -265,8 +265,6 @@ class Piece extends Component {
     });
   };
 
-  finishComment = () => {};
-
   render() {
     let { piece, classes, isHovering } = this.props;
     const {
@@ -466,7 +464,7 @@ class Piece extends Component {
                       </span>
                     </div>
                   ) : null}
-
+                  {/*
                   <Tooltip title={`Edit ${typeText} name`} placement={'top'}>
                     <IconButton
                       aria-label="Edit"
@@ -476,6 +474,7 @@ class Piece extends Component {
                       <EditIcon className={classes.iconInIconButtons} />
                     </IconButton>
                   </Tooltip>
+                  */}
                   <Tooltip title={`Delete this ${typeText}`} placement={'top'}>
                     <IconButton
                       aria-label="Delete"
@@ -594,7 +593,6 @@ class Piece extends Component {
               expandPiece={this.expandPiece}
               pieceId={piece.id}
               isHovering={isHovering}
-              finishComment={this.finishComment}
             />
           </div>
         </Card>
