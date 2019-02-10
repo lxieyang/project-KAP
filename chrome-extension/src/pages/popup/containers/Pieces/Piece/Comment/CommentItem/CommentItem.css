@@ -13,6 +13,7 @@
 }
 
 .CommentItemCompact {
+  min-height: 28px;
   align-items: center;
 }
 

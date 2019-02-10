@@ -119,6 +119,9 @@ class PieceItem extends Component {
     pieceNameBeforeStartEditing: this.props.piece.name,
     originalExpandedStatus: false,
 
+    // no edit access, viewing piece name
+    viewPieceNameExpand: false,
+
     // screenshot control
     maxScreenshotHeight: 300,
     screenshot: null,
@@ -201,6 +204,14 @@ class PieceItem extends Component {
     }
   };
 
+  toggleViewPieceNameExpandStatus = () => {
+    this.setState(prevState => {
+      return {
+        viewPieceNameExpand: !prevState.viewPieceNameExpand
+      };
+    });
+  };
+
   // comment
   addCommentClickedHandler = () => {
     this.setState({
@@ -218,7 +229,7 @@ class PieceItem extends Component {
   };
 
   render() {
-    let { piece, classes, isHovering } = this.props;
+    let { piece, classes, isHovering, editAccess } = this.props;
     const {
       maxScreenshotHeight,
       screenshot,
@@ -298,17 +309,41 @@ class PieceItem extends Component {
                 </div>
               ) : (
                 <div
-                  title={`Edit ${typeText} name`}
+                  title={
+                    (editAccess
+                      ? `Edit `
+                      : this.state.viewPieceNameExpand
+                      ? `Collapse `
+                      : `Expand `) + `${typeText} name`
+                  }
                   className={classesInCSS.PieceContentBox}
-                  onClick={() => this.editPieceNameClickedHandler()}
+                  onClick={() => {
+                    if (editAccess) {
+                      this.editPieceNameClickedHandler();
+                    } else {
+                      this.toggleViewPieceNameExpandStatus();
+                    }
+                  }}
                 >
-                  <LinesEllipsis
-                    text={piece.name}
-                    maxLine={2}
-                    ellipsis="..."
-                    trimRight
-                    basedOn="words"
-                  />
+                  {editAccess ? (
+                    <LinesEllipsis
+                      text={piece.name}
+                      maxLine={2}
+                      ellipsis="..."
+                      trimRight
+                      basedOn="words"
+                    />
+                  ) : this.state.viewPieceNameExpand ? (
+                    `${piece.name}`
+                  ) : (
+                    <LinesEllipsis
+                      text={piece.name}
+                      maxLine={2}
+                      ellipsis="..."
+                      trimRight
+                      basedOn="words"
+                    />
+                  )}
                 </div>
               )}
               <div
@@ -354,20 +389,25 @@ class PieceItem extends Component {
                     </IconButton>
                   </Tooltip>
                   */}
-                  <Tooltip title={`Delete this ${typeText}`} placement={'top'}>
-                    <IconButton
-                      aria-label="Delete"
-                      className={classes.iconButtons}
-                      onClick={() =>
-                        this.props.handleDeleteButtonClicked(
-                          piece.id,
-                          piece.name
-                        )
-                      }
+                  {editAccess ? (
+                    <Tooltip
+                      title={`Delete this ${typeText}`}
+                      placement={'top'}
                     >
-                      <DeleteIcon className={classes.iconInIconButtons} />
-                    </IconButton>
-                  </Tooltip>
+                      <IconButton
+                        aria-label="Delete"
+                        className={classes.iconButtons}
+                        onClick={() =>
+                          this.props.handleDeleteButtonClicked(
+                            piece.id,
+                            piece.name
+                          )
+                        }
+                      >
+                        <DeleteIcon className={classes.iconInIconButtons} />
+                      </IconButton>
+                    </Tooltip>
+                  ) : null}
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center' }}>
                   <Tooltip
