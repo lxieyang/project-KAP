@@ -54,7 +54,7 @@ const materialStyles = theme => ({
   },
   cardContent: { paddingBottom: '0px' },
   expand: {
-    padding: '6px',
+    padding: '4px',
     transform: 'rotate(0deg)',
     marginLeft: 'auto',
     transition: theme.transitions.create('transform', {
@@ -65,8 +65,8 @@ const materialStyles = theme => ({
     transform: 'rotate(180deg)'
   },
   expandIcon: {
-    width: '20px',
-    height: '20px'
+    width: '16px',
+    height: '16px'
   },
   iconButtons: {
     padding: '4px'
@@ -225,7 +225,8 @@ class PieceItem extends Component {
   };
 
   // expand
-  handleExpandClick = () => {
+  handleExpandClick = e => {
+    e.stopPropagation();
     this.setState(prevState => ({ expanded: !prevState.expanded }));
   };
 
@@ -278,8 +279,8 @@ class PieceItem extends Component {
                 aria-label="type"
                 style={{
                   backgroundColor: color,
-                  width: '32px',
-                  height: '32px',
+                  width: '28px',
+                  height: '28px',
                   color: 'white'
                 }}
                 className={classesInCSS.Avatar}
@@ -354,7 +355,7 @@ class PieceItem extends Component {
               <div
                 className={classesInCSS.InfoActionBar}
                 style={{
-                  opacity: !this.state.expanded && isHovering ? '1' : '0.5'
+                  opacity: this.state.expanded || isHovering ? '1' : '0.5'
                 }}
               >
                 <div
@@ -443,10 +444,11 @@ class PieceItem extends Component {
 
             <div
               style={{
-                flexBasis: '32px',
+                flexBasis: '24px',
                 marginLeft: 'auto',
                 order: '3',
-                paddingTop: '3px'
+                paddingTop: '3px',
+                opacity: isHovering ? '1' : '0.3'
               }}
             >
               <IconButton
@@ -517,7 +519,6 @@ class PieceItem extends Component {
               expandPiece={this.expandPiece}
               pieceId={piece.id}
               isHovering={isHovering}
-              finishComment={this.finishComment}
             />
           </div>
         </Card>

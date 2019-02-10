@@ -3,22 +3,22 @@
   justify-content: center;
   align-items: center;
 
-  margin-top: 5px;
+  margin-top: 8px;
   margin-left: 5px;
 
   cursor: pointer;
 }
 
 .IconInsideAvatar {
-  font-size: 16px;
+  font-size: 15px;
 }
 
 .PieceContentBox {
   display: flex;
   align-items: flex-start;
-  margin-top: 4px;
-  margin-left: 4px;
-  padding: 3px 6px;
+  margin-top: 3px;
+  margin-left: 1px;
+  padding: 2px 6px;
   /* padding-right: 6px; */
   font-size: 14px;
   color: #000;
@@ -52,7 +52,7 @@
   overflow: auto;
 
   font-size: 13px;
-  padding: 3px 4px;
+  padding: 2px 4px;
 
   border: 1px solid rgb(226, 226, 226);
   border-radius: 4px;

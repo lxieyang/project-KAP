@@ -55,7 +55,7 @@ const styles = theme => ({
   },
   cardContent: { paddingBottom: '0px' },
   expand: {
-    padding: '6px',
+    padding: '4px',
     transform: 'rotate(0deg)',
     marginLeft: 'auto',
     transition: theme.transitions.create('transform', {
@@ -66,8 +66,8 @@ const styles = theme => ({
     transform: 'rotate(180deg)'
   },
   expandIcon: {
-    width: '20px',
-    height: '20px'
+    width: '16px',
+    height: '16px'
   },
   iconButtons: {
     padding: '4px'
@@ -240,7 +240,8 @@ class Piece extends Component {
   };
 
   // expand
-  handleExpandClick = () => {
+  handleExpandClick = e => {
+    e.stopPropagation();
     this.setState(prevState => ({ expanded: !prevState.expanded }));
   };
 
@@ -305,7 +306,7 @@ class Piece extends Component {
       <React.Fragment>
         <Card className={classes.card}>
           <CardContent
-            style={{ display: 'flex', padding: '0px' }}
+            style={{ display: 'flex', padding: '0px', position: 'relative' }}
             className={classes.cardContent}
           >
             <div>
@@ -313,8 +314,8 @@ class Piece extends Component {
                 aria-label="type"
                 style={{
                   backgroundColor: color,
-                  width: '32px',
-                  height: '32px',
+                  width: '28px',
+                  height: '28px',
                   color: 'white'
                 }}
                 className={classesInCSS.Avatar}
@@ -435,7 +436,7 @@ class Piece extends Component {
               <div
                 className={classesInCSS.InfoActionBar}
                 style={{
-                  opacity: !this.state.expanded && isHovering ? '1' : '0.5'
+                  opacity: this.state.expanded || isHovering ? '1' : '0.5'
                 }}
               >
                 <div
@@ -519,13 +520,19 @@ class Piece extends Component {
 
             <div
               style={{
-                flexBasis: '32px',
+                flexBasis: '24px',
                 marginLeft: 'auto',
                 order: '3',
-                paddingTop: '3px'
+                paddingTop: '3px',
+                opacity: isHovering ? '1' : '0.3'
+                // position: 'absolute',
+                // top: '4px',
+                // right: '4px',
+                // zIndex: '99999'
               }}
             >
               <IconButton
+                size="small"
                 className={classnames(classes.expand, {
                   [classes.expandOpen]: this.state.expanded
                 })}
