@@ -412,7 +412,7 @@ class Piece extends Component {
                 <div className={classesInCSS.PieceContentBox}>
                   <LinesEllipsis
                     text={piece.name}
-                    maxLine={this.state.expanded ? 1 : 2}
+                    maxLine={2}
                     ellipsis="..."
                     trimRight
                     basedOn="words"

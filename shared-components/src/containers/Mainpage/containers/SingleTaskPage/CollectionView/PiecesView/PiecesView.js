@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
 import ReactHoverObserver from 'react-hover-observer';
+import LinesEllipsis from 'react-lines-ellipsis';
 import { withRouter } from 'react-router-dom';
 import { getTaskIdFromPath } from '../../matchPath';
 import * as FirestoreManager from '../../../../../../firebase/firestore_wrapper';
@@ -46,6 +47,12 @@ const materialStyles = theme => ({
     padding: theme.spacing.unit / 2
   }
 });
+
+const HighZIndexSnackbar = withStyles({
+  root: {
+    zIndex: '99999'
+  }
+})(Snackbar);
 
 class PiecesView extends Component {
   state = {
@@ -103,6 +110,32 @@ class PiecesView extends Component {
     this.unsubscribePieces();
   }
 
+  handleDeleteButtonClicked = (pieceId, pieceName) => {
+    if (window.confirm(`Are you sure you want to delete "${pieceName}"?`)) {
+      this.setState({ open: true });
+
+      this.setState({ toDeletePieceId: pieceId, toDeletePieceName: pieceName });
+      FirestoreManager.deletePieceById(pieceId);
+    }
+  };
+
+  handleSnackbarClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    this.setState({ open: false });
+  };
+
+  undoButtonClickedHandler = () => {
+    this.setState({ open: false });
+
+    FirestoreManager.revivePieceById(this.state.toDeletePieceId);
+    setTimeout(() => {
+      this.setState({ toDeletePieceId: '', toDeletePieceName: '' });
+    }, 500);
+  };
+
   render() {
     let { pieces, taskId, editAccess } = this.state;
     let { classes } = this.props;
@@ -131,6 +164,7 @@ class PiecesView extends Component {
                       idx={idx}
                       currentTaskId={taskId}
                       editAccess={editAccess}
+                      handleDeleteButtonClicked={this.handleDeleteButtonClicked}
                     />
                   </ReactHoverObserver>
                 </PieceLI>
@@ -152,6 +186,54 @@ class PiecesView extends Component {
             />
           </PiecesUL>
         </PiecesContainer>
+
+        {/* snackbar */}
+        <HighZIndexSnackbar
+          anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'left'
+          }}
+          open={this.state.open}
+          autoHideDuration={this.state.timeoutDuration}
+          onClose={this.handleSnackbarClose}
+          ContentProps={{
+            'aria-describedby': `message-id-pieces`
+          }}
+          message={
+            <span
+              id={`message-id-pieces`}
+              style={{ display: 'flex', alignItems: 'center' }}
+            >
+              <LinesEllipsis
+                text={this.state.toDeletePieceName}
+                maxLine={2}
+                ellipsis="..."
+                trimRight
+                basedOn="words"
+              />{' '}
+              <span style={{ marginLeft: '5px' }}>deleted!</span>
+            </span>
+          }
+          action={[
+            <Button
+              key="undo"
+              color="secondary"
+              size="small"
+              onClick={e => this.undoButtonClickedHandler()}
+            >
+              UNDO
+            </Button>,
+            <IconButton
+              key="close"
+              aria-label="Close"
+              color="inherit"
+              className={classes.close}
+              onClick={this.handleSnackbarClose}
+            >
+              <CloseIcon />
+            </IconButton>
+          ]}
+        />
       </React.Fragment>
     );
   }
