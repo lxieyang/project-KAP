@@ -8,6 +8,7 @@ import fasListUl from '@fortawesome/fontawesome-free-solid/faListUl';
 import fasFlagCheckered from '@fortawesome/fontawesome-free-solid/faFlagCheckered';
 import fasBookmark from '@fortawesome/fontawesome-free-solid/faBookmark';
 import LinesEllipsis from 'react-lines-ellipsis';
+import ContentEditable from 'react-contenteditable';
 
 import { withStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
@@ -128,6 +129,11 @@ class PieceItem extends Component {
     commentCount: 0
   };
 
+  constructor(props) {
+    super(props);
+    this.contentEditable = React.createRef();
+  }
+
   componentDidMount() {
     this.keyPress = this.keyPress.bind(this);
     FirestoreManager.getScreenshotById(this.props.piece.id)
@@ -157,6 +163,38 @@ class PieceItem extends Component {
       this.savePieceNameClickedHandler();
     }
   }
+
+  // piece name
+  editPieceNameClickedHandler = () => {
+    let expanded = this.state.expanded;
+    this.setState({
+      editingPieceName: true,
+      expanded: true,
+      originalExpandedStatus: expanded
+    });
+    setTimeout(() => {
+      this.textarea.focus();
+      this.textarea.setSelectionRange(0, 0);
+      this.textarea.scrollTo(0, 0);
+    }, 100);
+  };
+
+  handlePieceNameInputChange = event => {
+    this.setState({
+      pieceName: event.target.value
+    });
+  };
+
+  savePieceNameClickedHandler = () => {
+    let expanded = this.state.originalExpandedStatus;
+    this.setState({ editingPieceName: false, expanded });
+    FirestoreManager.updatePieceName(this.props.piece.id, this.state.pieceName);
+  };
+
+  cancelPieceNameEditClickedHandler = () => {
+    let expanded = this.state.originalExpandedStatus;
+    this.setState({ editingPieceName: false, expanded });
+  };
 
   // expand
   handleExpandClick = () => {
@@ -230,21 +268,22 @@ class PieceItem extends Component {
                 flex: '1'
               }}
             >
-              {' '}
               {this.state.editingPieceName ? (
                 <div className={classesInCSS.PieceNameEditContainer}>
                   <div className={classesInCSS.TextAreaContainer}>
                     <Textarea
                       inputRef={tag => (this.textarea = tag)}
                       minRows={1}
-                      maxRows={3}
+                      maxRows={4}
                       placeholder={'Add a name'}
                       value={this.state.pieceName}
                       onKeyDown={this.keyPress}
+                      onBlur={() => this.savePieceNameClickedHandler()}
                       onChange={e => this.handlePieceNameInputChange(e)}
                       className={classesInCSS.Textarea}
                     />
                   </div>
+                  {/*
                   <div className={classesInCSS.TextareaActionSection}>
                     <ActionButton
                       color="secondary"
@@ -260,10 +299,14 @@ class PieceItem extends Component {
                     >
                       Save
                     </ActionButton>
-                  </div>
+                  </div>*/}
                 </div>
               ) : (
-                <div className={classesInCSS.PieceContentBox}>
+                <div
+                  title={`Edit ${typeText} name`}
+                  className={classesInCSS.PieceContentBox}
+                  onClick={() => this.editPieceNameClickedHandler()}
+                >
                   <LinesEllipsis
                     text={piece.name}
                     maxLine={2}
@@ -305,7 +348,7 @@ class PieceItem extends Component {
                       </span>
                     </div>
                   ) : null}
-
+                  {/*
                   <Tooltip title={`Edit ${typeText} name`} placement={'top'}>
                     <IconButton
                       aria-label="Edit"
@@ -315,6 +358,7 @@ class PieceItem extends Component {
                       <EditIcon className={classes.iconInIconButtons} />
                     </IconButton>
                   </Tooltip>
+                  */}
                   <Tooltip title={`Delete this ${typeText}`} placement={'top'}>
                     <IconButton
                       aria-label="Delete"

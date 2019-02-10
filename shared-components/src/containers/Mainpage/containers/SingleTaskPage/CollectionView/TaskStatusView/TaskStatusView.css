@@ -37,6 +37,7 @@
 
 .Textarea:focus {
   color: #35383a;
+  font-weight: 400;
   background-color: #fff;
   border-color: rgb(17, 100, 224);
   outline: none;

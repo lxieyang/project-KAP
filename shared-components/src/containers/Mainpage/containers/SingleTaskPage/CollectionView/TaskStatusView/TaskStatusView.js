@@ -128,7 +128,10 @@ class TaskStatusView extends Component {
               </Tooltip>
             ) : null}
           </div>
-          <div className={styles.TaskNameContainer}>
+          <div
+            className={styles.TaskNameContainer}
+            title={editAccess ? `Edit task name` : null}
+          >
             <Textarea
               inputRef={tag => (this.textarea = tag)}
               minRows={1}

@@ -14,11 +14,21 @@
 .PieceContentBox {
   display: flex;
   align-items: flex-start;
-  padding-top: 4px;
-  padding-left: 8px;
+  margin-top: 4px;
+  margin-left: 4px;
+  padding: 3px 6px;
   /* padding-right: 6px; */
   font-size: 15px;
-  font-weight: 500;
+  color: #000;
+  font-weight: 400;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  cursor: text;
+  white-space: pre-wrap;
+}
+
+.PieceContentBox:hover {
+  border-color: rgb(226, 226, 226);
 }
 
 .PieceNameEditContainer {
@@ -42,18 +52,17 @@
   font-size: 13px;
   padding: 3px 4px;
 
-  border: 1px solid #ced4da;
+  border: 1px solid rgb(226, 226, 226);
   border-radius: 4px;
-  color: #495057;
+  color: #000;
   background: transparent !important;
 }
 
 .Textarea:focus {
   color: #35383a;
   background-color: #fff;
-  border-color: #80bdff;
-  outline: 0;
-  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+  border-color: rgb(17, 100, 224);
+  outline: none;
 }
 
 .TextareaActionSection {

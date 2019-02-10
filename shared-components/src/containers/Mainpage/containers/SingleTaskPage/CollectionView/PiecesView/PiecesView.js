@@ -26,12 +26,18 @@ const PiecesContainer = styled.div`
 `;
 
 const PiecesUL = styled.div`
-  position: absolute;
+  /* position: absolute;
   top: 0px;
   bottom: 0px;
   left: 0px;
+  padding-right: 15px;
   right: -15px;
+  overflow: auto; */
+
+  width: 100%;
+  height: 100%;
   overflow: auto;
+  padding-right: 15px;
 `;
 
 const PieceLI = styled.div`
