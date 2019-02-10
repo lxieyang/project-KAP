@@ -30,18 +30,17 @@
   font-size: 13px;
   padding: 6px 8px;
 
-  border: 1px solid #ced4da;
+  border: 1px solid rgb(226, 226, 226);
   border-radius: 4px;
-  color: #495057;
+  color: #000;
   background: transparent !important;
 }
 
 .Textarea:focus {
   color: #35383a;
-  background-color: #fff;
-  border-color: #80bdff;
-  outline: 0;
-  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+  background-color: #fff !important;
+  border-color: rgb(17, 100, 224);
+  outline: none;
 }
 
 .TextareaActionBar {
