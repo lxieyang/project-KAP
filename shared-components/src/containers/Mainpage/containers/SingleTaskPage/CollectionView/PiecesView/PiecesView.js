@@ -155,49 +155,53 @@ class PiecesView extends Component {
     return (
       <React.Fragment>
         <PiecesContainer innerRef={this.containerRef}>
-          <PiecesUL>
-            <PieceLI
-              style={{
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center'
-              }}
-            >
-              <span ref={this.topRef} className={styles.TopChip}>
-                top
-              </span>
-            </PieceLI>
-            {pieces.map((p, idx) => {
-              return (
-                <PieceLI key={idx + p.id}>
-                  <ReactHoverObserver>
-                    <PieceItem
-                      piece={p}
-                      idx={idx}
-                      currentTaskId={taskId}
-                      editAccess={editAccess}
-                      handleDeleteButtonClicked={this.handleDeleteButtonClicked}
-                      openScreenshot={this.openScreenshot}
-                    />
-                  </ReactHoverObserver>
-                </PieceLI>
-              );
-            })}
-            <PieceLI
-              style={{
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center'
-              }}
-            >
-              <span className={styles.BottomChip}>end</span>
-            </PieceLI>
-            <PieceLI
-              style={{
-                height: '400px'
-              }}
-            />
-          </PiecesUL>
+          {pieces.length !== 0 ? (
+            <PiecesUL>
+              <PieceLI
+                style={{
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center'
+                }}
+              >
+                <span ref={this.topRef} className={styles.TopChip}>
+                  top
+                </span>
+              </PieceLI>
+              {pieces.map((p, idx) => {
+                return (
+                  <PieceLI key={idx + p.id}>
+                    <ReactHoverObserver>
+                      <PieceItem
+                        piece={p}
+                        idx={idx}
+                        currentTaskId={taskId}
+                        editAccess={editAccess}
+                        handleDeleteButtonClicked={
+                          this.handleDeleteButtonClicked
+                        }
+                        openScreenshot={this.openScreenshot}
+                      />
+                    </ReactHoverObserver>
+                  </PieceLI>
+                );
+              })}
+              <PieceLI
+                style={{
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center'
+                }}
+              >
+                <span className={styles.BottomChip}>end</span>
+              </PieceLI>
+              <PieceLI
+                style={{
+                  height: '400px'
+                }}
+              />
+            </PiecesUL>
+          ) : null}
         </PiecesContainer>
 
         {/* snackbar */}
