@@ -99,10 +99,6 @@ class CommentItem extends Component {
     );
   };
 
-  cancelCommentItemEditClickedHandler = () => {
-    this.setState({ editingCommentItem: false });
-  };
-
   handleClick = event => {
     this.setState({ anchorEl: event.currentTarget });
   };
@@ -143,29 +139,14 @@ class CommentItem extends Component {
                 <Textarea
                   inputRef={tag => (this.textarea = tag)}
                   minRows={1}
-                  maxRows={3}
+                  maxRows={4}
                   placeholder={'Add a comment'}
                   value={this.state.commentItemContent}
                   onKeyDown={this.keyPress}
+                  onBlur={() => this.saveCommentItemClickedHandler(item.id)}
                   onChange={e => this.handleCommentItemInputChange(e)}
                   className={classesInCSS.Textarea}
                 />
-              </div>
-              <div className={classesInCSS.TextareaActionSection}>
-                <ActionButton
-                  color="primary"
-                  size="small"
-                  onClick={() => this.saveCommentItemClickedHandler(item.id)}
-                >
-                  Save
-                </ActionButton>
-                <ActionButton
-                  color="secondary"
-                  size="small"
-                  onClick={() => this.cancelCommentItemEditClickedHandler()}
-                >
-                  Cancel
-                </ActionButton>
               </div>
             </div>
           ) : (

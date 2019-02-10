@@ -1,5 +1,5 @@
 .CommentItem {
-  margin: 2px 0px 2px 0px;
+  margin: 0px;
   padding-left: 4px;
   padding-right: 0px;
   padding-bottom: 1px;
@@ -54,8 +54,9 @@
 .CommentContent {
   font-size: 12px;
   font-weight: 300;
+  margin-bottom: 3px;
   color: black;
-  white-space: pre;
+  white-space: pre-wrap;
 }
 
 .CommentItemEditContainer {
@@ -73,25 +74,24 @@
 .Textarea {
   display: block;
   box-sizing: border-box;
-  width: 100%;
+  width: 98%;
   resize: none;
   overflow: auto;
 
-  font-size: 13px;
+  font-size: 12px;
   padding: 3px 4px;
 
-  border: 1px solid #ced4da;
+  border: 1px solid rgb(226, 226, 226);
   border-radius: 4px;
-  color: #495057;
+  color: #000;
   background: transparent !important;
 }
 
 .Textarea:focus {
   color: #35383a;
   background-color: #fff !important;
-  border-color: #80bdff;
-  outline: 0;
-  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+  border-color: rgb(17, 100, 224);
+  outline: none;
 }
 
 .TextareaActionSection {
