@@ -15,6 +15,7 @@ import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 
 import PieceItem from './PieceItem/PieceItem';
+import ScreenshotModal from './ScreenshotModal/ScreenshotModal';
 
 const PiecesContainer = styled.div`
   margin: 5px 0px;
@@ -142,6 +143,11 @@ class PiecesView extends Component {
     }, 500);
   };
 
+  openScreenshot = imageDataUrl => {
+    ScreenshotModal.setDataSource(imageDataUrl);
+    ScreenshotModal.toggleModalOpen();
+  };
+
   render() {
     let { pieces, taskId, editAccess } = this.state;
     let { classes } = this.props;
@@ -171,6 +177,7 @@ class PiecesView extends Component {
                       currentTaskId={taskId}
                       editAccess={editAccess}
                       handleDeleteButtonClicked={this.handleDeleteButtonClicked}
+                      openScreenshot={this.openScreenshot}
                     />
                   </ReactHoverObserver>
                 </PieceLI>
@@ -240,6 +247,9 @@ class PiecesView extends Component {
             </IconButton>
           ]}
         />
+
+        {/* Screenshot Modal */}
+        <ScreenshotModal />
       </React.Fragment>
     );
   }

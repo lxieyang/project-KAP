@@ -212,6 +212,11 @@ class PieceItem extends Component {
     });
   };
 
+  // screenshot
+  screenshotImageClickedHandler = pieceId => {
+    this.props.openScreenshot(this.state.screenshot.imageDataUrl);
+  };
+
   // comment
   addCommentClickedHandler = () => {
     this.setState({

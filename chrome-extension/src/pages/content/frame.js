@@ -36,7 +36,7 @@ const containerClass = css({
   borderRadius: '3px',
   transform: 'translateX(115%)',
   transition: 'transform .25s cubic-bezier(0, 0, 0.3, 1)',
-  zIndex: 10000
+  zIndex: 1290
 });
 
 const containerVisibleClass = css({
