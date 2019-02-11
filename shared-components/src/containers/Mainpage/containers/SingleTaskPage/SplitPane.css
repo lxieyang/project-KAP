@@ -11,7 +11,7 @@
 }
 
 :global(.Resizer:hover) {
-  -webkit-transition: all 2s ease;
+  -webkit-transition: all 0.2s ease;
   transition: all 0.2s ease;
 }
 
@@ -40,6 +40,8 @@
 :global(.Resizer.vertical:hover) {
   border-left: 5px solid rgba(0, 0, 0, 0.5);
   border-right: 5px solid rgba(0, 0, 0, 0.5);
+  /* border-left: 5px solid rgba(255, 0, 0, 0.5);
+  border-right: 5px solid rgba(255, 0, 0, 0.5); */
 }
 
 :global(.Resizer.disabled) {

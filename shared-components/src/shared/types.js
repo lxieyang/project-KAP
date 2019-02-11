@@ -8,3 +8,8 @@ export const PIECE_TYPES = {
   option: 2,
   criterion: 3
 };
+
+export const WORKSPACE_TYPES = {
+  more: -1,
+  table: 1
+};

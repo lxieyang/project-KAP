@@ -8,7 +8,6 @@ import fasListUl from '@fortawesome/fontawesome-free-solid/faListUl';
 import fasFlagCheckered from '@fortawesome/fontawesome-free-solid/faFlagCheckered';
 import fasBookmark from '@fortawesome/fontawesome-free-solid/faBookmark';
 import LinesEllipsis from 'react-lines-ellipsis';
-import ContentEditable from 'react-contenteditable';
 
 import { withStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
@@ -133,11 +132,6 @@ class PieceItem extends Component {
     // comment
     commentCount: 0
   };
-
-  constructor(props) {
-    super(props);
-    this.contentEditable = React.createRef();
-  }
 
   componentDidMount() {
     this.keyPress = this.keyPress.bind(this);
