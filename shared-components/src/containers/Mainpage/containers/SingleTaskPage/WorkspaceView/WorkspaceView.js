@@ -13,6 +13,7 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 
 import CreateNewWorkspace from './CreateNewWorkspace/CreateNewWorkspace';
+import TableView from './Structures/TableView/TableView';
 
 const workspaces = [
   {
@@ -23,16 +24,16 @@ const workspaces = [
     updateDate: new Date().getTime(),
     trashed: false,
     content: {}
-  },
-  {
-    id: 'test-table-002',
-    type: WORKSPACE_TYPES.table,
-    name: 'Comparison table 2',
-    creationDate: new Date().getTime(),
-    updateDate: new Date().getTime(),
-    trashed: false,
-    content: {}
   }
+  // {
+  //   id: 'test-table-002',
+  //   type: WORKSPACE_TYPES.table,
+  //   name: 'Comparison table 2',
+  //   creationDate: new Date().getTime(),
+  //   updateDate: new Date().getTime(),
+  //   trashed: false,
+  //   content: {}
+  // }
 ];
 
 const WorkspaceContainer = styled.div`
@@ -59,8 +60,16 @@ const StyledTab = withStyles({
 
 class WorkspaceView extends Component {
   state = {
-    tabIdx: workspaces.length === 0 ? 0 : 1
+    tabIdx: 0,
+
+    workspaces: []
   };
+
+  componentDidMount() {
+    setTimeout(() => {
+      this.setState({ workspaces, tabIdx: workspaces.length !== 0 ? 1 : 0 });
+    }, 1000);
+  }
 
   handleTabChange = (event, tabIdx) => {
     this.setState({ tabIdx });
@@ -81,7 +90,7 @@ class WorkspaceView extends Component {
             onChange={this.handleTabChange}
           >
             <StyledTab icon={<AddIcon />} style={{ minWidth: '40px' }} />
-            {workspaces.map((workspace, idx) => {
+            {this.state.workspaces.map((workspace, idx) => {
               let workspaceIcon = <TableLarge />;
               switch (workspace.type) {
                 case WORKSPACE_TYPES.table:
@@ -108,27 +117,24 @@ class WorkspaceView extends Component {
               );
             })}
           </Tabs>
-          <WorkspaceContentContainer>
-            {tabIdx === 0 ? (
+
+          {tabIdx === 0 ? (
+            <WorkspaceContentContainer>
               <CreateNewWorkspace />
-            ) : (
-              <React.Fragment>
-                <div
-                  style={{
-                    backgroundImage: 'linear-gradient(-90deg, red, yellow)',
-                    width: '2000px',
-                    height: '5000px',
-                    display: 'inline-block'
-                  }}
-                />
-                <div
-                  style={{
-                    height: '50px'
-                  }}
-                />
+            </WorkspaceContentContainer>
+          ) : null}
+
+          {this.state.workspaces.map((workspace, idx) => {
+            return (
+              <React.Fragment key={idx}>
+                {tabIdx === idx + 1 ? (
+                  <WorkspaceContentContainer>
+                    <TableView idx={idx + 1} workspace={workspace} />
+                  </WorkspaceContentContainer>
+                ) : null}
               </React.Fragment>
-            )}
-          </WorkspaceContentContainer>
+            );
+          })}
         </WorkspaceContainer>
       </React.Fragment>
     );
