@@ -13,3 +13,10 @@ export const WORKSPACE_TYPES = {
   more: -1,
   table: 1
 };
+
+export const TABLE_CELL_TYPES = {
+  topLeft: 0,
+  columnHeader: 1,
+  rowHeader: 2,
+  regularCell: 3
+};

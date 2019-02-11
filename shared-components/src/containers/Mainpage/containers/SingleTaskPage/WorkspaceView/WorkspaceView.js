@@ -1,39 +1,40 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
 import { withRouter } from 'react-router-dom';
-import { matchPath } from 'react-router';
+import { getTaskIdFromPath } from '../matchPath';
 import { WORKSPACE_TYPES } from '../../../../../shared/types';
 import * as FirestoreManager from '../../../../../firebase/firestore_wrapper';
 import styles from './WorkspaceView.css';
 
+import LinesEllipsis from 'react-lines-ellipsis';
 import { withStyles } from '@material-ui/core/styles';
 import AddIcon from '@material-ui/icons/Add';
-import { TableLarge } from 'mdi-material-ui';
+import { TableLarge, Close } from 'mdi-material-ui';
+import IconButton from '@material-ui/core/IconButton';
+import Tooltip from '@material-ui/core/Tooltip';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
+
+import Textarea from 'react-textarea-autosize';
+import AutosizeInput from 'react-input-autosize';
 
 import CreateNewWorkspace from './CreateNewWorkspace/CreateNewWorkspace';
 import TableView from './Structures/TableView/TableView';
 
-const workspaces = [
+const fakeWorkspaces = [
   {
     id: 'test-table-001',
-    type: WORKSPACE_TYPES.table,
+    workspaceType: WORKSPACE_TYPES.table,
     name: 'Comparison table 1',
+    creator: 'dummy',
     creationDate: new Date().getTime(),
     updateDate: new Date().getTime(),
     trashed: false,
-    content: {}
+    references: {
+      task: 'task-01'
+    },
+    data: []
   }
-  // {
-  //   id: 'test-table-002',
-  //   type: WORKSPACE_TYPES.table,
-  //   name: 'Comparison table 2',
-  //   creationDate: new Date().getTime(),
-  //   updateDate: new Date().getTime(),
-  //   trashed: false,
-  //   content: {}
-  // }
 ];
 
 const WorkspaceContainer = styled.div`
@@ -54,86 +55,168 @@ const WorkspaceContentContainer = styled.div`
 
 const StyledTab = withStyles({
   label: {
-    textTransform: 'capitalize'
+    textTransform: 'capitalize',
+    overflow: 'hidden'
   }
 })(Tab);
 
 class WorkspaceView extends Component {
   state = {
-    tabIdx: 0,
+    activeWorkspaceId: '0',
 
-    workspaces: []
+    workspaces: [],
+    workspaceLoading: true
   };
 
   componentDidMount() {
-    setTimeout(() => {
-      this.setState({ workspaces, tabIdx: workspaces.length !== 0 ? 1 : 0 });
-    }, 1000);
+    // setTimeout(() => {
+    //   this.setState({ workspaces, tabIdx: workspaces.length !== 0 ? 1 : 0 });
+    // }, 1000);
+    let taskId = getTaskIdFromPath(this.props.history.location.pathname);
+    this.unsubscribeWorkspaces = FirestoreManager.getAllWorkspacesInTask(taskId)
+      .orderBy('creationDate', 'asc')
+      .onSnapshot(querySnapshot => {
+        let workspaces = [];
+        querySnapshot.forEach(snapshot => {
+          workspaces.push({
+            id: snapshot.id,
+            ...snapshot.data()
+          });
+        });
+
+        let activeWorkspaceId = this.state.activeWorkspaceId;
+        if (this.isWorkspaceStillPresent(workspaces, activeWorkspaceId)) {
+          // not going to change
+          this.setState({ workspaces });
+        } else {
+          if (workspaces.length > 0) {
+            // set to last one created
+            this.setState({
+              workspaces,
+              activeWorkspaceId: workspaces[workspaces.length - 1].id
+            });
+          } else {
+            // set to '0'
+            this.setState({ workspaces, activeWorkspaceId: '0' });
+          }
+        }
+      });
   }
 
-  handleTabChange = (event, tabIdx) => {
-    this.setState({ tabIdx });
+  isWorkspaceStillPresent = (workspaces, activeWorkspaceId) => {
+    if (activeWorkspaceId === '0') {
+      return false;
+    }
+    for (let i = 0; i < workspaces.length; i++) {
+      if (workspaces[i].id === activeWorkspaceId) {
+        return true;
+      }
+    }
+    return false;
+  };
+
+  handleTabChange = (event, activeWorkspaceId) => {
+    this.setState({ activeWorkspaceId });
+  };
+
+  deleteWorkspace = (workspaceId, workspaceName) => {
+    if (window.confirm(`Are you sure you want to delete "${workspaceName}"?`)) {
+      // add "undo" later, permanently delete for now
+      FirestoreManager.deleteWorkspaceById(workspaceId);
+    }
   };
 
   render() {
-    let { tabIdx } = this.state;
-
+    const { activeWorkspaceId } = this.state;
     return (
       <React.Fragment>
         <WorkspaceContainer>
-          <Tabs
-            value={tabIdx}
-            indicatorColor="primary"
-            textColor="primary"
-            variant="scrollable"
-            scrollButtons="auto"
-            onChange={this.handleTabChange}
-          >
-            <StyledTab icon={<AddIcon />} style={{ minWidth: '40px' }} />
-            {this.state.workspaces.map((workspace, idx) => {
-              let workspaceIcon = <TableLarge />;
-              switch (workspace.type) {
-                case WORKSPACE_TYPES.table:
-                  workspaceIcon = <TableLarge />;
-                  break;
-                default:
-                  break;
-              }
-              return (
-                <StyledTab
-                  key={`${workspace.id}-${idx}`}
-                  label={
-                    <div
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center'
-                      }}
-                    >
-                      {workspaceIcon} {workspace.name}
-                    </div>
-                  }
-                />
-              );
-            })}
-          </Tabs>
+          <div ref={tag => (this.tabs = tag)}>
+            <Tabs
+              value={activeWorkspaceId}
+              indicatorColor="primary"
+              textColor="primary"
+              variant="scrollable"
+              scrollButtons="auto"
+              onChange={this.handleTabChange}
+            >
+              <StyledTab
+                value={'0'}
+                icon={<AddIcon />}
+                style={{ minWidth: '40px' }}
+              />
+              {this.state.workspaces.map((workspace, idx) => {
+                let workspaceIcon = <TableLarge />;
+                let workspaceTypeString = 'table';
+                switch (workspace.type) {
+                  case WORKSPACE_TYPES.table:
+                    workspaceIcon = <TableLarge />;
+                    workspaceTypeString = 'table';
+                    break;
+                  default:
+                    break;
+                }
+                return (
+                  <StyledTab
+                    value={workspace.id}
+                    style={{ maxWidth: '370px' }}
+                    key={`${workspace.id}-${idx}`}
+                    label={
+                      <div
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center'
+                        }}
+                      >
+                        {workspaceIcon}{' '}
+                        <div
+                          title={workspace.name}
+                          className={styles.WorkspaceName}
+                        >
+                          {workspace.name}
+                        </div>
+                        <div
+                          title={`Delete this ${workspaceTypeString}`}
+                          onClick={() =>
+                            this.deleteWorkspace(workspace.id, workspace.name)
+                          }
+                        >
+                          <Close className={styles.CloseButton} />
+                        </div>
+                      </div>
+                    }
+                  />
+                );
+              })}
+            </Tabs>
+          </div>
 
-          {tabIdx === 0 ? (
-            <WorkspaceContentContainer>
+          {activeWorkspaceId === '0' ? (
+            <WorkspaceContentContainer className="workspace-content-container">
               <CreateNewWorkspace />
             </WorkspaceContentContainer>
           ) : null}
 
           {this.state.workspaces.map((workspace, idx) => {
-            return (
-              <React.Fragment key={idx}>
-                {tabIdx === idx + 1 ? (
-                  <WorkspaceContentContainer>
-                    <TableView idx={idx + 1} workspace={workspace} />
-                  </WorkspaceContentContainer>
-                ) : null}
-              </React.Fragment>
-            );
+            let retVal = null;
+            switch (workspace.workspaceType) {
+              case WORKSPACE_TYPES.table:
+                retVal = (
+                  <React.Fragment key={idx}>
+                    {activeWorkspaceId === workspace.id ? (
+                      <WorkspaceContentContainer className="workspace-content-container">
+                        <TableView workspace={workspace} />
+                      </WorkspaceContentContainer>
+                    ) : null}
+                  </React.Fragment>
+                );
+                break;
+              // add other types of workspace here
+              default:
+                break;
+            }
+            return retVal;
           })}
         </WorkspaceContainer>
       </React.Fragment>

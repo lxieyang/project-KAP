@@ -7,14 +7,15 @@ import styles from './TableView.css';
 
 class TableView extends Component {
   state = {
-    workspace: this.props.workspace
+    workspaceId: this.props.workspace.id
   };
 
   render() {
+    let { workspace } = this.props;
     return (
       <React.Fragment>
         <div className={styles.TableViewContainer}>
-          Table view {this.state.workspace.id}
+          Table view {workspace.name}
         </div>
       </React.Fragment>
     );

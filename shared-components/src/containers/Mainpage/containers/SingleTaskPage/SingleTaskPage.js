@@ -45,7 +45,7 @@ class SingleTaskPage extends Component {
             split="vertical"
             minSize={200}
             defaultSize={320}
-            maxSize={420}
+            maxSize={700}
             pane2Style={{ width: '100%' }}
           >
             <div className={styles.LeftPane}>

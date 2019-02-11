@@ -15,3 +15,5 @@ export const getCurrentUserCurrentTaskId = () => {
 export * from './wrappers/user_functions';
 export * from './wrappers/task_functions';
 export * from './wrappers/piece_functions';
+export * from './wrappers/table_functions';
+export * from './wrappers/workspace_functions';

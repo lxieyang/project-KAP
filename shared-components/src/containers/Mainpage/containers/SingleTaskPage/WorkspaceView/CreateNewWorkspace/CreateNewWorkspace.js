@@ -113,8 +113,14 @@ class CreateNewWorkspace extends Component {
     this.textarea.blur();
     let type = options[this.state.selectedIndex].type;
     let name = this.state.workspaceName;
-    if (type !== WORKSPACE_TYPES.more && name !== null && name !== '') {
-      console.log(`Should create ${name} of type ${type}`);
+    if (type !== WORKSPACE_TYPES.more && name !== null) {
+      // console.log(`Should create ${name} of type ${type}`);
+      FirestoreManager.createNewTable({
+        name,
+        type
+      }).then(id => {
+        // console.log(id);
+      });
       this.setState({ workspaceName: '' });
     }
   };
@@ -178,9 +184,9 @@ class CreateNewWorkspace extends Component {
                   maxRows={6}
                   placeholder={`Name your ${
                     options[this.state.selectedIndex].shortName
-                  }! [Hit 'Enter' to create]`}
+                  }!`}
                   value={workspaceName}
-                  onKeyDown={this.keyPress}
+                  // onKeyDown={this.keyPress}
                   onChange={e => this.handleWorkspaceNameInputChange(e)}
                   className={classesInCSS.Textarea}
                 />
