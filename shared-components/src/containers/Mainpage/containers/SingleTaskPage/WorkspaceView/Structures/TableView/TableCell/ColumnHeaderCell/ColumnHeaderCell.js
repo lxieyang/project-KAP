@@ -37,20 +37,25 @@ class ColumnHeaderCell extends Component {
   };
 
   render() {
-    let { classes, cell } = this.props;
+    let { classes, cell, editAccess } = this.props;
+
+    let deleteColumnActionContainer = editAccess ? (
+      <div className={styles.DeleteColumnIconContainer}>
+        <Tooltip title="Delete this column" placement={'top'}>
+          <IconButton
+            aria-label="Delete"
+            className={classes.iconButtons}
+            onClick={() => this.deleteTableColumnByIndex()}
+          >
+            <DeleteIcon className={classes.iconInIconButtons} />
+          </IconButton>
+        </Tooltip>
+      </div>
+    ) : null;
+
     return (
       <th className={styles.ColumnHeaderCellContainer}>
-        <div className={styles.DeleteColumnIconContainer}>
-          <Tooltip title="Delete this column" placement={'top'}>
-            <IconButton
-              aria-label="Delete"
-              className={classes.iconButtons}
-              onClick={() => this.deleteTableColumnByIndex()}
-            >
-              <DeleteIcon className={classes.iconInIconButtons} />
-            </IconButton>
-          </Tooltip>
-        </div>
+        {deleteColumnActionContainer}
         <div>{cell.id}</div>
       </th>
     );

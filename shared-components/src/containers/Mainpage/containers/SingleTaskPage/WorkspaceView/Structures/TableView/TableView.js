@@ -128,14 +128,16 @@ class TableView extends Component {
             />
           );
         })}
-        <th>
-          <div
-            className={styles.CreateNewButton}
-            onClick={e => this.createNewTableColumn(e)}
-          >
-            create new criterion
-          </div>
-        </th>
+        {editAccess ? (
+          <th>
+            <div
+              className={styles.CreateNewButton}
+              onClick={e => this.createNewTableColumn(e)}
+            >
+              create new criterion
+            </div>
+          </th>
+        ) : null}
       </tr>
     );
 
@@ -159,40 +161,23 @@ class TableView extends Component {
                       columnIndex={indexInRow}
                     />
                   );
-                  // return (
-                  //   <td key={`${idx}-${indexInRow}`}>
-                  //     {indexInRow === 0 ? (
-                  //       <div
-                  //         style={{
-                  //           position: 'absolute',
-                  //           left: '-20px',
-                  //           top: '5px',
-                  //           cursor: 'pointer',
-                  //           fontWeight: 500
-                  //         }}
-                  //         onClick={e => this.deleteTableRowByIndex(e, idx)}
-                  //       >
-                  //         x
-                  //       </div>
-                  //     ) : null}
-                  //     <div>{cellId}</div>
-                  //   </td>
-                  // );
                 })}
               </tr>
             );
           }
         })}
-        <tr>
-          <td>
-            <div
-              className={styles.CreateNewButton}
-              onClick={e => this.createNewTableRow(e)}
-            >
-              create new option
-            </div>
-          </td>
-        </tr>
+        {editAccess ? (
+          <tr>
+            <td>
+              <div
+                className={styles.CreateNewButton}
+                onClick={e => this.createNewTableRow(e)}
+              >
+                create new option
+              </div>
+            </td>
+          </tr>
+        ) : null}
       </React.Fragment>
     );
 
