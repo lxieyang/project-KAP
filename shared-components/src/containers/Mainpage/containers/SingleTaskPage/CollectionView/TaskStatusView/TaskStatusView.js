@@ -38,7 +38,10 @@ class TaskStatusView extends Component {
     taskNameEdit: '',
 
     // task editing privilege
-    editAccess: false
+    editAccess: false,
+
+    // author detail
+    author: null
   };
 
   componentDidMount() {
@@ -53,6 +56,20 @@ class TaskStatusView extends Component {
             taskNameEdit: task.name,
             editAccess: task.creator === FirestoreManager.getCurrentUserId()
           });
+
+          FirestoreManager.getUserProfileById(task.creator)
+            .get()
+            .then(doc => {
+              if (doc.exists) {
+                let user = doc.data();
+                this.setState({
+                  author: {
+                    displayName: user.displayName,
+                    photoURL: user.photoURL
+                  }
+                });
+              }
+            });
         }
       }
     );
@@ -91,11 +108,33 @@ class TaskStatusView extends Component {
   };
 
   render() {
-    const { task, taskNameEdit, editAccess } = this.state;
+    const { task, taskNameEdit, editAccess, author } = this.state;
     const { classes } = this.props;
 
     if (task === null) {
       return null;
+    }
+
+    if (!editAccess) {
+      return (
+        <React.Fragment>
+          <div
+            className={styles.ReviewingTaskContainer}
+            style={{
+              backgroundColor: THEME_COLOR.reviewingTaskBackgroundColor
+            }}
+          >
+            <div className={styles.ReviewingTaskNameContainer}>{task.name}</div>
+            {author ? (
+              <div className={styles.ReviewingTaskAuthorContainer}>
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                  Created by {author.displayName}
+                </div>
+              </div>
+            ) : null}
+          </div>
+        </React.Fragment>
+      );
     }
 
     return (

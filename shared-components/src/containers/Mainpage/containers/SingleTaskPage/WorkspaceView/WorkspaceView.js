@@ -4,12 +4,13 @@ import { withRouter } from 'react-router-dom';
 import { getTaskIdFromPath } from '../matchPath';
 import { WORKSPACE_TYPES } from '../../../../../shared/types';
 import * as FirestoreManager from '../../../../../firebase/firestore_wrapper';
+import Spinner from '../../../../../components/UI/Spinner/Spinner';
 import styles from './WorkspaceView.css';
 
 import LinesEllipsis from 'react-lines-ellipsis';
 import { withStyles } from '@material-ui/core/styles';
 import AddIcon from '@material-ui/icons/Add';
-import { TableLarge, Close } from 'mdi-material-ui';
+import { TableLarge, Close, Cancel } from 'mdi-material-ui';
 import IconButton from '@material-ui/core/IconButton';
 import Tooltip from '@material-ui/core/Tooltip';
 import Tabs from '@material-ui/core/Tabs';
@@ -65,7 +66,11 @@ class WorkspaceView extends Component {
     activeWorkspaceId: '0',
 
     workspaces: [],
-    workspaceLoading: true
+    workspacesLoading: true,
+
+    // edit access
+    taskId: '',
+    editAccess: false
   };
 
   componentDidMount() {
@@ -73,6 +78,17 @@ class WorkspaceView extends Component {
     //   this.setState({ workspaces, tabIdx: workspaces.length !== 0 ? 1 : 0 });
     // }, 1000);
     let taskId = getTaskIdFromPath(this.props.history.location.pathname);
+    this.unsubscribeTaskId = FirestoreManager.getTaskById(taskId).onSnapshot(
+      snapshot => {
+        if (snapshot.exists) {
+          this.setState({
+            taskId,
+            editAccess:
+              snapshot.data().creator === FirestoreManager.getCurrentUserId()
+          });
+        }
+      }
+    );
     this.unsubscribeWorkspaces = FirestoreManager.getAllWorkspacesInTask(taskId)
       .orderBy('creationDate', 'asc')
       .onSnapshot(querySnapshot => {
@@ -87,20 +103,30 @@ class WorkspaceView extends Component {
         let activeWorkspaceId = this.state.activeWorkspaceId;
         if (this.isWorkspaceStillPresent(workspaces, activeWorkspaceId)) {
           // not going to change
-          this.setState({ workspaces });
+          this.setState({ workspaces, workspacesLoading: false });
         } else {
           if (workspaces.length > 0) {
             // set to last one created
             this.setState({
               workspaces,
-              activeWorkspaceId: workspaces[workspaces.length - 1].id
+              activeWorkspaceId: workspaces[workspaces.length - 1].id,
+              workspacesLoading: false
             });
           } else {
             // set to '0'
-            this.setState({ workspaces, activeWorkspaceId: '0' });
+            this.setState({
+              workspaces,
+              activeWorkspaceId: '0',
+              workspacesLoading: false
+            });
           }
         }
       });
+  }
+
+  componentWillUnmount() {
+    this.unsubscribeTaskId();
+    this.unsubscribeWorkspaces();
   }
 
   isWorkspaceStillPresent = (workspaces, activeWorkspaceId) => {
@@ -127,7 +153,24 @@ class WorkspaceView extends Component {
   };
 
   render() {
-    const { activeWorkspaceId } = this.state;
+    const { activeWorkspaceId, editAccess, workspacesLoading } = this.state;
+
+    if (workspacesLoading) {
+      return (
+        <div
+          style={{
+            width: '100%',
+            height: '400px',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center'
+          }}
+        >
+          <Spinner size={'30px'} />
+        </div>
+      );
+    }
+
     return (
       <React.Fragment>
         <WorkspaceContainer>
@@ -141,8 +184,9 @@ class WorkspaceView extends Component {
               onChange={this.handleTabChange}
             >
               <StyledTab
+                disabled={!editAccess ? true : false}
                 value={'0'}
-                icon={<AddIcon />}
+                icon={editAccess ? <AddIcon /> : null}
                 style={{ minWidth: '40px' }}
               />
               {this.state.workspaces.map((workspace, idx) => {
@@ -159,7 +203,7 @@ class WorkspaceView extends Component {
                 return (
                   <StyledTab
                     value={workspace.id}
-                    style={{ maxWidth: '370px' }}
+                    // style={{ maxWidth: '370px' }}
                     key={`${workspace.id}-${idx}`}
                     label={
                       <div
@@ -176,14 +220,16 @@ class WorkspaceView extends Component {
                         >
                           {workspace.name}
                         </div>
-                        <div
-                          title={`Delete this ${workspaceTypeString}`}
-                          onClick={() =>
-                            this.deleteWorkspace(workspace.id, workspace.name)
-                          }
-                        >
-                          <Close className={styles.CloseButton} />
-                        </div>
+                        {editAccess ? (
+                          <div
+                            title={`Delete this ${workspaceTypeString}`}
+                            onClick={() =>
+                              this.deleteWorkspace(workspace.id, workspace.name)
+                            }
+                          >
+                            <Close className={styles.CloseButton} />
+                          </div>
+                        ) : null}
                       </div>
                     }
                   />
@@ -194,7 +240,10 @@ class WorkspaceView extends Component {
 
           {activeWorkspaceId === '0' ? (
             <WorkspaceContentContainer className="workspace-content-container">
-              <CreateNewWorkspace />
+              <CreateNewWorkspace
+                editAccess={editAccess}
+                taskId={this.state.taskId}
+              />
             </WorkspaceContentContainer>
           ) : null}
 
@@ -206,7 +255,10 @@ class WorkspaceView extends Component {
                   <React.Fragment key={idx}>
                     {activeWorkspaceId === workspace.id ? (
                       <WorkspaceContentContainer className="workspace-content-container">
-                        <TableView workspace={workspace} />
+                        <TableView
+                          workspace={workspace}
+                          editAccess={editAccess}
+                        />
                       </WorkspaceContentContainer>
                     ) : null}
                   </React.Fragment>

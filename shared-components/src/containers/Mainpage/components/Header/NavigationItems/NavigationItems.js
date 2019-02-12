@@ -30,7 +30,7 @@ const navigationItems = props => (
       className={[styles.NavigationItem, styles.ActiveNavigationItem].join(' ')}
     >
       <NavLink to={appRoutes.ALL_TASKS} exact activeClassName={styles.active}>
-        <div className={styles.Label}>All Tasks</div>
+        <div className={styles.Label}>My Tasks</div>
       </NavLink>
     </li>
   </ul>

@@ -117,7 +117,8 @@ class CreateNewWorkspace extends Component {
       // console.log(`Should create ${name} of type ${type}`);
       FirestoreManager.createNewTable({
         name,
-        type
+        type,
+        taskId: this.props.taskId
       }).then(id => {
         // console.log(id);
       });
@@ -127,6 +128,20 @@ class CreateNewWorkspace extends Component {
 
   render() {
     const { workspaceName, anchorEl } = this.state;
+    const { editAccess } = this.props;
+
+    if (!editAccess) {
+      return (
+        <React.Fragment>
+          <CreateNewWorkspacePageContainer>
+            <CreateNewWorkspacePromptContainer>
+              There's no workspace associated with this task yet.
+            </CreateNewWorkspacePromptContainer>
+          </CreateNewWorkspacePageContainer>
+        </React.Fragment>
+      );
+    }
+
     return (
       <React.Fragment>
         <CreateNewWorkspacePageContainer>

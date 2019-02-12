@@ -7,8 +7,13 @@ import styles from './TableView.css';
 
 class TableView extends Component {
   state = {
-    workspaceId: this.props.workspace.id
+    workspaceId: this.props.workspace.id,
+
+    // cells
+    cells: {}
   };
+
+  componentDidMount() {}
 
   render() {
     let { workspace } = this.props;
