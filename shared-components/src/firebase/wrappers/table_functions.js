@@ -6,18 +6,16 @@ import {
   getCurrentUserCurrentTaskId,
   updateTaskUpdateTime,
   updateCurrentTaskUpdateTime,
-  getCurrentUser
+  getCurrentUser,
+  getWorkspaceById
 } from '../firestore_wrapper';
 import moment from 'moment';
 
-export const getAllWorkspacesInTask = taskId => {
-  return db
-    .collection('workspaces')
-    .where('references.task', '==', taskId)
-    .where('trashed', '==', false);
+export const getAllTableCellsInTableById = tableId => {
+  return getWorkspaceById(tableId).collection('cells');
 };
 
-export const createNewTableCell = async (
+export const createNewTableCell = (
   tableId,
   tableCellType = TABLE_CELL_TYPES.regularCell
 ) => {
@@ -26,10 +24,58 @@ export const createNewTableCell = async (
     .doc(tableId)
     .collection('cells')
     .doc();
-  await ref.set({
+  ref.set({
     type: tableCellType
   });
   return ref.id;
+};
+
+export const createNewRowInTable = async tableId => {
+  let tableRows = (await db
+    .collection('workspaces')
+    .doc(tableId)
+    .get()).data().data;
+
+  let numCols = tableRows[0].data.length;
+  let row = [];
+  for (let i = 0; i < numCols; i++) {
+    let cell;
+    if (i === 0) {
+      cell = createNewTableCell(tableId, TABLE_CELL_TYPES.rowHeader);
+    } else if (i > 0) {
+      cell = createNewTableCell(tableId, TABLE_CELL_TYPES.regularCell);
+    }
+    row.push(cell);
+  }
+  tableRows.push({ data: row });
+  updateTableData(tableId, tableRows);
+};
+
+export const createNewColumnInTable = async tableId => {
+  let tableRows = (await db
+    .collection('workspaces')
+    .doc(tableId)
+    .get()).data().data;
+
+  let numRows = tableRows.length;
+  for (let i = 0; i < numRows; i++) {
+    let cell;
+    if (i === 0) {
+      cell = createNewTableCell(tableId, TABLE_CELL_TYPES.columnHeader);
+    } else if (i > 0) {
+      cell = createNewTableCell(tableId, TABLE_CELL_TYPES.regularCell);
+    }
+    tableRows[i].data.push(cell);
+  }
+  updateTableData(tableId, tableRows);
+};
+
+export const updateTableData = (tableId, tableRows) => {
+  db.collection('workspaces')
+    .doc(tableId)
+    .update({
+      data: tableRows
+    });
 };
 
 export const createNewTable = async ({ name, creatorId, taskId }) => {
@@ -48,16 +94,16 @@ export const createNewTable = async ({ name, creatorId, taskId }) => {
       let cell;
       if (i === 0 && j === 0) {
         // top left
-        cell = await createNewTableCell(ref.id, TABLE_CELL_TYPES.topLeft);
+        cell = createNewTableCell(ref.id, TABLE_CELL_TYPES.topLeft);
       } else if (i === 0 && j > 0) {
         // column header
-        cell = await createNewTableCell(ref.id, TABLE_CELL_TYPES.columnHeader);
+        cell = createNewTableCell(ref.id, TABLE_CELL_TYPES.columnHeader);
       } else if (i > 0 && j === 0) {
         // row header
-        cell = await createNewTableCell(ref.id, TABLE_CELL_TYPES.rowHeader);
+        cell = createNewTableCell(ref.id, TABLE_CELL_TYPES.rowHeader);
       } else if (i > 0 && j > 0) {
         // regular cell
-        cell = await createNewTableCell(ref.id, TABLE_CELL_TYPES.regularCell);
+        cell = createNewTableCell(ref.id, TABLE_CELL_TYPES.regularCell);
       }
       row.push(cell);
     }
@@ -82,4 +128,14 @@ export const createNewTable = async ({ name, creatorId, taskId }) => {
 
   await ref.set(table);
   return ref.id;
+};
+
+export const deleteTableById = async tableId => {
+  getWorkspaceById(tableId).delete();
+  let querySnapshot = await getAllTableCellsInTableById(tableId).get();
+  for (let i = 0; i < querySnapshot.docs.length; i++) {
+    getAllTableCellsInTableById(tableId)
+      .doc(querySnapshot.docs[i].id)
+      .delete();
+  }
 };

@@ -145,10 +145,10 @@ class WorkspaceView extends Component {
     this.setState({ activeWorkspaceId });
   };
 
-  deleteWorkspace = (workspaceId, workspaceName) => {
+  deleteWorkspace = (workspaceId, workspaceName, workspaceType) => {
     if (window.confirm(`Are you sure you want to delete "${workspaceName}"?`)) {
       // add "undo" later, permanently delete for now
-      FirestoreManager.deleteWorkspaceById(workspaceId);
+      FirestoreManager.deleteWorkspaceById(workspaceId, workspaceType);
     }
   };
 
@@ -224,7 +224,11 @@ class WorkspaceView extends Component {
                           <div
                             title={`Delete this ${workspaceTypeString}`}
                             onClick={() =>
-                              this.deleteWorkspace(workspace.id, workspace.name)
+                              this.deleteWorkspace(
+                                workspace.id,
+                                workspace.name,
+                                workspace.workspaceType
+                              )
                             }
                           >
                             <Close className={styles.CloseButton} />
@@ -257,6 +261,7 @@ class WorkspaceView extends Component {
                       <WorkspaceContentContainer className="workspace-content-container">
                         <TableView
                           workspace={workspace}
+                          workspaceTypeString={'table'}
                           editAccess={editAccess}
                         />
                       </WorkspaceContentContainer>

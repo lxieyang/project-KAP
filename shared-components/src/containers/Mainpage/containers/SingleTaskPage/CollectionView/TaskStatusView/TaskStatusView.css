@@ -12,6 +12,7 @@
 
 .TaskNameContainer {
   flex: 1;
+  font-size: 18px;
 }
 
 .Textarea {
@@ -37,7 +38,7 @@
 
 .Textarea:focus {
   color: #35383a;
-  font-weight: 400;
+  font-weight: 500;
   background-color: #fff;
   border-color: rgb(17, 100, 224);
   outline: none;

@@ -2,3 +2,84 @@
   box-sizing: border-box;
   margin: 10px;
 }
+
+.TableNameContainer {
+  font-size: 15px;
+  font-weight: 500;
+  max-width: 400px;
+}
+
+.Textarea {
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  resize: none;
+  font-size: inherit;
+  font-weight: 500;
+  overflow: auto;
+
+  padding: 6px 8px;
+
+  border: 1px solid transparent;
+  border-radius: 8px;
+  color: #000;
+  background: transparent !important;
+}
+
+.Textarea:hover {
+  border-color: rgb(226, 226, 226);
+}
+
+.Textarea:focus {
+  color: #35383a;
+  font-weight: 500;
+  background-color: #fff;
+  border-color: rgb(17, 100, 224);
+  outline: none;
+}
+
+/* 
+ * 
+ *
+ *
+ Table Content */
+.TableContentContainer {
+}
+
+table.ComparisonTable {
+  border-collapse: collapse;
+  margin: 0px 0px;
+  font-size: 14px;
+}
+
+.ComparisonTable th {
+  font-weight: 500;
+  position: sticky;
+  top: 0;
+  vertical-align: bottom;
+  z-index: 44;
+  padding: 3px 3px;
+  border: 1px solid lightgray;
+}
+
+.ComparisonTable tr {
+  /* border-bottom: 1px solid #ddd; */
+}
+
+/* .ComparisonTable th, */
+.ComparisonTable td {
+  padding: 3px 3px;
+  text-align: left;
+  border: 1px solid lightgray;
+}
+
+.CreateNewButton {
+  cursor: pointer;
+  font-weight: 500;
+  opacity: 0.5;
+  transition: all 0.1s ease-in;
+}
+
+.CreateNewButton:hover {
+  opacity: 1;
+}
