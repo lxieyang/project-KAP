@@ -9,7 +9,7 @@ import { withStyles } from '@material-ui/core/styles';
 import IconButton from '@material-ui/core/IconButton';
 import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
-import { ViewGrid, Star, StarOutline } from 'mdi-material-ui';
+import { ViewGrid, Star, StarOutline, OpenInNew } from 'mdi-material-ui';
 import Tooltip from '@material-ui/core/Tooltip';
 import Button from '@material-ui/core/Button';
 import Snackbar from '@material-ui/core/Snackbar';
@@ -42,7 +42,7 @@ const TaskSwitcherContainer = styled.div`
   /* background-color: #ccc; */
   box-sizing: border-box;
   width: 100%;
-  padding: 0px 10px;
+  padding: 0px 5px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -224,6 +224,18 @@ class TaskSwitcher extends Component {
     return (
       <React.Fragment>
         <TaskSwitcherContainer>
+          <Tooltip title="Open Task Detail Page" placement={'bottom'}>
+            <a
+              href={`https://unakite-v2.firebaseapp.com/tasks/${
+                currentTask.value
+              }`}
+              target="__blank"
+            >
+              <IconButton aria-label="Open" className={classes.iconButtons}>
+                <OpenInNew className={classes.iconInIconButtons} />
+              </IconButton>
+            </a>
+          </Tooltip>
           <Dropdown
             className={classesInCSS.DropdownRoot}
             controlClassName={classesInCSS.DropdownControl}
@@ -289,9 +301,14 @@ class TaskSwitcher extends Component {
               </IconButton>
             </Tooltip>
             <Tooltip title="All tasks" placement={'bottom'}>
-              <IconButton aria-label="Grid" className={classes.iconButtons}>
-                <ViewGrid className={classes.iconInIconButtons} />
-              </IconButton>
+              <a
+                href={`https://unakite-v2.firebaseapp.com/alltasks`}
+                target="__blank"
+              >
+                <IconButton aria-label="Grid" className={classes.iconButtons}>
+                  <ViewGrid className={classes.iconInIconButtons} />
+                </IconButton>
+              </a>
             </Tooltip>
           </VariousButtonsContainer>
         </TaskSwitcherContainer>
