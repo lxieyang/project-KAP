@@ -6,14 +6,19 @@ export const updateUserProfile = () => {
   let user = getCurrentUser();
   db.collection('users')
     .doc(getCurrentUserId())
-    .update({
-      uid: user.uid,
-      displayName: user.displayName,
-      photoURL: user.photoURL,
-      email: user.email,
-      isAnonymous: user.isAnonymous,
-      providerId: user.providerId
-    });
+    .set(
+      {
+        uid: user.uid,
+        displayName: user.displayName,
+        photoURL: user.photoURL,
+        email: user.email,
+        isAnonymous: user.isAnonymous,
+        providerId: user.providerId
+      },
+      {
+        merge: true
+      }
+    );
 };
 
 export const getUserProfileById = uid => {

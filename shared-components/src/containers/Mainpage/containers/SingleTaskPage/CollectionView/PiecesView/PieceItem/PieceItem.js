@@ -43,6 +43,17 @@ import Spinner from '../../../../../../../components/UI/Spinner/Spinner';
 import Comments from './Comments/Comments';
 import classesInCSS from './PieceItem.css';
 
+// dnd stuff
+import { DragSource, DropTarget } from 'react-dnd';
+import PropTypes from 'prop-types';
+
+const collectDrag = (connect, monitor) => {
+  return {
+    connectDragSource: connect.dragSource(),
+    isDragging: monitor.isDragging()
+  };
+};
+
 const materialStyles = theme => ({
   card: {
     borderRadius: '5px',
@@ -108,6 +119,35 @@ const getHTML = htmls => {
   return { __html: htmlString };
 };
 
+//
+//
+//
+//
+//
+/* drag and drop */
+const dragSource = {
+  beginDrag(props) {
+    console.log(
+      `BEGINNING Dragging piece item [ID: ${props.piece.id}, NAME: ${
+        props.piece.name
+      }]`
+    );
+    return {
+      id: props.piece.id,
+      pieceName: props.piece.name
+    };
+  },
+  canDrag(props, monitor) {
+    return props.editAccess ? true : false;
+  },
+
+  endDrag(props, monitor, component) {
+    // console.log("END DRAGGING")
+    // const item = monitor.getDropResult();
+    // console.log(item);
+  }
+};
+
 class PieceItem extends Component {
   state = {
     expanded: false,
@@ -131,6 +171,12 @@ class PieceItem extends Component {
 
     // comment
     commentCount: 0
+  };
+
+  static propTypes = {
+    // Injected by React DnD:
+    connectDragSource: PropTypes.func.isRequired,
+    isDragging: PropTypes.bool.isRequired
   };
 
   componentDidMount() {
@@ -229,6 +275,8 @@ class PieceItem extends Component {
   };
 
   render() {
+    const { connectDragSource, isDragging } = this.props; // dnd
+
     let { piece, classes, isHovering, editAccess } = this.props;
     const {
       maxScreenshotHeight,
@@ -261,124 +309,125 @@ class PieceItem extends Component {
         break;
     }
 
-    return (
-      <React.Fragment>
-        <Card className={classes.card}>
-          <CardContent
-            style={{ display: 'flex', padding: '0px' }}
-            className={classes.cardContent}
-          >
-            <div>
-              <Avatar
-                aria-label="type"
-                style={{
-                  backgroundColor: color,
-                  width: '28px',
-                  height: '28px',
-                  color: 'white'
-                }}
-                className={classesInCSS.Avatar}
-              >
-                <FontAwesomeIcon
-                  icon={icon}
-                  className={classesInCSS.IconInsideAvatar}
-                />
-              </Avatar>
-            </div>
-
-            <div
-              style={{
-                flex: '1'
-              }}
+    return connectDragSource(
+      <div>
+        <React.Fragment>
+          <Card className={classes.card}>
+            <CardContent
+              style={{ display: 'flex', padding: '0px' }}
+              className={classes.cardContent}
             >
-              {this.state.editingPieceName ? (
-                <div className={classesInCSS.PieceNameEditContainer}>
-                  <div className={classesInCSS.TextAreaContainer}>
-                    <Textarea
-                      inputRef={tag => (this.textarea = tag)}
-                      minRows={1}
-                      maxRows={4}
-                      placeholder={'Add a name'}
-                      value={this.state.pieceName}
-                      onKeyDown={this.keyPress}
-                      onBlur={() => this.savePieceNameClickedHandler()}
-                      onChange={e => this.handlePieceNameInputChange(e)}
-                      className={classesInCSS.Textarea}
-                    />
-                  </div>
-                </div>
-              ) : (
-                <div
-                  title={
-                    (editAccess
-                      ? `Edit `
-                      : this.state.viewPieceNameExpand
-                      ? `Collapse `
-                      : `Expand `) + `${typeText} name`
-                  }
-                  className={classesInCSS.PieceContentBox}
-                  onClick={() => {
-                    if (editAccess) {
-                      this.editPieceNameClickedHandler();
-                    } else {
-                      this.toggleViewPieceNameExpandStatus();
-                    }
+              <div>
+                <Avatar
+                  aria-label="type"
+                  style={{
+                    backgroundColor: color,
+                    width: '28px',
+                    height: '28px',
+                    color: 'white'
                   }}
+                  className={classesInCSS.Avatar}
                 >
-                  {editAccess ? (
-                    <LinesEllipsis
-                      text={piece.name}
-                      maxLine={2}
-                      ellipsis="..."
-                      trimRight
-                      basedOn="words"
-                    />
-                  ) : this.state.viewPieceNameExpand ? (
-                    `${piece.name}`
-                  ) : (
-                    <LinesEllipsis
-                      text={piece.name}
-                      maxLine={2}
-                      ellipsis="..."
-                      trimRight
-                      basedOn="words"
-                    />
-                  )}
-                </div>
-              )}
+                  <FontAwesomeIcon
+                    icon={icon}
+                    className={classesInCSS.IconInsideAvatar}
+                  />
+                </Avatar>
+              </div>
+
               <div
-                className={classesInCSS.InfoActionBar}
                 style={{
-                  opacity: this.state.expanded || isHovering ? '1' : '0.5'
+                  flex: '1'
                 }}
               >
+                {this.state.editingPieceName ? (
+                  <div className={classesInCSS.PieceNameEditContainer}>
+                    <div className={classesInCSS.TextAreaContainer}>
+                      <Textarea
+                        inputRef={tag => (this.textarea = tag)}
+                        minRows={1}
+                        maxRows={4}
+                        placeholder={'Add a name'}
+                        value={this.state.pieceName}
+                        onKeyDown={this.keyPress}
+                        onBlur={() => this.savePieceNameClickedHandler()}
+                        onChange={e => this.handlePieceNameInputChange(e)}
+                        className={classesInCSS.Textarea}
+                      />
+                    </div>
+                  </div>
+                ) : (
+                  <div
+                    title={
+                      (editAccess
+                        ? `Edit `
+                        : this.state.viewPieceNameExpand
+                        ? `Collapse `
+                        : `Expand `) + `${typeText} name`
+                    }
+                    className={classesInCSS.PieceContentBox}
+                    onClick={() => {
+                      if (editAccess) {
+                        this.editPieceNameClickedHandler();
+                      } else {
+                        this.toggleViewPieceNameExpandStatus();
+                      }
+                    }}
+                  >
+                    {editAccess ? (
+                      <LinesEllipsis
+                        text={piece.name}
+                        maxLine={2}
+                        ellipsis="..."
+                        trimRight
+                        basedOn="words"
+                      />
+                    ) : this.state.viewPieceNameExpand ? (
+                      `${piece.name}`
+                    ) : (
+                      <LinesEllipsis
+                        text={piece.name}
+                        maxLine={2}
+                        ellipsis="..."
+                        trimRight
+                        basedOn="words"
+                      />
+                    )}
+                  </div>
+                )}
                 <div
+                  className={classesInCSS.InfoActionBar}
                   style={{
-                    fontSize: '12px',
-                    display: 'flex',
-                    alignItems: 'center'
+                    opacity: this.state.expanded || isHovering ? '1' : '0.5'
                   }}
                 >
-                  {!this.state.expanded ? (
-                    <div style={{ position: 'relative' }}>
-                      <Tooltip title="Make a comment" placement={'top'}>
-                        <IconButton
-                          aria-label="Comment"
-                          className={classes.iconButtons}
-                          onClick={() => this.addCommentClickedHandler()}
+                  <div
+                    style={{
+                      fontSize: '12px',
+                      display: 'flex',
+                      alignItems: 'center'
+                    }}
+                  >
+                    {!this.state.expanded ? (
+                      <div style={{ position: 'relative' }}>
+                        <Tooltip title="Make a comment" placement={'top'}>
+                          <IconButton
+                            aria-label="Comment"
+                            className={classes.iconButtons}
+                            onClick={() => this.addCommentClickedHandler()}
+                          >
+                            <Chat className={classes.iconInIconButtons} />
+                          </IconButton>
+                        </Tooltip>
+                        <span
+                          style={{ color: THEME_COLOR.badgeColor }}
+                          className={classesInCSS.CommentCount}
                         >
-                          <Chat className={classes.iconInIconButtons} />
-                        </IconButton>
-                      </Tooltip>
-                      <span
-                        style={{ color: THEME_COLOR.badgeColor }}
-                        className={classesInCSS.CommentCount}
-                      >
-                        {commentCount > 0 ? commentCount : null}
-                      </span>
-                    </div>
-                  ) : null}
-                  {/*
+                          {commentCount > 0 ? commentCount : null}
+                        </span>
+                      </div>
+                    ) : null}
+                    {/*
                   <Tooltip title={`Edit ${typeText} name`} placement={'top'}>
                     <IconButton
                       aria-label="Edit"
@@ -389,136 +438,147 @@ class PieceItem extends Component {
                     </IconButton>
                   </Tooltip>
                   */}
-                  {editAccess ? (
+                    {editAccess ? (
+                      <Tooltip
+                        title={`Delete this ${typeText}`}
+                        placement={'top'}
+                      >
+                        <IconButton
+                          aria-label="Delete"
+                          className={classes.iconButtons}
+                          onClick={() =>
+                            this.props.handleDeleteButtonClicked(
+                              piece.id,
+                              piece.name
+                            )
+                          }
+                        >
+                          <DeleteIcon className={classes.iconInIconButtons} />
+                        </IconButton>
+                      </Tooltip>
+                    ) : null}
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center' }}>
                     <Tooltip
-                      title={`Delete this ${typeText}`}
+                      title={`${
+                        piece.references.pageTitle
+                      }  ---  Click to open`}
                       placement={'top'}
                     >
-                      <IconButton
-                        aria-label="Delete"
-                        className={classes.iconButtons}
-                        onClick={() =>
-                          this.props.handleDeleteButtonClicked(
-                            piece.id,
-                            piece.name
-                          )
-                        }
-                      >
-                        <DeleteIcon className={classes.iconInIconButtons} />
-                      </IconButton>
-                    </Tooltip>
-                  ) : null}
-                </div>
-                <div style={{ display: 'flex', alignItems: 'center' }}>
-                  <Tooltip
-                    title={`${piece.references.pageTitle}  ---  Click to open`}
-                    placement={'top'}
-                  >
-                    <a
-                      href={piece.references.url}
-                      target="__blank"
-                      className={classesInCSS.SiteIcon}
-                    >
-                      <img
-                        src={GET_FAVICON_URL_PREFIX + piece.references.url}
-                        alt={'favicon'}
+                      <a
+                        href={piece.references.url}
+                        target="__blank"
                         className={classesInCSS.SiteIcon}
-                      />
-                    </a>
-                  </Tooltip>
+                      >
+                        <img
+                          src={GET_FAVICON_URL_PREFIX + piece.references.url}
+                          alt={'favicon'}
+                          className={classesInCSS.SiteIcon}
+                        />
+                      </a>
+                    </Tooltip>
 
-                  <div className={classesInCSS.Moment}>
-                    {piece.creationDate
-                      ? moment(piece.creationDate.toDate()).fromNow()
-                      : null}
+                    <div className={classesInCSS.Moment}>
+                      {piece.creationDate
+                        ? moment(piece.creationDate.toDate()).fromNow()
+                        : null}
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
 
-            <div
-              style={{
-                flexBasis: '24px',
-                marginLeft: 'auto',
-                order: '3',
-                paddingTop: '3px',
-                opacity: isHovering ? '1' : '0.3'
-              }}
-            >
-              <IconButton
-                className={classnames(classes.expand, {
-                  [classes.expandOpen]: this.state.expanded
-                })}
-                onClick={this.handleExpandClick}
-                aria-expanded={this.state.expanded}
-                aria-label="Show more"
+              <div
+                style={{
+                  flexBasis: '24px',
+                  marginLeft: 'auto',
+                  order: '3',
+                  paddingTop: '3px',
+                  opacity: isHovering ? '1' : '0.3'
+                }}
               >
-                <ExpandMoreIcon className={classes.expandIcon} />
-              </IconButton>
-            </div>
-          </CardContent>
+                <IconButton
+                  className={classnames(classes.expand, {
+                    [classes.expandOpen]: this.state.expanded
+                  })}
+                  onClick={this.handleExpandClick}
+                  aria-expanded={this.state.expanded}
+                  aria-label="Show more"
+                >
+                  <ExpandMoreIcon className={classes.expandIcon} />
+                </IconButton>
+              </div>
+            </CardContent>
 
-          {/* Original content in collapse */}
-          <Collapse in={this.state.expanded} timeout="auto">
-            <div className={classesInCSS.CollapseContainer}>
-              {displayingScreenshot ? (
-                screenshotLoading ? (
-                  <div
-                    style={{
-                      width: '100%',
-                      height: '200px',
-                      display: 'flex',
-                      justifyContent: 'space-around',
-                      alignItems: 'center'
-                    }}
-                  >
-                    <Spinner size={'30px'} />
-                  </div>
-                ) : (
-                  <React.Fragment>
+            {/* Original content in collapse */}
+            <Collapse
+              in={this.state.expanded || isDragging}
+              timeout="auto"
+              unmountOnExit
+            >
+              <div className={classesInCSS.CollapseContainer}>
+                {displayingScreenshot ? (
+                  screenshotLoading ? (
                     <div
-                      className={classesInCSS.OriginalScreenshotContainer}
-                      style={{ maxHeight: `${maxScreenshotHeight}px` }}
+                      style={{
+                        width: '100%',
+                        height: '200px',
+                        display: 'flex',
+                        justifyContent: 'space-around',
+                        alignItems: 'center'
+                      }}
                     >
-                      <img
-                        alt={piece.id}
-                        src={screenshot.imageDataUrl}
-                        style={{
-                          height: `${Math.min(
-                            Math.floor(screenshot.dimensions.rectHeight),
-                            maxScreenshotHeight
-                          )}px`
-                        }}
-                        onClick={() =>
-                          this.screenshotImageClickedHandler(piece.id)
-                        }
-                      />
+                      <Spinner size={'30px'} />
                     </div>
-                  </React.Fragment>
-                )
-              ) : (
-                <div className={classesInCSS.OriginalContentContainer}>
-                  <div
-                    className={classesInCSS.HTMLPreview}
-                    dangerouslySetInnerHTML={getHTML(piece.html)}
-                  />
-                </div>
-              )}
-            </div>
-          </Collapse>
+                  ) : (
+                    <React.Fragment>
+                      <div
+                        className={classesInCSS.OriginalScreenshotContainer}
+                        style={{ maxHeight: `${maxScreenshotHeight}px` }}
+                      >
+                        <img
+                          alt={piece.id}
+                          src={screenshot.imageDataUrl}
+                          style={{
+                            height: `${Math.min(
+                              Math.floor(screenshot.dimensions.rectHeight),
+                              maxScreenshotHeight
+                            )}px`
+                          }}
+                          onClick={() =>
+                            this.screenshotImageClickedHandler(piece.id)
+                          }
+                        />
+                      </div>
+                    </React.Fragment>
+                  )
+                ) : (
+                  <div className={classesInCSS.OriginalContentContainer}>
+                    <div
+                      className={classesInCSS.HTMLPreview}
+                      dangerouslySetInnerHTML={getHTML(piece.html)}
+                    />
+                  </div>
+                )}
+              </div>
+            </Collapse>
 
-          <div>
-            <Comments
-              expanded={this.state.expanded}
-              expandPiece={this.expandPiece}
-              pieceId={piece.id}
-              isHovering={isHovering}
-            />
-          </div>
-        </Card>
-      </React.Fragment>
+            <div>
+              <Comments
+                expanded={this.state.expanded}
+                expandPiece={this.expandPiece}
+                pieceId={piece.id}
+                isHovering={isHovering}
+              />
+            </div>
+          </Card>
+        </React.Fragment>
+      </div>
     );
   }
 }
 
-export default withRouter(withStyles(materialStyles)(PieceItem));
+export default withRouter(
+  withStyles(materialStyles)(
+    DragSource('PIECE_ITEM', dragSource, collectDrag)(PieceItem)
+  )
+);

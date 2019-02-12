@@ -18,7 +18,6 @@ import firebase from '../../firebase/firebase';
 import * as FirestoreManager from '../../firebase/firestore_wrapper';
 import { APP_NAME_SHORT, DEFAULT_SETTINGS } from '../../shared/constants';
 
-// @DragDropContext(HTML5Backend)
 class Mainpage extends Component {
   state = {
     authenticated: false,
