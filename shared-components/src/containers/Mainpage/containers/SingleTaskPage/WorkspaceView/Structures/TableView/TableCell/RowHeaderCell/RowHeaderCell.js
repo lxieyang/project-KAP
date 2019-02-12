@@ -9,6 +9,10 @@ import IconButton from '@material-ui/core/IconButton';
 import DeleteIcon from '@material-ui/icons/Delete';
 import Tooltip from '@material-ui/core/Tooltip';
 
+// dnd stuff
+import { DragSource, DropTarget } from 'react-dnd';
+import PropTypes from 'prop-types';
+
 const materialStyles = theme => ({
   iconButtons: {
     padding: '4px'
@@ -20,8 +24,39 @@ const materialStyles = theme => ({
   }
 });
 
+const dropTarget = {
+  canDrop(props, monitor, component) {
+    return true;
+  },
+
+  drop(props, monitor, component) {
+    console.log(`Dropped on cell ${props.cell.id}`);
+    const item = monitor.getItem();
+    console.log(item);
+
+    return {
+      id: props.cell.id
+    };
+  }
+};
+
+const collectDrop = (connect, monitor) => {
+  return {
+    connectDropTarget: connect.dropTarget(),
+    isOver: monitor.isOver(),
+    canDrop: monitor.canDrop()
+  };
+};
+
 class RowHeaderCell extends Component {
   state = {};
+
+  static propTypes = {
+    // Injected by React DnD:
+    connectDropTarget: PropTypes.func.isRequired,
+    isOver: PropTypes.bool.isRequired,
+    canDrop: PropTypes.bool.isRequired
+  };
 
   componentDidMount() {
     // this.unsubscribeCell = FirestoreManager.get
@@ -37,6 +72,7 @@ class RowHeaderCell extends Component {
   };
 
   render() {
+    const { connectDropTarget, canDrop, isOver } = this.props;
     let { classes, cell, editAccess } = this.props;
 
     let deleteRowActionContainer = editAccess ? (
@@ -52,8 +88,12 @@ class RowHeaderCell extends Component {
         </Tooltip>
       </div>
     ) : null;
-    return (
-      <td className={styles.RowHeaderCellContainer}>
+
+    return connectDropTarget(
+      <td
+        className={styles.RowHeaderCellContainer}
+        style={{ backgroundColor: isOver ? '#f8c471' : null }}
+      >
         {deleteRowActionContainer}
         <div>{cell.id}</div>
       </td>
@@ -61,4 +101,6 @@ class RowHeaderCell extends Component {
   }
 }
 
-export default withStyles(materialStyles)(RowHeaderCell);
+export default DropTarget(['PIECE_ITEM'], dropTarget, collectDrop)(
+  withStyles(materialStyles)(RowHeaderCell)
+);

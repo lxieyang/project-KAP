@@ -8,6 +8,7 @@ import fasListUl from '@fortawesome/fontawesome-free-solid/faListUl';
 import fasFlagCheckered from '@fortawesome/fontawesome-free-solid/faFlagCheckered';
 import fasBookmark from '@fortawesome/fontawesome-free-solid/faBookmark';
 import LinesEllipsis from 'react-lines-ellipsis';
+import ClampLines from 'react-clamp-lines';
 
 import { withStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
@@ -46,13 +47,6 @@ import classesInCSS from './PieceItem.css';
 // dnd stuff
 import { DragSource, DropTarget } from 'react-dnd';
 import PropTypes from 'prop-types';
-
-const collectDrag = (connect, monitor) => {
-  return {
-    connectDragSource: connect.dragSource(),
-    isDragging: monitor.isDragging()
-  };
-};
 
 const materialStyles = theme => ({
   card: {
@@ -146,6 +140,13 @@ const dragSource = {
     // const item = monitor.getDropResult();
     // console.log(item);
   }
+};
+
+const collectDrag = (connect, monitor) => {
+  return {
+    connectDragSource: connect.dragSource(),
+    isDragging: monitor.isDragging()
+  };
 };
 
 class PieceItem extends Component {

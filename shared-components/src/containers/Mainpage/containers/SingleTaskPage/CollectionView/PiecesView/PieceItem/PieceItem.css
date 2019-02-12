@@ -24,11 +24,21 @@
   border-radius: 8px;
   border: 1px solid transparent;
   cursor: text;
-  white-space: pre-wrap;
+  /* white-space: pre-wrap; */
 }
 
 .PieceContentBox:hover {
   border-color: rgb(226, 226, 226);
+}
+
+.PieceNameCompactView {
+  height: 1em;
+  line-height: 1em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.PieceNameExpandedView {
 }
 
 .PieceNameEditContainer {
