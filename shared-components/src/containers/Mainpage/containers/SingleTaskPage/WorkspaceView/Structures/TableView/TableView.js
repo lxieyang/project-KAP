@@ -8,6 +8,8 @@ import styles from './TableView.css';
 
 import Textarea from 'react-textarea-autosize';
 
+import TableCell from './TableCell/TableCell';
+
 class TableView extends Component {
   state = {
     workspace: this.props.workspace,
@@ -114,25 +116,16 @@ class TableView extends Component {
     let tableHeaders = (
       <tr>
         {tableRows[0].data.map((cellId, idx) => {
+          let cell = cells[cellId];
           return (
-            <th key={idx}>
-              {idx > 0 ? (
-                <div
-                  style={{
-                    position: 'absolute',
-                    left: '5px',
-                    top: '-20px',
-                    cursor: 'pointer',
-                    fontWeight: 500
-                  }}
-                  onClick={e => this.deleteTableColumnByIndex(e, idx)}
-                >
-                  x
-                </div>
-              ) : null}
-
-              <div>{cellId}</div>
-            </th>
+            <TableCell
+              key={idx}
+              workspace={workspace}
+              editAccess={editAccess}
+              cell={cell}
+              rowIndex={0}
+              columnIndex={idx}
+            />
           );
         })}
         <th>
@@ -155,25 +148,36 @@ class TableView extends Component {
             return (
               <tr key={idx}>
                 {row.data.map((cellId, indexInRow) => {
+                  let cell = cells[cellId];
                   return (
-                    <td key={`${idx}-${indexInRow}`}>
-                      {indexInRow === 0 ? (
-                        <div
-                          style={{
-                            position: 'absolute',
-                            left: '-20px',
-                            top: '5px',
-                            cursor: 'pointer',
-                            fontWeight: 500
-                          }}
-                          onClick={e => this.deleteTableRowByIndex(e, idx)}
-                        >
-                          x
-                        </div>
-                      ) : null}
-                      <div>{cellId}</div>
-                    </td>
+                    <TableCell
+                      key={`${idx}-${indexInRow}`}
+                      workspace={workspace}
+                      editAccess={editAccess}
+                      cell={cell}
+                      rowIndex={idx}
+                      columnIndex={indexInRow}
+                    />
                   );
+                  // return (
+                  //   <td key={`${idx}-${indexInRow}`}>
+                  //     {indexInRow === 0 ? (
+                  //       <div
+                  //         style={{
+                  //           position: 'absolute',
+                  //           left: '-20px',
+                  //           top: '5px',
+                  //           cursor: 'pointer',
+                  //           fontWeight: 500
+                  //         }}
+                  //         onClick={e => this.deleteTableRowByIndex(e, idx)}
+                  //       >
+                  //         x
+                  //       </div>
+                  //     ) : null}
+                  //     <div>{cellId}</div>
+                  //   </td>
+                  // );
                 })}
               </tr>
             );

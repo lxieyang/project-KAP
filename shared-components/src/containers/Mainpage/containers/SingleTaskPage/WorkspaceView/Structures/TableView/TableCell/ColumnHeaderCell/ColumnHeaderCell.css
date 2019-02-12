@@ -1,0 +1,24 @@
+.ColumnHeaderCellContainer {
+  font-weight: 500;
+  position: relative;
+}
+
+.DeleteColumnIconContainer {
+  position: absolute;
+  top: -25px;
+  left: 0px;
+  right: 0px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.DeleteColumnIcon {
+  cursor: pointer;
+  opacity: 0.3;
+  transition: all 0.15s ease-in;
+}
+
+.DeleteColumnIcon:hover {
+  opacity: 1;
+}

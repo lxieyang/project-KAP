@@ -1,0 +1,15 @@
+.RowHeaderCellContainer {
+  font-weight: 500;
+  height: 50px;
+  position: relative;
+}
+
+.DeleteColumnIconContainer {
+  position: absolute;
+  top: 0px;
+  left: -25px;
+  bottom: 0px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

@@ -59,12 +59,14 @@ export const createNewRowInTable = async tableId => {
 export const deleteRowInTableByIndex = async (tableId, toDeleteRowIdx) => {
   let tableRows = (await getWorkspaceById(tableId).get()).data().data;
 
-  let toDeleteRow = tableRows[toDeleteRowIdx].data;
-  for (let i = 0; i < toDeleteRow.length; i++) {
-    deleteTableCellById(tableId, toDeleteRow[i]);
-  }
+  let toDeleteCellIds = [...tableRows[toDeleteRowIdx].data];
   tableRows.splice(toDeleteRowIdx, 1);
-  updateTableData(tableId, tableRows);
+  updateTableData(tableId, tableRows).then(() => {
+    // then delete the actual cells in the "cells" collection
+    toDeleteCellIds.forEach(cellId => {
+      deleteTableCellById(tableId, cellId);
+    });
+  });
 };
 
 export const deleteColumnInTableByIndex = async (
@@ -73,11 +75,17 @@ export const deleteColumnInTableByIndex = async (
 ) => {
   let tableRows = (await getWorkspaceById(tableId).get()).data().data;
 
+  let toDeleteCellIds = [];
   for (let i = 0; i < tableRows.length; i++) {
-    deleteTableCellById(tableId, tableRows[i].data[toDeleteColumnIdx]);
+    toDeleteCellIds.push(tableRows[i].data[toDeleteColumnIdx]);
     tableRows[i].data.splice(toDeleteColumnIdx, 1);
   }
-  updateTableData(tableId, tableRows);
+  updateTableData(tableId, tableRows).then(() => {
+    // then delete the actual cells in the "cells" collection
+    toDeleteCellIds.forEach(cellId => {
+      deleteTableCellById(tableId, cellId);
+    });
+  });
 };
 
 export const createNewColumnInTable = async tableId => {
@@ -100,7 +108,8 @@ export const createNewColumnInTable = async tableId => {
 };
 
 export const updateTableData = (tableId, tableRows) => {
-  db.collection('workspaces')
+  return db
+    .collection('workspaces')
     .doc(tableId)
     .update({
       data: tableRows
