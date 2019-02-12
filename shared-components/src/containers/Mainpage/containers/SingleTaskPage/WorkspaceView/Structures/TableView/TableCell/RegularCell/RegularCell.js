@@ -21,6 +21,8 @@ const dropTarget = {
     const item = monitor.getItem();
     console.log(item);
 
+    component.addPieceToThisCell(item.id);
+
     return {
       id: props.cell.id
     };
@@ -36,7 +38,9 @@ const collectDrop = (connect, monitor) => {
 };
 
 class RegularCell extends Component {
-  state = {};
+  state = {
+    pieces: []
+  };
 
   static propTypes = {
     // Injected by React DnD:
@@ -45,17 +49,34 @@ class RegularCell extends Component {
     canDrop: PropTypes.bool.isRequired
   };
 
-  componentDidMount() {
-    // this.unsubscribeCell = FirestoreManager.get
-  }
-
-  componentWillUnmount() {}
+  addPieceToThisCell = pieceId => {
+    FirestoreManager.addPieceToTableCellById(
+      this.props.workspace.id,
+      this.props.cell.id,
+      pieceId
+    );
+  };
 
   render() {
     const { connectDropTarget, canDrop, isOver } = this.props;
-    let { cell } = this.props;
+    let { cell, pieces } = this.props;
+
+    if (cell === null || pieces === null) {
+      return <td />;
+    }
+
     return connectDropTarget(
-      <td style={{ backgroundColor: isOver ? '#f5b7b1' : null }}>{cell.id}</td>
+      <td style={{ backgroundColor: isOver ? '#f5b7b1' : null }}>
+        {cell.id}
+        <br />
+        {cell.pieces.map((p, idx) => {
+          return (
+            <div key={`${p.pieceId}-${idx}`}>
+              {idx + 1} * {pieces[p.pieceId].name} * {p.rating}
+            </div>
+          );
+        })}
+      </td>
     );
   }
 }

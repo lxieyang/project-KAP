@@ -20,3 +20,9 @@ export const TABLE_CELL_TYPES = {
   rowHeader: 2,
   regularCell: 3
 };
+
+export const RATING_TYPES = {
+  noRating: -1,
+  positive: 1,
+  negative: 2
+};

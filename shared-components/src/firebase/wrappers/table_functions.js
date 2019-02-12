@@ -1,5 +1,9 @@
 import firebase from '../firebase';
-import { WORKSPACE_TYPES, TABLE_CELL_TYPES } from '../../shared/types';
+import {
+  WORKSPACE_TYPES,
+  TABLE_CELL_TYPES,
+  RATING_TYPES
+} from '../../shared/types';
 import {
   db,
   getCurrentUserId,
@@ -29,13 +33,34 @@ export const createNewTableCell = (
     .collection('cells')
     .doc();
   ref.set({
-    type: tableCellType
+    type: tableCellType,
+    pieces: []
   });
   return ref.id;
 };
 
 export const deleteTableCellById = (tableId, cellId) => {
   getTableCellById(tableId, cellId).delete();
+};
+
+export const updatePiecesTableCellById = (tableId, cellId, pieces) => {
+  return getTableCellById(tableId, cellId).update({
+    pieces
+  });
+};
+
+export const addPieceToTableCellById = async (
+  tableId,
+  cellId,
+  pieceId,
+  rating = RATING_TYPES.noRating
+) => {
+  let pieces = (await getTableCellById(tableId, cellId).get()).data().pieces;
+  pieces.push({
+    pieceId: pieceId,
+    rating: rating
+  });
+  updatePiecesTableCellById(tableId, cellId, pieces);
 };
 
 export const createNewRowInTable = async tableId => {

@@ -127,8 +127,7 @@ const dragSource = {
       }]`
     );
     return {
-      id: props.piece.id,
-      pieceName: props.piece.name
+      id: props.piece.id
     };
   },
   canDrag(props, monitor) {

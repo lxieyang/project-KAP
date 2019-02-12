@@ -121,6 +121,7 @@ class TableView extends Component {
             <TableCell
               key={idx}
               workspace={workspace}
+              pieces={this.props.pieces}
               editAccess={editAccess}
               cell={cell}
               rowIndex={0}
@@ -154,6 +155,7 @@ class TableView extends Component {
                   return (
                     <TableCell
                       key={`${idx}-${indexInRow}`}
+                      pieces={this.props.pieces}
                       workspace={workspace}
                       editAccess={editAccess}
                       cell={cell}

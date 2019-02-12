@@ -68,15 +68,15 @@ class WorkspaceView extends Component {
     workspaces: [],
     workspacesLoading: true,
 
+    // pieces
+    pieces: null,
+
     // edit access
     taskId: '',
     editAccess: false
   };
 
   componentDidMount() {
-    // setTimeout(() => {
-    //   this.setState({ workspaces, tabIdx: workspaces.length !== 0 ? 1 : 0 });
-    // }, 1000);
     let taskId = getTaskIdFromPath(this.props.history.location.pathname);
     this.unsubscribeTaskId = FirestoreManager.getTaskById(taskId).onSnapshot(
       snapshot => {
@@ -89,6 +89,20 @@ class WorkspaceView extends Component {
         }
       }
     );
+
+    this.unsubscribePieces = FirestoreManager.getAllPiecesInTask(
+      taskId
+    ).onSnapshot(querySnapshot => {
+      let pieces = {};
+      querySnapshot.forEach(snapshot => {
+        pieces[snapshot.id] = {
+          id: snapshot.id,
+          ...snapshot.data()
+        };
+      });
+      this.setState({ pieces });
+    });
+
     this.unsubscribeWorkspaces = FirestoreManager.getAllWorkspacesInTask(taskId)
       .orderBy('creationDate', 'asc')
       .onSnapshot(querySnapshot => {
@@ -126,6 +140,7 @@ class WorkspaceView extends Component {
 
   componentWillUnmount() {
     this.unsubscribeTaskId();
+    this.unsubscribePieces();
     this.unsubscribeWorkspaces();
   }
 
@@ -260,6 +275,7 @@ class WorkspaceView extends Component {
                     {activeWorkspaceId === workspace.id ? (
                       <WorkspaceContentContainer className="workspace-content-container">
                         <TableView
+                          pieces={this.state.pieces}
                           workspace={workspace}
                           workspaceTypeString={'table'}
                           editAccess={editAccess}
