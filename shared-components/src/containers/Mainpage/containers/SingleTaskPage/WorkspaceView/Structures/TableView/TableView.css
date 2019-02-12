@@ -44,12 +44,18 @@
  *
  Table Content */
 .TableContentContainer {
+  margin: 20px;
 }
 
 table.ComparisonTable {
   border-collapse: collapse;
   margin: 0px 0px;
   font-size: 14px;
+}
+
+.ComparisonTable th,
+.ComparisonTable td {
+  position: relative;
 }
 
 .ComparisonTable th {

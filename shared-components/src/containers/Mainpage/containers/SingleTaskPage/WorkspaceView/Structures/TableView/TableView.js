@@ -73,6 +73,20 @@ class TableView extends Component {
     FirestoreManager.createNewRowInTable(this.props.workspace.id);
   };
 
+  deleteTableRowByIndex = (event, toDeleteRowIdx) => {
+    FirestoreManager.deleteRowInTableByIndex(
+      this.props.workspace.id,
+      toDeleteRowIdx
+    );
+  };
+
+  deleteTableColumnByIndex = (event, toDeleteColumnIdx) => {
+    FirestoreManager.deleteColumnInTableByIndex(
+      this.props.workspace.id,
+      toDeleteColumnIdx
+    );
+  };
+
   render() {
     let { workspace, editAccess, workspaceTypeString } = this.props;
     const { cells, workspaceNameEdit } = this.state;
@@ -100,7 +114,26 @@ class TableView extends Component {
     let tableHeaders = (
       <tr>
         {tableRows[0].data.map((cellId, idx) => {
-          return <th key={idx}>{cellId}</th>;
+          return (
+            <th key={idx}>
+              {idx > 0 ? (
+                <div
+                  style={{
+                    position: 'absolute',
+                    left: '5px',
+                    top: '-20px',
+                    cursor: 'pointer',
+                    fontWeight: 500
+                  }}
+                  onClick={e => this.deleteTableColumnByIndex(e, idx)}
+                >
+                  x
+                </div>
+              ) : null}
+
+              <div>{cellId}</div>
+            </th>
+          );
         })}
         <th>
           <div
@@ -122,7 +155,25 @@ class TableView extends Component {
             return (
               <tr key={idx}>
                 {row.data.map((cellId, indexInRow) => {
-                  return <td key={`${idx}-${indexInRow}`}>{cellId}</td>;
+                  return (
+                    <td key={`${idx}-${indexInRow}`}>
+                      {indexInRow === 0 ? (
+                        <div
+                          style={{
+                            position: 'absolute',
+                            left: '-20px',
+                            top: '5px',
+                            cursor: 'pointer',
+                            fontWeight: 500
+                          }}
+                          onClick={e => this.deleteTableRowByIndex(e, idx)}
+                        >
+                          x
+                        </div>
+                      ) : null}
+                      <div>{cellId}</div>
+                    </td>
+                  );
                 })}
               </tr>
             );
