@@ -26,6 +26,9 @@ const materialStyles = theme => ({
 
 const dropTarget = {
   canDrop(props, monitor, component) {
+    if (!props.editAccess) {
+      return false;
+    }
     return true;
   },
 

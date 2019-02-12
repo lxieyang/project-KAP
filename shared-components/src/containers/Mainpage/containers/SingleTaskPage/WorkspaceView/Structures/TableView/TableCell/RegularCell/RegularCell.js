@@ -10,6 +10,9 @@ import PropTypes from 'prop-types';
 
 const dropTarget = {
   canDrop(props, monitor, component) {
+    if (!props.editAccess) {
+      return false;
+    }
     return true;
   },
 
