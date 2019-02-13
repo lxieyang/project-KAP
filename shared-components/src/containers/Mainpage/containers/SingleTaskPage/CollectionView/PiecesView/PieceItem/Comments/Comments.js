@@ -106,16 +106,19 @@ class Comments extends Component {
       </div>
     );
 
-    let compactView = (
-      <React.Fragment>
-        <div
-          className={classesInCSS.CommentBox}
-          style={{ opacity: isHovering ? '1' : '0.5' }}
-        >
-          {CommentList}
-        </div>
-      </React.Fragment>
-    );
+    let compactView =
+      this.props.cellType === undefined ? (
+        <React.Fragment>
+          <div
+            className={classesInCSS.CommentBox}
+            style={{
+              opacity: isHovering ? '1' : '0.5'
+            }}
+          >
+            {CommentList}
+          </div>
+        </React.Fragment>
+      ) : null;
 
     let expandedView = (
       <React.Fragment>

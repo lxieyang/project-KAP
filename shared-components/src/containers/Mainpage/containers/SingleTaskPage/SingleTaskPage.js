@@ -14,6 +14,7 @@ import * as FirestoreManager from '../../../../firebase/firestore_wrapper';
 
 import SplitPane from 'react-split-pane';
 import './SplitPane.css';
+import './ContextMenu.css';
 import CollectionView from './CollectionView/CollectionView';
 import WorkspaceView from './WorkspaceView/WorkspaceView';
 

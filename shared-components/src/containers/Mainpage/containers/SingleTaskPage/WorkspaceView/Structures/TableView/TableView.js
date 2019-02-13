@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
+import ReactHoverObserver from 'react-hover-observer';
 import { withRouter } from 'react-router-dom';
 import { matchPath } from 'react-router';
 import * as FirestoreManager from '../../../../../../../firebase/firestore_wrapper';
@@ -126,6 +127,7 @@ class TableView extends Component {
               cell={cell}
               rowIndex={0}
               columnIndex={idx}
+              openScreenshot={this.props.openScreenshot}
             />
           );
         })}
@@ -161,6 +163,7 @@ class TableView extends Component {
                       cell={cell}
                       rowIndex={idx}
                       columnIndex={indexInRow}
+                      openScreenshot={this.props.openScreenshot}
                     />
                   );
                 })}

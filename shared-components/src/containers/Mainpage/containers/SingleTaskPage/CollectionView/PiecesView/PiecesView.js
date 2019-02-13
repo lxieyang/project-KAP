@@ -15,7 +15,7 @@ import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 
 import PieceItem from './PieceItem/PieceItem';
-import ScreenshotModal from './ScreenshotModal/ScreenshotModal';
+import ScreenshotModal from '../../ScreenshotModal/ScreenshotModal';
 
 const PiecesContainer = styled.div`
   margin: 5px 0px;

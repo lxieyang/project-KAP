@@ -1,6 +1,16 @@
-.ColumnHeaderCellContainer {
-  font-weight: 500;
+.ColumnHeaderCell {
   position: relative;
+}
+
+.ColumnHeaderCellContainer {
+  box-sizing: border-box;
+  min-width: 150px;
+  min-height: 60px;
+  padding: 10px 10px;
+  font-weight: 500;
+
+  transition: all 0.15s ease-in;
+  /* border-top: none !important; */
 }
 
 .DeleteColumnIconContainer {

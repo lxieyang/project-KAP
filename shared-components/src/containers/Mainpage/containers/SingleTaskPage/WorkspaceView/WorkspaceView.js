@@ -22,6 +22,8 @@ import AutosizeInput from 'react-input-autosize';
 import CreateNewWorkspace from './CreateNewWorkspace/CreateNewWorkspace';
 import TableView from './Structures/TableView/TableView';
 
+import ScreenshotModal from '../ScreenshotModal/ScreenshotModal';
+
 const fakeWorkspaces = [
   {
     id: 'test-table-001',
@@ -167,6 +169,11 @@ class WorkspaceView extends Component {
     }
   };
 
+  openScreenshot = imageDataUrl => {
+    ScreenshotModal.setDataSource(imageDataUrl);
+    ScreenshotModal.toggleModalOpen();
+  };
+
   render() {
     const { activeWorkspaceId, editAccess, workspacesLoading } = this.state;
 
@@ -279,6 +286,7 @@ class WorkspaceView extends Component {
                           workspace={workspace}
                           workspaceTypeString={'table'}
                           editAccess={editAccess}
+                          openScreenshot={this.openScreenshot}
                         />
                       </WorkspaceContentContainer>
                     ) : null}
@@ -292,6 +300,9 @@ class WorkspaceView extends Component {
             return retVal;
           })}
         </WorkspaceContainer>
+
+        {/* Screenshot Modal */}
+        <ScreenshotModal />
       </React.Fragment>
     );
   }

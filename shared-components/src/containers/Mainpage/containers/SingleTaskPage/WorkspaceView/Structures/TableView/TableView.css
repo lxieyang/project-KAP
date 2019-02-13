@@ -59,11 +59,7 @@ table.ComparisonTable {
 }
 
 .ComparisonTable th {
-  font-weight: 500;
-  position: sticky;
-  top: 0;
-  vertical-align: bottom;
-  z-index: 44;
+  text-align: left;
   padding: 3px 3px;
   border: 1px solid rgb(228, 228, 228);
 }

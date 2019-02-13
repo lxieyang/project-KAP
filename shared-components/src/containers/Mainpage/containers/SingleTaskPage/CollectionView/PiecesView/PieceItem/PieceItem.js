@@ -36,7 +36,8 @@ import Textarea from 'react-textarea-autosize';
 import * as FirestoreManager from '../../../../../../../firebase/firestore_wrapper';
 import {
   PIECE_TYPES,
-  ANNOTATION_TYPES
+  ANNOTATION_TYPES,
+  TABLE_CELL_TYPES
 } from '../../../../../../../shared/types';
 import { PIECE_COLOR, THEME_COLOR } from '../../../../../../../shared/theme';
 import { GET_FAVICON_URL_PREFIX } from '../../../../../../../shared/constants';
@@ -121,13 +122,12 @@ const getHTML = htmls => {
 /* drag and drop */
 const dragSource = {
   beginDrag(props) {
-    console.log(
-      `BEGINNING Dragging piece item [ID: ${props.piece.id}, NAME: ${
-        props.piece.name
-      }]`
-    );
     return {
-      id: props.piece.id
+      id: props.piece.id,
+      cellId: props.cellId,
+      cellType: props.cellType,
+      rowIndex: props.rowIndex,
+      columnIndex: props.columnIndex
     };
   },
   canDrag(props, monitor) {
@@ -438,7 +438,7 @@ class PieceItem extends Component {
                     </IconButton>
                   </Tooltip>
                   */}
-                    {editAccess ? (
+                    {editAccess && this.props.cellId === undefined ? (
                       <Tooltip
                         title={`Delete this ${typeText}`}
                         placement={'top'}
@@ -511,7 +511,11 @@ class PieceItem extends Component {
 
             {/* Original content in collapse */}
             <Collapse
-              in={this.state.expanded || isDragging}
+              in={
+                this.state.expanded ||
+                (isDragging && this.props.cellType === undefined) ||
+                this.props.cellType === TABLE_CELL_TYPES.rowHeader
+              }
               timeout="auto"
               unmountOnExit
             >
@@ -568,6 +572,8 @@ class PieceItem extends Component {
                 expandPiece={this.expandPiece}
                 pieceId={piece.id}
                 isHovering={isHovering}
+                cellId={this.props.cellId}
+                cellType={this.props.cellType}
               />
             </div>
           </Card>

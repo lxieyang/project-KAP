@@ -63,6 +63,27 @@ export const addPieceToTableCellById = async (
   updatePiecesTableCellById(tableId, cellId, pieces);
 };
 
+export const deletePieceInTableCellById = async (tableId, cellId, pieceId) => {
+  let pieces = (await getTableCellById(tableId, cellId).get()).data().pieces;
+  pieces = pieces.filter(p => p.pieceId !== pieceId);
+  updatePiecesTableCellById(tableId, cellId, pieces);
+};
+
+export const resetPieceInTableCellById = async (
+  tableId,
+  cellId,
+  pieceId,
+  rating = RATING_TYPES.noRating
+) => {
+  let pieces = [
+    {
+      pieceId: pieceId,
+      rating: rating
+    }
+  ];
+  updatePiecesTableCellById(tableId, cellId, pieces);
+};
+
 export const createNewRowInTable = async tableId => {
   let tableRows = (await getWorkspaceById(tableId).get()).data().data;
 
@@ -94,6 +115,25 @@ export const deleteRowInTableByIndex = async (tableId, toDeleteRowIdx) => {
   });
 };
 
+export const createNewColumnInTable = async tableId => {
+  let tableRows = (await db
+    .collection('workspaces')
+    .doc(tableId)
+    .get()).data().data;
+
+  let numRows = tableRows.length;
+  for (let i = 0; i < numRows; i++) {
+    let cell;
+    if (i === 0) {
+      cell = createNewTableCell(tableId, TABLE_CELL_TYPES.columnHeader);
+    } else if (i > 0) {
+      cell = createNewTableCell(tableId, TABLE_CELL_TYPES.regularCell);
+    }
+    tableRows[i].data.push(cell);
+  }
+  updateTableData(tableId, tableRows);
+};
+
 export const deleteColumnInTableByIndex = async (
   tableId,
   toDeleteColumnIdx
@@ -113,21 +153,24 @@ export const deleteColumnInTableByIndex = async (
   });
 };
 
-export const createNewColumnInTable = async tableId => {
-  let tableRows = (await db
-    .collection('workspaces')
-    .doc(tableId)
-    .get()).data().data;
+export const switchRowsInTable = async (tableId, rowIndex1, rowIndex2) => {
+  let tableRows = (await getWorkspaceById(tableId).get()).data().data;
+  let row1Data = [...tableRows[rowIndex1].data];
+  tableRows[rowIndex1].data = tableRows[rowIndex2].data;
+  tableRows[rowIndex2].data = row1Data;
+  updateTableData(tableId, tableRows);
+};
 
-  let numRows = tableRows.length;
-  for (let i = 0; i < numRows; i++) {
-    let cell;
-    if (i === 0) {
-      cell = createNewTableCell(tableId, TABLE_CELL_TYPES.columnHeader);
-    } else if (i > 0) {
-      cell = createNewTableCell(tableId, TABLE_CELL_TYPES.regularCell);
-    }
-    tableRows[i].data.push(cell);
+export const switchColumnsInTable = async (
+  tableId,
+  columnIndex1,
+  columnIndex2
+) => {
+  let tableRows = (await getWorkspaceById(tableId).get()).data().data;
+  for (let i = 0; i < tableRows.length; i++) {
+    let column1Data = tableRows[i].data[columnIndex1];
+    tableRows[i].data[columnIndex1] = tableRows[i].data[columnIndex2];
+    tableRows[i].data[columnIndex2] = column1Data;
   }
   updateTableData(tableId, tableRows);
 };

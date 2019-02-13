@@ -111,7 +111,7 @@ export const addScreenshotToPieceById = async (
 //
 /* piece type */
 export const switchPieceType = (pieceId, originalType, newType) => {
-  if (originalType !== newType) {
+  if (originalType === null || originalType !== newType) {
     getPieceById(pieceId)
       .update({
         pieceType: newType,
