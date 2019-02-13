@@ -125,7 +125,7 @@ class ColumnHeaderCell extends Component {
       pieceId
     );
 
-    // change type to option
+    // change type to criterion
     this.changePieceType(pieceId);
   };
 
@@ -176,10 +176,7 @@ class ColumnHeaderCell extends Component {
           {cell.pieces.map((p, idx) => {
             return (
               <React.Fragment key={`${p.pieceId}-${idx}`}>
-                <ContextMenuTrigger
-                  id={`${cell.id}-context-menu`}
-                  holdToDisplay={1000}
-                >
+                <ContextMenuTrigger id={`${cell.id}-context-menu`}>
                   <div
                     style={{
                       width: '300px',

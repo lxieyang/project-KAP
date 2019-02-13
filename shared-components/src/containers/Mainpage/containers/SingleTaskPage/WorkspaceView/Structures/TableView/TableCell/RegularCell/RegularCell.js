@@ -1,10 +1,16 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
+import { sortBy } from 'lodash';
 import styles from './RegularCell.css';
+import ReactHoverObserver from 'react-hover-observer';
+import ThumbV1 from '../../../../../../../../../components/UI/Thumbs/ThumbV1/ThumbV1';
 
 import PieceItem from '../../../../../CollectionView/PiecesView/PieceItem/PieceItem';
-
+import RatingLayer from './RatingLayer/RatingLayer';
 import * as FirestoreManager from '../../../../../../../../../firebase/firestore_wrapper';
+import { RATING_TYPES } from '../../../../../../../../../shared/types';
+import ReactTooltip from 'react-tooltip';
+import { ContextMenu, MenuItem, ContextMenuTrigger } from 'react-contextmenu';
 
 // dnd stuff
 import { DragSource, DropTarget } from 'react-dnd';
@@ -12,31 +18,7 @@ import PropTypes from 'prop-types';
 
 const dropTarget = {
   canDrop(props, monitor, component) {
-    // can't drop if no edit access
-    if (!props.editAccess) {
-      return false;
-    }
-
-    // can't drop if already exist
-    const item = monitor.getItem();
-    const pieces = props.cell.pieces.map(p => p.pieceId);
-    if (pieces.indexOf(item.id) !== -1) {
-      return false;
-    }
-
     return true;
-  },
-
-  drop(props, monitor, component) {
-    console.log(`Dropped on cell ${props.cell.id}`);
-    const item = monitor.getItem();
-    console.log(item);
-
-    component.addPieceToThisCell(item.id);
-
-    return {
-      id: props.cell.id
-    };
   }
 };
 
@@ -56,8 +38,8 @@ class RegularCell extends Component {
     canDrop: PropTypes.bool.isRequired
   };
 
-  addPieceToThisCell = pieceId => {
-    FirestoreManager.addPieceToTableCellById(
+  removePieceFromCellClickedHandler = (e, pieceId) => {
+    FirestoreManager.deletePieceInTableCellById(
       this.props.workspace.id,
       this.props.cell.id,
       pieceId
@@ -75,25 +57,85 @@ class RegularCell extends Component {
     return connectDropTarget(
       <td className={styles.RegularCell}>
         <div
-          className={styles.RegularCellContainer}
-          style={{ backgroundColor: isOver && canDrop ? '#f5b7b1' : null }}
+          className={styles.HoverLayer}
+          style={{ zIndex: isOver ? 1000 : 980 }}
         >
-          {cell.pieces.map((p, idx) => {
-            return (
-              <div
-                key={`${p.pieceId}-${idx}`}
-                style={{ width: '300px', minHeight: '65px' }}
-              >
-                <PieceItem
-                  piece={pieces[p.pieceId]}
-                  editAccess={editAccess}
-                  cellId={cell.id}
-                  cellType={cell.type}
-                  openScreenshot={this.props.openScreenshot}
-                />
-              </div>
-            );
-          })}
+          <div className={styles.HoverLayerPane}>
+            <RatingLayer ratingType={RATING_TYPES.positive} {...this.props} />
+          </div>
+          <div className={styles.HoverLayerPane}>
+            <RatingLayer ratingType={RATING_TYPES.negative} {...this.props} />
+          </div>
+        </div>
+
+        {/* regular */}
+        <div className={styles.RegularContentContainer} style={{ zIndex: 990 }}>
+          <div className={styles.EvidenceIconContainer}>
+            {sortBy(cell.pieces, ['rating']).map((p, idx) => {
+              return (
+                <div key={`${p.pieceId}-${idx}`}>
+                  <ContextMenuTrigger
+                    id={`${cell.id}-${p.pieceId}-${idx}-context-menu`}
+                  >
+                    <div
+                      style={{
+                        width: '40px',
+                        height: '40px',
+                        margin: '5px',
+                        zIndex: '2000'
+                      }}
+                      data-tip
+                      data-for={`${p.pieceId}`}
+                    >
+                      <ThumbV1
+                        type={
+                          p.rating === RATING_TYPES.positive ? 'up' : 'down'
+                        }
+                      />
+                    </div>
+                  </ContextMenuTrigger>
+                  {editAccess ? (
+                    <ContextMenu
+                      id={`${cell.id}-${p.pieceId}-${idx}-context-menu`}
+                    >
+                      <MenuItem
+                        onClick={e =>
+                          this.removePieceFromCellClickedHandler(e, p.pieceId)
+                        }
+                      >
+                        Remove from table
+                      </MenuItem>
+                    </ContextMenu>
+                  ) : null}
+                  <ReactTooltip
+                    place="right"
+                    type="light"
+                    effect="solid"
+                    delayHide={100}
+                    id={`${p.pieceId}`}
+                    className={styles.TooltipOverAttitude}
+                    getContent={() => {
+                      return (
+                        <ContextMenuTrigger
+                          id={`${cell.id}-${p.pieceId}-${idx}-context-menu`}
+                        >
+                          <PieceItem
+                            piece={pieces[p.pieceId]}
+                            editAccess={editAccess}
+                            cellId={cell.id}
+                            cellType={cell.type}
+                            rowIndex={this.props.rowIndex}
+                            columnIndex={this.props.columnIndex}
+                            openScreenshot={this.props.openScreenshot}
+                          />
+                        </ContextMenuTrigger>
+                      );
+                    }}
+                  />
+                </div>
+              );
+            })}
+          </div>
         </div>
       </td>
     );

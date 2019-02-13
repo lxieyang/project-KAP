@@ -2,13 +2,55 @@
   position: relative;
 }
 
-.RegularCellContainer {
-  box-sizing: border-box;
-  min-width: 150px;
-  min-height: 100px;
-  padding: 10px 10px;
-  font-weight: 500;
+.HoverLayer {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+}
 
-  transition: all 0.15s ease-in;
-  /* border-left: none !important; */
+.HoverLayerPane {
+  flex-basis: 50%;
+  height: 100%;
+  z-index: auto;
+}
+
+.RegularContentContainer {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.EvidenceIconContainer {
+  display: flex;
+  flex-flow: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.TooltipOverAttitude {
+  position: fixed;
+  /* overflow: auto; */
+  max-width: 360px;
+  margin: 0px 0px !important;
+  padding: 0px 0px !important;
+  /* margin: 0 !important; */
+  /* box-shadow: 0 4px 10px 0 rgba(0,0,0,0.2),0 4px 20px 0 rgba(0,0,0,0.19); */
+  opacity: 1 !important;
+  background-color: white !important;
+  pointer-events: auto !important;
+  /* z-index: 10000000 !important; */
+}
+
+.TooltipOverAttitude:hover {
+  visibility: visible !important;
+  opacity: 1 !important;
 }

@@ -514,7 +514,8 @@ class PieceItem extends Component {
               in={
                 this.state.expanded ||
                 (isDragging && this.props.cellType === undefined) ||
-                this.props.cellType === TABLE_CELL_TYPES.rowHeader
+                this.props.cellType === TABLE_CELL_TYPES.rowHeader ||
+                this.props.cellType === TABLE_CELL_TYPES.regularCell
               }
               timeout="auto"
               unmountOnExit

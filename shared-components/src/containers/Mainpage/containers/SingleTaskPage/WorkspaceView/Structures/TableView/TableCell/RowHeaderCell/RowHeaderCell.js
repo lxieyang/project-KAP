@@ -172,10 +172,7 @@ class RowHeaderCell extends Component {
           {cell.pieces.map((p, idx) => {
             return (
               <React.Fragment key={`${p.pieceId}-${idx}`}>
-                <ContextMenuTrigger
-                  id={`${cell.id}-context-menu`}
-                  holdToDisplay={1000}
-                >
+                <ContextMenuTrigger id={`${cell.id}-context-menu`}>
                   <div style={{ width: '300px', minHeight: '65px' }}>
                     <PieceItem
                       piece={pieces[p.pieceId]}
