@@ -10,6 +10,7 @@ import { withStyles } from '@material-ui/core/styles';
 import IconButton from '@material-ui/core/IconButton';
 import DeleteIcon from '@material-ui/icons/Delete';
 import Tooltip from '@material-ui/core/Tooltip';
+import Textarea from 'react-textarea-autosize';
 
 import { ContextMenu, MenuItem, ContextMenuTrigger } from 'react-contextmenu';
 
@@ -57,7 +58,9 @@ const dropTarget = {
     const dropPieceCellRowIndex = item.rowIndex;
 
     let pieces = props.cell.pieces.map(p => p.pieceId);
-    if (pieces.length === 0) {
+    let content = props.cell.content;
+    let thereIsContent = content !== undefined && content !== '';
+    if (pieces.length === 0 && !thereIsContent) {
       // no stuff in this cell
       component.addPieceToThisCell(dropPieceId);
     } else if (pieces.length > 0 && dropPieceCellId === undefined) {
@@ -74,8 +77,19 @@ const dropTarget = {
         props.rowIndex,
         dropPieceCellRowIndex
       );
+    } else if (
+      pieces.length === 0 &&
+      thereIsContent &&
+      dropPieceCellId !== undefined &&
+      dropPieceCellType === TABLE_CELL_TYPES.rowHeader
+    ) {
+      // both are from the table, should switch rows
+      FirestoreManager.switchRowsInTable(
+        props.workspace.id,
+        props.rowIndex,
+        dropPieceCellRowIndex
+      );
     }
-
     return {
       id: props.cell.id
     };
@@ -91,11 +105,44 @@ const collectDrop = (connect, monitor) => {
 };
 
 class RowHeaderCell extends Component {
+  state = {
+    contentEdit: this.props.cell.content
+  };
+
+  componentDidUpdate(prevProps, prevState) {
+    if (prevProps.cell.content !== this.props.cell.content)
+      this.setState({ contentEdit: this.props.cell.content });
+  }
+
   static propTypes = {
     // Injected by React DnD:
     connectDropTarget: PropTypes.func.isRequired,
     isOver: PropTypes.bool.isRequired,
     canDrop: PropTypes.bool.isRequired
+  };
+
+  componentDidMount() {
+    this.keyPress = this.keyPress.bind(this);
+  }
+
+  keyPress(e) {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      this.saveCellContentClickedHandler(e);
+    }
+  }
+
+  handleCellContentInputChange = e => {
+    this.setState({ contentEdit: e.target.value });
+  };
+
+  saveCellContentClickedHandler = e => {
+    e.stopPropagation();
+    this.textarea.blur();
+    FirestoreManager.setTableCellContentById(
+      this.props.workspace.id,
+      this.props.cell.id,
+      this.state.contentEdit
+    );
   };
 
   deleteTableRowByIndex = event => {
@@ -162,44 +209,69 @@ class RowHeaderCell extends Component {
     ) : null;
 
     return connectDropTarget(
-      <td className={styles.RowHeaderCell}>
+      <td
+        className={styles.RowHeaderCell}
+        style={{ backgroundColor: isOver && canDrop ? '#f8c471' : null }}
+      >
         {deleteRowActionContainer}
 
-        <div
-          className={styles.RowHeaderCellContainer}
-          style={{ backgroundColor: isOver && canDrop ? '#f8c471' : null }}
-        >
-          {cell.pieces.map((p, idx) => {
-            return (
-              <React.Fragment key={`${p.pieceId}-${idx}`}>
-                <ContextMenuTrigger id={`${cell.id}-context-menu`}>
-                  <div style={{ width: '300px', minHeight: '65px' }}>
-                    <PieceItem
-                      piece={pieces[p.pieceId]}
-                      editAccess={editAccess}
-                      cellId={cell.id}
-                      cellType={cell.type}
-                      rowIndex={this.props.rowIndex}
-                      columnIndex={this.props.columnIndex}
-                      openScreenshot={this.props.openScreenshot}
-                    />
-                  </div>
-                </ContextMenuTrigger>
-                {editAccess ? (
-                  <ContextMenu id={`${cell.id}-context-menu`}>
-                    <MenuItem
-                      onClick={e =>
-                        this.removePieceFromCellClickedHandler(e, p.pieceId)
-                      }
-                    >
-                      Remove from table
-                    </MenuItem>
-                  </ContextMenu>
-                ) : null}
-              </React.Fragment>
-            );
-          })}
-        </div>
+        {cell.pieces.length > 0 ? (
+          <div className={styles.RowHeaderCellContainer}>
+            {cell.pieces.map((p, idx) => {
+              return (
+                <React.Fragment key={`${p.pieceId}-${idx}`}>
+                  <ContextMenuTrigger
+                    id={`${cell.id}-context-menu`}
+                    holdToDisplay={-1}
+                  >
+                    <div style={{ width: '260px', minHeight: '65px' }}>
+                      <PieceItem
+                        piece={pieces[p.pieceId]}
+                        editAccess={editAccess}
+                        cellId={cell.id}
+                        cellType={cell.type}
+                        rowIndex={this.props.rowIndex}
+                        columnIndex={this.props.columnIndex}
+                        openScreenshot={this.props.openScreenshot}
+                      />
+                    </div>
+                  </ContextMenuTrigger>
+                  {editAccess ? (
+                    <ContextMenu id={`${cell.id}-context-menu`}>
+                      <MenuItem
+                        onClick={e =>
+                          this.removePieceFromCellClickedHandler(e, p.pieceId)
+                        }
+                      >
+                        Remove from table
+                      </MenuItem>
+                    </ContextMenu>
+                  ) : null}
+                </React.Fragment>
+              );
+            })}
+          </div>
+        ) : (
+          <div className={styles.CellContentContainer}>
+            <div className={styles.CellContentEditContainer}>
+              <div className={styles.TextAreaContainer}>
+                <Textarea
+                  inputRef={tag => (this.textarea = tag)}
+                  minRows={2}
+                  maxRows={10}
+                  placeholder={
+                    'Type or drop a snippet card here to add an option '
+                  }
+                  value={this.state.contentEdit}
+                  onKeyDown={this.keyPress}
+                  onBlur={e => this.saveCellContentClickedHandler(e)}
+                  onChange={e => this.handleCellContentInputChange(e)}
+                  className={styles.Textarea}
+                />
+              </div>
+            </div>
+          </div>
+        )}
       </td>
     );
   }

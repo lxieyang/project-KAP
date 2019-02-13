@@ -162,7 +162,7 @@ class PieceItem extends Component {
     viewPieceNameExpand: false,
 
     // screenshot control
-    maxScreenshotHeight: 300,
+    maxScreenshotHeight: 250,
     screenshot: null,
     screenshotLoading: true,
     displayingScreenshot:
@@ -366,6 +366,12 @@ class PieceItem extends Component {
                         : `Expand `) + `${typeText} name`
                     }
                     className={classesInCSS.PieceContentBox}
+                    style={{
+                      wordBreak:
+                        this.props.cellType === TABLE_CELL_TYPES.columnHeader
+                          ? 'break-all'
+                          : null
+                    }}
                     onClick={() => {
                       if (editAccess) {
                         this.editPieceNameClickedHandler();
@@ -377,20 +383,20 @@ class PieceItem extends Component {
                     {editAccess ? (
                       <LinesEllipsis
                         text={piece.name}
-                        maxLine={2}
+                        maxLine={3}
                         ellipsis="..."
                         trimRight
-                        basedOn="words"
+                        basedOn="letters"
                       />
                     ) : this.state.viewPieceNameExpand ? (
                       `${piece.name}`
                     ) : (
                       <LinesEllipsis
                         text={piece.name}
-                        maxLine={2}
+                        maxLine={3}
                         ellipsis="..."
                         trimRight
-                        basedOn="words"
+                        basedOn="letters"
                       />
                     )}
                   </div>
@@ -514,7 +520,6 @@ class PieceItem extends Component {
               in={
                 this.state.expanded ||
                 (isDragging && this.props.cellType === undefined) ||
-                this.props.cellType === TABLE_CELL_TYPES.rowHeader ||
                 this.props.cellType === TABLE_CELL_TYPES.regularCell
               }
               timeout="auto"

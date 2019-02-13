@@ -6,7 +6,7 @@
   box-sizing: border-box;
   min-width: 150px;
   min-height: 100px;
-  padding: 10px 10px;
+  padding: 0px 0px 10px 0px;
   font-weight: 500;
 
   transition: all 0.15s ease-in;
@@ -21,4 +21,59 @@
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.CellContentContainer {
+  box-sizing: border-box;
+  min-width: 150px;
+  min-height: 100px;
+  padding: 0px 0px 10px 0px;
+  font-weight: 500;
+
+  transition: all 0.15s ease-in;
+  /* border-left: none !important; */
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.CellContentEditContainer {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.TextAreaContainer {
+  flex: 1;
+  margin-left: 5px;
+}
+
+.Textarea {
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  resize: none;
+  overflow: auto;
+
+  font-size: 14px;
+  font-weight: 500;
+  padding: 2px 4px;
+
+  border: 1px solid transparent;
+  border-radius: 4px;
+  color: #000;
+  background: transparent !important;
+}
+
+.Textarea:hover {
+  border-color: rgb(226, 226, 226);
+}
+
+.Textarea:focus {
+  color: #35383a;
+  background-color: #fff;
+  border-color: rgb(17, 100, 224);
+  outline: none;
 }

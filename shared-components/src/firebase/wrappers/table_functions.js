@@ -34,13 +34,23 @@ export const createNewTableCell = (
     .doc();
   ref.set({
     type: tableCellType,
-    pieces: []
+    pieces: [],
+    content: ''
   });
   return ref.id;
 };
 
 export const deleteTableCellById = (tableId, cellId) => {
   getTableCellById(tableId, cellId).delete();
+};
+
+export const setTableCellContentById = (tableId, cellId, content) => {
+  getTableCellById(tableId, cellId).set(
+    {
+      content
+    },
+    { merge: true }
+  );
 };
 
 export const updatePiecesTableCellById = (tableId, cellId, pieces) => {

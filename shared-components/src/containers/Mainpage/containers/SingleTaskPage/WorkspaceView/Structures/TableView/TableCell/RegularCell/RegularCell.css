@@ -31,15 +31,35 @@
 
 .EvidenceIconContainer {
   display: flex;
-  flex-flow: column;
+  flex-flow: row;
   justify-content: center;
   align-items: center;
+}
+
+.AttitudeInTableCell {
+  font-size: 1.8rem;
+  margin-right: 5px;
+  width: 40px;
+  height: 40px;
+  transition: all 0.1s ease-in;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  z-index: 9999999;
+}
+
+/* .AttitudeInTableCellIsShowing, */
+.AttitudeInTableCell:hover {
+  /* border: 2px solid red; */
+  transform: scale(1.1);
+  box-shadow: 0 4px 10px 0 rgba(0, 0, 0, 0.2), 0 4px 20px 0 rgba(0, 0, 0, 0.19);
+  z-index: 9999999;
+  cursor: pointer;
 }
 
 .TooltipOverAttitude {
   position: fixed;
   /* overflow: auto; */
-  max-width: 360px;
+  max-width: 300px;
   margin: 0px 0px !important;
   padding: 0px 0px !important;
   /* margin: 0 !important; */
@@ -47,7 +67,7 @@
   opacity: 1 !important;
   background-color: white !important;
   pointer-events: auto !important;
-  /* z-index: 10000000 !important; */
+  z-index: 10000 !important;
 }
 
 .TooltipOverAttitude:hover {

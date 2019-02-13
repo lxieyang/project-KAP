@@ -176,10 +176,13 @@ class ColumnHeaderCell extends Component {
           {cell.pieces.map((p, idx) => {
             return (
               <React.Fragment key={`${p.pieceId}-${idx}`}>
-                <ContextMenuTrigger id={`${cell.id}-context-menu`}>
+                <ContextMenuTrigger
+                  id={`${cell.id}-context-menu`}
+                  holdToDisplay={-1}
+                >
                   <div
                     style={{
-                      width: '300px',
+                      width: '250px',
                       minHeight: '65px'
                     }}
                   >
