@@ -23,6 +23,10 @@ export const getTableCellById = (tableId, cellId) => {
   return getAllTableCellsInTableById(tableId).doc(cellId);
 };
 
+export const getAllCommentsToTableCell = (tableId, cellId) => {
+  return getTableCellById(tableId, cellId).collection('comments');
+};
+
 export const createNewTableCell = (
   tableId,
   tableCellType = TABLE_CELL_TYPES.regularCell
@@ -51,6 +55,51 @@ export const setTableCellContentById = (tableId, cellId, content) => {
     },
     { merge: true }
   );
+};
+
+/* commenting */
+export const addCommentToATableCellById = (
+  tableId,
+  cellId,
+  newCommentContent
+) => {
+  getTableCellById(tableId, cellId)
+    .collection('comments')
+    .add({
+      content: newCommentContent,
+      creationDate: firebase.firestore.FieldValue.serverTimestamp(),
+      updateDate: firebase.firestore.FieldValue.serverTimestamp(),
+      authorId: getCurrentUserId(),
+      authorName: getCurrentUser().displayName,
+      authorAvatarURL: getCurrentUser().photoURL
+    })
+    .then(() => {});
+};
+
+export const updateTableCellCommentById = (
+  tableId,
+  cellId,
+  commentId,
+  newCommentContent
+) => {
+  getTableCellById(tableId, cellId)
+    .collection('comments')
+    .doc(commentId)
+    .update({
+      content: newCommentContent,
+      authorName: getCurrentUser().displayName,
+      authorAvatarURL: getCurrentUser().photoURL,
+      updateDate: firebase.firestore.FieldValue.serverTimestamp()
+    })
+    .then(() => {});
+};
+
+export const deleteTableCellCommentById = (tableId, cellId, commentId) => {
+  return getTableCellById(tableId, cellId)
+    .collection('comments')
+    .doc(commentId)
+    .delete()
+    .then(() => {});
 };
 
 export const updatePiecesTableCellById = (tableId, cellId, pieces) => {
