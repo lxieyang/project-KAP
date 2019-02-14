@@ -110,17 +110,17 @@ class RowHeaderCell extends Component {
     contentEdit: this.props.cell.content
   };
 
-  componentDidUpdate(prevProps, prevState) {
-    if (prevProps.cell.content !== this.props.cell.content)
-      this.setState({ contentEdit: this.props.cell.content });
-  }
-
   static propTypes = {
     // Injected by React DnD:
     connectDropTarget: PropTypes.func.isRequired,
     isOver: PropTypes.bool.isRequired,
     canDrop: PropTypes.bool.isRequired
   };
+
+  componentDidUpdate(prevProps, prevState) {
+    if (prevProps.cell.content !== this.props.cell.content)
+      this.setState({ contentEdit: this.props.cell.content });
+  }
 
   componentDidMount() {
     this.keyPress = this.keyPress.bind(this);
@@ -271,7 +271,7 @@ class RowHeaderCell extends Component {
                   minRows={2}
                   maxRows={10}
                   placeholder={
-                    'Type or drop a snippet card here to add an option '
+                    'Type or drop a snippet card here to add an option'
                   }
                   value={this.state.contentEdit}
                   onKeyDown={this.keyPress}

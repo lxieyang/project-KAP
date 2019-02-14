@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
-import { sortBy } from 'lodash';
+import { sortBy, debounce } from 'lodash';
 import styles from './RegularCell.css';
 import ReactHoverObserver from 'react-hover-observer';
 import ThumbV1 from '../../../../../../../../../components/UI/Thumbs/ThumbV1/ThumbV1';
@@ -10,6 +10,7 @@ import RatingLayer from './RatingLayer/RatingLayer';
 import * as FirestoreManager from '../../../../../../../../../firebase/firestore_wrapper';
 import { RATING_TYPES } from '../../../../../../../../../shared/types';
 import ReactTooltip from 'react-tooltip';
+import Textarea from 'react-textarea-autosize';
 import { ContextMenu, MenuItem, ContextMenuTrigger } from 'react-contextmenu';
 
 // dnd stuff
@@ -31,11 +32,53 @@ const collectDrop = (connect, monitor) => {
 };
 
 class RegularCell extends Component {
+  state = {
+    contentEdit: this.props.cell.content
+  };
+
   static propTypes = {
     // Injected by React DnD:
     connectDropTarget: PropTypes.func.isRequired,
     isOver: PropTypes.bool.isRequired,
     canDrop: PropTypes.bool.isRequired
+  };
+
+  componentDidUpdate(prevProps, prevState) {
+    if (prevProps.cell.content !== this.props.cell.content)
+      this.setState({ contentEdit: this.props.cell.content });
+  }
+
+  componentDidMount() {
+    this.keyPress = this.keyPress.bind(this);
+    this.saveContentCallback = debounce(event => {
+      FirestoreManager.setTableCellContentById(
+        this.props.workspace.id,
+        this.props.cell.id,
+        event.target.value
+      );
+    }, 500);
+  }
+
+  keyPress(e) {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      this.saveCellContentClickedHandler(e);
+    }
+  }
+
+  handleCellContentInputChange = e => {
+    e.persist();
+    this.setState({ contentEdit: e.target.value });
+    this.saveContentCallback(e);
+  };
+
+  saveCellContentClickedHandler = e => {
+    e.stopPropagation();
+    this.textarea.blur();
+    FirestoreManager.setTableCellContentById(
+      this.props.workspace.id,
+      this.props.cell.id,
+      this.state.contentEdit
+    );
   };
 
   removePieceFromCellClickedHandler = (e, pieceId) => {
@@ -70,76 +113,99 @@ class RegularCell extends Component {
 
         {/* regular */}
         <div className={styles.RegularContentContainer} style={{ zIndex: 990 }}>
-          <div className={styles.EvidenceIconContainer}>
-            {sortBy(cell.pieces, ['rating']).map((p, idx) => {
-              if (
-                pieces[p.pieceId] !== undefined &&
-                pieces[p.pieceId] !== null
-              ) {
-                return (
-                  <div key={`${p.pieceId}-${idx}`}>
-                    <ContextMenuTrigger
-                      id={`${cell.id}-${p.pieceId}-${idx}-context-menu`}
-                      holdToDisplay={-1}
-                    >
-                      <div
-                        className={[styles.AttitudeInTableCell].join(' ')}
-                        data-tip
-                        data-for={`${p.pieceId}`}
-                      >
-                        <ThumbV1
-                          type={
-                            p.rating === RATING_TYPES.positive ? 'up' : 'down'
-                          }
-                        />
-                      </div>
-                    </ContextMenuTrigger>
-                    {editAccess ? (
-                      <ContextMenu
+          {cell.pieces.length > 0 ? (
+            <div className={styles.EvidenceIconContainer}>
+              {sortBy(cell.pieces, ['rating']).map((p, idx) => {
+                if (
+                  pieces[p.pieceId] !== undefined &&
+                  pieces[p.pieceId] !== null
+                ) {
+                  return (
+                    <div key={`${p.pieceId}-${idx}`}>
+                      <ContextMenuTrigger
                         id={`${cell.id}-${p.pieceId}-${idx}-context-menu`}
+                        holdToDisplay={-1}
                       >
-                        <MenuItem
-                          onClick={e =>
-                            this.removePieceFromCellClickedHandler(e, p.pieceId)
-                          }
+                        <div
+                          className={[styles.AttitudeInTableCell].join(' ')}
+                          data-tip
+                          data-for={`${p.pieceId}`}
                         >
-                          Remove from table
-                        </MenuItem>
-                      </ContextMenu>
-                    ) : null}
-                    <ReactTooltip
-                      place="right"
-                      type="light"
-                      effect="solid"
-                      delayHide={100}
-                      id={`${p.pieceId}`}
-                      className={styles.TooltipOverAttitude}
-                      getContent={() => {
-                        return (
-                          <ContextMenuTrigger
-                            id={`${cell.id}-${p.pieceId}-${idx}-context-menu`}
+                          <ThumbV1
+                            type={
+                              p.rating === RATING_TYPES.positive ? 'up' : 'down'
+                            }
+                          />
+                        </div>
+                      </ContextMenuTrigger>
+                      {editAccess ? (
+                        <ContextMenu
+                          id={`${cell.id}-${p.pieceId}-${idx}-context-menu`}
+                        >
+                          <MenuItem
+                            onClick={e =>
+                              this.removePieceFromCellClickedHandler(
+                                e,
+                                p.pieceId
+                              )
+                            }
                           >
-                            <PieceItem
-                              piece={pieces[p.pieceId]}
-                              editAccess={editAccess}
-                              commentAccess={commentAccess}
-                              cellId={cell.id}
-                              cellType={cell.type}
-                              rowIndex={this.props.rowIndex}
-                              columnIndex={this.props.columnIndex}
-                              openScreenshot={this.props.openScreenshot}
-                            />
-                          </ContextMenuTrigger>
-                        );
-                      }}
-                    />
-                  </div>
-                );
-              } else {
-                return null;
-              }
-            })}
-          </div>
+                            Remove from table
+                          </MenuItem>
+                        </ContextMenu>
+                      ) : null}
+                      <ReactTooltip
+                        place="right"
+                        type="light"
+                        effect="solid"
+                        delayHide={100}
+                        id={`${p.pieceId}`}
+                        className={styles.TooltipOverAttitude}
+                        getContent={() => {
+                          return (
+                            <ContextMenuTrigger
+                              id={`${cell.id}-${p.pieceId}-${idx}-context-menu`}
+                            >
+                              <PieceItem
+                                piece={pieces[p.pieceId]}
+                                editAccess={editAccess}
+                                commentAccess={commentAccess}
+                                cellId={cell.id}
+                                cellType={cell.type}
+                                rowIndex={this.props.rowIndex}
+                                columnIndex={this.props.columnIndex}
+                                openScreenshot={this.props.openScreenshot}
+                              />
+                            </ContextMenuTrigger>
+                          );
+                        }}
+                      />
+                    </div>
+                  );
+                } else {
+                  return null;
+                }
+              })}
+            </div>
+          ) : (
+            <div className={styles.CellContentContainer}>
+              <div className={styles.CellContentEditContainer}>
+                <div className={styles.TextAreaContainer}>
+                  <Textarea
+                    inputRef={tag => (this.textarea = tag)}
+                    minRows={2}
+                    maxRows={10}
+                    placeholder={'Type or drop a snippet card here as evidence'}
+                    value={this.state.contentEdit}
+                    onKeyDown={this.keyPress}
+                    onBlur={e => this.saveCellContentClickedHandler(e)}
+                    onChange={e => this.handleCellContentInputChange(e)}
+                    className={styles.Textarea}
+                  />
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </td>
     );

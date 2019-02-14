@@ -279,7 +279,7 @@ class ColumnHeaderCell extends Component {
                   minRows={2}
                   maxRows={10}
                   placeholder={
-                    'Type or drop a snippet card here to add an option '
+                    'Type or drop a snippet card here to add a criterion'
                   }
                   value={this.state.contentEdit}
                   onKeyDown={this.keyPress}

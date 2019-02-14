@@ -4,12 +4,36 @@ import ReactHoverObserver from 'react-hover-observer';
 import { withRouter } from 'react-router-dom';
 import { matchPath } from 'react-router';
 import * as FirestoreManager from '../../../../../../../firebase/firestore_wrapper';
+import { PIECE_COLOR } from '../../../../../../../shared/theme';
 import Spinner from '../../../../../../../components/UI/Spinner/Spinner';
 import styles from './TableView.css';
+
+import Button from '@material-ui/core/Button';
+import { withStyles } from '@material-ui/core/styles';
 
 import Textarea from 'react-textarea-autosize';
 
 import TableCell from './TableCell/TableCell';
+
+const materialStyles = theme => ({
+  button: {
+    marginTop: 0,
+    marginBottom: 0,
+    marginRight: 8,
+    padding: '1px 4px 1px 4px',
+    fontSize: 12
+  }
+});
+
+const ActionButton = withStyles({
+  root: {
+    minWidth: '0',
+    padding: '0px 4px'
+  },
+  label: {
+    textTransform: 'capitalize'
+  }
+})(Button);
 
 class TableView extends Component {
   state = {
@@ -95,7 +119,8 @@ class TableView extends Component {
       workspace,
       editAccess,
       commentAccess,
-      workspaceTypeString
+      workspaceTypeString,
+      classes
     } = this.props;
     const { cells, workspaceNameEdit } = this.state;
     let tableRows = workspace.data;
@@ -138,13 +163,20 @@ class TableView extends Component {
           );
         })}
         {editAccess ? (
-          <th>
-            <div
-              className={styles.CreateNewButton}
+          <th
+            style={{
+              borderTop: 'none',
+              borderBottom: 'none',
+              borderRight: 'none'
+            }}
+          >
+            <ActionButton
+              style={{ color: PIECE_COLOR.criterion }}
+              className={classes.button}
               onClick={e => this.createNewTableColumn(e)}
             >
-              create new criterion
-            </div>
+              Add a column
+            </ActionButton>
           </th>
         ) : null}
       </tr>
@@ -180,13 +212,20 @@ class TableView extends Component {
         })}
         {editAccess ? (
           <tr>
-            <td>
-              <div
-                className={styles.CreateNewButton}
+            <td
+              style={{
+                borderLeft: 'none',
+                borderBottom: 'none',
+                borderRight: 'none'
+              }}
+            >
+              <ActionButton
+                style={{ color: PIECE_COLOR.option }}
+                className={classes.button}
                 onClick={e => this.createNewTableRow(e)}
               >
-                create new option
-              </div>
+                Add a row
+              </ActionButton>
             </td>
           </tr>
         ) : null}
@@ -232,4 +271,4 @@ class TableView extends Component {
   }
 }
 
-export default withRouter(TableView);
+export default withRouter(withStyles(materialStyles)(TableView));

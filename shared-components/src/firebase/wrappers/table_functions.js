@@ -200,9 +200,12 @@ export const createNewTable = async ({ name, creatorId, taskId }) => {
   let workspaceType = WORKSPACE_TYPES.table;
   let ref = db.collection('workspaces').doc(); // create new table
 
-  // construct table with one cell: topLeft
-  let numRows = 1,
-    numCols = 1;
+  // construct table with 2x2 cells:
+  // topLeft    |  columnHeader
+  // --------------------------
+  // rowHeader  |  regularCell
+  let numRows = 2,
+    numCols = 2;
   let tableRows = [];
   for (let i = 0; i < numRows; i++) {
     let row = [];
