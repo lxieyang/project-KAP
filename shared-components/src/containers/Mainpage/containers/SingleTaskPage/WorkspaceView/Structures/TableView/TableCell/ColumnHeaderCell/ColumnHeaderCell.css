@@ -91,3 +91,28 @@
   border-color: rgb(17, 100, 224);
   outline: none;
 }
+
+.CommentsContainer {
+  position: absolute;
+  bottom: 0px;
+  right: 0px;
+}
+
+.CommentCount {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  box-sizing: border-box;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  font-size: 13px;
+  font-weight: 500;
+  border-radius: 50%;
+  padding: 2px;
+  opacity: 0.8;
+  transform: scale(0.75);
+}

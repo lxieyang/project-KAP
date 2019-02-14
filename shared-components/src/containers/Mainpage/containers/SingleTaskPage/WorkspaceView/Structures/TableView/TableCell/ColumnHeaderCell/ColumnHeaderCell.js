@@ -10,7 +10,9 @@ import * as FirestoreManager from '../../../../../../../../../firebase/firestore
 import { withStyles } from '@material-ui/core/styles';
 import IconButton from '@material-ui/core/IconButton';
 import DeleteIcon from '@material-ui/icons/Delete';
+import { Chat } from 'mdi-material-ui';
 import Tooltip from '@material-ui/core/Tooltip';
+import Popover from '@material-ui/core/Popover';
 import Textarea from 'react-textarea-autosize';
 
 import { ContextMenu, MenuItem, ContextMenuTrigger } from 'react-contextmenu';
@@ -22,6 +24,9 @@ import {
   PIECE_TYPES,
   TABLE_CELL_TYPES
 } from '../../../../../../../../../shared/types';
+
+import CellComments from '../CellComments/CellComments';
+import { THEME_COLOR } from '../../../../../../../../../shared/theme';
 
 const materialStyles = theme => ({
   iconButtons: {
@@ -108,13 +113,14 @@ const collectDrop = (connect, monitor) => {
 
 class ColumnHeaderCell extends Component {
   state = {
-    contentEdit: this.props.cell.content
-  };
+    contentEdit: this.props.cell.content,
 
-  componentDidUpdate(prevProps, prevState) {
-    if (prevProps.cell.content !== this.props.cell.content)
-      this.setState({ contentEdit: this.props.cell.content });
-  }
+    // comment popover
+    anchorEl: null,
+
+    // comment count
+    commentCount: 0
+  };
 
   static propTypes = {
     // Injected by React DnD:
@@ -122,6 +128,11 @@ class ColumnHeaderCell extends Component {
     isOver: PropTypes.bool.isRequired,
     canDrop: PropTypes.bool.isRequired
   };
+
+  componentDidUpdate(prevProps, prevState) {
+    if (prevProps.cell.content !== this.props.cell.content)
+      this.setState({ contentEdit: this.props.cell.content });
+  }
 
   componentDidMount() {
     this.keyPress = this.keyPress.bind(this);
@@ -132,7 +143,30 @@ class ColumnHeaderCell extends Component {
         event.target.value
       );
     }, 500);
+
+    this.unsubscribeAllComments = FirestoreManager.getAllCommentsToTableCell(
+      this.props.workspace.id,
+      this.props.cell.id
+    ).onSnapshot(querySnapshot => {
+      this.setState({ commentCount: querySnapshot.docs.length });
+    });
   }
+
+  componentWillUnmount() {
+    this.unsubscribeAllComments();
+  }
+
+  handleCommentClick = event => {
+    this.setState({
+      anchorEl: event.currentTarget
+    });
+  };
+
+  handleCommentClose = () => {
+    this.setState({
+      anchorEl: null
+    });
+  };
 
   keyPress(e) {
     if (e.key === 'Enter' && !e.shiftKey) {
@@ -200,6 +234,8 @@ class ColumnHeaderCell extends Component {
   render() {
     const { connectDropTarget, canDrop, isOver } = this.props;
     let { classes, cell, pieces, editAccess, commentAccess } = this.props;
+    const { anchorEl, commentCount } = this.state;
+    const open = Boolean(anchorEl);
 
     if (cell === null || pieces === null) {
       return <td />;
@@ -219,12 +255,57 @@ class ColumnHeaderCell extends Component {
       </div>
     ) : null;
 
+    let commentsActionContainer = commentAccess ? (
+      <div className={styles.CommentsContainer}>
+        <div style={{ position: 'relative' }}>
+          {/*<Tooltip title="Comments" placement={'top'}>*/}
+          <IconButton
+            aria-label="Comment"
+            className={classes.iconButtons}
+            onClick={e => this.handleCommentClick(e)}
+          >
+            <Chat className={classes.iconInIconButtons} />
+          </IconButton>
+          {/*</Tooltip>*/}
+          <Popover
+            id={`${cell.id}-comments-popover`}
+            open={open}
+            anchorEl={anchorEl}
+            onClose={this.handleCommentClose}
+            anchorOrigin={{
+              vertical: 'top',
+              horizontal: 'left'
+            }}
+            transformOrigin={{
+              vertical: 'top',
+              horizontal: 'left'
+            }}
+          >
+            <CellComments
+              workspaceId={this.props.workspace.id}
+              cellId={cell.id}
+              commentAccess={commentAccess}
+              cellType={cell.type}
+            />
+          </Popover>
+          <span
+            style={{ color: THEME_COLOR.badgeColor }}
+            className={styles.CommentCount}
+          >
+            {commentCount > 0 ? commentCount : null}
+          </span>
+        </div>
+      </div>
+    ) : null;
+
     return connectDropTarget(
       <th
         className={styles.ColumnHeaderCell}
         style={{ backgroundColor: isOver && canDrop ? '#aed6f1' : null }}
       >
         {deleteColumnActionContainer}
+        {commentsActionContainer}
+
         {cell.pieces.length > 0 ? (
           <div
             className={styles.ColumnHeaderCellContainer}
