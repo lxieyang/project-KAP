@@ -67,6 +67,10 @@
   background: transparent !important;
 }
 
+.Textarea::placeholder {
+  color: lightgray;
+}
+
 .Textarea:hover {
   border-color: rgb(226, 226, 226);
 }
