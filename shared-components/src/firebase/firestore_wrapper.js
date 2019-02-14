@@ -1,8 +1,15 @@
 import firebase from './firebase';
 
 export let db = firebase.firestore();
-export const getCurrentUserId = () => firebase.auth().currentUser.uid;
 export const getCurrentUser = () => firebase.auth().currentUser;
+export const getCurrentUserId = () => {
+  let currentUser = getCurrentUser();
+  if (currentUser) {
+    return currentUser.uid;
+  } else {
+    return null;
+  }
+};
 export const getCurrentUserCurrentTaskId = () => {
   return db
     .collection('users')

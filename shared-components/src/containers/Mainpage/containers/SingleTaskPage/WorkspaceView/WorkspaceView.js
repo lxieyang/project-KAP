@@ -86,7 +86,8 @@ class WorkspaceView extends Component {
           this.setState({
             taskId,
             editAccess:
-              snapshot.data().creator === FirestoreManager.getCurrentUserId()
+              snapshot.data().creator === FirestoreManager.getCurrentUserId(),
+            commentAccess: FirestoreManager.getCurrentUserId() !== null
           });
         }
       }
@@ -175,7 +176,12 @@ class WorkspaceView extends Component {
   };
 
   render() {
-    const { activeWorkspaceId, editAccess, workspacesLoading } = this.state;
+    const {
+      activeWorkspaceId,
+      editAccess,
+      commentAccess,
+      workspacesLoading
+    } = this.state;
 
     if (workspacesLoading) {
       return (
@@ -286,6 +292,7 @@ class WorkspaceView extends Component {
                           workspace={workspace}
                           workspaceTypeString={'table'}
                           editAccess={editAccess}
+                          commentAccess={commentAccess}
                           openScreenshot={this.openScreenshot}
                         />
                       </WorkspaceContentContainer>

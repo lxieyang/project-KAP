@@ -277,7 +277,7 @@ class PieceItem extends Component {
   render() {
     const { connectDragSource, isDragging } = this.props; // dnd
 
-    let { piece, classes, isHovering, editAccess } = this.props;
+    let { piece, classes, isHovering, editAccess, commentAccess } = this.props;
     const {
       maxScreenshotHeight,
       screenshot,
@@ -414,25 +414,30 @@ class PieceItem extends Component {
                       alignItems: 'center'
                     }}
                   >
-                    {!this.state.expanded ? (
-                      <div style={{ position: 'relative' }}>
-                        <Tooltip title="Make a comment" placement={'top'}>
-                          <IconButton
-                            aria-label="Comment"
-                            className={classes.iconButtons}
-                            onClick={() => this.addCommentClickedHandler()}
-                          >
-                            <Chat className={classes.iconInIconButtons} />
-                          </IconButton>
-                        </Tooltip>
-                        <span
-                          style={{ color: THEME_COLOR.badgeColor }}
-                          className={classesInCSS.CommentCount}
-                        >
-                          {commentCount > 0 ? commentCount : null}
-                        </span>
-                      </div>
+                    {commentAccess !== undefined && commentAccess ? (
+                      <React.Fragment>
+                        {!this.state.expanded ? (
+                          <div style={{ position: 'relative' }}>
+                            <Tooltip title="Make a comment" placement={'top'}>
+                              <IconButton
+                                aria-label="Comment"
+                                className={classes.iconButtons}
+                                onClick={() => this.addCommentClickedHandler()}
+                              >
+                                <Chat className={classes.iconInIconButtons} />
+                              </IconButton>
+                            </Tooltip>
+                            <span
+                              style={{ color: THEME_COLOR.badgeColor }}
+                              className={classesInCSS.CommentCount}
+                            >
+                              {commentCount > 0 ? commentCount : null}
+                            </span>
+                          </div>
+                        ) : null}
+                      </React.Fragment>
                     ) : null}
+
                     {/*
                   <Tooltip title={`Edit ${typeText} name`} placement={'top'}>
                     <IconButton
@@ -574,6 +579,7 @@ class PieceItem extends Component {
 
             <div>
               <Comments
+                commentAccess={commentAccess}
                 expanded={this.state.expanded}
                 expandPiece={this.expandPiece}
                 pieceId={piece.id}

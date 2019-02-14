@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
+import { debounce } from 'lodash';
 import styles from './RowHeaderCell.css';
 
 import PieceItem from '../../../../../CollectionView/PiecesView/PieceItem/PieceItem';
@@ -123,6 +124,13 @@ class RowHeaderCell extends Component {
 
   componentDidMount() {
     this.keyPress = this.keyPress.bind(this);
+    this.saveContentCallback = debounce(event => {
+      FirestoreManager.setTableCellContentById(
+        this.props.workspace.id,
+        this.props.cell.id,
+        event.target.value
+      );
+    }, 500);
   }
 
   keyPress(e) {
@@ -132,7 +140,9 @@ class RowHeaderCell extends Component {
   }
 
   handleCellContentInputChange = e => {
+    e.persist();
     this.setState({ contentEdit: e.target.value });
+    this.saveContentCallback(e);
   };
 
   saveCellContentClickedHandler = e => {
@@ -188,7 +198,7 @@ class RowHeaderCell extends Component {
 
   render() {
     const { connectDropTarget, canDrop, isOver } = this.props;
-    let { classes, cell, pieces, editAccess } = this.props;
+    let { classes, cell, pieces, editAccess, commentAccess } = this.props;
 
     if (cell === null || pieces === null) {
       return <td />;
@@ -228,6 +238,7 @@ class RowHeaderCell extends Component {
                       <PieceItem
                         piece={pieces[p.pieceId]}
                         editAccess={editAccess}
+                        commentAccess={commentAccess}
                         cellId={cell.id}
                         cellType={cell.type}
                         rowIndex={this.props.rowIndex}

@@ -85,7 +85,14 @@ class Comments extends Component {
   };
 
   render() {
-    const { expanded, classes, isHovering, pieceId, expandPiece } = this.props;
+    const {
+      expanded,
+      commentAccess,
+      classes,
+      isHovering,
+      pieceId,
+      expandPiece
+    } = this.props;
     const { comments } = this.state;
 
     let CommentList = (
@@ -124,38 +131,40 @@ class Comments extends Component {
       <React.Fragment>
         <div>
           <div className={classesInCSS.CommentBox}>{CommentList}</div>
-          <div className={classesInCSS.EditCommentBox}>
-            <div className={classesInCSS.TextAreaContainer}>
-              <Textarea
-                autoFocus
-                inputRef={tag => (this.textarea = tag)}
-                minRows={1}
-                maxRows={3}
-                placeholder={'Add a comment'}
-                value={this.state.editCommentValue}
-                onKeyDown={this.keyPress}
-                onChange={e => this.handleInputChange(e)}
-                className={classesInCSS.Textarea}
-              />
-            </div>
-            <div className={classesInCSS.TextareaActionBar}>
-              <ActionButton
-                color="primary"
-                className={classes.button}
-                onClick={() => this.saveEditClickedHandler()}
-              >
-                Save
-              </ActionButton>
+          {commentAccess ? (
+            <div className={classesInCSS.EditCommentBox}>
+              <div className={classesInCSS.TextAreaContainer}>
+                <Textarea
+                  autoFocus
+                  inputRef={tag => (this.textarea = tag)}
+                  minRows={1}
+                  maxRows={3}
+                  placeholder={'Add a comment'}
+                  value={this.state.editCommentValue}
+                  onKeyDown={this.keyPress}
+                  onChange={e => this.handleInputChange(e)}
+                  className={classesInCSS.Textarea}
+                />
+              </div>
+              <div className={classesInCSS.TextareaActionBar}>
+                <ActionButton
+                  color="primary"
+                  className={classes.button}
+                  onClick={() => this.saveEditClickedHandler()}
+                >
+                  Save
+                </ActionButton>
 
-              <ActionButton
-                color="secondary"
-                className={classes.button}
-                onClick={() => this.cancelEditClickedHandler()}
-              >
-                Cancel
-              </ActionButton>
+                <ActionButton
+                  color="secondary"
+                  className={classes.button}
+                  onClick={() => this.cancelEditClickedHandler()}
+                >
+                  Cancel
+                </ActionButton>
+              </div>
             </div>
-          </div>
+          ) : null}
         </div>
       </React.Fragment>
     );

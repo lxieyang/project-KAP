@@ -91,7 +91,12 @@ class TableView extends Component {
   };
 
   render() {
-    let { workspace, editAccess, workspaceTypeString } = this.props;
+    let {
+      workspace,
+      editAccess,
+      commentAccess,
+      workspaceTypeString
+    } = this.props;
     const { cells, workspaceNameEdit } = this.state;
     let tableRows = workspace.data;
 
@@ -124,6 +129,7 @@ class TableView extends Component {
               workspace={workspace}
               pieces={this.props.pieces}
               editAccess={editAccess}
+              commentAccess={commentAccess}
               cell={cell}
               rowIndex={0}
               columnIndex={idx}
@@ -160,6 +166,7 @@ class TableView extends Component {
                       pieces={this.props.pieces}
                       workspace={workspace}
                       editAccess={editAccess}
+                      commentAccess={commentAccess}
                       cell={cell}
                       rowIndex={idx}
                       columnIndex={indexInRow}

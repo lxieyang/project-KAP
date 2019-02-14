@@ -80,6 +80,15 @@ class Mainpage extends Component {
 
     let routes = (
       <Switch>
+        <Route
+          path={appRoutes.TASK_WITH_ID}
+          render={routeProps => (
+            <SingleTaskPage
+              {...routeProps}
+              setDisplayingTaskIdAndName={this.setDisplayingTaskIdAndName}
+            />
+          )}
+        />
         <Route exact path={appRoutes.LOG_IN} component={LoginPage} />
         <Redirect to={appRoutes.LOG_IN} />
       </Switch>

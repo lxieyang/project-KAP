@@ -143,7 +143,7 @@ class ColumnHeaderCell extends Component {
 
   render() {
     const { connectDropTarget, canDrop, isOver } = this.props;
-    let { classes, cell, pieces, editAccess } = this.props;
+    let { classes, cell, pieces, editAccess, commentAccess } = this.props;
 
     if (cell === null || pieces === null) {
       return <td />;
@@ -189,6 +189,7 @@ class ColumnHeaderCell extends Component {
                     <PieceItem
                       piece={pieces[p.pieceId]}
                       editAccess={editAccess}
+                      commentAccess={commentAccess}
                       cellId={cell.id}
                       cellType={cell.type}
                       rowIndex={this.props.rowIndex}

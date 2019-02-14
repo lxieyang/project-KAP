@@ -90,7 +90,8 @@ class PiecesView extends Component {
           this.setState({
             taskId,
             editAccess:
-              snapshot.data().creator === FirestoreManager.getCurrentUserId()
+              snapshot.data().creator === FirestoreManager.getCurrentUserId(),
+            commentAccess: FirestoreManager.getCurrentUserId() !== null
           });
         }
       }
@@ -149,7 +150,7 @@ class PiecesView extends Component {
   };
 
   render() {
-    let { pieces, taskId, editAccess } = this.state;
+    let { pieces, taskId, editAccess, commentAccess } = this.state;
     let { classes } = this.props;
 
     return (
@@ -177,6 +178,7 @@ class PiecesView extends Component {
                         idx={idx}
                         currentTaskId={taskId}
                         editAccess={editAccess}
+                        commentAccess={commentAccess}
                         handleDeleteButtonClicked={
                           this.handleDeleteButtonClicked
                         }
