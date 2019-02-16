@@ -10,6 +10,9 @@ import * as FirestoreManager from '../../../../../../../../firebase/firestore_wr
 
 class TableCell extends Component {
   state = {
+    // comments
+    comments: [],
+
     // comment count
     commentCount: 0
   };
@@ -20,9 +23,18 @@ class TableCell extends Component {
       this.unsubscribeAllComments = FirestoreManager.getAllCommentsToTableCell(
         this.props.workspace.id,
         this.props.cell.id
-      ).onSnapshot(querySnapshot => {
-        this.setState({ commentCount: querySnapshot.docs.length });
-      });
+      )
+        .orderBy('creationDate', 'asc')
+        .onSnapshot(querySnapshot => {
+          let comments = [];
+          querySnapshot.forEach(snapshot => {
+            comments.push({
+              id: snapshot.id,
+              ...snapshot.data()
+            });
+          });
+          this.setState({ comments, commentCount: comments.length });
+        });
     }
   }
 
@@ -30,9 +42,18 @@ class TableCell extends Component {
     this.unsubscribeAllComments = FirestoreManager.getAllCommentsToTableCell(
       this.props.workspace.id,
       this.props.cell.id
-    ).onSnapshot(querySnapshot => {
-      this.setState({ commentCount: querySnapshot.docs.length });
-    });
+    )
+      .orderBy('creationDate', 'asc')
+      .onSnapshot(querySnapshot => {
+        let comments = [];
+        querySnapshot.forEach(snapshot => {
+          comments.push({
+            id: snapshot.id,
+            ...snapshot.data()
+          });
+        });
+        this.setState({ comments, commentCount: comments.length });
+      });
   }
 
   componentWillUnmount() {
@@ -40,7 +61,7 @@ class TableCell extends Component {
   }
 
   render() {
-    const { commentCount } = this.state;
+    const { comments, commentCount } = this.state;
     let { type } = this.props.cell;
     let cell = null;
 
@@ -49,14 +70,32 @@ class TableCell extends Component {
         cell = <TopLeftCell {...this.props} />;
         break;
       case TABLE_CELL_TYPES.columnHeader:
-        cell = <ColumnHeaderCell {...this.props} commentCount={commentCount} />;
+        cell = (
+          <ColumnHeaderCell
+            {...this.props}
+            comments={comments}
+            commentCount={commentCount}
+          />
+        );
         break;
       case TABLE_CELL_TYPES.rowHeader:
-        cell = <RowHeaderCell {...this.props} commentCount={commentCount} />;
+        cell = (
+          <RowHeaderCell
+            {...this.props}
+            comments={comments}
+            commentCount={commentCount}
+          />
+        );
         break;
       case TABLE_CELL_TYPES.regularCell:
       default:
-        cell = <RegularCell {...this.props} commentCount={commentCount} />;
+        cell = (
+          <RegularCell
+            {...this.props}
+            comments={comments}
+            commentCount={commentCount}
+          />
+        );
         break;
     }
     return cell;

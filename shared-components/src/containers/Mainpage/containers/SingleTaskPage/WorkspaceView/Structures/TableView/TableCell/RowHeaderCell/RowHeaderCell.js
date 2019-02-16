@@ -27,6 +27,7 @@ import {
 import { THEME_COLOR } from '../../../../../../../../../shared/theme';
 
 import CellComments from '../CellComments/CellComments';
+import { getFirstName } from '../../../../../../../../../shared/utilities';
 
 const materialStyles = theme => ({
   iconButtons: {
@@ -227,6 +228,7 @@ class RowHeaderCell extends Component {
       pieces,
       editAccess,
       commentAccess,
+      comments,
       commentCount
     } = this.props;
     const { anchorEl } = this.state;
@@ -250,22 +252,37 @@ class RowHeaderCell extends Component {
       </div>
     ) : null;
 
+    let commentsFromOthers = comments.filter(
+      c => c.authorId !== FirestoreManager.getCurrentUserId()
+    );
+
+    let commentTooltipTitle = 'Make a comment';
+    if (commentCount > 0) {
+      if (commentsFromOthers.length === 1) {
+        let authorName = getFirstName(commentsFromOthers[0].authorName);
+        commentTooltipTitle = `1 comment from ${authorName}`;
+      } else if (commentsFromOthers.length > 1) {
+        commentTooltipTitle = `${
+          commentsFromOthers.length
+        } comments from others`;
+      }
+    }
+
     let commentsActionContainer = commentAccess ? (
       <div
         className={styles.CommentsContainer}
         style={{ zIndex: 1000, opacity: commentCount > 0 ? 0.7 : null }}
-        title={'Comments'}
       >
         <div style={{ position: 'relative' }}>
-          {/*<Tooltip title="Comments" placement={'top'}>*/}
-          <IconButton
-            aria-label="Comment"
-            className={classes.iconButtons}
-            onClick={e => this.handleCommentClick(e)}
-          >
-            <Chat className={classes.iconInIconButtons} />
-          </IconButton>
-          {/*</Tooltip>*/}
+          <Tooltip title={commentTooltipTitle} placement={'top'}>
+            <IconButton
+              aria-label="Comment"
+              className={classes.iconButtons}
+              onClick={e => this.handleCommentClick(e)}
+            >
+              <Chat className={classes.iconInIconButtons} />
+            </IconButton>
+          </Tooltip>
           <Popover
             id={`${cell.id}-comments-popover`}
             open={open}
@@ -283,6 +300,7 @@ class RowHeaderCell extends Component {
             <CellComments
               workspaceId={this.props.workspace.id}
               cellId={cell.id}
+              comments={comments}
               commentAccess={commentAccess}
               cellType={cell.type}
             />

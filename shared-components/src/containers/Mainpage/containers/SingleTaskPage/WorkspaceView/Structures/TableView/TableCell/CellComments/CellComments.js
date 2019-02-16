@@ -31,28 +31,11 @@ const ActionButton = withStyles({
 
 class CellComments extends Component {
   state = {
-    comments: [],
-
     editCommentValue: ''
   };
 
   componentDidMount() {
     this.keyPress = this.keyPress.bind(this);
-    this.unsubscribeComments = FirestoreManager.getAllCommentsToTableCell(
-      this.props.workspaceId,
-      this.props.cellId
-    )
-      .orderBy('creationDate', 'asc')
-      .onSnapshot(querySnapshot => {
-        let comments = [];
-        querySnapshot.forEach(snapshot => {
-          comments.push({
-            id: snapshot.id,
-            ...snapshot.data()
-          });
-        });
-        this.setState({ comments });
-      });
   }
 
   // also allow Enter to submit
@@ -60,10 +43,6 @@ class CellComments extends Component {
     if (e.key === 'Enter' && !e.shiftKey) {
       this.saveEditClickedHandler();
     }
-  }
-
-  componentWillUnmount() {
-    this.unsubscribeComments();
   }
 
   handleInputChange = event => {
@@ -90,8 +69,13 @@ class CellComments extends Component {
   };
 
   render() {
-    const { commentAccess, classes, workspaceId, cellId } = this.props;
-    const { comments } = this.state;
+    const {
+      comments,
+      commentAccess,
+      classes,
+      workspaceId,
+      cellId
+    } = this.props;
 
     let CommentList = (
       <div className={classesInCSS.CommentListContainer}>
@@ -111,7 +95,7 @@ class CellComments extends Component {
       </div>
     );
 
-    let expandedView = (
+    return (
       <React.Fragment>
         <div>
           <div className={classesInCSS.CommentBox}>{CommentList}</div>
@@ -152,8 +136,6 @@ class CellComments extends Component {
         </div>
       </React.Fragment>
     );
-
-    return expandedView;
   }
 }
 
