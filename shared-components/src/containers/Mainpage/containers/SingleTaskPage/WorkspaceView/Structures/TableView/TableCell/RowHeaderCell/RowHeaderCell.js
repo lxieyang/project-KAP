@@ -115,10 +115,7 @@ class RowHeaderCell extends Component {
     contentEdit: this.props.cell.content,
 
     // comment popover
-    anchorEl: null,
-
-    // comment count
-    commentCount: 0
+    anchorEl: null
   };
 
   static propTypes = {
@@ -129,8 +126,9 @@ class RowHeaderCell extends Component {
   };
 
   componentDidUpdate(prevProps, prevState) {
-    if (prevProps.cell.content !== this.props.cell.content)
+    if (prevProps.cell.content !== this.props.cell.content) {
       this.setState({ contentEdit: this.props.cell.content });
+    }
   }
 
   componentDidMount() {
@@ -142,18 +140,9 @@ class RowHeaderCell extends Component {
         event.target.value
       );
     }, 500);
-
-    this.unsubscribeAllComments = FirestoreManager.getAllCommentsToTableCell(
-      this.props.workspace.id,
-      this.props.cell.id
-    ).onSnapshot(querySnapshot => {
-      this.setState({ commentCount: querySnapshot.docs.length });
-    });
   }
 
-  componentWillUnmount() {
-    this.unsubscribeAllComments();
-  }
+  componentWillUnmount() {}
 
   handleCommentClick = event => {
     this.setState({
@@ -232,8 +221,15 @@ class RowHeaderCell extends Component {
 
   render() {
     const { connectDropTarget, canDrop, isOver } = this.props;
-    let { classes, cell, pieces, editAccess, commentAccess } = this.props;
-    const { anchorEl, commentCount } = this.state;
+    let {
+      classes,
+      cell,
+      pieces,
+      editAccess,
+      commentAccess,
+      commentCount
+    } = this.props;
+    const { anchorEl } = this.state;
     const open = Boolean(anchorEl);
 
     if (cell === null || pieces === null) {
@@ -255,7 +251,11 @@ class RowHeaderCell extends Component {
     ) : null;
 
     let commentsActionContainer = commentAccess ? (
-      <div className={styles.CommentsContainer}>
+      <div
+        className={styles.CommentsContainer}
+        style={{ zIndex: 1000, opacity: commentCount > 0 ? 0.7 : null }}
+        title={'Comments'}
+      >
         <div style={{ position: 'relative' }}>
           {/*<Tooltip title="Comments" placement={'top'}>*/}
           <IconButton

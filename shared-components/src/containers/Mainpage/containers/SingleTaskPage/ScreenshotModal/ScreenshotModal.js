@@ -30,6 +30,10 @@ const styles = theme => ({
   }
 });
 
+const HighZIndexModal = withStyles({
+  root: { zIndex: 999999999 }
+})(Modal);
+
 class SimpleModal extends React.Component {
   state = {
     open: false,
@@ -58,7 +62,7 @@ class SimpleModal extends React.Component {
 
     return (
       <div>
-        <Modal
+        <HighZIndexModal
           aria-labelledby="simple-modal-title"
           aria-describedby="simple-modal-description"
           open={this.state.open}
@@ -71,7 +75,7 @@ class SimpleModal extends React.Component {
               style={{ maxWidth: '80%', maxHeight: '80%' }}
             />
           </div>
-        </Modal>
+        </HighZIndexModal>
       </div>
     );
   }

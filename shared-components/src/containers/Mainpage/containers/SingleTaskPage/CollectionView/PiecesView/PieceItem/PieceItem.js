@@ -46,7 +46,12 @@ import Comments from './Comments/Comments';
 import classesInCSS from './PieceItem.css';
 
 // dnd stuff
-import { DragSource, DropTarget } from 'react-dnd';
+import {
+  DragSource,
+  ConnectDragPreview,
+  ConnectDragSource,
+  DropTarget
+} from 'react-dnd';
 import PropTypes from 'prop-types';
 
 const materialStyles = theme => ({
@@ -144,6 +149,7 @@ const dragSource = {
 const collectDrag = (connect, monitor) => {
   return {
     connectDragSource: connect.dragSource(),
+    connectDragPreview: connect.dragPreview(),
     isDragging: monitor.isDragging()
   };
 };
@@ -195,6 +201,10 @@ class PieceItem extends Component {
     ).onSnapshot(querySnapshot => {
       this.setState({ commentCount: querySnapshot.docs.length });
     });
+
+    if (this.props.cellType === TABLE_CELL_TYPES.regularCell) {
+      this.setState({ expanded: true });
+    }
   }
 
   componentWillUnmount() {
@@ -275,7 +285,7 @@ class PieceItem extends Component {
   };
 
   render() {
-    const { connectDragSource, isDragging } = this.props; // dnd
+    const { connectDragSource, connectDragPreview, isDragging } = this.props; // dnd
 
     let { piece, classes, isHovering, editAccess, commentAccess } = this.props;
     const {
@@ -309,31 +319,41 @@ class PieceItem extends Component {
         break;
     }
 
-    return connectDragSource(
+    return connectDragPreview(
       <div>
         <React.Fragment>
-          <Card className={classes.card}>
+          <Card
+            className={classes.card}
+            style={{
+              marginBottom:
+                this.props.cellType === TABLE_CELL_TYPES.regularCell
+                  ? '0px'
+                  : null
+            }}
+          >
             <CardContent
               style={{ display: 'flex', padding: '0px' }}
               className={classes.cardContent}
             >
-              <div>
-                <Avatar
-                  aria-label="type"
-                  style={{
-                    backgroundColor: color,
-                    width: '28px',
-                    height: '28px',
-                    color: 'white'
-                  }}
-                  className={classesInCSS.Avatar}
-                >
-                  <FontAwesomeIcon
-                    icon={icon}
-                    className={classesInCSS.IconInsideAvatar}
-                  />
-                </Avatar>
-              </div>
+              {connectDragSource(
+                <div style={{ cursor: 'move' }}>
+                  <Avatar
+                    aria-label="type"
+                    style={{
+                      backgroundColor: color,
+                      width: '28px',
+                      height: '28px',
+                      color: 'white'
+                    }}
+                    className={classesInCSS.Avatar}
+                  >
+                    <FontAwesomeIcon
+                      icon={icon}
+                      className={classesInCSS.IconInsideAvatar}
+                    />
+                  </Avatar>
+                </div>
+              )}
 
               <div
                 style={{

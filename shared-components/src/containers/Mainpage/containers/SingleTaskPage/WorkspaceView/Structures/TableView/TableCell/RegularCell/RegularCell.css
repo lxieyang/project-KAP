@@ -2,6 +2,10 @@
   position: relative;
 }
 
+.RegularCell:hover .CommentsContainer {
+  opacity: 1;
+}
+
 .HoverLayer {
   position: absolute;
   top: 0;
@@ -41,33 +45,30 @@
   margin-right: 5px;
   width: 40px;
   height: 40px;
-  transition: all 0.1s ease-in;
+  transition: all 0.15s ease-in;
   border-radius: 50%;
   border: 2px solid transparent;
-  z-index: 9999999;
+  /* z-index: 9999; */
 }
 
 /* .AttitudeInTableCellIsShowing, */
 .AttitudeInTableCell:hover {
-  /* border: 2px solid red; */
   transform: scale(1.1);
   box-shadow: 0 4px 10px 0 rgba(0, 0, 0, 0.2), 0 4px 20px 0 rgba(0, 0, 0, 0.19);
-  z-index: 9999999;
-  cursor: pointer;
 }
 
 .TooltipOverAttitude {
-  position: fixed;
+  /* position: fixed; */
   /* overflow: auto; */
   max-width: 300px;
   margin: 0px 0px !important;
   padding: 0px 0px !important;
-  /* margin: 0 !important; */
-  /* box-shadow: 0 4px 10px 0 rgba(0,0,0,0.2),0 4px 20px 0 rgba(0,0,0,0.19); */
+  border-radius: 5px !important;
+  box-shadow: 0 4px 10px 0 rgba(0, 0, 0, 0.2), 0 4px 20px 0 rgba(0, 0, 0, 0.19) !important;
   opacity: 1 !important;
   background-color: white !important;
   pointer-events: auto !important;
-  z-index: 10000 !important;
+  z-index: 1200 !important;
 }
 
 .TooltipOverAttitude:hover {
@@ -132,4 +133,35 @@
   background-color: #fff;
   border-color: rgb(17, 100, 224);
   outline: none;
+}
+
+.CommentsContainer {
+  position: absolute;
+  bottom: 0px;
+  right: 0px;
+  opacity: 0;
+  transition: all 0.1s ease-in;
+}
+
+/* .CommentsContainer:hover {
+  opacity: 1;
+} */
+
+.CommentCount {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  box-sizing: border-box;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  font-size: 13px;
+  font-weight: 500;
+  border-radius: 50%;
+  padding: 2px;
+  opacity: 0.8;
+  transform: scale(0.75);
 }

@@ -107,6 +107,8 @@ class Comments extends Component {
               expanded={expanded}
               expandPiece={expandPiece}
               isHovering={isHovering}
+              cellId={this.props.cellId}
+              cellType={this.props.cellType}
             />
           );
         })}

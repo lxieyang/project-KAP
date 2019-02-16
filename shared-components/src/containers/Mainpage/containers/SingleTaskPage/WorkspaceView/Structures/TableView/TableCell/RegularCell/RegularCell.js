@@ -9,13 +9,35 @@ import PieceItem from '../../../../../CollectionView/PiecesView/PieceItem/PieceI
 import RatingLayer from './RatingLayer/RatingLayer';
 import * as FirestoreManager from '../../../../../../../../../firebase/firestore_wrapper';
 import { RATING_TYPES } from '../../../../../../../../../shared/types';
+import { THEME_COLOR } from '../../../../../../../../../shared/theme';
+
 import ReactTooltip from 'react-tooltip';
+import HTMLTooltips from './components/HTMLTooltips';
+import { withStyles } from '@material-ui/core/styles';
+import { Chat } from 'mdi-material-ui';
+import Tooltip from '@material-ui/core/Tooltip';
+import IconButton from '@material-ui/core/IconButton';
+import Popover from '@material-ui/core/Popover';
+
 import Textarea from 'react-textarea-autosize';
 import { ContextMenu, MenuItem, ContextMenuTrigger } from 'react-contextmenu';
 
 // dnd stuff
 import { DragSource, DropTarget } from 'react-dnd';
 import PropTypes from 'prop-types';
+
+import CellComments from '../CellComments/CellComments';
+
+const materialStyles = theme => ({
+  iconButtons: {
+    padding: '4px'
+  },
+  iconInIconButtons: {
+    width: '14px',
+    height: '14px',
+    color: 'rgb(187, 187, 187)'
+  }
+});
 
 const dropTarget = {
   canDrop(props, monitor, component) {
@@ -33,7 +55,10 @@ const collectDrop = (connect, monitor) => {
 
 class RegularCell extends Component {
   state = {
-    contentEdit: this.props.cell.content
+    contentEdit: this.props.cell.content,
+
+    // comment popover
+    anchorEl: null
   };
 
   static propTypes = {
@@ -58,6 +83,18 @@ class RegularCell extends Component {
       );
     }, 500);
   }
+
+  handleCommentClick = event => {
+    this.setState({
+      anchorEl: event.currentTarget
+    });
+  };
+
+  handleCommentClose = () => {
+    this.setState({
+      anchorEl: null
+    });
+  };
 
   keyPress(e) {
     if (e.key === 'Enter' && !e.shiftKey) {
@@ -91,17 +128,75 @@ class RegularCell extends Component {
 
   render() {
     const { connectDropTarget, canDrop, isOver } = this.props;
-    let { cell, pieces, editAccess, commentAccess } = this.props;
+    let {
+      classes,
+      cell,
+      pieces,
+      editAccess,
+      commentAccess,
+      commentCount
+    } = this.props;
+    const { anchorEl } = this.state;
+    const open = Boolean(anchorEl);
 
     if (cell === null || pieces === null) {
       return <td />;
     }
 
+    let commentsActionContainer = commentAccess ? (
+      <div
+        className={styles.CommentsContainer}
+        style={{ zIndex: 1000, opacity: commentCount > 0 ? 0.7 : null }}
+        title={'Comments'}
+      >
+        <div style={{ position: 'relative' }}>
+          {/*<Tooltip title="Comments" placement={'top'}>*/}
+          <IconButton
+            aria-label="Comment"
+            className={classes.iconButtons}
+            onClick={e => this.handleCommentClick(e)}
+          >
+            <Chat className={classes.iconInIconButtons} />
+          </IconButton>
+          {/*</Tooltip>*/}
+          <Popover
+            id={`${cell.id}-comments-popover`}
+            open={open}
+            anchorEl={anchorEl}
+            onClose={this.handleCommentClose}
+            anchorOrigin={{
+              vertical: 'top',
+              horizontal: 'left'
+            }}
+            transformOrigin={{
+              vertical: 'top',
+              horizontal: 'left'
+            }}
+          >
+            <CellComments
+              workspaceId={this.props.workspace.id}
+              cellId={cell.id}
+              commentAccess={commentAccess}
+              cellType={cell.type}
+            />
+          </Popover>
+          <span
+            style={{ color: THEME_COLOR.badgeColor }}
+            className={styles.CommentCount}
+          >
+            {commentCount > 0 ? commentCount : null}
+          </span>
+        </div>
+      </div>
+    ) : null;
+
     return connectDropTarget(
       <td className={styles.RegularCell}>
+        {commentsActionContainer}
+
         <div
           className={styles.HoverLayer}
-          style={{ zIndex: isOver ? 1000 : 980 }}
+          style={{ zIndex: isOver ? 1000 : -1 }}
         >
           <div className={styles.HoverLayerPane}>
             <RatingLayer ratingType={RATING_TYPES.positive} {...this.props} />
@@ -112,7 +207,7 @@ class RegularCell extends Component {
         </div>
 
         {/* regular */}
-        <div className={styles.RegularContentContainer} style={{ zIndex: 990 }}>
+        <div className={styles.RegularContentContainer}>
           {cell.pieces.length > 0 ? (
             <div className={styles.EvidenceIconContainer}>
               {sortBy(cell.pieces, ['rating']).map((p, idx) => {
@@ -120,6 +215,54 @@ class RegularCell extends Component {
                   pieces[p.pieceId] !== undefined &&
                   pieces[p.pieceId] !== null
                 ) {
+                  // return (
+                  //   <div key={`${p.pieceId}-${idx}`}>
+                  //     <HTMLTooltips
+                  //       title={
+                  //         <PieceItem
+                  //           piece={pieces[p.pieceId]}
+                  //           editAccess={editAccess}
+                  //           commentAccess={commentAccess}
+                  //           cellId={cell.id}
+                  //           cellType={cell.type}
+                  //           rowIndex={this.props.rowIndex}
+                  //           columnIndex={this.props.columnIndex}
+                  //           openScreenshot={this.props.openScreenshot}
+                  //         />
+                  //       }
+                  //     >
+                  //       <div
+                  //         className={[styles.AttitudeInTableCell].join(' ')}
+                  //         data-tip
+                  //         data-for={`${p.pieceId}`}
+                  //       >
+                  //         <ThumbV1
+                  //           type={
+                  //             p.rating === RATING_TYPES.positive ? 'up' : 'down'
+                  //           }
+                  //         />
+                  //       </div>
+                  //     </HTMLTooltips>
+                  //     {editAccess ? (
+                  //       <ContextMenu
+                  //         style={{ zIndex: '9999999' }}
+                  //         id={`${cell.id}-${p.pieceId}-${idx}-context-menu`}
+                  //       >
+                  //         <MenuItem
+                  //           onClick={e =>
+                  //             this.removePieceFromCellClickedHandler(
+                  //               e,
+                  //               p.pieceId
+                  //             )
+                  //           }
+                  //         >
+                  //           Remove from table
+                  //         </MenuItem>
+                  //       </ContextMenu>
+                  //     ) : null}
+                  //   </div>
+                  // );
+
                   return (
                     <div key={`${p.pieceId}-${idx}`}>
                       <ContextMenuTrigger
@@ -158,13 +301,14 @@ class RegularCell extends Component {
                         place="right"
                         type="light"
                         effect="solid"
-                        delayHide={100}
+                        delayHide={200}
                         id={`${p.pieceId}`}
                         className={styles.TooltipOverAttitude}
                         getContent={() => {
                           return (
                             <ContextMenuTrigger
                               id={`${cell.id}-${p.pieceId}-${idx}-context-menu`}
+                              holdToDisplay={-1}
                             >
                               <PieceItem
                                 piece={pieces[p.pieceId]}
@@ -212,4 +356,6 @@ class RegularCell extends Component {
   }
 }
 
-export default DropTarget(['PIECE_ITEM'], dropTarget, collectDrop)(RegularCell);
+export default withStyles(materialStyles)(
+  DropTarget(['PIECE_ITEM'], dropTarget, collectDrop)(RegularCell)
+);
