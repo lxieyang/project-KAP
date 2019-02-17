@@ -63,7 +63,7 @@ const options = [
     disabled: false
   },
   {
-    name: 'More structures to come in upcoming releases',
+    name: 'More structures to come in future releases',
     type: WORKSPACE_TYPES.more,
     shortName: 'more',
     icon: <BullseyeArrow />,

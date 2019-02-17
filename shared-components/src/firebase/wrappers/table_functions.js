@@ -143,7 +143,7 @@ export const resetPieceInTableCellById = async (
   updatePiecesTableCellById(tableId, cellId, pieces);
 };
 
-export const createNewRowInTable = async tableId => {
+export const createNewRowInTable = async (tableId, beginning = false) => {
   let tableRows = (await getWorkspaceById(tableId).get()).data().data;
 
   let numCols = tableRows[0].data.length;
@@ -157,7 +157,11 @@ export const createNewRowInTable = async tableId => {
     }
     row.push(cell);
   }
-  tableRows.push({ data: row });
+  if (beginning) {
+    tableRows.splice(1, 0, { data: row });
+  } else {
+    tableRows.push({ data: row });
+  }
   updateTableData(tableId, tableRows);
 };
 
@@ -174,7 +178,7 @@ export const deleteRowInTableByIndex = async (tableId, toDeleteRowIdx) => {
   });
 };
 
-export const createNewColumnInTable = async tableId => {
+export const createNewColumnInTable = async (tableId, beginning = false) => {
   let tableRows = (await db
     .collection('workspaces')
     .doc(tableId)
@@ -188,7 +192,11 @@ export const createNewColumnInTable = async tableId => {
     } else if (i > 0) {
       cell = createNewTableCell(tableId, TABLE_CELL_TYPES.regularCell);
     }
-    tableRows[i].data.push(cell);
+    if (beginning) {
+      tableRows[i].data.splice(1, 0, cell);
+    } else {
+      tableRows[i].data.push(cell);
+    }
   }
   updateTableData(tableId, tableRows);
 };

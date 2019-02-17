@@ -85,3 +85,35 @@ table.ComparisonTable {
 .CreateNewButton:hover {
   opacity: 1;
 }
+
+.AddRowButtonContainer {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 4px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0.5;
+  transition: all 0.15s ease-in;
+}
+
+.AddRowButtonContainer:hover {
+  opacity: 1;
+}
+
+.AddColumnButtonContainer {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.5;
+  transition: all 0.15s ease-in;
+}
+
+.AddColumnButtonContainer:hover {
+  opacity: 1;
+}

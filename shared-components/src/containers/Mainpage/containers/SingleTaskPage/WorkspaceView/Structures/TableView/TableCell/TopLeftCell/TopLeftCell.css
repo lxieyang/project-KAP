@@ -1,6 +1,39 @@
 .TopLeftCellContainer {
+  position: relative;
   width: 100px;
   height: 50px;
   border-left: none !important;
   border-top: none !important;
+}
+
+.AddRowButtonContainer {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 3px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0.5;
+  transition: all 0.15s ease-in;
+}
+
+.AddRowButtonContainer:hover {
+  opacity: 1;
+}
+
+.AddColumnButtonContainer {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.5;
+  transition: all 0.15s ease-in;
+}
+
+.AddColumnButtonContainer:hover {
+  opacity: 1;
 }

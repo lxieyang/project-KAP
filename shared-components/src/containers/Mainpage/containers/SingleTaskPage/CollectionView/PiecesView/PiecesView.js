@@ -18,12 +18,13 @@ import PieceItem from './PieceItem/PieceItem';
 import ScreenshotModal from '../../ScreenshotModal/ScreenshotModal';
 
 const PiecesContainer = styled.div`
-  margin: 5px 0px;
+  padding: 5px 0px;
   box-sizing: border-box;
   width: 100%;
   height: 100%;
   overflow: hidden;
   position: relative;
+  background-color: rgb(211, 211, 211);
 `;
 
 const PiecesUL = styled.div`
@@ -44,6 +45,7 @@ const PiecesUL = styled.div`
 const PieceLI = styled.div`
   margin: 0px;
   padding-left: 4px;
+  padding-right: 4px;
 `;
 
 const materialStyles = theme => ({
@@ -75,12 +77,6 @@ class PiecesView extends Component {
     toDeletePieceId: '',
     toDeletePieceName: ''
   };
-
-  constructor() {
-    super();
-    this.topRef = React.createRef();
-    this.containerRef = React.createRef();
-  }
 
   componentDidMount() {
     let taskId = getTaskIdFromPath(this.props.history.location.pathname);
@@ -155,7 +151,7 @@ class PiecesView extends Component {
 
     return (
       <React.Fragment>
-        <PiecesContainer innerRef={this.containerRef}>
+        <PiecesContainer>
           {pieces.length !== 0 ? (
             <PiecesUL>
               <PieceLI
@@ -165,9 +161,7 @@ class PiecesView extends Component {
                   alignItems: 'center'
                 }}
               >
-                <span ref={this.topRef} className={styles.TopChip}>
-                  top
-                </span>
+                <span className={styles.TopChip}>top</span>
               </PieceLI>
               {pieces.map((p, idx) => {
                 return (

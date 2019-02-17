@@ -152,6 +152,8 @@ class TableView extends Component {
             <TableCell
               key={idx}
               workspace={workspace}
+              numRows={tableRows.length}
+              numColumns={tableRows[0].data.length}
               pieces={this.props.pieces}
               editAccess={editAccess}
               commentAccess={commentAccess}
@@ -165,18 +167,19 @@ class TableView extends Component {
         {editAccess ? (
           <th
             style={{
-              borderTop: 'none',
-              borderBottom: 'none',
-              borderRight: 'none'
+              border: 'none',
+              position: 'relative'
             }}
           >
-            <ActionButton
-              style={{ color: PIECE_COLOR.criterion }}
-              className={classes.button}
-              onClick={e => this.createNewTableColumn(e)}
-            >
-              Add a column
-            </ActionButton>
+            <div className={styles.AddColumnButtonContainer}>
+              <ActionButton
+                style={{ color: PIECE_COLOR.criterion }}
+                className={classes.button}
+                onClick={e => this.createNewTableColumn(e)}
+              >
+                Add a column
+              </ActionButton>
+            </div>
           </th>
         ) : null}
       </tr>
@@ -214,18 +217,21 @@ class TableView extends Component {
           <tr>
             <td
               style={{
-                borderLeft: 'none',
-                borderBottom: 'none',
-                borderRight: 'none'
+                position: 'relative',
+                border: 'none',
+                display: 'flex',
+                justifyContent: 'center'
               }}
             >
-              <ActionButton
-                style={{ color: PIECE_COLOR.option }}
-                className={classes.button}
-                onClick={e => this.createNewTableRow(e)}
-              >
-                Add a row
-              </ActionButton>
+              <div className={styles.AddRowButtonContainer}>
+                <ActionButton
+                  style={{ color: PIECE_COLOR.option }}
+                  className={classes.button}
+                  onClick={e => this.createNewTableRow(e)}
+                >
+                  Add a row
+                </ActionButton>
+              </div>
             </td>
           </tr>
         ) : null}
