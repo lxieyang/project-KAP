@@ -161,10 +161,15 @@ class RegularCell extends Component {
       }
     }
 
-    let commentsActionContainer = commentAccess ? (
+    let commentsActionContainer = (
       <div
         className={styles.CommentsContainer}
-        style={{ zIndex: 1000, opacity: commentCount > 0 ? 1 : null }}
+        style={{
+          zIndex: 1000,
+          opacity: commentCount > 0 ? 1 : null,
+          display:
+            commentAccess !== true && commentCount === 0 ? 'none' : null
+        }}
       >
         <div style={{ position: 'relative' }}>
           <Tooltip title={commentTooltipTitle} placement={'top'}>
@@ -206,7 +211,7 @@ class RegularCell extends Component {
           </span>
         </div>
       </div>
-    ) : null;
+    );
 
     return connectDropTarget(
       <td
@@ -332,7 +337,10 @@ class RegularCell extends Component {
                 onKeyDown={this.keyPress}
                 onBlur={e => this.saveCellContentClickedHandler(e)}
                 onChange={e => this.handleCellContentInputChange(e)}
-                className={styles.Textarea}
+                className={[
+                  styles.Textarea,
+                  editAccess ? styles.TextareaEditable : null
+                ].join(' ')}
               />
             </div>
           </div>

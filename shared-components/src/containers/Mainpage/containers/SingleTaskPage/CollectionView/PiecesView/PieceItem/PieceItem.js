@@ -336,7 +336,7 @@ class PieceItem extends Component {
               className={classes.cardContent}
             >
               {connectDragSource(
-                <div style={{ cursor: 'move' }}>
+                <div style={{ cursor: editAccess ? 'move' : null }}>
                   <Avatar
                     aria-label="type"
                     style={{

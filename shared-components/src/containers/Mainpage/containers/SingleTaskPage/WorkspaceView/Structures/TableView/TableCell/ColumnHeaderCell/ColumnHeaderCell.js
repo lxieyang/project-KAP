@@ -537,7 +537,11 @@ class ColumnHeaderCell extends Component {
                     width: '28px',
                     height: '28px',
                     color: 'white',
-                    marginRight: '4px'
+                    marginRight: '4px',
+                    display:
+                      !editAccess && this.state.contentEdit === ''
+                        ? 'none'
+                        : null
                   }}
                   className={styles.Avatar}
                 >
@@ -561,7 +565,10 @@ class ColumnHeaderCell extends Component {
                   onFocus={() => this.setState({ textareaFocused: true })}
                   onBlur={() => this.setState({ textareaFocused: false })}
                   onChange={e => this.handleCellContentInputChange(e)}
-                  className={styles.Textarea}
+                  className={[
+                    styles.Textarea,
+                    editAccess ? styles.TextareaEditable : null
+                  ].join(' ')}
                 />
               </div>
 

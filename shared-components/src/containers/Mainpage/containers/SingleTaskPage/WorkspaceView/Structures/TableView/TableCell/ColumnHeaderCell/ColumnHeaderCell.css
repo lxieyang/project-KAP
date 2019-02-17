@@ -105,7 +105,7 @@
   color: lightgray;
 }
 
-.Textarea:hover {
+.TextareaEditable:hover {
   border-color: rgb(226, 226, 226);
 }
 
