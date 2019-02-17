@@ -241,54 +241,6 @@ class RegularCell extends Component {
                   pieces[p.pieceId] !== undefined &&
                   pieces[p.pieceId] !== null
                 ) {
-                  // return (
-                  //   <div key={`${p.pieceId}-${idx}`}>
-                  //     <HTMLTooltips
-                  //       title={
-                  //         <PieceItem
-                  //           piece={pieces[p.pieceId]}
-                  //           editAccess={editAccess}
-                  //           commentAccess={commentAccess}
-                  //           cellId={cell.id}
-                  //           cellType={cell.type}
-                  //           rowIndex={this.props.rowIndex}
-                  //           columnIndex={this.props.columnIndex}
-                  //           openScreenshot={this.props.openScreenshot}
-                  //         />
-                  //       }
-                  //     >
-                  //       <div
-                  //         className={[styles.AttitudeInTableCell].join(' ')}
-                  //         data-tip
-                  //         data-for={`${p.pieceId}`}
-                  //       >
-                  //         <ThumbV1
-                  //           type={
-                  //             p.rating === RATING_TYPES.positive ? 'up' : 'down'
-                  //           }
-                  //         />
-                  //       </div>
-                  //     </HTMLTooltips>
-                  //     {editAccess ? (
-                  //       <ContextMenu
-                  //         style={{ zIndex: '9999999' }}
-                  //         id={`${cell.id}-${p.pieceId}-${idx}-context-menu`}
-                  //       >
-                  //         <MenuItem
-                  //           onClick={e =>
-                  //             this.removePieceFromCellClickedHandler(
-                  //               e,
-                  //               p.pieceId
-                  //             )
-                  //           }
-                  //         >
-                  //           Remove from table
-                  //         </MenuItem>
-                  //       </ContextMenu>
-                  //     ) : null}
-                  //   </div>
-                  // );
-
                   return (
                     <div key={`${p.pieceId}-${idx}`}>
                       <ContextMenuTrigger
@@ -357,25 +309,33 @@ class RegularCell extends Component {
                 }
               })}
             </div>
-          ) : (
-            <div className={styles.CellContentContainer}>
-              <div className={styles.CellContentEditContainer}>
-                <div className={styles.TextAreaContainer}>
-                  <Textarea
-                    inputRef={tag => (this.textarea = tag)}
-                    minRows={2}
-                    maxRows={10}
-                    placeholder={'Type or drop a snippet card here as evidence'}
-                    value={this.state.contentEdit}
-                    onKeyDown={this.keyPress}
-                    onBlur={e => this.saveCellContentClickedHandler(e)}
-                    onChange={e => this.handleCellContentInputChange(e)}
-                    className={styles.Textarea}
-                  />
-                </div>
-              </div>
+          ) : null}
+
+          <div
+            className={[
+              styles.CellContentEditContainer,
+              this.state.contentEdit === '' ? styles.HoverToReveal : null
+            ].join(' ')}
+          >
+            <div className={styles.TextAreaContainer}>
+              <Textarea
+                disabled={!editAccess}
+                inputRef={tag => (this.textarea = tag)}
+                minRows={1}
+                maxRows={5}
+                placeholder={
+                  editAccess
+                    ? 'Type or drop a snippet card here as evidence'
+                    : ''
+                }
+                value={this.state.contentEdit}
+                onKeyDown={this.keyPress}
+                onBlur={e => this.saveCellContentClickedHandler(e)}
+                onChange={e => this.handleCellContentInputChange(e)}
+                className={styles.Textarea}
+              />
             </div>
-          )}
+          </div>
         </div>
       </td>
     );

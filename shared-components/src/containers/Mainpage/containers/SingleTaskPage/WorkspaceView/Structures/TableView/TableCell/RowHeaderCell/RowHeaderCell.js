@@ -434,11 +434,14 @@ class RowHeaderCell extends Component {
             <div className={styles.CellContentEditContainer}>
               <div className={styles.TextAreaContainer}>
                 <Textarea
+                  disabled={!editAccess}
                   inputRef={tag => (this.textarea = tag)}
-                  minRows={2}
-                  maxRows={10}
+                  minRows={1}
+                  maxRows={5}
                   placeholder={
-                    'Type or drop a snippet card here to add an option'
+                    editAccess
+                      ? 'Type or drop a snippet card here to add an option'
+                      : ''
                   }
                   value={this.state.contentEdit}
                   onKeyDown={this.keyPress}

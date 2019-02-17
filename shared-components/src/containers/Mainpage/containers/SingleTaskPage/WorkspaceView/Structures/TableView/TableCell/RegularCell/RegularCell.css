@@ -3,7 +3,13 @@
   transition: all 0.15s ease-in;
 }
 
-.RegularCell:hover .CommentsContainer {
+.HoverToReveal {
+  opacity: 0;
+  transition: all 0.1s ease-in;
+}
+
+.RegularCell:hover .CommentsContainer,
+.RegularCell:hover .HoverToReveal {
   opacity: 1;
 }
 
@@ -24,12 +30,8 @@
 }
 
 .RegularContentContainer {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
   display: flex;
+  flex-flow: column;
   justify-content: center;
   align-items: center;
 }
@@ -39,6 +41,7 @@
   flex-flow: row;
   justify-content: center;
   align-items: center;
+  margin-bottom: 5px;
 }
 
 .AttitudeInTableCell {
@@ -62,6 +65,8 @@
   /* position: fixed; */
   /* overflow: auto; */
   max-width: 300px;
+  max-height: 600px;
+  overflow: auto;
   margin: 0px 0px !important;
   padding: 0px 0px !important;
   border-radius: 5px !important;
@@ -107,7 +112,7 @@
 .Textarea {
   display: block;
   box-sizing: border-box;
-  width: 100%;
+  width: 97%;
   resize: none;
   overflow: auto;
 

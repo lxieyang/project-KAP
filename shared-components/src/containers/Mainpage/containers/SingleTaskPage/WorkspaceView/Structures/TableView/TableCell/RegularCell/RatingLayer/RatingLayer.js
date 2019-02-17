@@ -33,9 +33,9 @@ const dropTarget = {
   },
 
   drop(props, monitor, component) {
-    console.log(`Dropped on cell ${props.cell.id}`);
+    // console.log(`Dropped on cell ${props.cell.id}`);
     const item = monitor.getItem();
-    console.log(item);
+    // console.log(item);
 
     component.addPieceToThisCell(item.id);
 
