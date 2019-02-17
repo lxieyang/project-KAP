@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
+import ReactHoverObserver from 'react-hover-observer';
 import { debounce } from 'lodash';
 import styles from './RowHeaderCell.css';
 
@@ -240,15 +241,28 @@ class RowHeaderCell extends Component {
 
     let deleteRowActionContainer = editAccess ? (
       <div className={styles.DeleteColumnIconContainer}>
-        <Tooltip title="Delete this row" placement={'top'}>
-          <IconButton
-            aria-label="Delete"
-            className={classes.iconButtons}
-            onClick={() => this.deleteTableRowByIndex()}
-          >
-            <DeleteIcon className={classes.iconInIconButtons} />
-          </IconButton>
-        </Tooltip>
+        <ReactHoverObserver
+          {...{
+            onMouseEnter: () => {
+              this.props.setRowToDelete(this.props.rowIndex);
+            },
+            onMouseLeave: () => {
+              this.props.setRowToDelete(-1);
+            }
+          }}
+        >
+          <div>
+            <Tooltip title="Delete this row" placement={'top'}>
+              <IconButton
+                aria-label="Delete"
+                className={classes.iconButtons}
+                onClick={() => this.deleteTableRowByIndex()}
+              >
+                <DeleteIcon className={classes.iconInIconButtons} />
+              </IconButton>
+            </Tooltip>
+          </div>
+        </ReactHoverObserver>
       </div>
     ) : null;
 

@@ -1,5 +1,6 @@
 .ColumnHeaderCell {
   position: relative;
+  transition: all 0.15s ease-in;
 }
 
 .ColumnHeaderCell:hover .CommentsContainer {
@@ -19,7 +20,7 @@
 
 .DeleteColumnIconContainer {
   position: absolute;
-  top: -25px;
+  top: -30px;
   left: 0px;
   right: 0px;
   display: flex;

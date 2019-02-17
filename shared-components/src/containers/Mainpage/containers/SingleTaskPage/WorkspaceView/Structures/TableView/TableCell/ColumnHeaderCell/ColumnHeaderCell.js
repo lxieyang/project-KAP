@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
+import ReactHoverObserver from 'react-hover-observer';
 import { debounce } from 'lodash';
 import styles from './ColumnHeaderCell.css';
 
@@ -240,15 +241,29 @@ class ColumnHeaderCell extends Component {
 
     let deleteColumnActionContainer = editAccess ? (
       <div className={styles.DeleteColumnIconContainer}>
-        <Tooltip title="Delete this column" placement={'top'}>
-          <IconButton
-            aria-label="Delete"
-            className={classes.iconButtons}
-            onClick={() => this.deleteTableColumnByIndex()}
-          >
-            <DeleteIcon className={classes.iconInIconButtons} />
-          </IconButton>
-        </Tooltip>
+        {' '}
+        <ReactHoverObserver
+          {...{
+            onMouseEnter: () => {
+              this.props.setColumnToDelete(this.props.columnIndex);
+            },
+            onMouseLeave: () => {
+              this.props.setColumnToDelete(-1);
+            }
+          }}
+        >
+          <div>
+            <Tooltip title="Delete this column" placement={'top'}>
+              <IconButton
+                aria-label="Delete"
+                className={classes.iconButtons}
+                onClick={() => this.deleteTableColumnByIndex()}
+              >
+                <DeleteIcon className={classes.iconInIconButtons} />
+              </IconButton>
+            </Tooltip>
+          </div>
+        </ReactHoverObserver>
       </div>
     ) : null;
 
@@ -318,7 +333,14 @@ class ColumnHeaderCell extends Component {
     return connectDropTarget(
       <th
         className={styles.ColumnHeaderCell}
-        style={{ backgroundColor: isOver && canDrop ? '#aed6f1' : null }}
+        style={{
+          backgroundColor:
+            this.props.columnIndex === this.props.columnToDelete
+              ? THEME_COLOR.alertBackgroundColor
+              : isOver && canDrop
+              ? '#aed6f1'
+              : null
+        }}
       >
         {deleteColumnActionContainer}
         {commentsActionContainer}

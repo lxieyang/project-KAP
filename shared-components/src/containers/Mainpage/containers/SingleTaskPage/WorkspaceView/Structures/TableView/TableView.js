@@ -4,7 +4,7 @@ import ReactHoverObserver from 'react-hover-observer';
 import { withRouter } from 'react-router-dom';
 import { matchPath } from 'react-router';
 import * as FirestoreManager from '../../../../../../../firebase/firestore_wrapper';
-import { PIECE_COLOR } from '../../../../../../../shared/theme';
+import { PIECE_COLOR, THEME_COLOR } from '../../../../../../../shared/theme';
 import Spinner from '../../../../../../../components/UI/Spinner/Spinner';
 import styles from './TableView.css';
 
@@ -42,7 +42,19 @@ class TableView extends Component {
     workspaceNameEdit: this.props.workspace.name,
 
     // cells
-    cells: null
+    cells: null,
+
+    // row / col delete
+    rowToDelete: -1,
+    columnToDelete: -1
+  };
+
+  setRowToDelete = to => {
+    this.setState({ rowToDelete: to });
+  };
+
+  setColumnToDelete = to => {
+    this.setState({ columnToDelete: to });
   };
 
   componentDidMount() {
@@ -160,6 +172,10 @@ class TableView extends Component {
               cell={cell}
               rowIndex={0}
               columnIndex={idx}
+              rowToDelete={this.state.rowToDelete}
+              columnToDelete={this.state.columnToDelete}
+              setRowToDelete={this.setRowToDelete}
+              setColumnToDelete={this.setColumnToDelete}
               openScreenshot={this.props.openScreenshot}
             />
           );
@@ -192,7 +208,20 @@ class TableView extends Component {
             return null;
           } else {
             return (
-              <tr key={idx}>
+              <tr
+                key={idx}
+                style={{
+                  transition: 'all 0.15s ease-in',
+                  // border:
+                  //   this.state.rowToDelete === idx
+                  //     ? `1px solid ${THEME_COLOR.alertBackgroundColor}`
+                  //     : null
+                  backgroundColor:
+                    this.state.rowToDelete === idx
+                      ? THEME_COLOR.alertBackgroundColor
+                      : 'transparent'
+                }}
+              >
                 {row.data.map((cellId, indexInRow) => {
                   let cell = cells[cellId];
                   return (
@@ -205,6 +234,10 @@ class TableView extends Component {
                       cell={cell}
                       rowIndex={idx}
                       columnIndex={indexInRow}
+                      rowToDelete={this.state.rowToDelete}
+                      columnToDelete={this.state.columnToDelete}
+                      setRowToDelete={this.setRowToDelete}
+                      setColumnToDelete={this.setColumnToDelete}
                       openScreenshot={this.props.openScreenshot}
                     />
                   );

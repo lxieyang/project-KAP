@@ -209,7 +209,15 @@ class RegularCell extends Component {
     ) : null;
 
     return connectDropTarget(
-      <td className={styles.RegularCell}>
+      <td
+        className={styles.RegularCell}
+        style={{
+          backgroundColor:
+            this.props.columnIndex === this.props.columnToDelete
+              ? THEME_COLOR.alertBackgroundColor
+              : 'transparent'
+        }}
+      >
         {commentsActionContainer}
 
         <div

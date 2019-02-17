@@ -14,5 +14,6 @@ export const PIECE_COLOR = {
 export const THEME_COLOR = {
   starColor: yellow['600'],
   badgeColor: pink['A100'],
-  reviewingTaskBackgroundColor: lime['200']
+  reviewingTaskBackgroundColor: lime['200'],
+  alertBackgroundColor: 'rgb(240, 68, 61)'
 };

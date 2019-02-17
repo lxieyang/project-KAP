@@ -1,5 +1,6 @@
 .RegularCell {
   position: relative;
+  transition: all 0.15s ease-in;
 }
 
 .RegularCell:hover .CommentsContainer {
