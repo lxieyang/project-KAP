@@ -57,6 +57,15 @@ export const setTableCellContentById = (tableId, cellId, content) => {
   );
 };
 
+export const switchTableCellCheckedStatus = (tableId, cellId, to) => {
+  getTableCellById(tableId, cellId).set(
+    {
+      checked: to
+    },
+    { merge: true }
+  );
+};
+
 /* commenting */
 export const addCommentToATableCellById = (
   tableId,

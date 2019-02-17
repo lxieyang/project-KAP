@@ -11,7 +11,7 @@ import * as FirestoreManager from '../../../../../../../../../firebase/firestore
 import { withStyles } from '@material-ui/core/styles';
 import IconButton from '@material-ui/core/IconButton';
 import DeleteIcon from '@material-ui/icons/Delete';
-import { Chat } from 'mdi-material-ui';
+import { Chat, CheckCircle, Cancel } from 'mdi-material-ui';
 import Tooltip from '@material-ui/core/Tooltip';
 import Popover from '@material-ui/core/Popover';
 import Textarea from 'react-textarea-autosize';
@@ -38,6 +38,10 @@ const materialStyles = theme => ({
     width: '14px',
     height: '14px',
     color: 'rgb(187, 187, 187)'
+  },
+  checkmarkIconInIconButtons: {
+    width: '18px',
+    height: '18px'
   }
 });
 
@@ -221,6 +225,14 @@ class RowHeaderCell extends Component {
     );
   };
 
+  switchOptionCheckedStatus = () => {
+    FirestoreManager.switchTableCellCheckedStatus(
+      this.props.workspace.id,
+      this.props.cell.id,
+      !this.props.cell.checked
+    );
+  };
+
   render() {
     const { connectDropTarget, canDrop, isOver } = this.props;
     let {
@@ -240,7 +252,7 @@ class RowHeaderCell extends Component {
     }
 
     let deleteRowActionContainer = editAccess ? (
-      <div className={styles.DeleteColumnIconContainer}>
+      <div className={styles.DeleteRowIconContainer}>
         <ReactHoverObserver
           {...{
             onMouseEnter: () => {
@@ -285,7 +297,7 @@ class RowHeaderCell extends Component {
     let commentsActionContainer = commentAccess ? (
       <div
         className={styles.CommentsContainer}
-        style={{ zIndex: 1000, opacity: commentCount > 0 ? 1 : null }}
+        style={{ zIndex: 1000, opacity: commentCount > 0 ? 0.7 : null }}
       >
         <div style={{ position: 'relative' }}>
           <Tooltip title={commentTooltipTitle} placement={'top'}>
@@ -329,13 +341,56 @@ class RowHeaderCell extends Component {
       </div>
     ) : null;
 
+    let decideRowActionContainer = editAccess ? (
+      <div className={styles.DecideRowIconContainer}>
+        {cell.checked === true ? (
+          <Tooltip
+            title={`I decide NOT to choose this option`}
+            placement={'top'}
+            style={{ color: '#f44336' }}
+          >
+            <IconButton
+              aria-label="Choose"
+              color="inherit"
+              className={classes.iconButtons}
+              onClick={() => this.switchOptionCheckedStatus()}
+            >
+              <Cancel className={classes.checkmarkIconInIconButtons} />
+            </IconButton>
+          </Tooltip>
+        ) : (
+          <Tooltip
+            title={`I decide to choose this option`}
+            placement={'top'}
+            style={{ color: '#8bc34a' }}
+          >
+            <IconButton
+              aria-label="Cancel"
+              color="inherit"
+              className={classes.iconButtons}
+              onClick={() => this.switchOptionCheckedStatus()}
+            >
+              <CheckCircle className={classes.checkmarkIconInIconButtons} />
+            </IconButton>
+          </Tooltip>
+        )}
+      </div>
+    ) : null;
+
     return connectDropTarget(
       <td
         className={styles.RowHeaderCell}
-        style={{ backgroundColor: isOver && canDrop ? '#f8c471' : null }}
+        style={{
+          backgroundColor: cell.checked
+            ? THEME_COLOR.optionChosenBackgroundColor
+            : isOver && canDrop
+            ? '#f8c471'
+            : null
+        }}
       >
         {deleteRowActionContainer}
         {commentsActionContainer}
+        {decideRowActionContainer}
 
         {cell.pieces.length > 0 ? (
           <div className={styles.RowHeaderCellContainer}>

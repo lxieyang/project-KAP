@@ -2,7 +2,8 @@
   position: relative;
 }
 
-.RowHeaderCell:hover .CommentsContainer {
+.RowHeaderCell:hover .CommentsContainer,
+.RowHeaderCell:hover .DecideRowIconContainer {
   opacity: 1;
 }
 
@@ -17,7 +18,7 @@
   /* border-left: none !important; */
 }
 
-.DeleteColumnIconContainer {
+.DeleteRowIconContainer {
   position: absolute;
   top: 0px;
   left: -30px;
@@ -25,6 +26,14 @@
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.DecideRowIconContainer {
+  position: absolute;
+  bottom: 0px;
+  left: 0px;
+  opacity: 0;
+  transition: all 0.1s ease-in;
 }
 
 .CellContentContainer {
