@@ -221,6 +221,11 @@ export const createPiece = async (
   };
 
   switch (annotationType) {
+    case ANNOTATION_TYPES.Manual:
+      piece.text = data.text.trim();
+      piece.name = data.text.trim();
+      piece.html = data.text.trim();
+      break;
     case ANNOTATION_TYPES.Highlight:
       piece.text = data.text.trim();
       piece.name = data.text.trim();

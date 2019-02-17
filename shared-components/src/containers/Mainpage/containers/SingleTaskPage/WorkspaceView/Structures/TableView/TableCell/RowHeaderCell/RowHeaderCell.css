@@ -9,7 +9,7 @@
 
 .RowHeaderCell:hover .CommentsContainer,
 .RowHeaderCell:hover .DecideRowIconContainer,
-.RegularCell:hover .HoverToReveal {
+.RowHeaderCell:hover .HoverToReveal {
   opacity: 1;
 }
 

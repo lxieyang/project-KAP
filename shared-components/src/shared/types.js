@@ -1,6 +1,7 @@
 export const ANNOTATION_TYPES = {
   Highlight: 1,
-  Snippet: 2
+  Snippet: 2,
+  Manual: 3
 };
 
 export const PIECE_TYPES = {

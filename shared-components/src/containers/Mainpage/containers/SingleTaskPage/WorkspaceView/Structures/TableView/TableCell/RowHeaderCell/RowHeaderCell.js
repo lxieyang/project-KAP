@@ -431,7 +431,12 @@ class RowHeaderCell extends Component {
           </div>
         ) : (
           <div className={styles.CellContentContainer}>
-            <div className={styles.CellContentEditContainer}>
+            <div
+              className={[
+                styles.CellContentEditContainer,
+                this.state.contentEdit === '' ? styles.HoverToReveal : null
+              ].join(' ')}
+            >
               <div className={styles.TextAreaContainer}>
                 <Textarea
                   disabled={!editAccess}
