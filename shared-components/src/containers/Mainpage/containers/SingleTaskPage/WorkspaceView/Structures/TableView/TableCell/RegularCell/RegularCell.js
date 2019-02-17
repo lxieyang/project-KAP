@@ -164,7 +164,7 @@ class RegularCell extends Component {
     let commentsActionContainer = commentAccess ? (
       <div
         className={styles.CommentsContainer}
-        style={{ zIndex: 1000, opacity: commentCount > 0 ? 0.7 : null }}
+        style={{ zIndex: 1000, opacity: commentCount > 0 ? 1 : null }}
       >
         <div style={{ position: 'relative' }}>
           <Tooltip title={commentTooltipTitle} placement={'top'}>
