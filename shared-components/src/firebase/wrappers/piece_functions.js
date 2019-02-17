@@ -254,5 +254,7 @@ export const createPiece = async (
 
   updateTaskUpdateTime(piece.references.task);
 
-  return ref.set(piece);
+  return ref.set(piece).then(() => {
+    return ref.id;
+  });
 };

@@ -119,6 +119,7 @@ class SelectTooltipButton extends Component {
       type
     )
       .then(data => {
+        console.log(data);
         chrome.runtime.sendMessage({
           msg: 'SHOW_SUCCESS_STATUS_BADGE',
           success: true
