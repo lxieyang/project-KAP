@@ -27,6 +27,11 @@ export const getAllCommentsToTableCell = (tableId, cellId) => {
   return getTableCellById(tableId, cellId).collection('comments');
 };
 
+export const updateTaskUpdateTimeUponChangesToTable = async tableId => {
+  let taskId = (await getWorkspaceById(tableId).get()).data().references.task;
+  updateTaskUpdateTime(taskId);
+};
+
 export const createNewTableCell = (
   tableId,
   tableCellType = TABLE_CELL_TYPES.regularCell
@@ -41,6 +46,7 @@ export const createNewTableCell = (
     pieces: [],
     content: ''
   });
+
   return ref.id;
 };
 
@@ -55,6 +61,9 @@ export const setTableCellContentById = (tableId, cellId, content) => {
     },
     { merge: true }
   );
+
+  // update task updated time
+  updateTaskUpdateTimeUponChangesToTable(tableId);
 };
 
 export const switchTableCellCheckedStatus = (tableId, cellId, to) => {
@@ -64,6 +73,9 @@ export const switchTableCellCheckedStatus = (tableId, cellId, to) => {
     },
     { merge: true }
   );
+
+  // update task updated time
+  updateTaskUpdateTimeUponChangesToTable(tableId);
 };
 
 /* commenting */
@@ -83,6 +95,9 @@ export const addCommentToATableCellById = (
       authorAvatarURL: getCurrentUser().photoURL
     })
     .then(() => {});
+
+  // update task updated time
+  updateTaskUpdateTimeUponChangesToTable(tableId);
 };
 
 export const updateTableCellCommentById = (
@@ -101,9 +116,15 @@ export const updateTableCellCommentById = (
       updateDate: firebase.firestore.FieldValue.serverTimestamp()
     })
     .then(() => {});
+
+  // update task updated time
+  updateTaskUpdateTimeUponChangesToTable(tableId);
 };
 
 export const deleteTableCellCommentById = (tableId, cellId, commentId) => {
+  // update task updated time
+  updateTaskUpdateTimeUponChangesToTable(tableId);
+
   return getTableCellById(tableId, cellId)
     .collection('comments')
     .doc(commentId)
@@ -112,6 +133,9 @@ export const deleteTableCellCommentById = (tableId, cellId, commentId) => {
 };
 
 export const updatePiecesTableCellById = (tableId, cellId, pieces) => {
+  // update task updated time
+  updateTaskUpdateTimeUponChangesToTable(tableId);
+
   return getTableCellById(tableId, cellId).update({
     pieces
   });
@@ -252,12 +276,12 @@ export const switchColumnsInTable = async (
 };
 
 export const updateTableData = (tableId, tableRows) => {
-  return db
-    .collection('workspaces')
-    .doc(tableId)
-    .update({
-      data: tableRows
-    });
+  // update task updated time
+  updateTaskUpdateTimeUponChangesToTable(tableId);
+
+  return getWorkspaceById(tableId).update({
+    data: tableRows
+  });
 };
 
 export const createNewTable = async ({ name, creatorId, taskId }) => {
@@ -312,6 +336,7 @@ export const createNewTable = async ({ name, creatorId, taskId }) => {
   };
 
   await ref.set(table);
+  updateTaskUpdateTime(table.references.task);
   return ref.id;
 };
 

@@ -9,6 +9,9 @@ import Button from '@material-ui/core/Button';
 import Snackbar from '@material-ui/core/Snackbar';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
+import Tooltip from '@material-ui/core/Tooltip';
+import Fab from '@material-ui/core/Fab';
+import AddIcon from '@material-ui/icons/Add';
 
 import Countdown from 'react-countdown-now';
 
@@ -19,6 +22,9 @@ import * as FirestoreManager from '../../../../firebase/firestore_wrapper';
 const materialStyles = theme => ({
   close: {
     padding: theme.spacing.unit / 2
+  },
+  fab: {
+    margin: theme.spacing.unit * 2
   }
 });
 
@@ -30,10 +36,16 @@ class AllTasksPage extends Component {
 
     // snackbar control
     open: false,
-    timeoutDuration: 12000,
+    timeoutDuration: 8000,
     toDeleteTaskId: '',
     toDeleteTaskName: ''
   };
+
+  componentWillUnmount() {
+    this.unsubscribeTasks();
+    this.unsubscribeCurrentTaskId();
+    this.handleSnackbarClose();
+  }
 
   handleDeleteButtonClicked = (taskId, taskName) => {
     if (window.confirm(`Are you sure you want to delete "${taskName}"?`)) {
@@ -84,10 +96,22 @@ class AllTasksPage extends Component {
     );
   }
 
-  componentWillUnmount() {
-    this.unsubscribeTasks();
-    this.unsubscribeCurrentTaskId();
-  }
+  createNewTaskButtonClickedHandler = () => {
+    let taskName = prompt('New task name:');
+    if (taskName !== null && taskName !== '') {
+      FirestoreManager.createTaskWithName(taskName)
+        .then(docRef => {
+          let taskId = docRef.id;
+          FirestoreManager.updateCurrentUserCurrentTaskId(taskId);
+          FirestoreManager.createNewTable({ taskId });
+          this.props.history.push(`/tasks/${taskId}`);
+        })
+        .catch(error => {
+          console.log(error);
+          alert(error);
+        });
+    }
+  };
 
   render() {
     let { classes } = this.props;
@@ -96,9 +120,25 @@ class AllTasksPage extends Component {
       return task.isStarred === true;
     });
 
+    let createNewTaskButton = (
+      <div className={styles.CreateNewTaskButtonContainer}>
+        <Tooltip title="Create a new task" aria-label="Add">
+          <Fab
+            color="primary"
+            className={classes.fab}
+            onClick={() => this.createNewTaskButtonClickedHandler()}
+          >
+            <AddIcon />
+          </Fab>
+        </Tooltip>
+      </div>
+    );
+
     return (
       <React.Fragment>
         <div className={styles.AllTasksContainer}>
+          {createNewTaskButton}
+
           <TaskGroup
             category="starred"
             tasks={starredTasks}

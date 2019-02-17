@@ -3,7 +3,7 @@
   display: flex;
   flex-flow: column;
   align-items: center;
-} 
+}
 
 /* snackbar */
 .SnackbarLeft {
@@ -18,11 +18,11 @@
 }
 
 .UndoButton {
-  font-size: 1.0rem;
+  font-size: 1rem;
   font-weight: 600;
   border-radius: 5px;
   cursor: pointer;
-  background-color: #eee
+  background-color: #eee;
 }
 
 .UndoButton:hover {
@@ -31,4 +31,11 @@
 
 .UndoButton:focus {
   outline: none;
+}
+
+.CreateNewTaskButtonContainer {
+  position: fixed;
+  padding: 10px;
+  bottom: 0;
+  right: 0;
 }

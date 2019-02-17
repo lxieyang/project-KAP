@@ -142,6 +142,7 @@ class TaskSwitcher extends Component {
         FirestoreManager.createTaskWithName(taskName)
           .then(docRef => {
             FirestoreManager.updateCurrentUserCurrentTaskId(docRef.id);
+            FirestoreManager.createNewTable({ taskId: docRef.id });
           })
           .catch(error => {
             console.log(error);
@@ -164,6 +165,7 @@ class TaskSwitcher extends Component {
       FirestoreManager.createTaskWithName(taskName)
         .then(docRef => {
           FirestoreManager.updateCurrentUserCurrentTaskId(docRef.id);
+          FirestoreManager.createNewTable({ taskId: docRef.id });
         })
         .catch(error => {
           console.log(error);

@@ -1,6 +1,11 @@
 import firebase from '../firebase';
 import { WORKSPACE_TYPES } from '../../shared/types';
-import { db, createNewTable, deleteTableById } from '../firestore_wrapper';
+import {
+  db,
+  createNewTable,
+  deleteTableById,
+  updateTaskUpdateTime
+} from '../firestore_wrapper';
 
 export const getAllWorkspacesInTask = taskId => {
   return db
@@ -25,13 +30,17 @@ export const deleteWorkspaceById = (workspaceId, workspaceType) => {
   }
 };
 
-export const updateWorkspaceName = (workspaceId, newWorkspaceName) => {
-  db.collection('workspaces')
-    .doc(workspaceId)
+export const updateWorkspaceName = async (workspaceId, newWorkspaceName) => {
+  getWorkspaceById(workspaceId)
     .update({
       name: newWorkspaceName
     })
     .then(() => {
       // update task updated time
+      getWorkspaceById(workspaceId)
+        .get()
+        .then(doc => {
+          updateTaskUpdateTime(doc.data().references.task);
+        });
     });
 };

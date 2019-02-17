@@ -492,22 +492,26 @@ class Piece extends Component {
                   </Tooltip>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center' }}>
-                  <Tooltip
-                    title={`${piece.references.pageTitle}  ---  Click to open`}
-                    placement={'top'}
-                  >
-                    <a
-                      href={piece.references.url}
-                      target="__blank"
-                      className={classesInCSS.SiteIcon}
+                  {piece.references.url !== false ? (
+                    <Tooltip
+                      title={`${
+                        piece.references.pageTitle
+                      }  ---  Click to open`}
+                      placement={'top'}
                     >
-                      <img
-                        src={GET_FAVICON_URL_PREFIX + piece.references.url}
-                        alt={'favicon'}
+                      <a
+                        href={piece.references.url}
+                        target="__blank"
                         className={classesInCSS.SiteIcon}
-                      />
-                    </a>
-                  </Tooltip>
+                      >
+                        <img
+                          src={GET_FAVICON_URL_PREFIX + piece.references.url}
+                          alt={'favicon'}
+                          className={classesInCSS.SiteIcon}
+                        />
+                      </a>
+                    </Tooltip>
+                  ) : null}
 
                   <div className={classesInCSS.Moment}>
                     {piece.creationDate
