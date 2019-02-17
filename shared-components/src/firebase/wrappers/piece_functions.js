@@ -66,9 +66,13 @@ export const deletePieceById = pieceId => {
       updateDate: firebase.firestore.FieldValue.serverTimestamp()
     })
     .then(() => {
-      getScreenshotById(pieceId).update({
-        trashed: true
-      });
+      getScreenshotById(pieceId)
+        .update({
+          trashed: true
+        })
+        .catch(e => {
+          // no screenshot to update, but it's OK
+        });
       updateTaskUpdateTimeUponPieceManipulation(pieceId);
     });
 };
@@ -80,9 +84,13 @@ export const revivePieceById = pieceId => {
       updateDate: firebase.firestore.FieldValue.serverTimestamp()
     })
     .then(() => {
-      getScreenshotById(pieceId).update({
-        trashed: false
-      });
+      getScreenshotById(pieceId)
+        .update({
+          trashed: false
+        })
+        .catch(e => {
+          // no screenshot to update, but it's OK
+        });
       updateTaskUpdateTimeUponPieceManipulation(pieceId);
     });
 };
@@ -207,7 +215,7 @@ export const createPiece = async (
     trashed: false,
     annotationType: annotationType,
     pieceType: pieceType || PIECE_TYPES.snippet,
-    shouldUseScreenshot: shouldUseScreenshot,
+    shouldUseScreenshot: shouldUseScreenshot ? shouldUseScreenshot : false,
     creationDate: firebase.firestore.FieldValue.serverTimestamp(),
     updateDate: firebase.firestore.FieldValue.serverTimestamp(),
     references: {

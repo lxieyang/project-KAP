@@ -489,25 +489,28 @@ class PieceItem extends Component {
                       </Tooltip>
                     ) : null}
                   </div>
+
                   <div style={{ display: 'flex', alignItems: 'center' }}>
-                    <Tooltip
-                      title={`${
-                        piece.references.pageTitle
-                      }  ---  Click to open`}
-                      placement={'top'}
-                    >
-                      <a
-                        href={piece.references.url}
-                        target="__blank"
-                        className={classesInCSS.SiteIcon}
+                    {piece.references.url !== false ? (
+                      <Tooltip
+                        title={`${
+                          piece.references.pageTitle
+                        }  ---  Click to open`}
+                        placement={'top'}
                       >
-                        <img
-                          src={GET_FAVICON_URL_PREFIX + piece.references.url}
-                          alt={'favicon'}
+                        <a
+                          href={piece.references.url}
+                          target="__blank"
                           className={classesInCSS.SiteIcon}
-                        />
-                      </a>
-                    </Tooltip>
+                        >
+                          <img
+                            src={GET_FAVICON_URL_PREFIX + piece.references.url}
+                            alt={'favicon'}
+                            className={classesInCSS.SiteIcon}
+                          />
+                        </a>
+                      </Tooltip>
+                    ) : null}
 
                     <div className={classesInCSS.Moment}>
                       {piece.creationDate
@@ -541,61 +544,63 @@ class PieceItem extends Component {
             </CardContent>
 
             {/* Original content in collapse */}
-            <Collapse
-              in={
-                this.state.expanded ||
-                (isDragging && this.props.cellType === undefined) ||
-                this.props.cellType === TABLE_CELL_TYPES.regularCell
-              }
-              timeout="auto"
-              unmountOnExit
-            >
-              <div className={classesInCSS.CollapseContainer}>
-                {displayingScreenshot ? (
-                  screenshotLoading ? (
-                    <div
-                      style={{
-                        width: '100%',
-                        height: '200px',
-                        display: 'flex',
-                        justifyContent: 'space-around',
-                        alignItems: 'center'
-                      }}
-                    >
-                      <Spinner size={'30px'} />
-                    </div>
-                  ) : (
-                    <React.Fragment>
+            {piece.annotationType !== ANNOTATION_TYPES.Manual ? (
+              <Collapse
+                in={
+                  this.state.expanded ||
+                  (isDragging && this.props.cellType === undefined) ||
+                  this.props.cellType === TABLE_CELL_TYPES.regularCell
+                }
+                timeout="auto"
+                unmountOnExit
+              >
+                <div className={classesInCSS.CollapseContainer}>
+                  {displayingScreenshot ? (
+                    screenshotLoading ? (
                       <div
-                        className={classesInCSS.OriginalScreenshotContainer}
-                        style={{ maxHeight: `${maxScreenshotHeight}px` }}
+                        style={{
+                          width: '100%',
+                          height: '200px',
+                          display: 'flex',
+                          justifyContent: 'space-around',
+                          alignItems: 'center'
+                        }}
                       >
-                        <img
-                          alt={piece.id}
-                          src={screenshot.imageDataUrl}
-                          style={{
-                            height: `${Math.min(
-                              Math.floor(screenshot.dimensions.rectHeight),
-                              maxScreenshotHeight
-                            )}px`
-                          }}
-                          onClick={() =>
-                            this.screenshotImageClickedHandler(piece.id)
-                          }
-                        />
+                        <Spinner size={'30px'} />
                       </div>
-                    </React.Fragment>
-                  )
-                ) : (
-                  <div className={classesInCSS.OriginalContentContainer}>
-                    <div
-                      className={classesInCSS.HTMLPreview}
-                      dangerouslySetInnerHTML={getHTML(piece.html)}
-                    />
-                  </div>
-                )}
-              </div>
-            </Collapse>
+                    ) : (
+                      <React.Fragment>
+                        <div
+                          className={classesInCSS.OriginalScreenshotContainer}
+                          style={{ maxHeight: `${maxScreenshotHeight}px` }}
+                        >
+                          <img
+                            alt={piece.id}
+                            src={screenshot.imageDataUrl}
+                            style={{
+                              height: `${Math.min(
+                                Math.floor(screenshot.dimensions.rectHeight),
+                                maxScreenshotHeight
+                              )}px`
+                            }}
+                            onClick={() =>
+                              this.screenshotImageClickedHandler(piece.id)
+                            }
+                          />
+                        </div>
+                      </React.Fragment>
+                    )
+                  ) : (
+                    <div className={classesInCSS.OriginalContentContainer}>
+                      <div
+                        className={classesInCSS.HTMLPreview}
+                        dangerouslySetInnerHTML={getHTML(piece.html)}
+                      />
+                    </div>
+                  )}
+                </div>
+              </Collapse>
+            ) : null}
 
             <div>
               <Comments

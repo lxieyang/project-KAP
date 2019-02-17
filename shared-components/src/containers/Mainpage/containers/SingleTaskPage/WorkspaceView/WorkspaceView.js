@@ -177,6 +177,8 @@ class WorkspaceView extends Component {
 
   render() {
     const {
+      taskId,
+      pieces,
       activeWorkspaceId,
       editAccess,
       commentAccess,
@@ -288,7 +290,8 @@ class WorkspaceView extends Component {
                     {activeWorkspaceId === workspace.id ? (
                       <WorkspaceContentContainer className="workspace-content-container">
                         <TableView
-                          pieces={this.state.pieces}
+                          taskId={taskId}
+                          pieces={pieces}
                           workspace={workspace}
                           workspaceTypeString={'table'}
                           editAccess={editAccess}

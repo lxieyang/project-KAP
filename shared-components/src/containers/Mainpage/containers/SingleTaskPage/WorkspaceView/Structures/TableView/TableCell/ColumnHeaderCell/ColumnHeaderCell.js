@@ -1,20 +1,27 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
 import ReactHoverObserver from 'react-hover-observer';
+import FontAwesomeIcon from '@fortawesome/react-fontawesome';
+import fasListUl from '@fortawesome/fontawesome-free-solid/faListUl';
+import fasFlagCheckered from '@fortawesome/fontawesome-free-solid/faFlagCheckered';
+import fasBookmark from '@fortawesome/fontawesome-free-solid/faBookmark';
 import { debounce } from 'lodash';
 import styles from './ColumnHeaderCell.css';
 
 import PieceItem from '../../../../../CollectionView/PiecesView/PieceItem/PieceItem';
+import Spinner from '../../../../../../../../../components/UI/Spinner/Spinner';
 
 import * as FirestoreManager from '../../../../../../../../../firebase/firestore_wrapper';
 
 import { withStyles } from '@material-ui/core/styles';
 import IconButton from '@material-ui/core/IconButton';
+import Avatar from '@material-ui/core/Avatar';
 import DeleteIcon from '@material-ui/icons/Delete';
-import { Chat } from 'mdi-material-ui';
+import { Chat, CheckCircle, Cancel } from 'mdi-material-ui';
 import Tooltip from '@material-ui/core/Tooltip';
 import Popover from '@material-ui/core/Popover';
 import Textarea from 'react-textarea-autosize';
+import Button from '@material-ui/core/Button';
 
 import { ContextMenu, MenuItem, ContextMenuTrigger } from 'react-contextmenu';
 
@@ -23,11 +30,15 @@ import { DragSource, DropTarget } from 'react-dnd';
 import PropTypes from 'prop-types';
 import {
   PIECE_TYPES,
-  TABLE_CELL_TYPES
+  TABLE_CELL_TYPES,
+  ANNOTATION_TYPES
 } from '../../../../../../../../../shared/types';
+import {
+  THEME_COLOR,
+  PIECE_COLOR
+} from '../../../../../../../../../shared/theme';
 
 import CellComments from '../CellComments/CellComments';
-import { THEME_COLOR } from '../../../../../../../../../shared/theme';
 import { getFirstName } from '../../../../../../../../../shared/utilities';
 
 const materialStyles = theme => ({
@@ -38,8 +49,25 @@ const materialStyles = theme => ({
     width: '14px',
     height: '14px',
     color: 'rgb(187, 187, 187)'
+  },
+  button: {
+    marginTop: 0,
+    marginBottom: 0,
+    marginRight: 8,
+    padding: '1px 4px 1px 4px',
+    fontSize: 12
   }
 });
+
+const ActionButton = withStyles({
+  root: {
+    minWidth: '0',
+    padding: '0px 4px'
+  },
+  label: {
+    textTransform: 'capitalize'
+  }
+})(Button);
 
 const dropTarget = {
   canDrop(props, monitor, component) {
@@ -49,10 +77,32 @@ const dropTarget = {
     }
 
     // can't drop if already exist
-    const dropPieceId = monitor.getItem().id;
+    const item = monitor.getItem();
+    const dropPieceId = item.id;
+    const dropPieceCellId = item.cellId;
+    const dropPieceCellType = item.cellType;
+    const dropPieceCellColumnIndex = item.columnIndex;
+
+    const allPieces = props.pieces;
+    let cellPieces = props.cell.pieces
+      .filter(
+        p => allPieces[p.pieceId] !== undefined && allPieces[p.pieceId] !== null
+      )
+      .map(p => p.pieceId);
+
     const pieceIds = props.cell.pieces.map(p => p.pieceId);
     if (pieceIds.indexOf(dropPieceId) !== -1) {
       return false;
+    }
+
+    if (
+      cellPieces.length === 0 &&
+      dropPieceCellId !== undefined &&
+      dropPieceCellType === TABLE_CELL_TYPES.columnHeader
+    ) {
+      // prevent dropping option from other option cells into this cell
+      return false;
+      // TODO: we CANNOT prevent dropping the same option into two option cells if both drops come from the piecesView
     }
 
     return true;
@@ -65,39 +115,65 @@ const dropTarget = {
     const dropPieceCellType = item.cellType;
     const dropPieceCellColumnIndex = item.columnIndex;
 
-    let pieces = props.cell.pieces.map(p => p.pieceId);
-    let content = props.cell.content;
-    let thereIsContent = content !== undefined && content !== '';
-    if (pieces.length === 0 && !thereIsContent) {
+    const allPieces = props.pieces;
+    let cellPieces = props.cell.pieces
+      .filter(
+        p => allPieces[p.pieceId] !== undefined && allPieces[p.pieceId] !== null
+      )
+      .map(p => p.pieceId);
+
+    if (cellPieces.length === 0) {
       // no stuff in this cell
-      component.addPieceToThisCell(dropPieceId);
-    } else if (pieces.length > 0 && dropPieceCellId === undefined) {
+      component.resetPieceInThisCell(dropPieceId);
+    } else if (cellPieces.length > 0 && dropPieceCellId === undefined) {
       // there's existing piece, but dropping on from the pieceView
       component.resetPieceInThisCell(dropPieceId);
     } else if (
-      pieces.length > 0 &&
+      cellPieces.length > 0 &&
       dropPieceCellId !== undefined &&
       dropPieceCellType === TABLE_CELL_TYPES.columnHeader
     ) {
-      // both are from the table, should switch rows
-      FirestoreManager.switchColumnsInTable(
-        props.workspace.id,
-        props.columnIndex,
-        dropPieceCellColumnIndex
-      );
-    } else if (
-      pieces.length === 0 &&
-      thereIsContent &&
-      dropPieceCellId !== undefined &&
-      dropPieceCellType === TABLE_CELL_TYPES.columnHeader
-    ) {
-      // both are from the table, should switch rows
-      FirestoreManager.switchColumnsInTable(
+      // both are from the table, should switch columns
+      FirestoreManager.switchRowsInTable(
         props.workspace.id,
         props.columnIndex,
         dropPieceCellColumnIndex
       );
     }
+
+    // let pieces = props.cell.pieces.map(p => p.pieceId);
+    // let content = props.cell.content;
+    // let thereIsContent = content !== undefined && content !== '';
+    // if (pieces.length === 0 && !thereIsContent) {
+    //   // no stuff in this cell
+    //   component.addPieceToThisCell(dropPieceId);
+    // } else if (pieces.length > 0 && dropPieceCellId === undefined) {
+    //   // there's existing piece, but dropping on from the pieceView
+    //   component.resetPieceInThisCell(dropPieceId);
+    // } else if (
+    //   pieces.length > 0 &&
+    //   dropPieceCellId !== undefined &&
+    //   dropPieceCellType === TABLE_CELL_TYPES.columnHeader
+    // ) {
+    //   // both are from the table, should switch rows
+    //   FirestoreManager.switchColumnsInTable(
+    //     props.workspace.id,
+    //     props.columnIndex,
+    //     dropPieceCellColumnIndex
+    //   );
+    // } else if (
+    //   pieces.length === 0 &&
+    //   thereIsContent &&
+    //   dropPieceCellId !== undefined &&
+    //   dropPieceCellType === TABLE_CELL_TYPES.columnHeader
+    // ) {
+    //   // both are from the table, should switch rows
+    //   FirestoreManager.switchColumnsInTable(
+    //     props.workspace.id,
+    //     props.columnIndex,
+    //     dropPieceCellColumnIndex
+    //   );
+    // }
 
     return {
       id: props.cell.id
@@ -118,7 +194,15 @@ class ColumnHeaderCell extends Component {
     contentEdit: this.props.cell.content,
 
     // comment popover
-    anchorEl: null
+    anchorEl: null,
+
+    // manual piece id / pieces
+    manualPieceId: '',
+    manualPieces: {},
+    addingManualPiece: false,
+
+    // textarea focus
+    textareaFocused: false
   };
 
   static propTypes = {
@@ -135,16 +219,13 @@ class ColumnHeaderCell extends Component {
 
   componentDidMount() {
     this.keyPress = this.keyPress.bind(this);
-    this.saveContentCallback = debounce(event => {
-      FirestoreManager.setTableCellContentById(
-        this.props.workspace.id,
-        this.props.cell.id,
-        event.target.value
-      );
-    }, 500);
-  }
 
-  componentWillUnmount() {}
+    setTimeout(() => {
+      if (this.textarea) {
+        this.textarea.focus();
+      }
+    }, 50);
+  }
 
   handleCommentClick = event => {
     this.setState({
@@ -160,24 +241,51 @@ class ColumnHeaderCell extends Component {
 
   keyPress(e) {
     if (e.key === 'Enter' && !e.shiftKey) {
-      this.saveCellContentClickedHandler(e);
+      this.saveCellContentAsPiece();
     }
   }
 
   handleCellContentInputChange = e => {
-    e.persist();
+    // e.persist();
     this.setState({ contentEdit: e.target.value });
-    this.saveContentCallback(e);
+    // this.saveContentCallback(e);
+  };
+
+  saveCellContentAsPiece = () => {
+    this.textarea.blur();
+    let newPieceContent = this.state.contentEdit;
+    if (newPieceContent !== '') {
+      setTimeout(() => {
+        FirestoreManager.setTableCellContentById(
+          this.props.workspace.id,
+          this.props.cell.id,
+          newPieceContent
+        );
+        // this.setState({ addingManualPiece: true });
+
+        // go create piece and eventually replace cell content with piece
+        FirestoreManager.createPiece(
+          {
+            text: newPieceContent
+          },
+          {
+            taskId: this.props.taskId
+          },
+          ANNOTATION_TYPES.Manual,
+          PIECE_TYPES.criterion
+        ).then(pieceId => {
+          this.resetPieceInThisCell(pieceId, true);
+        });
+      }, 50);
+    }
   };
 
   saveCellContentClickedHandler = e => {
-    e.stopPropagation();
-    this.textarea.blur();
-    FirestoreManager.setTableCellContentById(
-      this.props.workspace.id,
-      this.props.cell.id,
-      this.state.contentEdit
-    );
+    this.saveCellContentAsPiece();
+  };
+
+  cancelEditClickedHandler = () => {
+    this.setState({ contentEdit: '' });
   };
 
   deleteTableColumnByIndex = event => {
@@ -185,6 +293,8 @@ class ColumnHeaderCell extends Component {
       this.props.workspace.id,
       this.props.columnIndex
     );
+
+    this.props.setColumnToDelete(-1);
   };
 
   addPieceToThisCell = pieceId => {
@@ -198,12 +308,32 @@ class ColumnHeaderCell extends Component {
     this.changePieceType(pieceId);
   };
 
-  resetPieceInThisCell = pieceId => {
+  resetPieceInThisCell = (pieceId, manual = false) => {
     FirestoreManager.resetPieceInTableCellById(
       this.props.workspace.id,
       this.props.cell.id,
       pieceId
-    );
+    )
+      .then(() => {
+        if (manual) {
+          // this.setState({ addingManualPiece: false });
+          FirestoreManager.setTableCellContentById(
+            this.props.workspace.id,
+            this.props.cell.id,
+            ''
+          );
+        }
+      })
+      .catch(() => {
+        if (manual) {
+          // this.setState({ addingManualPiece: false });
+          FirestoreManager.setTableCellContentById(
+            this.props.workspace.id,
+            this.props.cell.id,
+            ''
+          );
+        }
+      });
 
     // change type to criterion
     this.changePieceType(pieceId);
@@ -330,6 +460,10 @@ class ColumnHeaderCell extends Component {
       </div>
     ) : null;
 
+    let cellPieces = cell.pieces.filter(
+      p => pieces[p.pieceId] !== undefined && pieces[p.pieceId] !== null
+    );
+
     return connectDropTarget(
       <th
         className={styles.ColumnHeaderCell}
@@ -345,12 +479,9 @@ class ColumnHeaderCell extends Component {
         {deleteColumnActionContainer}
         {commentsActionContainer}
 
-        {cell.pieces.length > 0 ? (
-          <div
-            className={styles.ColumnHeaderCellContainer}
-            style={{ backgroundColor: isOver && canDrop ? '#aed6f1' : null }}
-          >
-            {cell.pieces.map((p, idx) => {
+        {cellPieces.length > 0 ? (
+          <div className={styles.ColumnHeaderCellContainer}>
+            {cellPieces.map((p, idx) => {
               return (
                 <React.Fragment key={`${p.pieceId}-${idx}`}>
                   <ContextMenuTrigger
@@ -399,10 +530,26 @@ class ColumnHeaderCell extends Component {
               ].join(' ')}
             >
               <div className={styles.TextAreaContainer}>
+                <Avatar
+                  aria-label="type"
+                  style={{
+                    backgroundColor: PIECE_COLOR.criterion,
+                    width: '28px',
+                    height: '28px',
+                    color: 'white',
+                    marginRight: '4px'
+                  }}
+                  className={styles.Avatar}
+                >
+                  <FontAwesomeIcon
+                    icon={fasFlagCheckered}
+                    className={styles.IconInsideAvatar}
+                  />
+                </Avatar>
                 <Textarea
                   disabled={!editAccess}
                   inputRef={tag => (this.textarea = tag)}
-                  minRows={1}
+                  minRows={2}
                   maxRows={5}
                   placeholder={
                     editAccess
@@ -411,10 +558,32 @@ class ColumnHeaderCell extends Component {
                   }
                   value={this.state.contentEdit}
                   onKeyDown={this.keyPress}
-                  onBlur={e => this.saveCellContentClickedHandler(e)}
+                  onFocus={() => this.setState({ textareaFocused: true })}
+                  onBlur={() => this.setState({ textareaFocused: false })}
                   onChange={e => this.handleCellContentInputChange(e)}
                   className={styles.Textarea}
                 />
+              </div>
+
+              <div
+                className={styles.TextareaActionBar}
+                style={{ opacity: this.state.textareaFocused ? 1 : 0 }}
+              >
+                <ActionButton
+                  color="primary"
+                  className={classes.button}
+                  onClick={() => this.saveCellContentClickedHandler()}
+                >
+                  Add as a criterion
+                </ActionButton>
+
+                <ActionButton
+                  color="secondary"
+                  className={classes.button}
+                  onClick={() => this.cancelEditClickedHandler()}
+                >
+                  Cancel
+                </ActionButton>
               </div>
             </div>
           </div>

@@ -128,13 +128,13 @@ export const addPieceToTableCellById = async (
     pieceId: pieceId,
     rating: rating
   });
-  updatePiecesTableCellById(tableId, cellId, pieces);
+  return updatePiecesTableCellById(tableId, cellId, pieces);
 };
 
 export const deletePieceInTableCellById = async (tableId, cellId, pieceId) => {
   let pieces = (await getTableCellById(tableId, cellId).get()).data().pieces;
   pieces = pieces.filter(p => p.pieceId !== pieceId);
-  updatePiecesTableCellById(tableId, cellId, pieces);
+  return updatePiecesTableCellById(tableId, cellId, pieces);
 };
 
 export const resetPieceInTableCellById = async (
@@ -149,7 +149,7 @@ export const resetPieceInTableCellById = async (
       rating: rating
     }
   ];
-  updatePiecesTableCellById(tableId, cellId, pieces);
+  return updatePiecesTableCellById(tableId, cellId, pieces);
 };
 
 export const createNewRowInTable = async (tableId, beginning = false) => {

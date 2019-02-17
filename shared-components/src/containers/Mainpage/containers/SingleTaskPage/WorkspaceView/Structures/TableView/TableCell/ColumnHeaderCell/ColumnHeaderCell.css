@@ -59,22 +59,35 @@
   align-items: center;
 }
 
+.Avatar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  margin-top: 5px;
+  margin-left: 5px;
+}
+
+.IconInsideAvatar {
+  font-size: 16px;
+}
+
 .CellContentEditContainer {
   height: 100%;
   width: 100%;
-  display: flex;
-  align-items: center;
 }
 
 .TextAreaContainer {
   flex: 1;
   margin-left: 5px;
+  display: flex;
+  align-items: flex-start;
 }
 
 .Textarea {
   display: block;
   box-sizing: border-box;
-  width: 100%;
+  width: 96%;
   resize: none;
   overflow: auto;
 
@@ -101,6 +114,16 @@
   background-color: #fff;
   border-color: rgb(17, 100, 224);
   outline: none;
+}
+
+.TextareaActionBar {
+  margin-top: 6px;
+  margin-left: 38px;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+
+  opacity: 0.8;
 }
 
 .CommentsContainer {

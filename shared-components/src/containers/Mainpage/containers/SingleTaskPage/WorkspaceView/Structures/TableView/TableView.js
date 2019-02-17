@@ -163,6 +163,7 @@ class TableView extends Component {
           return (
             <TableCell
               key={idx}
+              taskId={this.props.taskId}
               workspace={workspace}
               numRows={tableRows.length}
               numColumns={tableRows[0].data.length}
@@ -227,6 +228,7 @@ class TableView extends Component {
                   return (
                     <TableCell
                       key={`${idx}-${indexInRow}`}
+                      taskId={this.props.taskId}
                       pieces={this.props.pieces}
                       workspace={workspace}
                       editAccess={editAccess}
