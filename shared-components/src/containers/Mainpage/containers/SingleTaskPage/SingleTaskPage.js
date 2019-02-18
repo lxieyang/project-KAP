@@ -19,7 +19,9 @@ import CollectionView from './CollectionView/CollectionView';
 import WorkspaceView from './WorkspaceView/WorkspaceView';
 
 class SingleTaskPage extends Component {
-  state = {};
+  state = {
+    currentWorkspaceId: '0'
+  };
 
   componentDidMount() {
     let taskId = getTaskIdFromPath(this.props.history.location.pathname);
@@ -33,6 +35,10 @@ class SingleTaskPage extends Component {
       }
     );
   }
+
+  setCurrentWorkspaceId = workspaceId => {
+    this.setState({ currentWorkspaceId: workspaceId });
+  };
 
   componentWillUnmount() {
     this.unsubscribeTaskId();
@@ -50,10 +56,14 @@ class SingleTaskPage extends Component {
             pane2Style={{ width: '100%' }}
           >
             <div className={styles.LeftPane}>
-              <CollectionView />
+              <CollectionView
+                currentWorkspaceId={this.state.currentWorkspaceId}
+              />
             </div>
             <div className={styles.RightPane}>
-              <WorkspaceView />
+              <WorkspaceView
+                setCurrentWorkspaceId={this.setCurrentWorkspaceId}
+              />
             </div>
           </SplitPane>
           {/*

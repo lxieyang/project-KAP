@@ -115,6 +115,7 @@ class PiecesView extends Component {
   state = {
     pieces: [],
     trashedPieces: [],
+    piecesInCurrentWorkspace: {},
     taskId: null,
 
     // editAccess
@@ -127,7 +128,7 @@ class PiecesView extends Component {
     toDeletePieceName: '',
 
     // tab control
-    activeTabValue: TAB_VALUES.all
+    activeTabValue: TAB_VALUES.uncategorized
   };
 
   componentDidMount() {
@@ -176,12 +177,43 @@ class PiecesView extends Component {
           trashedPieces
         });
       });
+
+    this.getAllPiecesInCurrentTable(this.props.currentWorkspaceId);
   }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (prevProps.currentWorkspaceId !== this.props.currentWorkspaceId) {
+      this.getAllPiecesInCurrentTable(this.props.currentWorkspaceId);
+    }
+  }
+
+  getAllPiecesInCurrentTable = tableId => {
+    if (tableId !== '0') {
+      if (this.unsubscribeTablePieces) {
+        this.unsubscribeTablePieces();
+      }
+      this.unsubscribeTablePieces = FirestoreManager.getAllTableCellsInTableById(
+        tableId
+      ).onSnapshot(querySnapshot => {
+        let piecesInCurrentWorkspace = {};
+        querySnapshot.forEach(snapshot => {
+          let pieceIds = snapshot.data().pieces.map(p => p.pieceId);
+          pieceIds.forEach(
+            pieceId => (piecesInCurrentWorkspace[pieceId] = true)
+          );
+        });
+        this.setState({ piecesInCurrentWorkspace });
+      });
+    }
+  };
 
   componentWillUnmount() {
     this.unsubscribeTaskId();
     this.unsubscribePieces();
     this.unsubscribeTrashedPieces();
+    if (this.unsubscribeTablePieces) {
+      this.unsubscribeTablePieces();
+    }
   }
 
   handleDeleteButtonClicked = (pieceId, pieceName) => {
@@ -238,6 +270,7 @@ class PiecesView extends Component {
     let {
       pieces,
       trashedPieces,
+      piecesInCurrentWorkspace,
       taskId,
       editAccess,
       commentAccess,
@@ -261,6 +294,9 @@ class PiecesView extends Component {
         break;
       case TAB_VALUES.uncategorized:
         // TODO: need further implementation
+        piecesList = pieces.filter(
+          p => piecesInCurrentWorkspace[p.id] !== true
+        );
         break;
       case TAB_VALUES.all:
       default:

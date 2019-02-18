@@ -16,7 +16,7 @@ class CollectionView extends Component {
       <React.Fragment>
         <TaskStatusView />
         <Divider light />
-        <PiecesView />
+        <PiecesView currentWorkspaceId={this.props.currentWorkspaceId} />
       </React.Fragment>
     );
   }

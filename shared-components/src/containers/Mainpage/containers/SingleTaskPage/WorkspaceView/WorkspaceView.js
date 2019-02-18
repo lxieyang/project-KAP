@@ -143,6 +143,10 @@ class WorkspaceView extends Component {
               activeWorkspaceId: workspaces[workspaces.length - 1].id,
               workspacesLoading: false
             });
+
+            this.props.setCurrentWorkspaceId(
+              workspaces[workspaces.length - 1].id
+            );
           } else {
             // set to '0'
             this.setState({
@@ -150,6 +154,7 @@ class WorkspaceView extends Component {
               activeWorkspaceId: '0',
               workspacesLoading: false
             });
+            this.props.setCurrentWorkspaceId('0');
           }
         }
       });
@@ -175,6 +180,7 @@ class WorkspaceView extends Component {
 
   handleTabChange = (event, activeWorkspaceId) => {
     this.setState({ activeWorkspaceId });
+    this.props.setCurrentWorkspaceId(activeWorkspaceId);
   };
 
   deleteWorkspace = (workspaceId, workspaceName, workspaceType) => {
