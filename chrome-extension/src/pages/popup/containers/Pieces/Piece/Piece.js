@@ -476,7 +476,14 @@ class Piece extends Component {
                     </IconButton>
                   </Tooltip>
                   */}
-                  <Tooltip title={`Trash this ${typeText}`} placement={'top'}>
+                  <Tooltip
+                    title={`${
+                      this.props.inTrashedTab === true
+                        ? 'Permanently Delete'
+                        : 'Trash'
+                    } this ${typeText}`}
+                    placement={'top'}
+                  >
                     <IconButton
                       aria-label="Trash"
                       className={classes.iconButtons}

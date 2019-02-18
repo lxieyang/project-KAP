@@ -475,7 +475,11 @@ class PieceItem extends Component {
                   */}
                     {editAccess && this.props.cellId === undefined ? (
                       <Tooltip
-                        title={`Trash this ${typeText}`}
+                        title={`${
+                          this.props.inTrashedTab === true
+                            ? 'Permanently Delete'
+                            : 'Trash'
+                        } this ${typeText}`}
                         placement={'top'}
                       >
                         <IconButton
