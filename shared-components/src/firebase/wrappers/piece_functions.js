@@ -25,6 +25,13 @@ export const getAllPiecesInTask = taskId => {
     .where('trashed', '==', false);
 };
 
+export const getAllTrashedPiecesInTask = taskId => {
+  return db
+    .collection('pieces')
+    .where('references.task', '==', taskId)
+    .where('trashed', '==', true);
+};
+
 export const getPieceById = pieceId => {
   return db.collection('pieces').doc(pieceId);
 };
@@ -74,6 +81,18 @@ export const deletePieceById = pieceId => {
           // no screenshot to update, but it's OK
         });
       updateTaskUpdateTimeUponPieceManipulation(pieceId);
+    });
+};
+
+export const deletePieceForeverById = pieceId => {
+  getPieceById(pieceId)
+    .delete()
+    .then(() => {
+      getScreenshotById(pieceId)
+        .delete()
+        .catch(e => {
+          // no screenshot to update, but it's OK
+        });
     });
 };
 

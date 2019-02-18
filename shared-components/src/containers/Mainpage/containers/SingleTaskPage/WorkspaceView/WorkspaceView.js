@@ -24,21 +24,21 @@ import TableView from './Structures/TableView/TableView';
 
 import ScreenshotModal from '../ScreenshotModal/ScreenshotModal';
 
-const fakeWorkspaces = [
-  {
-    id: 'test-table-001',
-    workspaceType: WORKSPACE_TYPES.table,
-    name: 'Comparison table 1',
-    creator: 'dummy',
-    creationDate: new Date().getTime(),
-    updateDate: new Date().getTime(),
-    trashed: false,
-    references: {
-      task: 'task-01'
-    },
-    data: []
-  }
-];
+// const fakeWorkspaces = [
+//   {
+//     id: 'test-table-001',
+//     workspaceType: WORKSPACE_TYPES.table,
+//     name: 'Comparison table 1',
+//     creator: 'dummy',
+//     creationDate: new Date().getTime(),
+//     updateDate: new Date().getTime(),
+//     trashed: false,
+//     references: {
+//       task: 'task-01'
+//     },
+//     data: []
+//   }
+// ];
 
 const WorkspaceContainer = styled.div`
   margin-left: 10px;
@@ -218,7 +218,7 @@ class WorkspaceView extends Component {
     return (
       <React.Fragment>
         <WorkspaceContainer>
-          <div ref={tag => (this.tabs = tag)}>
+          <div>
             <Tabs
               value={activeWorkspaceId}
               indicatorColor="primary"

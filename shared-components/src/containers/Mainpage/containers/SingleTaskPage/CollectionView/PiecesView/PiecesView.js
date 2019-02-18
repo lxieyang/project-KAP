@@ -13,9 +13,48 @@ import Button from '@material-ui/core/Button';
 import Snackbar from '@material-ui/core/Snackbar';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
+import AddIcon from '@material-ui/icons/Add';
+import { Wall, DeleteVariant } from 'mdi-material-ui';
+import Tabs from '@material-ui/core/Tabs';
+import Tab from '@material-ui/core/Tab';
 
 import PieceItem from './PieceItem/PieceItem';
 import ScreenshotModal from '../../ScreenshotModal/ScreenshotModal';
+import { PIECE_TYPES } from '../../../../../../shared/types';
+
+const StyledTab = withStyles({
+  root: {
+    minWidth: 30,
+    minHeight: 36
+  },
+  label: {
+    fontSize: '12px',
+    textTransform: 'capitalize',
+    overflow: 'hidden'
+  },
+  labelContainer: {
+    padding: '0 4px'
+  }
+})(Tab);
+
+const StyledTabs = withStyles({
+  root: {
+    minWidth: 30,
+    minHeight: 36
+  },
+  label: {
+    fontSize: '12px',
+    textTransform: 'capitalize',
+    overflow: 'hidden'
+  },
+  labelContainer: {
+    padding: '0 4px'
+  },
+  icon: {
+    width: '15px',
+    height: '15px'
+  }
+})(Tabs);
 
 const PiecesContainer = styled.div`
   padding: 5px 0px;
@@ -24,7 +63,7 @@ const PiecesContainer = styled.div`
   height: 100%;
   overflow: hidden;
   position: relative;
-  background-color: rgb(211, 211, 211);
+  /* background-color: rgb(211, 211, 211); */
 `;
 
 const PiecesUL = styled.div`
@@ -63,9 +102,19 @@ const HighZIndexSnackbar = withStyles({
   }
 })(Snackbar);
 
+const TAB_VALUES = {
+  all: 1,
+  trashed: 2,
+  uncategorized: 3,
+  options: 4,
+  criteria: 5,
+  snippets: 6
+};
+
 class PiecesView extends Component {
   state = {
     pieces: [],
+    trashedPieces: [],
     taskId: null,
 
     // editAccess
@@ -75,7 +124,10 @@ class PiecesView extends Component {
     open: false,
     timeoutDuration: 10000,
     toDeletePieceId: '',
-    toDeletePieceName: ''
+    toDeletePieceName: '',
+
+    // tab control
+    activeTabValue: TAB_VALUES.all
   };
 
   componentDidMount() {
@@ -107,19 +159,52 @@ class PiecesView extends Component {
           pieces
         });
       });
+
+    this.unsubscribeTrashedPieces = FirestoreManager.getAllTrashedPiecesInTask(
+      taskId
+    )
+      .orderBy('creationDate', 'desc')
+      .onSnapshot(querySnapshot => {
+        let trashedPieces = [];
+        querySnapshot.forEach(doc => {
+          trashedPieces.push({
+            id: doc.id,
+            ...doc.data()
+          });
+        });
+        this.setState({
+          trashedPieces
+        });
+      });
   }
 
   componentWillUnmount() {
     this.unsubscribeTaskId();
     this.unsubscribePieces();
+    this.unsubscribeTrashedPieces();
   }
 
   handleDeleteButtonClicked = (pieceId, pieceName) => {
-    if (window.confirm(`Are you sure you want to delete "${pieceName}"?`)) {
-      this.setState({ open: true });
+    if (this.state.activeTabValue === TAB_VALUES.trashed) {
+      // delete forever
+      if (
+        window.confirm(
+          `Are you sure you want to PERMANENTLY DELETE "${pieceName}"?`
+        )
+      ) {
+        FirestoreManager.deletePieceForeverById(pieceId);
+      }
+    } else {
+      // mark as trashed
+      if (window.confirm(`Are you sure you want to trash "${pieceName}"?`)) {
+        this.setState({ open: true });
 
-      this.setState({ toDeletePieceId: pieceId, toDeletePieceName: pieceName });
-      FirestoreManager.deletePieceById(pieceId);
+        this.setState({
+          toDeletePieceId: pieceId,
+          toDeletePieceName: pieceName
+        });
+        FirestoreManager.deletePieceById(pieceId);
+      }
     }
   };
 
@@ -145,59 +230,91 @@ class PiecesView extends Component {
     ScreenshotModal.toggleModalOpen();
   };
 
+  handleTabChange = (event, activeTabValue) => {
+    this.setState({ activeTabValue });
+  };
+
   render() {
-    let { pieces, taskId, editAccess, commentAccess } = this.state;
+    let {
+      pieces,
+      trashedPieces,
+      taskId,
+      editAccess,
+      commentAccess,
+      activeTabValue
+    } = this.state;
     let { classes } = this.props;
+
+    let piecesList = pieces;
+    switch (activeTabValue) {
+      case TAB_VALUES.trashed:
+        piecesList = trashedPieces;
+        break;
+      case TAB_VALUES.options:
+        piecesList = pieces.filter(p => p.pieceType === PIECE_TYPES.option);
+        break;
+      case TAB_VALUES.criteria:
+        piecesList = pieces.filter(p => p.pieceType === PIECE_TYPES.criterion);
+        break;
+      case TAB_VALUES.snippets:
+        piecesList = pieces.filter(p => p.pieceType === PIECE_TYPES.snippet);
+        break;
+      case TAB_VALUES.uncategorized:
+        // TODO: need further implementation
+        break;
+      case TAB_VALUES.all:
+      default:
+        break;
+    }
 
     return (
       <React.Fragment>
         <PiecesContainer>
-          {pieces.length !== 0 ? (
-            <PiecesUL>
-              <PieceLI
-                style={{
-                  display: 'flex',
-                  justifyContent: 'center',
-                  alignItems: 'center'
-                }}
-              >
-                <span className={styles.TopChip}>top</span>
-              </PieceLI>
-              {pieces.map((p, idx) => {
-                return (
-                  <PieceLI key={idx + p.id}>
-                    <ReactHoverObserver>
-                      <PieceItem
-                        piece={p}
-                        idx={idx}
-                        currentTaskId={taskId}
-                        editAccess={editAccess}
-                        commentAccess={commentAccess}
-                        handleDeleteButtonClicked={
-                          this.handleDeleteButtonClicked
-                        }
-                        openScreenshot={this.openScreenshot}
-                      />
-                    </ReactHoverObserver>
-                  </PieceLI>
-                );
-              })}
-              <PieceLI
-                style={{
-                  display: 'flex',
-                  justifyContent: 'center',
-                  alignItems: 'center'
-                }}
-              >
-                <span className={styles.BottomChip}>end</span>
-              </PieceLI>
-              <PieceLI
-                style={{
-                  height: '400px'
-                }}
+          <div>
+            <Tabs
+              value={activeTabValue}
+              indicatorColor="primary"
+              textColor="primary"
+              // variant="scrollable"
+              // scrollButtons="auto"
+              onChange={this.handleTabChange}
+            >
+              <StyledTab
+                value={TAB_VALUES.uncategorized}
+                label={`Uncategorized`}
               />
-            </PiecesUL>
-          ) : null}
+              <StyledTab value={TAB_VALUES.options} label={`Options`} />
+              <StyledTab value={TAB_VALUES.criteria} label={`Criteria`} />
+              <StyledTab value={TAB_VALUES.snippets} label={`Snippets`} />
+              <StyledTab value={TAB_VALUES.all} label={`All`} />
+              <StyledTab value={TAB_VALUES.trashed} label={`Trashed`} />
+            </Tabs>
+          </div>
+
+          <PiecesUL>
+            {piecesList.map((p, idx) => {
+              return (
+                <PieceLI key={idx + p.id}>
+                  <ReactHoverObserver>
+                    <PieceItem
+                      piece={p}
+                      idx={idx}
+                      currentTaskId={taskId}
+                      editAccess={editAccess}
+                      commentAccess={commentAccess}
+                      handleDeleteButtonClicked={this.handleDeleteButtonClicked}
+                      openScreenshot={this.openScreenshot}
+                    />
+                  </ReactHoverObserver>
+                </PieceLI>
+              );
+            })}
+            <PieceLI
+              style={{
+                height: '400px'
+              }}
+            />
+          </PiecesUL>
         </PiecesContainer>
 
         {/* snackbar */}
