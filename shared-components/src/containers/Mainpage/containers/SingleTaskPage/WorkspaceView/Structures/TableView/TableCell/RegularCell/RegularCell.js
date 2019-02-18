@@ -76,13 +76,13 @@ class RegularCell extends Component {
 
   componentDidMount() {
     this.keyPress = this.keyPress.bind(this);
-    this.saveContentCallback = debounce(event => {
-      FirestoreManager.setTableCellContentById(
-        this.props.workspace.id,
-        this.props.cell.id,
-        event.target.value
-      );
-    }, 500);
+    // this.saveContentCallback = debounce(event => {
+    //   FirestoreManager.setTableCellContentById(
+    //     this.props.workspace.id,
+    //     this.props.cell.id,
+    //     event.target.value
+    //   );
+    // }, 500);
   }
 
   handleCommentClick = event => {
@@ -104,9 +104,9 @@ class RegularCell extends Component {
   }
 
   handleCellContentInputChange = e => {
-    e.persist();
+    // e.persist();
     this.setState({ contentEdit: e.target.value });
-    this.saveContentCallback(e);
+    // this.saveContentCallback(e);
   };
 
   saveCellContentClickedHandler = e => {
@@ -167,8 +167,7 @@ class RegularCell extends Component {
         style={{
           zIndex: 1000,
           opacity: commentCount > 0 ? 1 : null,
-          display:
-            commentAccess !== true && commentCount === 0 ? 'none' : null
+          display: commentAccess !== true && commentCount === 0 ? 'none' : null
         }}
       >
         <div style={{ position: 'relative' }}>
@@ -326,7 +325,7 @@ class RegularCell extends Component {
               <Textarea
                 disabled={!editAccess}
                 inputRef={tag => (this.textarea = tag)}
-                minRows={1}
+                minRows={2}
                 maxRows={5}
                 placeholder={
                   editAccess

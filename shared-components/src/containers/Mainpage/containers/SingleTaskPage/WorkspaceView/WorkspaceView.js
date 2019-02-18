@@ -71,7 +71,7 @@ class WorkspaceView extends Component {
     workspacesLoading: true,
 
     // pieces
-    pieces: null,
+    pieces: {},
 
     // edit access
     taskId: '',
@@ -96,13 +96,27 @@ class WorkspaceView extends Component {
     this.unsubscribePieces = FirestoreManager.getAllPiecesInTask(
       taskId
     ).onSnapshot(querySnapshot => {
-      let pieces = {};
-      querySnapshot.forEach(snapshot => {
-        pieces[snapshot.id] = {
-          id: snapshot.id,
-          ...snapshot.data()
-        };
+      let pieces = { ...this.state.pieces };
+      querySnapshot.docChanges().forEach(change => {
+        if (change.type === 'added' || change.type === 'modified') {
+          let p = {
+            ...change.doc.data(),
+            id: change.doc.id
+          };
+          pieces[change.doc.id] = p;
+        } else if (change.type === 'removed') {
+          delete pieces[change.doc.id];
+        }
       });
+
+      // let pieces = {};
+      // querySnapshot.forEach(snapshot => {
+      //   pieces[snapshot.id] = {
+      //     id: snapshot.id,
+      //     ...snapshot.data()
+      //   };
+      // });
+
       this.setState({ pieces });
     });
 
