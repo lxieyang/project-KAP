@@ -15,6 +15,34 @@ import {
 } from '../firestore_wrapper';
 import moment from 'moment';
 
+export const putOptionIntoDefaultTable = async ({ taskId, pieceId }) => {
+  let currentTaskId = (await getCurrentUserCurrentTaskId().get()).data().id;
+  let task = taskId ? taskId : currentTaskId;
+  let tableId = (await db
+    .collection('workspaces')
+    .where('references.task', '==', task)
+    .orderBy('updateDate', 'desc')
+    .limit(1)
+    .get()).docs[0].id;
+
+  let rowHeaderId = await createNewRowInTable(tableId);
+  resetPieceInTableCellById(tableId, rowHeaderId, pieceId);
+};
+
+export const putCriterionIntoDefaultTable = async ({ taskId, pieceId }) => {
+  let currentTaskId = (await getCurrentUserCurrentTaskId().get()).data().id;
+  let task = taskId ? taskId : currentTaskId;
+  let tableId = (await db
+    .collection('workspaces')
+    .where('references.task', '==', task)
+    .orderBy('updateDate', 'desc')
+    .limit(1)
+    .get()).docs[0].id;
+
+  let columnHeaderId = await createNewColumnInTable(tableId);
+  resetPieceInTableCellById(tableId, columnHeaderId, pieceId);
+};
+
 export const getAllTableCellsInTableById = tableId => {
   return getWorkspaceById(tableId).collection('cells');
 };
@@ -196,6 +224,8 @@ export const createNewRowInTable = async (tableId, beginning = false) => {
     tableRows.push({ data: row });
   }
   updateTableData(tableId, tableRows);
+
+  return row[0];
 };
 
 export const deleteRowInTableByIndex = async (tableId, toDeleteRowIdx) => {
@@ -218,10 +248,12 @@ export const createNewColumnInTable = async (tableId, beginning = false) => {
     .get()).data().data;
 
   let numRows = tableRows.length;
+  let retVal;
   for (let i = 0; i < numRows; i++) {
     let cell;
     if (i === 0) {
       cell = createNewTableCell(tableId, TABLE_CELL_TYPES.columnHeader);
+      retVal = cell;
     } else if (i > 0) {
       cell = createNewTableCell(tableId, TABLE_CELL_TYPES.regularCell);
     }
@@ -232,6 +264,8 @@ export const createNewColumnInTable = async (tableId, beginning = false) => {
     }
   }
   updateTableData(tableId, tableRows);
+
+  return retVal;
 };
 
 export const deleteColumnInTableByIndex = async (

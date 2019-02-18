@@ -95,7 +95,7 @@ class SelectTooltipButton extends Component {
     }, 300);
   };
 
-  tooltipButtonClickedHandler = (type = PIECE_TYPES.snippet) => {
+  tooltipButtonClickedHandler = async (type = PIECE_TYPES.snippet) => {
     if (this.state.annotation === null) {
       // make sure annotation is collected
       return false;
@@ -118,11 +118,17 @@ class SelectTooltipButton extends Component {
       this.props.annotationType,
       type
     )
-      .then(data => {
+      .then(pieceId => {
         chrome.runtime.sendMessage({
           msg: 'SHOW_SUCCESS_STATUS_BADGE',
           success: true
         });
+
+        if (type === PIECE_TYPES.option) {
+          FirestoreManager.putOptionIntoDefaultTable({ pieceId });
+        } else if (type === PIECE_TYPES.criterion) {
+          FirestoreManager.putCriterionIntoDefaultTable({ pieceId });
+        }
       })
       .catch(error => {
         console.log(error);
