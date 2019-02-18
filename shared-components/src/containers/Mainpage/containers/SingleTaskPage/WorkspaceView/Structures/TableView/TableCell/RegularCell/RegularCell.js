@@ -43,6 +43,12 @@ const materialStyles = theme => ({
 const dropTarget = {
   canDrop(props, monitor, component) {
     return true;
+  },
+
+  drop(props, monitor, component) {
+    return {
+      id: props.cell.id
+    };
   }
 };
 
@@ -212,6 +218,8 @@ class RegularCell extends Component {
       </div>
     );
 
+    let piecesList = cell.pieces;
+
     return connectDropTarget(
       <td
         className={styles.RegularCell}
@@ -238,9 +246,9 @@ class RegularCell extends Component {
 
         {/* regular */}
         <div className={styles.RegularContentContainer}>
-          {cell.pieces.length > 0 ? (
+          {piecesList.length > 0 ? (
             <div className={styles.EvidenceIconContainer}>
-              {sortBy(cell.pieces, ['rating']).map((p, idx) => {
+              {sortBy(piecesList, ['rating']).map((p, idx) => {
                 if (
                   pieces[p.pieceId] !== undefined &&
                   pieces[p.pieceId] !== null
@@ -328,7 +336,7 @@ class RegularCell extends Component {
                 minRows={2}
                 maxRows={5}
                 placeholder={
-                  editAccess
+                  editAccess && piecesList.length === 0
                     ? 'Type or drop a snippet card here as evidence'
                     : ''
                 }

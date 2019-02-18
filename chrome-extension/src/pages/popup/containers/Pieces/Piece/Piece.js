@@ -34,7 +34,7 @@ import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
-import { Chat } from 'mdi-material-ui';
+import { Chat, Looks } from 'mdi-material-ui';
 import Tooltip from '@material-ui/core/Tooltip';
 import Divider from '@material-ui/core/Divider';
 
@@ -476,9 +476,9 @@ class Piece extends Component {
                     </IconButton>
                   </Tooltip>
                   */}
-                  <Tooltip title={`Delete this ${typeText}`} placement={'top'}>
+                  <Tooltip title={`Trash this ${typeText}`} placement={'top'}>
                     <IconButton
-                      aria-label="Delete"
+                      aria-label="Trash"
                       className={classes.iconButtons}
                       onClick={() =>
                         this.props.handleDeleteButtonClicked(
@@ -488,6 +488,20 @@ class Piece extends Component {
                       }
                     >
                       <DeleteIcon className={classes.iconInIconButtons} />
+                    </IconButton>
+                  </Tooltip>
+                  <Tooltip
+                    title={`Un-trash this ${typeText}`}
+                    placement={'top'}
+                  >
+                    <IconButton
+                      aria-label="Revive"
+                      className={classes.iconButtons}
+                      onClick={() =>
+                        this.props.handleReviveButtonClicked(piece.id)
+                      }
+                    >
+                      <Looks className={classes.iconInIconButtons} />
                     </IconButton>
                   </Tooltip>
                 </div>

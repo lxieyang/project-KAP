@@ -8,11 +8,29 @@ import Button from '@material-ui/core/Button';
 import Snackbar from '@material-ui/core/Snackbar';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
+import Tabs from '@material-ui/core/Tabs';
+import Tab from '@material-ui/core/Tab';
 
 import Countdown from 'react-countdown-now';
 
 import Piece from './Piece/Piece';
 import * as FirestoreManager from '../../../../../../shared-components/src/firebase/firestore_wrapper';
+import { PIECE_TYPES } from '../../../../../../shared-components/src/shared/types';
+
+const StyledTab = withStyles({
+  root: {
+    minWidth: 30,
+    minHeight: 36
+  },
+  label: {
+    fontSize: '12px',
+    textTransform: 'capitalize',
+    overflow: 'hidden'
+  },
+  labelContainer: {
+    padding: '0 4px'
+  }
+})(Tab);
 
 const PiecesContainer = styled.div`
   /* background-color: rgb(242, 242, 242); */
@@ -42,25 +60,60 @@ const styles = theme => ({
   }
 });
 
+const TAB_VALUES = {
+  all: 1,
+  trashed: 2,
+  uncategorized: 3,
+  options: 4,
+  criteria: 5,
+  snippets: 6
+};
+
 class Pieces extends Component {
   state = {
     pieces: [],
+    trashedPieces: [],
     currentTaskId: '',
 
     // snackbar control
     open: false,
     timeoutDuration: 10000,
     toDeletePieceId: '',
-    toDeletePieceName: ''
+    toDeletePieceName: '',
+
+    // tab control
+    activeTabValue: TAB_VALUES.uncategorized
+  };
+
+  handleTabChange = (event, activeTabValue) => {
+    this.setState({ activeTabValue });
   };
 
   handleDeleteButtonClicked = (pieceId, pieceName) => {
-    if (window.confirm(`Are you sure you want to delete "${pieceName}"?`)) {
-      this.setState({ open: true });
+    if (this.state.activeTabValue === TAB_VALUES.trashed) {
+      // delete forever
+      if (
+        window.confirm(
+          `Are you sure you want to PERMANENTLY DELETE "${pieceName}"?`
+        )
+      ) {
+        FirestoreManager.deletePieceForeverById(pieceId);
+      }
+    } else {
+      if (window.confirm(`Are you sure you want to trash "${pieceName}"?`)) {
+        this.setState({ open: true });
 
-      this.setState({ toDeletePieceId: pieceId, toDeletePieceName: pieceName });
-      FirestoreManager.deletePieceById(pieceId);
+        this.setState({
+          toDeletePieceId: pieceId,
+          toDeletePieceName: pieceName
+        });
+        FirestoreManager.deletePieceById(pieceId);
+      }
     }
+  };
+
+  handleReviveButtonClicked = pieceId => {
+    FirestoreManager.revivePieceById(pieceId);
   };
 
   handleSnackbarClose = (event, reason) => {
@@ -96,6 +149,23 @@ class Pieces extends Component {
             });
             this.setState({ pieces });
           });
+
+        this.unsubscribeTrashedPieces = FirestoreManager.getAllTrashedPiecesInTask(
+          currentTaskId
+        )
+          .orderBy('creationDate', 'desc')
+          .onSnapshot(querySnapshot => {
+            let trashedPieces = [];
+            querySnapshot.forEach(doc => {
+              trashedPieces.push({
+                id: doc.id,
+                ...doc.data()
+              });
+            });
+            this.setState({
+              trashedPieces
+            });
+          });
       }
     );
   }
@@ -103,16 +173,64 @@ class Pieces extends Component {
   componentWillUnmount() {
     this.unsubscribeCurrentTaskId();
     this.unsubscribeAllPieces();
+    this.unsubscribeTrashedPieces();
   }
 
   render() {
-    let { pieces, currentTaskId } = this.state;
+    let { pieces, trashedPieces, currentTaskId, activeTabValue } = this.state;
     let { classes } = this.props;
+
+    let piecesList = pieces;
+    switch (activeTabValue) {
+      case TAB_VALUES.trashed:
+        piecesList = trashedPieces;
+        break;
+      case TAB_VALUES.options:
+        piecesList = pieces.filter(p => p.pieceType === PIECE_TYPES.option);
+        break;
+      case TAB_VALUES.criteria:
+        piecesList = pieces.filter(p => p.pieceType === PIECE_TYPES.criterion);
+        break;
+      case TAB_VALUES.snippets:
+        piecesList = pieces.filter(p => p.pieceType === PIECE_TYPES.snippet);
+        break;
+      case TAB_VALUES.uncategorized:
+        // TODO: need further implementation
+
+        break;
+
+      case TAB_VALUES.all:
+      default:
+        break;
+    }
+
     return (
       <React.Fragment>
         <PiecesContainer>
+          <div>
+            <Tabs
+              value={activeTabValue}
+              indicatorColor="primary"
+              textColor="primary"
+              variant="fullWidth"
+              // variant="scrollable"
+              // scrollButtons="auto"
+              onChange={this.handleTabChange}
+            >
+              <StyledTab
+                value={TAB_VALUES.uncategorized}
+                label={`Uncategorized`}
+              />
+              <StyledTab value={TAB_VALUES.options} label={`Options`} />
+              <StyledTab value={TAB_VALUES.criteria} label={`Criteria`} />
+              <StyledTab value={TAB_VALUES.snippets} label={`Snippets`} />
+              <StyledTab value={TAB_VALUES.all} label={`All`} />
+              <StyledTab value={TAB_VALUES.trashed} label={`Trashed`} />
+            </Tabs>
+          </div>
+
           <PiecesUL>
-            {pieces.map((p, idx) => {
+            {piecesList.map((p, idx) => {
               return (
                 <PieceLI key={idx + p.id}>
                   <ReactHoverObserver>
@@ -120,7 +238,9 @@ class Pieces extends Component {
                       piece={p}
                       idx={idx}
                       currentTaskId={currentTaskId}
+                      inTrashedTab={activeTabValue === TAB_VALUES.trashed}
                       handleDeleteButtonClicked={this.handleDeleteButtonClicked}
+                      handleReviveButtonClicked={this.handleReviveButtonClicked}
                     />
                   </ReactHoverObserver>
                 </PieceLI>

@@ -25,7 +25,7 @@ import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
-import { Chat } from 'mdi-material-ui';
+import { Chat, Looks } from 'mdi-material-ui';
 import Badge from '@material-ui/core/Badge';
 import purple from '@material-ui/core/colors/purple';
 import Tooltip from '@material-ui/core/Tooltip';
@@ -140,9 +140,13 @@ const dragSource = {
   },
 
   endDrag(props, monitor, component) {
-    // console.log("END DRAGGING")
-    // const item = monitor.getDropResult();
-    // console.log(item);
+    const item = monitor.getDropResult();
+    if (item !== null && item.id !== null && item.id !== undefined) {
+      // dropped in a table cell
+      if (props.inTrashedTab) {
+        FirestoreManager.revivePieceById(props.piece.id);
+      }
+    }
   }
 };
 
@@ -471,11 +475,11 @@ class PieceItem extends Component {
                   */}
                     {editAccess && this.props.cellId === undefined ? (
                       <Tooltip
-                        title={`Delete this ${typeText}`}
+                        title={`Trash this ${typeText}`}
                         placement={'top'}
                       >
                         <IconButton
-                          aria-label="Delete"
+                          aria-label="Trash"
                           className={classes.iconButtons}
                           onClick={() =>
                             this.props.handleDeleteButtonClicked(
@@ -485,6 +489,23 @@ class PieceItem extends Component {
                           }
                         >
                           <DeleteIcon className={classes.iconInIconButtons} />
+                        </IconButton>
+                      </Tooltip>
+                    ) : null}
+
+                    {editAccess && this.props.inTrashedTab === true ? (
+                      <Tooltip
+                        title={`Un-trash this ${typeText}`}
+                        placement={'top'}
+                      >
+                        <IconButton
+                          aria-label="Revive"
+                          className={classes.iconButtons}
+                          onClick={() =>
+                            this.props.handleReviveButtonClicked(piece.id)
+                          }
+                        >
+                          <Looks className={classes.iconInIconButtons} />
                         </IconButton>
                       </Tooltip>
                     ) : null}

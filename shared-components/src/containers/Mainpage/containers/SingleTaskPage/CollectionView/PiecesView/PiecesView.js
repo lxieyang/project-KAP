@@ -14,7 +14,6 @@ import Snackbar from '@material-ui/core/Snackbar';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import AddIcon from '@material-ui/icons/Add';
-import { Wall, DeleteVariant } from 'mdi-material-ui';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 
@@ -24,7 +23,7 @@ import { PIECE_TYPES } from '../../../../../../shared/types';
 
 const StyledTab = withStyles({
   root: {
-    minWidth: 30,
+    minWidth: 40,
     minHeight: 36
   },
   label: {
@@ -33,28 +32,9 @@ const StyledTab = withStyles({
     overflow: 'hidden'
   },
   labelContainer: {
-    padding: '0 4px'
+    padding: '6px 4px'
   }
 })(Tab);
-
-const StyledTabs = withStyles({
-  root: {
-    minWidth: 30,
-    minHeight: 36
-  },
-  label: {
-    fontSize: '12px',
-    textTransform: 'capitalize',
-    overflow: 'hidden'
-  },
-  labelContainer: {
-    padding: '0 4px'
-  },
-  icon: {
-    width: '15px',
-    height: '15px'
-  }
-})(Tabs);
 
 const PiecesContainer = styled.div`
   padding: 5px 0px;
@@ -240,6 +220,10 @@ class PiecesView extends Component {
     }
   };
 
+  handleReviveButtonClicked = pieceId => {
+    FirestoreManager.revivePieceById(pieceId);
+  };
+
   handleSnackbarClose = (event, reason) => {
     if (reason === 'clickaway') {
       return;
@@ -293,7 +277,6 @@ class PiecesView extends Component {
         piecesList = pieces.filter(p => p.pieceType === PIECE_TYPES.snippet);
         break;
       case TAB_VALUES.uncategorized:
-        // TODO: need further implementation
         piecesList = pieces.filter(
           p => piecesInCurrentWorkspace[p.id] !== true
         );
@@ -311,8 +294,9 @@ class PiecesView extends Component {
               value={activeTabValue}
               indicatorColor="primary"
               textColor="primary"
+              // variant="fullWidth"
               // variant="scrollable"
-              // scrollButtons="auto"
+              // scrollButtons="off"
               onChange={this.handleTabChange}
             >
               <StyledTab
@@ -323,7 +307,9 @@ class PiecesView extends Component {
               <StyledTab value={TAB_VALUES.criteria} label={`Criteria`} />
               <StyledTab value={TAB_VALUES.snippets} label={`Snippets`} />
               <StyledTab value={TAB_VALUES.all} label={`All`} />
-              <StyledTab value={TAB_VALUES.trashed} label={`Trashed`} />
+              {editAccess ? (
+                <StyledTab value={TAB_VALUES.trashed} label={`Trashed`} />
+              ) : null}
             </Tabs>
           </div>
 
@@ -338,7 +324,9 @@ class PiecesView extends Component {
                       currentTaskId={taskId}
                       editAccess={editAccess}
                       commentAccess={commentAccess}
+                      inTrashedTab={activeTabValue === TAB_VALUES.trashed}
                       handleDeleteButtonClicked={this.handleDeleteButtonClicked}
+                      handleReviveButtonClicked={this.handleReviveButtonClicked}
                       openScreenshot={this.openScreenshot}
                     />
                   </ReactHoverObserver>
