@@ -165,7 +165,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
   if (request.msg === 'SETTINGS_CHANGED_SIDEBAR_BEHAVIOR') {
     shouldShrinkBody = request.to === 'overlay' ? false : true;
     updateShouldShrinkBodyStatus();
-    chrome.storage.local.set({ shouldShrinkBody }, function() {
+    chrome.storage.sync.set({ shouldShrinkBody }, function() {
       //  Data's been saved boys and girls, go on home
       console.log('shouldShrinkBody has been set to:', shouldShrinkBody);
     });
@@ -174,7 +174,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
   if (request.msg === 'SETTINGS_CHANGED_SIDEBAR_ESCAPE_KEY_TOGGLE') {
     shouldUseEscapeKeyToToggleSidebar = request.to;
     updateShouldUseEscapeKeyToToggleSidebarStatus();
-    chrome.storage.local.set({ shouldUseEscapeKeyToToggleSidebar }, function() {
+    chrome.storage.sync.set({ shouldUseEscapeKeyToToggleSidebar }, function() {
       //  Data's been saved boys and girls, go on home
       console.log(
         'shouldUseEscapeKeyToToggleSidebar has been set to:',

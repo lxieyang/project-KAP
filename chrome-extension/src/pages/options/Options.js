@@ -10,6 +10,26 @@ class Options extends Component {
     sidebarEscapeKeyToggle: true
   };
 
+  componentDidMount() {
+    chrome.runtime.sendMessage({ msg: 'SHOULD_SHRINK_BODY' }, response => {
+      let shouldShrinkBody = response.SHOULD_SHRINK_BODY;
+      this.setState({
+        sidebarBehavior: shouldShrinkBody ? 'shrinkbody' : 'overlay'
+      });
+    });
+
+    chrome.runtime.sendMessage(
+      { msg: 'SHOULD_SHSHOULD_TOGGLE_SIDEBAR_WITH_ESC_KEYRINK_BODY' },
+      response => {
+        let shouldUseEscapeKeyToToggleSidebar =
+          response.SHOULD_TOGGLE_SIDEBAR_WITH_ESC_KEY;
+        this.setState({
+          sidebarEscapeKeyToggle: shouldUseEscapeKeyToToggleSidebar
+        });
+      }
+    );
+  }
+
   handleSidebarBehaviorChange = value => {
     this.setState({ sidebarBehavior: value });
     chrome.runtime.sendMessage({
