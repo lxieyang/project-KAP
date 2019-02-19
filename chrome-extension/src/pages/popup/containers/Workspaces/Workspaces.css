@@ -1,0 +1,28 @@
+.WorkspaceName {
+  flex: 1;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.CloseButton {
+  transform: scale(0.6);
+  transition: all 0.2s ease-in;
+}
+
+.CloseButton:hover {
+  color: red;
+  transform: scale(0.8);
+}
+
+.WorkspacesTitle {
+  font-size: 16px;
+  font-weight: 600;
+  padding-left: 6px;
+  transition: all 0.1s ease-in;
+  cursor: pointer;
+}
+
+.WorkspacesTitle:hover {
+  opacity: 0.7;
+}

@@ -7,8 +7,8 @@ const SCREENSHOT_MODAL_TOGGLE_OPEN = 'screenshotModalToggleOpen';
 const SCREENSHOT_MODAL_SET_SOURCE = 'screenshotModalSetSource';
 
 function getModalStyle() {
-  const top = 40;
-  const left = 30;
+  const top = 50;
+  const left = 50;
 
   return {
     top: `${top}%`,
@@ -20,7 +20,7 @@ function getModalStyle() {
 const styles = theme => ({
   paper: {
     position: 'absolute',
-    width: '70%',
+    width: '90%',
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
@@ -29,6 +29,9 @@ const styles = theme => ({
     outline: 'none'
   }
 });
+const HighZIndexModal = withStyles({
+  root: { zIndex: 999999999 }
+})(Modal);
 
 class SimpleModal extends React.Component {
   state = {
@@ -58,7 +61,7 @@ class SimpleModal extends React.Component {
 
     return (
       <div>
-        <Modal
+        <HighZIndexModal
           aria-labelledby="simple-modal-title"
           aria-describedby="simple-modal-description"
           open={this.state.open}
@@ -71,7 +74,7 @@ class SimpleModal extends React.Component {
               style={{ maxWidth: '80%', maxHeight: '80%' }}
             />
           </div>
-        </Modal>
+        </HighZIndexModal>
       </div>
     );
   }

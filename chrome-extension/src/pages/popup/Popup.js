@@ -5,7 +5,7 @@ import fasExternalLinkSquareAlt from '@fortawesome/fontawesome-free-solid/faExte
 
 import AppHeader from '../../../../shared-components/src/components/UI/AppHeader/AppHeader';
 import TaskSwitcher from './containers/TaskSwitcher/TaskSwitcher';
-import Structure from './containers/Structure/Strusture';
+import Workspaces from './containers/Workspaces/Workspaces';
 import Pieces from './containers/Pieces/Pieces';
 import styles from './Popup.css';
 import { APP_NAME_SHORT } from '../../../../shared-components/src/shared/constants';
@@ -22,7 +22,9 @@ class Popup extends Component {
 
     currentTaskId: null,
 
-    loadingUserInfo: true
+    loadingUserInfo: true,
+
+    currentWorkspaceId: '0'
   };
 
   componentDidMount() {
@@ -114,7 +116,10 @@ class Popup extends Component {
 
   setCurrentTaskId = taskId => {
     this.setState({ currentTaskId: taskId });
-    // console.log(taskId);
+  };
+
+  setCurrentWorkspaceId = workspaceId => {
+    this.setState({ currentWorkspaceId: workspaceId });
   };
 
   render() {
@@ -190,8 +195,8 @@ class Popup extends Component {
           Successfully logged into {APP_NAME_SHORT}.
         </div>*/}
         <TaskSwitcher setCurrentTaskId={this.setCurrentTaskId} />
-        <Structure />
-        <Pieces />
+        <Workspaces setCurrentWorkspaceId={this.setCurrentWorkspaceId} />
+        <Pieces currentWorkspaceId={this.state.currentWorkspaceId} />
       </React.Fragment>
     );
   }

@@ -10,14 +10,11 @@ import styles from './WorkspaceView.css';
 import LinesEllipsis from 'react-lines-ellipsis';
 import { withStyles } from '@material-ui/core/styles';
 import AddIcon from '@material-ui/icons/Add';
-import { TableLarge, Close, Cancel } from 'mdi-material-ui';
+import { TableLarge, Close } from 'mdi-material-ui';
 import IconButton from '@material-ui/core/IconButton';
 import Tooltip from '@material-ui/core/Tooltip';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
-
-import Textarea from 'react-textarea-autosize';
-import AutosizeInput from 'react-input-autosize';
 
 import CreateNewWorkspace from './CreateNewWorkspace/CreateNewWorkspace';
 import TableView from './Structures/TableView/TableView';

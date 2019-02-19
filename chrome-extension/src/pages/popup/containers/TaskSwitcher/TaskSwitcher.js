@@ -14,12 +14,12 @@ import Tooltip from '@material-ui/core/Tooltip';
 import Button from '@material-ui/core/Button';
 import Snackbar from '@material-ui/core/Snackbar';
 import CloseIcon from '@material-ui/icons/Close';
+import Divider from '@material-ui/core/Divider';
 
 import Countdown from 'react-countdown-now';
 
 import { THEME_COLOR } from '../../../../../../shared-components/src/shared/theme';
 
-import firebase from '../../../../../../shared-components/src/firebase/firebase';
 import * as FirestoreManager from '../../../../../../shared-components/src/firebase/firestore_wrapper';
 
 import classesInCSS from './TaskSwitcher.css';
@@ -46,6 +46,7 @@ const TaskSwitcherContainer = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
+  font-size: 14px;
 `;
 
 const VariousButtonsContainer = styled.div`
