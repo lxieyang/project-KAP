@@ -73,6 +73,7 @@ class Pieces extends Component {
   state = {
     pieces: [],
     trashedPieces: [],
+    piecesInCurrentWorkspace: {},
     currentTaskId: '',
 
     // snackbar control
@@ -138,6 +139,7 @@ class Pieces extends Component {
       doc => {
         let currentTaskId = doc.data().id;
         this.setState({ currentTaskId });
+
         this.unsubscribeAllPieces = FirestoreManager.getAllPiecesInTask(
           currentTaskId
         )
@@ -166,18 +168,55 @@ class Pieces extends Component {
               trashedPieces
             });
           });
+
+        this.getAllPiecesInCurrentTable(this.props.currentWorkspaceId);
       }
     );
   }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (prevProps.currentWorkspaceId !== this.props.currentWorkspaceId) {
+      this.getAllPiecesInCurrentTable(this.props.currentWorkspaceId);
+    }
+  }
+
+  getAllPiecesInCurrentTable = tableId => {
+    if (tableId !== '0') {
+      if (this.unsubscribeTablePieces) {
+        this.unsubscribeTablePieces();
+      }
+      this.unsubscribeTablePieces = FirestoreManager.getAllTableCellsInTableById(
+        tableId
+      ).onSnapshot(querySnapshot => {
+        let piecesInCurrentWorkspace = {};
+        querySnapshot.forEach(snapshot => {
+          let pieceIds = snapshot.data().pieces.map(p => p.pieceId);
+          pieceIds.forEach(
+            pieceId => (piecesInCurrentWorkspace[pieceId] = true)
+          );
+        });
+        this.setState({ piecesInCurrentWorkspace });
+      });
+    }
+  };
 
   componentWillUnmount() {
     this.unsubscribeCurrentTaskId();
     this.unsubscribeAllPieces();
     this.unsubscribeTrashedPieces();
+    if (this.unsubscribeTablePieces) {
+      this.unsubscribeTablePieces();
+    }
   }
 
   render() {
-    let { pieces, trashedPieces, currentTaskId, activeTabValue } = this.state;
+    let {
+      pieces,
+      trashedPieces,
+      piecesInCurrentWorkspace,
+      currentTaskId,
+      activeTabValue
+    } = this.state;
     let { classes } = this.props;
 
     let piecesList = pieces;
@@ -195,8 +234,9 @@ class Pieces extends Component {
         piecesList = pieces.filter(p => p.pieceType === PIECE_TYPES.snippet);
         break;
       case TAB_VALUES.uncategorized:
-        // TODO: need further implementation
-
+        piecesList = pieces.filter(
+          p => piecesInCurrentWorkspace[p.id] !== true
+        );
         break;
 
       case TAB_VALUES.all:
