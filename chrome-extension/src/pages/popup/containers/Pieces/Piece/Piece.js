@@ -497,20 +497,22 @@ class Piece extends Component {
                       <DeleteIcon className={classes.iconInIconButtons} />
                     </IconButton>
                   </Tooltip>
-                  <Tooltip
-                    title={`Un-trash this ${typeText}`}
-                    placement={'top'}
-                  >
-                    <IconButton
-                      aria-label="Revive"
-                      className={classes.iconButtons}
-                      onClick={() =>
-                        this.props.handleReviveButtonClicked(piece.id)
-                      }
+                  {this.props.inTrashedTab === true ? (
+                    <Tooltip
+                      title={`Un-trash this ${typeText}`}
+                      placement={'top'}
                     >
-                      <Looks className={classes.iconInIconButtons} />
-                    </IconButton>
-                  </Tooltip>
+                      <IconButton
+                        aria-label="Revive"
+                        className={classes.iconButtons}
+                        onClick={() =>
+                          this.props.handleReviveButtonClicked(piece.id)
+                        }
+                      >
+                        <Looks className={classes.iconInIconButtons} />
+                      </IconButton>
+                    </Tooltip>
+                  ) : null}
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center' }}>
                   {piece.references.url !== false ? (
