@@ -88,6 +88,7 @@ const toggleButtonInnerClass = css({
 });
 
 const FRAME_TOGGLE_FUNCTION = 'chromeIframeSheetToggle';
+const FRAME_TOGGLE_WINDER_FUNCTION = 'chromeIframeSheetToggleWinder';
 
 export class Frame extends Component {
   render() {
@@ -151,7 +152,10 @@ export class Frame extends Component {
             [containerMinimizedClass]: isMinimized,
             [containerClassName]: true
           })}
-          style={containerStyle}
+          style={{
+            ...containerStyle,
+            width: this.state.wider ? '600px' : null
+          }}
           onClick={this.onFrameClick}
         >
           <iframe
@@ -176,7 +180,10 @@ export class Frame extends Component {
 
   state = {
     isVisible: false,
-    isMinimized: true // default is minimized
+    isMinimized: true, // default is minimized,
+
+    // wider
+    wider: false
   };
 
   static defaultProps = {
@@ -213,6 +220,7 @@ export class Frame extends Component {
     const { delay, onMount } = this.props;
 
     window[FRAME_TOGGLE_FUNCTION] = this.toggleFrame;
+    window[FRAME_TOGGLE_WINDER_FUNCTION] = this.toggleFrameWinder;
 
     onMount({
       mask: this.mask,
@@ -278,6 +286,14 @@ export class Frame extends Component {
     }
   };
 
+  toggleFrameWinder = () => {
+    this.setState(prevState => {
+      return {
+        wider: !prevState.wider
+      };
+    });
+  };
+
   static isReady() {
     return typeof window[FRAME_TOGGLE_FUNCTION] !== 'undefined';
   }
@@ -285,6 +301,12 @@ export class Frame extends Component {
   static toggle(to = undefined) {
     if (window[FRAME_TOGGLE_FUNCTION]) {
       window[FRAME_TOGGLE_FUNCTION](to);
+    }
+  }
+
+  static toggleWider() {
+    if (window[FRAME_TOGGLE_WINDER_FUNCTION]) {
+      window[FRAME_TOGGLE_WINDER_FUNCTION]();
     }
   }
 }
