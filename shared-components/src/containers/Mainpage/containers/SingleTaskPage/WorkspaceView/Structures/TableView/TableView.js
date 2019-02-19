@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
-import ReactHoverObserver from 'react-hover-observer';
 import { withRouter } from 'react-router-dom';
-import { matchPath } from 'react-router';
 import * as FirestoreManager from '../../../../../../../firebase/firestore_wrapper';
 import { PIECE_COLOR, THEME_COLOR } from '../../../../../../../shared/theme';
 import Spinner from '../../../../../../../components/UI/Spinner/Spinner';

@@ -19,9 +19,9 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 
 import CreateNewWorkspace from './CreateNewWorkspace/CreateNewWorkspace';
+import Table from './Structures/Table/Table';
 
 const WorkspacesContainer = styled.div`
-  /* background-color: #ddd; */
   margin: 0px 0px;
   box-sizing: border-box;
   width: 100%;
@@ -31,7 +31,7 @@ const WorkspacesContainer = styled.div`
 `;
 
 const WorkspacesContentContainer = styled.div`
-  background-color: #ddd;
+  /* background-color: #ddd; */
   width: 100%;
   height: 350px;
   overflow: auto;
@@ -340,7 +340,12 @@ class Workspaces extends Component {
                     <React.Fragment key={idx}>
                       {activeWorkspaceId === workspace.id ? (
                         <WorkspacesContentContainer className="workspace-content-container">
-                          table view {workspace.id}
+                          <Table
+                            taskId={taskId}
+                            pieces={pieces}
+                            workspace={workspace}
+                            workspaceTypeString={'table'}
+                          />
                         </WorkspacesContentContainer>
                       ) : null}
                     </React.Fragment>
