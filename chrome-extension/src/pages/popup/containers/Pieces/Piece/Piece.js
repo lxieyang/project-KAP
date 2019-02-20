@@ -34,7 +34,8 @@ import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
-import { Chat, Looks } from 'mdi-material-ui';
+import Chat from 'mdi-material-ui/Chat';
+import Looks from 'mdi-material-ui/Looks';
 import Tooltip from '@material-ui/core/Tooltip';
 import Divider from '@material-ui/core/Divider';
 

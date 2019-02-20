@@ -17,7 +17,8 @@ import IconButton from '@material-ui/core/IconButton';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import Button from '@material-ui/core/Button';
 import DeleteIcon from '@material-ui/icons/Delete';
-import { Chat, Looks } from 'mdi-material-ui';
+import Chat from 'mdi-material-ui/Chat';
+import Looks from 'mdi-material-ui/Looks';
 import Tooltip from '@material-ui/core/Tooltip';
 
 import Textarea from 'react-textarea-autosize';

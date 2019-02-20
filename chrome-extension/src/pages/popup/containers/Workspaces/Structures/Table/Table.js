@@ -9,6 +9,7 @@ import Spinner from '../../../../../../../../shared-components/src/components/UI
 import styles from './Table.css';
 
 import Button from '@material-ui/core/Button';
+
 import { withStyles } from '@material-ui/core/styles';
 
 import TableCell from './TableCell/TableCell';

@@ -12,7 +12,8 @@ import Button from '@material-ui/core/Button';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
-import { PencilCircleOutline, DeleteCircleOutline } from 'mdi-material-ui';
+import PencilCircleOutline from 'mdi-material-ui/PencilCircleOutline';
+import DeleteCircleOutline from 'mdi-material-ui/DeleteCircleOutline';
 
 import Textarea from 'react-textarea-autosize';
 

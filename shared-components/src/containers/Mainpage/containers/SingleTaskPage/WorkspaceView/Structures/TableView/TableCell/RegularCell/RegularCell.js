@@ -11,7 +11,7 @@ import { THEME_COLOR } from '../../../../../../../../../shared/theme';
 
 import ReactTooltip from 'react-tooltip';
 import { withStyles } from '@material-ui/core/styles';
-import { Chat } from 'mdi-material-ui';
+import Chat from 'mdi-material-ui/Chat';
 import Tooltip from '@material-ui/core/Tooltip';
 import IconButton from '@material-ui/core/IconButton';
 import Popover from '@material-ui/core/Popover';

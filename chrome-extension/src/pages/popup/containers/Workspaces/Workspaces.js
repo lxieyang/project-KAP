@@ -9,12 +9,12 @@ import Spinner from '../../../../../../shared-components/src/components/UI/Spinn
 import LinesEllipsis from 'react-lines-ellipsis';
 import { withStyles } from '@material-ui/core/styles';
 import AddIcon from '@material-ui/icons/Add';
-import { TableLarge, Close } from 'mdi-material-ui';
+import TableLarge from 'mdi-material-ui/TableLarge';
+import Close from 'mdi-material-ui/Close';
 import IconButton from '@material-ui/core/IconButton';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import Divider from '@material-ui/core/Divider';
 import Collapse from '@material-ui/core/Collapse';
-import Tooltip from '@material-ui/core/Tooltip';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 

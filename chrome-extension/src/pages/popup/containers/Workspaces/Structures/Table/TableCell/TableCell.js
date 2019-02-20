@@ -7,6 +7,10 @@ import TopLeftCell from './TopLeftCell/TopLeftCell';
 import { TABLE_CELL_TYPES } from '../../../../../../../../../shared-components/src/shared/types';
 import * as FirestoreManager from '../../../../../../../../../shared-components/src/firebase/firestore_wrapper';
 
+let smallBox = (
+  <div style={{ width: '50px', height: '50px', backgroundColor: 'blue' }} />
+);
+
 class TableCell extends Component {
   state = {
     // comments
@@ -70,7 +74,7 @@ class TableCell extends Component {
         break;
       case TABLE_CELL_TYPES.columnHeader:
         cell = (
-          <td>{this.props.cell.id}</td>
+          <td>{smallBox}</td>
           // <ColumnHeaderCell
           //   {...this.props}
           //   comments={comments}
@@ -80,7 +84,7 @@ class TableCell extends Component {
         break;
       case TABLE_CELL_TYPES.rowHeader:
         cell = (
-          <td>{this.props.cell.id}</td>
+          <td>{smallBox}</td>
           // <RowHeaderCell
           //   {...this.props}
           //   comments={comments}
@@ -91,7 +95,7 @@ class TableCell extends Component {
       case TABLE_CELL_TYPES.regularCell:
       default:
         cell = (
-          <td>{this.props.cell.id}</td>
+          <td>{smallBox}</td>
           // <RegularCell
           //   {...this.props}
           //   comments={comments}

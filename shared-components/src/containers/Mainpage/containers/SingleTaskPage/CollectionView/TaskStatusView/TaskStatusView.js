@@ -7,7 +7,8 @@ import styles from './TaskStatusView.css';
 
 import { withStyles } from '@material-ui/core/styles';
 import IconButton from '@material-ui/core/IconButton';
-import { Star, StarOutline } from 'mdi-material-ui';
+import Star from 'mdi-material-ui/Star';
+import StarOutline from 'mdi-material-ui/StarOutline';
 import Tooltip from '@material-ui/core/Tooltip';
 
 import Textarea from 'react-textarea-autosize';

@@ -9,7 +9,8 @@ import styles from './WorkspaceView.css';
 
 import { withStyles } from '@material-ui/core/styles';
 import AddIcon from '@material-ui/icons/Add';
-import { TableLarge, Close } from 'mdi-material-ui';
+import TableLarge from 'mdi-material-ui/TableLarge';
+import Close from 'mdi-material-ui/Close';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 

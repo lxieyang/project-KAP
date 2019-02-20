@@ -12,7 +12,8 @@ import ListItemText from '@material-ui/core/ListItemText';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
-import { TableLarge, BullseyeArrow } from 'mdi-material-ui';
+import TableLarge from 'mdi-material-ui/TableLarge';
+import BullseyeArrow from 'mdi-material-ui/BullseyeArrow';
 import Button from '@material-ui/core/Button';
 
 const CreateNewWorkspacePageContainer = styled.div`

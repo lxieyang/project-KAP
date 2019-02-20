@@ -12,7 +12,7 @@ import { withStyles } from '@material-ui/core/styles';
 import IconButton from '@material-ui/core/IconButton';
 import Avatar from '@material-ui/core/Avatar';
 import DeleteIcon from '@material-ui/icons/Delete';
-import { Chat } from 'mdi-material-ui';
+import Chat from 'mdi-material-ui/Chat';
 import Tooltip from '@material-ui/core/Tooltip';
 import Popover from '@material-ui/core/Popover';
 import Textarea from 'react-textarea-autosize';
