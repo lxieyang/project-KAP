@@ -39,9 +39,8 @@ import {
   THEME_COLOR,
   PIECE_COLOR
 } from '../../../../../../../../../../shared-components/src/shared/theme';
-
+import { getFirstNWords } from '../../../../../../../../../../shared-components/src/shared/utilities';
 // import CellComments from '../CellComments/CellComments';
-// import { getFirstName } from '../../../../../../../../../shared/utilities';
 
 const materialStyles = theme => ({
   iconButtons: {
@@ -275,13 +274,18 @@ class RowHeaderCell extends Component {
       <td
         className={styles.RowHeaderCell}
         style={{
+          borderLeft: `3px solid ${PIECE_COLOR.option}`,
           backgroundColor: cell.checked
             ? THEME_COLOR.optionChosenBackgroundColor
             : null
         }}
       >
         {deleteRowActionContainer}
-        <div className={styles.RowHeaderCellContainer}> row header </div>
+        <div className={styles.RowHeaderCellContainer}>
+          {cell.pieces.length > 0
+            ? getFirstNWords(10, pieces[cell.pieces[0].pieceId].name)
+            : null}
+        </div>
       </td>
     );
   }

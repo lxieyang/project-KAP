@@ -62,7 +62,7 @@ class AppHeader extends Component {
             <Logo size={props.logoSize} hover={props.hover} /> &nbsp;
             <strong>{APP_NAME_SHORT}</strong>
             &nbsp;
-            <span className={styles.AppVersion}>(v2-beta)</span>
+            {/*<span className={styles.AppVersion}>(v2-beta)</span>*/}
           </div>
           <div
             style={{

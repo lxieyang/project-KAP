@@ -37,15 +37,15 @@
 }
 
 .EvidenceIconContainer {
-  display: flex;
+  /* display: flex;
   flex-flow: row;
   justify-content: center;
   align-items: center;
-  margin-bottom: 5px;
+  margin-bottom: 5px; */
 }
 
 .AttitudeInTableCell {
-  font-size: 1.8rem;
+  display: inline-block;
   margin-right: 5px;
   width: 40px;
   height: 40px;

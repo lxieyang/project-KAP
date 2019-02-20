@@ -270,8 +270,9 @@ class RegularCell extends Component {
                   }
 
                   return (
-                    <div key={`${p.pieceId}-${idx}`}>
+                    <React.Fragment key={`${p.pieceId}-${idx}`}>
                       <ContextMenuTrigger
+                        renderTag={'span'}
                         id={`${cell.id}-${p.pieceId}-${idx}-context-menu`}
                         holdToDisplay={-1}
                       >
@@ -326,7 +327,7 @@ class RegularCell extends Component {
                           );
                         }}
                       />
-                    </div>
+                    </React.Fragment>
                   );
                 } else {
                   return null;

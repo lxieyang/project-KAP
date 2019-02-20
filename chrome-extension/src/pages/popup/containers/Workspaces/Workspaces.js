@@ -25,7 +25,7 @@ const WorkspacesContainer = styled.div`
   margin: 0px 0px;
   box-sizing: border-box;
   width: 100%;
-  padding: 0px 0px;
+  padding: 0px;
   font-size: 12px;
   font-weight: 400;
 `;
@@ -33,7 +33,7 @@ const WorkspacesContainer = styled.div`
 const WorkspacesContentContainer = styled.div`
   /* background-color: #ddd; */
   width: 100%;
-  height: 350px;
+  max-height: 360px;
   overflow: auto;
 `;
 

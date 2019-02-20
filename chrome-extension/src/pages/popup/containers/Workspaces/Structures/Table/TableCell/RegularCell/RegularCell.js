@@ -2,13 +2,22 @@ import React, { Component } from 'react';
 import styled from 'styled-components';
 import { sortBy, debounce } from 'lodash';
 import styles from './RegularCell.css';
-import ThumbV1 from '../../../../../../../../../components/UI/Thumbs/ThumbV1/ThumbV1';
+import ThumbV1 from '../../../../../../../../../../shared-components/src/components/UI/Thumbs/ThumbV1/ThumbV1';
+import InfoIcon from '../../../../../../../../../../shared-components/src/components/UI/Thumbs/InfoIcon/InfoIcon';
 
-import PieceItem from '../../../../../CollectionView/PiecesView/PieceItem/PieceItem';
-import RatingLayer from './RatingLayer/RatingLayer';
-import * as FirestoreManager from '../../../../../../../../../firebase/firestore_wrapper';
-import { RATING_TYPES } from '../../../../../../../../../shared/types';
-import { THEME_COLOR } from '../../../../../../../../../shared/theme';
+// import PieceItem from '../../../../../CollectionView/PiecesView/PieceItem/PieceItem';
+// import RatingLayer from './RatingLayer/RatingLayer';
+import * as FirestoreManager from '../../../../../../../../../../shared-components/src/firebase/firestore_wrapper';
+import {
+  PIECE_TYPES,
+  TABLE_CELL_TYPES,
+  ANNOTATION_TYPES,
+  RATING_TYPES
+} from '../../../../../../../../../../shared-components/src/shared/types';
+import {
+  THEME_COLOR,
+  PIECE_COLOR
+} from '../../../../../../../../../../shared-components/src/shared/theme';
 
 import ReactTooltip from 'react-tooltip';
 import { withStyles } from '@material-ui/core/styles';
@@ -24,8 +33,8 @@ import { ContextMenu, MenuItem, ContextMenuTrigger } from 'react-contextmenu';
 import { DragSource, DropTarget } from 'react-dnd';
 import PropTypes from 'prop-types';
 
-import CellComments from '../CellComments/CellComments';
-import { getFirstName } from '../../../../../../../../../shared/utilities';
+// import CellComments from '../CellComments/CellComments';
+import { getFirstNWords } from '../../../../../../../../../../shared-components/src/shared/utilities';
 
 const materialStyles = theme => ({
   iconButtons: {
@@ -38,39 +47,12 @@ const materialStyles = theme => ({
   }
 });
 
-const dropTarget = {
-  canDrop(props, monitor, component) {
-    return true;
-  },
-
-  drop(props, monitor, component) {
-    return {
-      id: props.cell.id
-    };
-  }
-};
-
-const collectDrop = (connect, monitor) => {
-  return {
-    connectDropTarget: connect.dropTarget(),
-    isOver: monitor.isOver(),
-    canDrop: monitor.canDrop()
-  };
-};
-
 class RegularCell extends Component {
   state = {
     contentEdit: this.props.cell.content,
 
     // comment popover
     anchorEl: null
-  };
-
-  static propTypes = {
-    // Injected by React DnD:
-    connectDropTarget: PropTypes.func.isRequired,
-    isOver: PropTypes.bool.isRequired,
-    canDrop: PropTypes.bool.isRequired
   };
 
   componentDidUpdate(prevProps, prevState) {
@@ -132,16 +114,7 @@ class RegularCell extends Component {
   };
 
   render() {
-    const { connectDropTarget, canDrop, isOver } = this.props;
-    let {
-      classes,
-      cell,
-      pieces,
-      editAccess,
-      commentAccess,
-      comments,
-      commentCount
-    } = this.props;
+    let { classes, cell, pieces, comments, commentCount } = this.props;
     const { anchorEl } = this.state;
     const open = Boolean(anchorEl);
 
@@ -149,76 +122,9 @@ class RegularCell extends Component {
       return <td />;
     }
 
-    let commentsFromOthers = comments.filter(
-      c => c.authorId !== FirestoreManager.getCurrentUserId()
-    );
-
-    let commentTooltipTitle = 'Make a comment';
-    if (commentCount > 0) {
-      if (commentsFromOthers.length === 1) {
-        let authorName = getFirstName(commentsFromOthers[0].authorName);
-        commentTooltipTitle = `1 comment from ${authorName}`;
-      } else if (commentsFromOthers.length > 1) {
-        commentTooltipTitle = `${
-          commentsFromOthers.length
-        } comments from others`;
-      }
-    }
-
-    let commentsActionContainer = (
-      <div
-        className={styles.CommentsContainer}
-        style={{
-          zIndex: 1000,
-          opacity: commentCount > 0 ? 1 : null,
-          display: commentAccess !== true && commentCount === 0 ? 'none' : null
-        }}
-      >
-        <div style={{ position: 'relative' }}>
-          <Tooltip title={commentTooltipTitle} placement={'top'}>
-            <IconButton
-              aria-label="Comment"
-              className={classes.iconButtons}
-              onClick={e => this.handleCommentClick(e)}
-            >
-              <Chat className={classes.iconInIconButtons} />
-            </IconButton>
-          </Tooltip>
-          <Popover
-            id={`${cell.id}-comments-popover`}
-            open={open}
-            anchorEl={anchorEl}
-            onClose={this.handleCommentClose}
-            anchorOrigin={{
-              vertical: 'top',
-              horizontal: 'left'
-            }}
-            transformOrigin={{
-              vertical: 'top',
-              horizontal: 'left'
-            }}
-          >
-            <CellComments
-              workspaceId={this.props.workspace.id}
-              cellId={cell.id}
-              comments={comments}
-              commentAccess={commentAccess}
-              cellType={cell.type}
-            />
-          </Popover>
-          <span
-            style={{ color: THEME_COLOR.badgeColor }}
-            className={styles.CommentCount}
-          >
-            {commentCount > 0 ? commentCount : null}
-          </span>
-        </div>
-      </div>
-    );
-
     let piecesList = cell.pieces;
 
-    return connectDropTarget(
+    return (
       <td
         className={styles.RegularCell}
         style={{
@@ -228,20 +134,6 @@ class RegularCell extends Component {
               : 'transparent'
         }}
       >
-        {commentsActionContainer}
-
-        <div
-          className={styles.HoverLayer}
-          style={{ zIndex: isOver ? 1000 : -1 }}
-        >
-          <div className={styles.HoverLayerPane}>
-            <RatingLayer ratingType={RATING_TYPES.positive} {...this.props} />
-          </div>
-          <div className={styles.HoverLayerPane}>
-            <RatingLayer ratingType={RATING_TYPES.negative} {...this.props} />
-          </div>
-        </div>
-
         {/* regular */}
         <div className={styles.RegularContentContainer}>
           {piecesList.length > 0 ? (
@@ -251,68 +143,43 @@ class RegularCell extends Component {
                   pieces[p.pieceId] !== undefined &&
                   pieces[p.pieceId] !== null
                 ) {
+                  let icon = <InfoIcon />;
+                  switch (p.rating) {
+                    case RATING_TYPES.positive:
+                      icon = <ThumbV1 type={'up'} />;
+                      break;
+                    case RATING_TYPES.negative:
+                      icon = <ThumbV1 type={'down'} />;
+                      break;
+                    case RATING_TYPES.info:
+                      icon = <InfoIcon />;
+                      break;
+                    default:
+                      break;
+                  }
                   return (
-                    <div key={`${p.pieceId}-${idx}`}>
-                      <ContextMenuTrigger
+                    <React.Fragment key={`${p.pieceId}-${idx}`}>
+                      {/*<ContextMenuTrigger
                         id={`${cell.id}-${p.pieceId}-${idx}-context-menu`}
                         holdToDisplay={-1}
+                      >*/}
+                      <div className={[styles.AttitudeInTableCell].join(' ')}>
+                        {icon}
+                      </div>
+                      {/*</ContextMenuTrigger>*/}
+
+                      <ContextMenu
+                        id={`${cell.id}-${p.pieceId}-${idx}-context-menu`}
                       >
-                        <div
-                          className={[styles.AttitudeInTableCell].join(' ')}
-                          data-tip
-                          data-for={`${p.pieceId}`}
+                        <MenuItem
+                          onClick={e =>
+                            this.removePieceFromCellClickedHandler(e, p.pieceId)
+                          }
                         >
-                          <ThumbV1
-                            type={
-                              p.rating === RATING_TYPES.positive ? 'up' : 'down'
-                            }
-                          />
-                        </div>
-                      </ContextMenuTrigger>
-                      {editAccess ? (
-                        <ContextMenu
-                          id={`${cell.id}-${p.pieceId}-${idx}-context-menu`}
-                        >
-                          <MenuItem
-                            onClick={e =>
-                              this.removePieceFromCellClickedHandler(
-                                e,
-                                p.pieceId
-                              )
-                            }
-                          >
-                            Remove from table
-                          </MenuItem>
-                        </ContextMenu>
-                      ) : null}
-                      <ReactTooltip
-                        place="right"
-                        type="light"
-                        effect="solid"
-                        delayHide={200}
-                        id={`${p.pieceId}`}
-                        className={styles.TooltipOverAttitude}
-                        getContent={() => {
-                          return (
-                            <ContextMenuTrigger
-                              id={`${cell.id}-${p.pieceId}-${idx}-context-menu`}
-                              holdToDisplay={-1}
-                            >
-                              <PieceItem
-                                piece={pieces[p.pieceId]}
-                                editAccess={editAccess}
-                                commentAccess={commentAccess}
-                                cellId={cell.id}
-                                cellType={cell.type}
-                                rowIndex={this.props.rowIndex}
-                                columnIndex={this.props.columnIndex}
-                                openScreenshot={this.props.openScreenshot}
-                              />
-                            </ContextMenuTrigger>
-                          );
-                        }}
-                      />
-                    </div>
+                          Remove from table
+                        </MenuItem>
+                      </ContextMenu>
+                    </React.Fragment>
                   );
                 } else {
                   return null;
@@ -321,6 +188,7 @@ class RegularCell extends Component {
             </div>
           ) : null}
 
+          {/*
           <div
             className={[
               styles.CellContentEditContainer,
@@ -349,12 +217,11 @@ class RegularCell extends Component {
               />
             </div>
           </div>
+          */}
         </div>
       </td>
     );
   }
 }
 
-export default withStyles(materialStyles)(
-  DropTarget(['PIECE_ITEM'], dropTarget, collectDrop)(RegularCell)
-);
+export default withStyles(materialStyles)(RegularCell);

@@ -30,6 +30,7 @@
 }
 
 .RegularContentContainer {
+  height: 100%;
   display: flex;
   flex-flow: column;
   justify-content: center;
@@ -37,28 +38,27 @@
 }
 
 .EvidenceIconContainer {
-  display: flex;
+  /* display: flex;
   flex-flow: row;
   justify-content: center;
-  align-items: center;
-  margin-bottom: 5px;
+  align-items: center; */
 }
 
 .AttitudeInTableCell {
-  font-size: 1.8rem;
-  margin-right: 5px;
-  width: 40px;
-  height: 40px;
+  display: inline-block;
+  margin-right: 2px;
+  width: 15px;
+  height: 15px;
   transition: all 0.15s ease-in;
   border-radius: 50%;
-  border: 2px solid transparent;
+  border: 1px solid transparent;
   /* z-index: 9999; */
+  cursor: pointer;
 }
 
 /* .AttitudeInTableCellIsShowing, */
 .AttitudeInTableCell:hover {
   transform: scale(1.1);
-  box-shadow: 0 4px 10px 0 rgba(0, 0, 0, 0.2), 0 4px 20px 0 rgba(0, 0, 0, 0.19);
 }
 
 .TooltipOverAttitude {

@@ -37,9 +37,8 @@ import {
   THEME_COLOR,
   PIECE_COLOR
 } from '../../../../../../../../../../shared-components/src/shared/theme';
-
+import { getFirstNWords } from '../../../../../../../../../../shared-components/src/shared/utilities';
 // import CellComments from '../CellComments/CellComments';
-// import { getFirstName } from '../../../../../../../../../shared/utilities';
 
 const materialStyles = theme => ({
   iconButtons: {
@@ -264,6 +263,7 @@ class ColumnHeaderCell extends Component {
       <th
         className={styles.ColumnHeaderCell}
         style={{
+          borderTop: `3px solid ${PIECE_COLOR.criterion}`,
           backgroundColor:
             this.props.columnIndex === this.props.columnToDelete
               ? THEME_COLOR.alertBackgroundColor
@@ -271,7 +271,11 @@ class ColumnHeaderCell extends Component {
         }}
       >
         {deleteColumnActionContainer}
-        <div className={styles.ColumnHeaderCellContainer}> col header </div>
+        <div className={styles.ColumnHeaderCellContainer}>
+          {cell.pieces.length > 0
+            ? getFirstNWords(10, pieces[cell.pieces[0].pieceId].name)
+            : null}
+        </div>
       </th>
     );
   }

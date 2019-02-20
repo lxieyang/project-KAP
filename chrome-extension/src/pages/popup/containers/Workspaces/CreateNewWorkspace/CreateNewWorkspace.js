@@ -20,6 +20,7 @@ const CreateNewWorkspacePageContainer = styled.div`
   width: 100%;
   font-size: 16px;
   box-sizing: border-box;
+  padding-bottom: 10px;
 `;
 
 const CreateNewWorkspacePromptContainer = styled.div`

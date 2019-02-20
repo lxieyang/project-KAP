@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-// import RegularCell from './RegularCell/RegularCell';
+import RegularCell from './RegularCell/RegularCell';
 import TopLeftCell from './TopLeftCell/TopLeftCell';
 import RowHeaderCell from './RowHeaderCell/RowHeaderCell';
 import ColumnHeaderCell from './ColumnHeaderCell/ColumnHeaderCell';
@@ -99,12 +99,11 @@ class TableCell extends Component {
       case TABLE_CELL_TYPES.regularCell:
       default:
         cell = (
-          <td />
-          // <RegularCell
-          //   {...this.props}
-          //   comments={comments}
-          //   commentCount={commentCount}
-          // />
+          <RegularCell
+            {...this.props}
+            comments={comments}
+            commentCount={commentCount}
+          />
         );
         break;
     }
