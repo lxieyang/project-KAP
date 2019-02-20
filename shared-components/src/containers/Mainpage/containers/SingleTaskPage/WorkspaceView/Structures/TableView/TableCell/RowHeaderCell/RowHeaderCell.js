@@ -97,15 +97,15 @@ const dropTarget = {
       return false;
     }
 
-    if (
-      cellPieces.length === 0 &&
-      dropPieceCellId !== undefined &&
-      dropPieceCellType === TABLE_CELL_TYPES.rowHeader
-    ) {
-      // prevent dropping option from other option cells into this cell
-      return false;
-      // TODO: we CANNOT prevent dropping the same option into two option cells if both drops come from the piecesView
-    }
+    // if (
+    //   cellPieces.length === 0 &&
+    //   dropPieceCellId !== undefined &&
+    //   dropPieceCellType === TABLE_CELL_TYPES.rowHeader
+    // ) {
+    //   // prevent dropping option from other option cells into this cell
+    //   return false;
+    //   // TODO: we CANNOT prevent dropping the same option into two option cells if both drops come from the piecesView
+    // }
 
     return true;
   },
@@ -124,9 +124,19 @@ const dropTarget = {
       )
       .map(p => p.pieceId);
 
-    if (cellPieces.length === 0) {
-      // no stuff in this cell
+    if (cellPieces.length === 0 && dropPieceCellId === undefined) {
+      // no stuff in this cell, dropping from piecesView
       component.resetPieceInThisCell(dropPieceId);
+    } else if (
+      cellPieces.length === 0 &&
+      dropPieceCellId !== undefined &&
+      dropPieceCellType === TABLE_CELL_TYPES.rowHeader
+    ) {
+      FirestoreManager.switchRowsInTable(
+        props.workspace.id,
+        props.rowIndex,
+        dropPieceCellRowIndex
+      );
     } else if (cellPieces.length > 0 && dropPieceCellId === undefined) {
       // there's existing piece, but dropping on from the pieceView
       component.resetPieceInThisCell(dropPieceId);
