@@ -1,10 +1,15 @@
 import React, { Component } from 'react';
+import styled from 'styled-components';
 import ReactHoverObserver from 'react-hover-observer';
 import FontAwesomeIcon from '@fortawesome/react-fontawesome';
+import fasListUl from '@fortawesome/fontawesome-free-solid/faListUl';
 import fasFlagCheckered from '@fortawesome/fontawesome-free-solid/faFlagCheckered';
+import fasBookmark from '@fortawesome/fontawesome-free-solid/faBookmark';
+import { debounce } from 'lodash';
 import styles from './ColumnHeaderCell.css';
 
 import PieceItem from '../../../../../CollectionView/PiecesView/PieceItem/PieceItem';
+import Spinner from '../../../../../../../../../components/UI/Spinner/Spinner';
 
 import * as FirestoreManager from '../../../../../../../../../firebase/firestore_wrapper';
 
@@ -12,7 +17,7 @@ import { withStyles } from '@material-ui/core/styles';
 import IconButton from '@material-ui/core/IconButton';
 import Avatar from '@material-ui/core/Avatar';
 import DeleteIcon from '@material-ui/icons/Delete';
-import { Chat } from 'mdi-material-ui';
+import { Chat, CheckCircle, Cancel } from 'mdi-material-ui';
 import Tooltip from '@material-ui/core/Tooltip';
 import Popover from '@material-ui/core/Popover';
 import Textarea from 'react-textarea-autosize';
@@ -21,7 +26,7 @@ import Button from '@material-ui/core/Button';
 import { ContextMenu, MenuItem, ContextMenuTrigger } from 'react-contextmenu';
 
 // dnd stuff
-import { DropTarget } from 'react-dnd';
+import { DragSource, DropTarget } from 'react-dnd';
 import PropTypes from 'prop-types';
 import {
   PIECE_TYPES,

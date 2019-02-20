@@ -1,15 +1,7 @@
 import React, { Component } from 'react';
-import styled from 'styled-components';
 import { withRouter } from 'react-router-dom';
 import { getTaskIdFromPath } from './matchPath';
-import FontAwesomeIcon from '@fortawesome/react-fontawesome';
-import fasCopy from '@fortawesome/fontawesome-free-solid/faCopy';
 import styles from './SingleTaskPage.css';
-import {
-  APP_NAME_SHORT,
-  showoffSurveyUrl,
-  projectIntroPage
-} from '../../../../shared/constants';
 import * as FirestoreManager from '../../../../firebase/firestore_wrapper';
 
 import SplitPane from 'react-split-pane';

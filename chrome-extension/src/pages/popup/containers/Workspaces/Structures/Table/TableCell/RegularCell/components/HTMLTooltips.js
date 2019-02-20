@@ -1,5 +1,6 @@
 import React from 'react';
 import { withStyles } from '@material-ui/core/styles';
+import Fade from '@material-ui/core/Fade';
 import Tooltip from '@material-ui/core/Tooltip';
 
 function arrowGenerator(color) {

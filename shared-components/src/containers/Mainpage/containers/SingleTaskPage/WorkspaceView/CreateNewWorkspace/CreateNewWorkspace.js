@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import styled from 'styled-components';
 import { withRouter } from 'react-router-dom';
 import Textarea from 'react-textarea-autosize';
-import { matchPath } from 'react-router';
 import { WORKSPACE_TYPES } from '../../../../../../shared/types';
 import * as FirestoreManager from '../../../../../../firebase/firestore_wrapper';
 import classesInCSS from './CreateNewWorkspace.css';

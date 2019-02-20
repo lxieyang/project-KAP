@@ -1,12 +1,9 @@
 /* global chrome */
 import React, { Component } from 'react';
-import { matchPath } from 'react-router';
 import { Route, Switch, withRouter, Redirect } from 'react-router-dom';
-import qs from 'query-string';
 import Spinner from '../../components/UI/Spinner/Spinner';
 import Layout from './containers/Layout/Layout';
 import AllTasksPage from './containers/AllTasksPage/AllTasksPage';
-import CurrentTaskPage from './containers/CurrentTaskPage/CurrentTaskPage';
 import SingleTaskPage from './containers/SingleTaskPage/SingleTaskPage';
 import LoginPage from './containers/Auth/LoginPage/LoginPage';
 import LogoutPage from './containers/Auth/LogoutPage/LogoutPage';
@@ -16,7 +13,7 @@ import { DragDropContext } from 'react-dnd';
 
 import firebase from '../../firebase/firebase';
 import * as FirestoreManager from '../../firebase/firestore_wrapper';
-import { APP_NAME_SHORT, DEFAULT_SETTINGS } from '../../shared/constants';
+import { APP_NAME_SHORT } from '../../shared/constants';
 
 class Mainpage extends Component {
   state = {

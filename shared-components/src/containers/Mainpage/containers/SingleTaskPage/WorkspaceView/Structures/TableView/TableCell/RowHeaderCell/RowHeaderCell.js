@@ -1,16 +1,10 @@
 import React, { Component } from 'react';
-import ReactDOM from 'react-dom';
-import styled from 'styled-components';
 import ReactHoverObserver from 'react-hover-observer';
 import FontAwesomeIcon from '@fortawesome/react-fontawesome';
 import fasListUl from '@fortawesome/fontawesome-free-solid/faListUl';
-import fasFlagCheckered from '@fortawesome/fontawesome-free-solid/faFlagCheckered';
-import fasBookmark from '@fortawesome/fontawesome-free-solid/faBookmark';
-import { debounce } from 'lodash';
 import styles from './RowHeaderCell.css';
 
 import PieceItem from '../../../../../CollectionView/PiecesView/PieceItem/PieceItem';
-import Spinner from '../../../../../../../../../components/UI/Spinner/Spinner';
 
 import * as FirestoreManager from '../../../../../../../../../firebase/firestore_wrapper';
 
@@ -27,7 +21,7 @@ import Button from '@material-ui/core/Button';
 import { ContextMenu, MenuItem, ContextMenuTrigger } from 'react-contextmenu';
 
 // dnd stuff
-import { DragSource, DropTarget } from 'react-dnd';
+import { DropTarget } from 'react-dnd';
 import PropTypes from 'prop-types';
 import {
   PIECE_TYPES,

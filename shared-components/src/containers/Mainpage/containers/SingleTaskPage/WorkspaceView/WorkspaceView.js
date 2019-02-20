@@ -7,12 +7,9 @@ import * as FirestoreManager from '../../../../../firebase/firestore_wrapper';
 import Spinner from '../../../../../components/UI/Spinner/Spinner';
 import styles from './WorkspaceView.css';
 
-import LinesEllipsis from 'react-lines-ellipsis';
 import { withStyles } from '@material-ui/core/styles';
 import AddIcon from '@material-ui/icons/Add';
 import { TableLarge, Close } from 'mdi-material-ui';
-import IconButton from '@material-ui/core/IconButton';
-import Tooltip from '@material-ui/core/Tooltip';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 

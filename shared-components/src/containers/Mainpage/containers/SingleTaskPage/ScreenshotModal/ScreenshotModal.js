@@ -1,7 +1,6 @@
 import React from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import Modal from '@material-ui/core/Modal';
-import Button from '@material-ui/core/Button';
 
 const SCREENSHOT_MODAL_TOGGLE_OPEN = 'screenshotModalToggleOpen';
 const SCREENSHOT_MODAL_SET_SOURCE = 'screenshotModalSetSource';

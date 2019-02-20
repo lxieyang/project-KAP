@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import styled from 'styled-components';
 import { withRouter } from 'react-router-dom';
 import * as FirestoreManager from '../../../../../../../firebase/firestore_wrapper';
 import { PIECE_COLOR, THEME_COLOR } from '../../../../../../../shared/theme';

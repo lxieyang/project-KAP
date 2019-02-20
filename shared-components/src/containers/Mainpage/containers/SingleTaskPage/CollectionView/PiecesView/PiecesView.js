@@ -8,12 +8,10 @@ import * as FirestoreManager from '../../../../../../firebase/firestore_wrapper'
 import styles from './PiecesView.css';
 
 import { withStyles } from '@material-ui/core/styles';
-import Chip from '@material-ui/core/Chip';
 import Button from '@material-ui/core/Button';
 import Snackbar from '@material-ui/core/Snackbar';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
-import AddIcon from '@material-ui/icons/Add';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 

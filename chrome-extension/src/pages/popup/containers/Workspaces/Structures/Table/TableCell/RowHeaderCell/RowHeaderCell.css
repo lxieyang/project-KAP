@@ -1,0 +1,156 @@
+.RowHeaderCell {
+  position: relative;
+}
+
+.HoverToReveal {
+  opacity: 0;
+  transition: all 0.1s ease-in;
+}
+
+.RowHeaderCell:hover .CommentsContainer,
+.RowHeaderCell:hover .DecideRowIconContainer,
+.RowHeaderCell:hover .HoverToReveal {
+  opacity: 1;
+}
+
+.RowHeaderCellContainer {
+  box-sizing: border-box;
+  min-width: 150px;
+  min-height: 100px;
+  padding: 0px 0px 10px 0px;
+  font-weight: 500;
+
+  transition: all 0.15s ease-in;
+  /* border-left: none !important; */
+}
+
+.DeleteRowIconContainer {
+  position: absolute;
+  top: 0px;
+  left: -30px;
+  bottom: 0px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.DecideRowIconContainer {
+  position: absolute;
+  bottom: 0px;
+  left: 0px;
+  opacity: 0;
+  transition: all 0.1s ease-in;
+}
+
+.CellContentContainer {
+  box-sizing: border-box;
+  min-width: 150px;
+  min-height: 100px;
+  padding: 0px 0px 10px 0px;
+  font-weight: 500;
+
+  transition: all 0.15s ease-in;
+  /* border-left: none !important; */
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.Avatar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  margin-top: 5px;
+  margin-left: 5px;
+}
+
+.IconInsideAvatar {
+  font-size: 16px;
+}
+
+.CellContentEditContainer {
+  height: 100%;
+  width: 100%;
+}
+
+.TextAreaContainer {
+  flex: 1;
+  margin-left: 0px;
+  display: flex;
+  align-items: flex-start;
+}
+
+.Textarea {
+  display: block;
+  box-sizing: border-box;
+  width: 96%;
+  resize: none;
+  overflow: auto;
+
+  font-size: 14px;
+  font-weight: 500;
+  padding: 2px 4px;
+
+  border: 1px solid transparent;
+  border-radius: 4px;
+  color: #000;
+  background: transparent !important;
+}
+
+.Textarea::placeholder {
+  color: lightgray;
+}
+
+.Textarea:hover {
+  border-color: rgb(226, 226, 226);
+}
+
+.Textarea:focus {
+  color: #35383a;
+  background-color: #fff;
+  border-color: rgb(17, 100, 224);
+  outline: none;
+}
+
+.TextareaActionBar {
+  margin-top: 6px;
+  margin-left: 38px;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+
+  opacity: 0.8;
+}
+
+.CommentsContainer {
+  position: absolute;
+  bottom: 0px;
+  right: 0px;
+  opacity: 0;
+  transition: all 0.1s ease-in;
+}
+
+/* .CommentsContainer:hover {
+  opacity: 1;
+} */
+
+.CommentCount {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  box-sizing: border-box;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  font-size: 13px;
+  font-weight: 500;
+  border-radius: 50%;
+  padding: 2px;
+  opacity: 0.8;
+  transform: scale(0.75);
+}

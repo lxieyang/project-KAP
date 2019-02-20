@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
-import styled from 'styled-components';
 import moment from 'moment';
 import classnames from 'classnames';
 import FontAwesomeIcon from '@fortawesome/react-fontawesome';
@@ -8,7 +7,6 @@ import fasListUl from '@fortawesome/fontawesome-free-solid/faListUl';
 import fasFlagCheckered from '@fortawesome/fontawesome-free-solid/faFlagCheckered';
 import fasBookmark from '@fortawesome/fontawesome-free-solid/faBookmark';
 import LinesEllipsis from 'react-lines-ellipsis';
-import ClampLines from 'react-clamp-lines';
 
 import { withStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
@@ -17,19 +15,10 @@ import Collapse from '@material-ui/core/Collapse';
 import Avatar from '@material-ui/core/Avatar';
 import IconButton from '@material-ui/core/IconButton';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import MoreVertIcon from '@material-ui/icons/MoreVert';
 import Button from '@material-ui/core/Button';
-import Icon from '@material-ui/core/Icon';
-import SaveIcon from '@material-ui/icons/Save';
-import Menu from '@material-ui/core/Menu';
-import MenuItem from '@material-ui/core/MenuItem';
 import DeleteIcon from '@material-ui/icons/Delete';
-import EditIcon from '@material-ui/icons/Edit';
 import { Chat, Looks } from 'mdi-material-ui';
-import Badge from '@material-ui/core/Badge';
-import purple from '@material-ui/core/colors/purple';
 import Tooltip from '@material-ui/core/Tooltip';
-import Divider from '@material-ui/core/Divider';
 
 import Textarea from 'react-textarea-autosize';
 

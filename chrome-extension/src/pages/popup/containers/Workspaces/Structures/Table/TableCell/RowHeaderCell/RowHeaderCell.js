@@ -1,10 +1,16 @@
 import React, { Component } from 'react';
+import ReactDOM from 'react-dom';
+import styled from 'styled-components';
 import ReactHoverObserver from 'react-hover-observer';
 import FontAwesomeIcon from '@fortawesome/react-fontawesome';
+import fasListUl from '@fortawesome/fontawesome-free-solid/faListUl';
 import fasFlagCheckered from '@fortawesome/fontawesome-free-solid/faFlagCheckered';
-import styles from './ColumnHeaderCell.css';
+import fasBookmark from '@fortawesome/fontawesome-free-solid/faBookmark';
+import { debounce } from 'lodash';
+import styles from './RowHeaderCell.css';
 
 import PieceItem from '../../../../../CollectionView/PiecesView/PieceItem/PieceItem';
+import Spinner from '../../../../../../../../../components/UI/Spinner/Spinner';
 
 import * as FirestoreManager from '../../../../../../../../../firebase/firestore_wrapper';
 
@@ -12,7 +18,7 @@ import { withStyles } from '@material-ui/core/styles';
 import IconButton from '@material-ui/core/IconButton';
 import Avatar from '@material-ui/core/Avatar';
 import DeleteIcon from '@material-ui/icons/Delete';
-import { Chat } from 'mdi-material-ui';
+import { Chat, CheckCircle, Cancel } from 'mdi-material-ui';
 import Tooltip from '@material-ui/core/Tooltip';
 import Popover from '@material-ui/core/Popover';
 import Textarea from 'react-textarea-autosize';
@@ -21,7 +27,7 @@ import Button from '@material-ui/core/Button';
 import { ContextMenu, MenuItem, ContextMenuTrigger } from 'react-contextmenu';
 
 // dnd stuff
-import { DropTarget } from 'react-dnd';
+import { DragSource, DropTarget } from 'react-dnd';
 import PropTypes from 'prop-types';
 import {
   PIECE_TYPES,
@@ -44,6 +50,10 @@ const materialStyles = theme => ({
     width: '14px',
     height: '14px',
     color: 'rgb(187, 187, 187)'
+  },
+  checkmarkIconInIconButtons: {
+    width: '18px',
+    height: '18px'
   },
   button: {
     marginTop: 0,
@@ -76,7 +86,7 @@ const dropTarget = {
     const dropPieceId = item.id;
     const dropPieceCellId = item.cellId;
     const dropPieceCellType = item.cellType;
-    const dropPieceCellColumnIndex = item.columnIndex;
+    const dropPieceCellRowIndex = item.rowIndex;
 
     const allPieces = props.pieces;
     let cellPieces = props.cell.pieces
@@ -87,13 +97,14 @@ const dropTarget = {
 
     const pieceIds = props.cell.pieces.map(p => p.pieceId);
     if (pieceIds.indexOf(dropPieceId) !== -1) {
+      // prevent dropping the same thing
       return false;
     }
 
     if (
       cellPieces.length === 0 &&
       dropPieceCellId !== undefined &&
-      dropPieceCellType === TABLE_CELL_TYPES.columnHeader
+      dropPieceCellType === TABLE_CELL_TYPES.rowHeader
     ) {
       // prevent dropping option from other option cells into this cell
       return false;
@@ -108,7 +119,7 @@ const dropTarget = {
     const dropPieceId = item.id;
     const dropPieceCellId = item.cellId;
     const dropPieceCellType = item.cellType;
-    const dropPieceCellColumnIndex = item.columnIndex;
+    const dropPieceCellRowIndex = item.rowIndex;
 
     const allPieces = props.pieces;
     let cellPieces = props.cell.pieces
@@ -126,13 +137,13 @@ const dropTarget = {
     } else if (
       cellPieces.length > 0 &&
       dropPieceCellId !== undefined &&
-      dropPieceCellType === TABLE_CELL_TYPES.columnHeader
+      dropPieceCellType === TABLE_CELL_TYPES.rowHeader
     ) {
-      // both are from the table, should switch columns
+      // both are from the table, should switch rows
       FirestoreManager.switchRowsInTable(
         props.workspace.id,
-        props.columnIndex,
-        dropPieceCellColumnIndex
+        props.rowIndex,
+        dropPieceCellRowIndex
       );
     }
 
@@ -148,28 +159,27 @@ const dropTarget = {
     // } else if (
     //   pieces.length > 0 &&
     //   dropPieceCellId !== undefined &&
-    //   dropPieceCellType === TABLE_CELL_TYPES.columnHeader
+    //   dropPieceCellType === TABLE_CELL_TYPES.rowHeader
     // ) {
     //   // both are from the table, should switch rows
-    //   FirestoreManager.switchColumnsInTable(
+    //   FirestoreManager.switchRowsInTable(
     //     props.workspace.id,
-    //     props.columnIndex,
-    //     dropPieceCellColumnIndex
+    //     props.rowIndex,
+    //     dropPieceCellRowIndex
     //   );
     // } else if (
     //   pieces.length === 0 &&
     //   thereIsContent &&
     //   dropPieceCellId !== undefined &&
-    //   dropPieceCellType === TABLE_CELL_TYPES.columnHeader
+    //   dropPieceCellType === TABLE_CELL_TYPES.rowHeader
     // ) {
     //   // both are from the table, should switch rows
-    //   FirestoreManager.switchColumnsInTable(
+    //   FirestoreManager.switchRowsInTable(
     //     props.workspace.id,
-    //     props.columnIndex,
-    //     dropPieceCellColumnIndex
+    //     props.rowIndex,
+    //     dropPieceCellRowIndex
     //   );
     // }
-
     return {
       id: props.cell.id
     };
@@ -184,7 +194,7 @@ const collectDrop = (connect, monitor) => {
   };
 };
 
-class ColumnHeaderCell extends Component {
+class RowHeaderCell extends Component {
   state = {
     contentEdit: this.props.cell.content,
 
@@ -208,8 +218,9 @@ class ColumnHeaderCell extends Component {
   };
 
   componentDidUpdate(prevProps, prevState) {
-    if (prevProps.cell.content !== this.props.cell.content)
+    if (prevProps.cell.content !== this.props.cell.content) {
       this.setState({ contentEdit: this.props.cell.content });
+    }
   }
 
   componentDidMount() {
@@ -267,7 +278,7 @@ class ColumnHeaderCell extends Component {
             taskId: this.props.taskId
           },
           ANNOTATION_TYPES.Manual,
-          PIECE_TYPES.criterion
+          PIECE_TYPES.option
         ).then(pieceId => {
           this.resetPieceInThisCell(pieceId, true);
         });
@@ -275,7 +286,7 @@ class ColumnHeaderCell extends Component {
     }
   };
 
-  saveCellContentClickedHandler = e => {
+  saveCellContentClickedHandler = () => {
     this.saveCellContentAsPiece();
   };
 
@@ -283,13 +294,13 @@ class ColumnHeaderCell extends Component {
     this.setState({ contentEdit: '' });
   };
 
-  deleteTableColumnByIndex = event => {
-    FirestoreManager.deleteColumnInTableByIndex(
+  deleteTableRowByIndex = event => {
+    FirestoreManager.deleteRowInTableByIndex(
       this.props.workspace.id,
-      this.props.columnIndex
+      this.props.rowIndex
     );
 
-    this.props.setColumnToDelete(-1);
+    this.props.setRowToDelete(-1);
   };
 
   addPieceToThisCell = pieceId => {
@@ -330,11 +341,11 @@ class ColumnHeaderCell extends Component {
         }
       });
 
-    // change type to criterion
+    // change type to option
     this.changePieceType(pieceId);
   };
 
-  changePieceType = (pieceId, to = PIECE_TYPES.criterion) => {
+  changePieceType = (pieceId, to = PIECE_TYPES.option) => {
     FirestoreManager.switchPieceType(pieceId, null, to);
   };
 
@@ -343,6 +354,14 @@ class ColumnHeaderCell extends Component {
       this.props.workspace.id,
       this.props.cell.id,
       pieceId
+    );
+  };
+
+  switchOptionCheckedStatus = () => {
+    FirestoreManager.switchTableCellCheckedStatus(
+      this.props.workspace.id,
+      this.props.cell.id,
+      !this.props.cell.checked
     );
   };
 
@@ -360,29 +379,28 @@ class ColumnHeaderCell extends Component {
     const { anchorEl } = this.state;
     const open = Boolean(anchorEl);
 
-    if (cell === null || pieces === null) {
+    if (cell === null || Object.keys(pieces).length === 0) {
       return <td />;
     }
 
-    let deleteColumnActionContainer = editAccess ? (
-      <div className={styles.DeleteColumnIconContainer}>
-        {' '}
+    let deleteRowActionContainer = editAccess ? (
+      <div className={styles.DeleteRowIconContainer}>
         <ReactHoverObserver
           {...{
             onMouseEnter: () => {
-              this.props.setColumnToDelete(this.props.columnIndex);
+              this.props.setRowToDelete(this.props.rowIndex);
             },
             onMouseLeave: () => {
-              this.props.setColumnToDelete(-1);
+              this.props.setRowToDelete(-1);
             }
           }}
         >
           <div>
-            <Tooltip title="Delete this column" placement={'top'}>
+            <Tooltip title="Delete this row" placement={'top'}>
               <IconButton
                 aria-label="Delete"
                 className={classes.iconButtons}
-                onClick={() => this.deleteTableColumnByIndex()}
+                onClick={() => this.deleteTableRowByIndex()}
               >
                 <DeleteIcon className={classes.iconInIconButtons} />
               </IconButton>
@@ -411,7 +429,7 @@ class ColumnHeaderCell extends Component {
     let commentsActionContainer = commentAccess ? (
       <div
         className={styles.CommentsContainer}
-        style={{ zIndex: 1000, opacity: commentCount > 0 ? 1 : null }}
+        style={{ zIndex: 1000, opacity: commentCount > 0 ? 0.7 : null }}
       >
         <div style={{ position: 'relative' }}>
           <Tooltip title={commentTooltipTitle} placement={'top'}>
@@ -455,27 +473,65 @@ class ColumnHeaderCell extends Component {
       </div>
     ) : null;
 
+    let decideRowActionContainer = editAccess ? (
+      <div className={styles.DecideRowIconContainer}>
+        {cell.checked === true ? (
+          <Tooltip
+            title={`I decide NOT to choose this option`}
+            placement={'top'}
+            style={{ color: '#f44336' }}
+          >
+            <IconButton
+              aria-label="Choose"
+              color="inherit"
+              className={classes.iconButtons}
+              onClick={() => this.switchOptionCheckedStatus()}
+            >
+              <Cancel className={classes.checkmarkIconInIconButtons} />
+            </IconButton>
+          </Tooltip>
+        ) : (
+          <Tooltip
+            title={`I decide to choose this option`}
+            placement={'top'}
+            style={{ color: '#8bc34a' }}
+          >
+            <IconButton
+              aria-label="Cancel"
+              color="inherit"
+              className={classes.iconButtons}
+              onClick={() => this.switchOptionCheckedStatus()}
+            >
+              <CheckCircle className={classes.checkmarkIconInIconButtons} />
+            </IconButton>
+          </Tooltip>
+        )}
+      </div>
+    ) : null;
+
+    // pieces = { ...pieces, ...this.state.manualPieces };
+
     let cellPieces = cell.pieces.filter(
       p => pieces[p.pieceId] !== undefined && pieces[p.pieceId] !== null
     );
 
     return connectDropTarget(
-      <th
-        className={styles.ColumnHeaderCell}
+      <td
+        className={styles.RowHeaderCell}
         style={{
-          backgroundColor:
-            this.props.columnIndex === this.props.columnToDelete
-              ? THEME_COLOR.alertBackgroundColor
-              : isOver && canDrop
-              ? '#aed6f1'
-              : null
+          backgroundColor: cell.checked
+            ? THEME_COLOR.optionChosenBackgroundColor
+            : isOver && canDrop
+            ? '#f8c471'
+            : null
         }}
       >
-        {deleteColumnActionContainer}
+        {deleteRowActionContainer}
         {commentsActionContainer}
+        {decideRowActionContainer}
 
         {cellPieces.length > 0 ? (
-          <div className={styles.ColumnHeaderCellContainer}>
+          <div className={styles.RowHeaderCellContainer}>
             {cellPieces.map((p, idx) => {
               return (
                 <React.Fragment key={`${p.pieceId}-${idx}`}>
@@ -483,12 +539,7 @@ class ColumnHeaderCell extends Component {
                     id={`${cell.id}-context-menu`}
                     holdToDisplay={-1}
                   >
-                    <div
-                      style={{
-                        width: '250px',
-                        minHeight: '65px'
-                      }}
-                    >
+                    <div style={{ width: '260px', minHeight: '65px' }}>
                       <PieceItem
                         piece={pieces[p.pieceId]}
                         editAccess={editAccess}
@@ -528,20 +579,16 @@ class ColumnHeaderCell extends Component {
                 <Avatar
                   aria-label="type"
                   style={{
-                    backgroundColor: PIECE_COLOR.criterion,
+                    backgroundColor: PIECE_COLOR.option,
                     width: '28px',
                     height: '28px',
                     color: 'white',
-                    marginRight: '4px',
-                    display:
-                      !editAccess && this.state.contentEdit === ''
-                        ? 'none'
-                        : null
+                    marginRight: '4px'
                   }}
                   className={styles.Avatar}
                 >
                   <FontAwesomeIcon
-                    icon={fasFlagCheckered}
+                    icon={fasListUl}
                     className={styles.IconInsideAvatar}
                   />
                 </Avatar>
@@ -552,7 +599,7 @@ class ColumnHeaderCell extends Component {
                   maxRows={5}
                   placeholder={
                     editAccess
-                      ? 'Type or drop a snippet card here to add a criterion'
+                      ? 'Type or drop a snippet card here to add an option'
                       : ''
                   }
                   value={this.state.contentEdit}
@@ -560,10 +607,7 @@ class ColumnHeaderCell extends Component {
                   onFocus={() => this.setState({ textareaFocused: true })}
                   onBlur={() => this.setState({ textareaFocused: false })}
                   onChange={e => this.handleCellContentInputChange(e)}
-                  className={[
-                    styles.Textarea,
-                    editAccess ? styles.TextareaEditable : null
-                  ].join(' ')}
+                  className={styles.Textarea}
                 />
               </div>
 
@@ -576,7 +620,7 @@ class ColumnHeaderCell extends Component {
                   className={classes.button}
                   onClick={() => this.saveCellContentClickedHandler()}
                 >
-                  Add as a criterion
+                  Add as an option
                 </ActionButton>
 
                 <ActionButton
@@ -590,11 +634,11 @@ class ColumnHeaderCell extends Component {
             </div>
           </div>
         )}
-      </th>
+      </td>
     );
   }
 }
 
 export default withStyles(materialStyles)(
-  DropTarget(['PIECE_ITEM'], dropTarget, collectDrop)(ColumnHeaderCell)
+  DropTarget(['PIECE_ITEM'], dropTarget, collectDrop)(RowHeaderCell)
 );

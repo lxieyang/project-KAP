@@ -1,11 +1,14 @@
 import React, { Component } from 'react';
+import styled from 'styled-components';
 import styles from './RatingLayer.css';
+
+import PieceItem from '../../../../../../CollectionView/PiecesView/PieceItem/PieceItem';
 
 import ThumbV1 from '../../../../../../../../../../components/UI/Thumbs/ThumbV1/ThumbV1';
 import * as FirestoreManager from '../../../../../../../../../../firebase/firestore_wrapper';
 
 // dnd stuff
-import { DropTarget } from 'react-dnd';
+import { DragSource, DropTarget } from 'react-dnd';
 import PropTypes from 'prop-types';
 import {
   RATING_TYPES,
