@@ -181,15 +181,19 @@ class PieceItem extends Component {
 
   componentDidMount() {
     this.keyPress = this.keyPress.bind(this);
-    FirestoreManager.getScreenshotById(this.props.piece.id)
-      .get()
-      .then(doc => {
-        if (doc.exists) {
-          this.setState({ screenshot: doc.data(), screenshotLoading: false });
-        } else {
-          this.setState({ screenshot: null, screenshotLoading: false });
-        }
-      });
+    this.unsubscribeScreenshot = FirestoreManager.getScreenshotById(
+      this.props.piece.id
+    ).onSnapshot(snapshot => {
+      if (snapshot.exists) {
+        this.setState({
+          screenshot: snapshot.data(),
+          screenshotLoading: false
+        });
+      } else {
+        this.setState({ screenshot: null, screenshotLoading: false });
+      }
+    });
+
     this.unsubscribeAllComments = FirestoreManager.getAllCommentsToPiece(
       this.props.piece.id
     ).onSnapshot(querySnapshot => {
@@ -202,6 +206,7 @@ class PieceItem extends Component {
   }
 
   componentWillUnmount() {
+    this.unsubscribeScreenshot();
     this.unsubscribeAllComments();
   }
 

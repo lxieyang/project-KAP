@@ -129,7 +129,7 @@ const dropTarget = {
       dropPieceCellType === TABLE_CELL_TYPES.columnHeader
     ) {
       // both are from the table, should switch columns
-      FirestoreManager.switchRowsInTable(
+      FirestoreManager.switchColumnsInTable(
         props.workspace.id,
         props.columnIndex,
         dropPieceCellColumnIndex

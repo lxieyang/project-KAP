@@ -27,46 +27,46 @@ class TableCell extends Component {
   };
 
   componentDidUpdate(prevProps, prevState) {
-    // if (prevProps.cell.id !== this.props.cell.id) {
-    //   this.unsubscribeAllComments();
-    //   this.unsubscribeAllComments = FirestoreManager.getAllCommentsToTableCell(
-    //     this.props.workspace.id,
-    //     this.props.cell.id
-    //   )
-    //     .orderBy('creationDate', 'asc')
-    //     .onSnapshot(querySnapshot => {
-    //       let comments = [];
-    //       querySnapshot.forEach(snapshot => {
-    //         comments.push({
-    //           id: snapshot.id,
-    //           ...snapshot.data()
-    //         });
-    //       });
-    //       this.setState({ comments, commentCount: comments.length });
-    //     });
-    // }
+    if (prevProps.cell.id !== this.props.cell.id) {
+      this.unsubscribeAllComments();
+      this.unsubscribeAllComments = FirestoreManager.getAllCommentsToTableCell(
+        this.props.workspace.id,
+        this.props.cell.id
+      )
+        .orderBy('creationDate', 'asc')
+        .onSnapshot(querySnapshot => {
+          let comments = [];
+          querySnapshot.forEach(snapshot => {
+            comments.push({
+              id: snapshot.id,
+              ...snapshot.data()
+            });
+          });
+          this.setState({ comments, commentCount: comments.length });
+        });
+    }
   }
 
   componentDidMount() {
-    // this.unsubscribeAllComments = FirestoreManager.getAllCommentsToTableCell(
-    //   this.props.workspace.id,
-    //   this.props.cell.id
-    // )
-    //   .orderBy('creationDate', 'asc')
-    //   .onSnapshot(querySnapshot => {
-    //     let comments = [];
-    //     querySnapshot.forEach(snapshot => {
-    //       comments.push({
-    //         id: snapshot.id,
-    //         ...snapshot.data()
-    //       });
-    //     });
-    //     this.setState({ comments, commentCount: comments.length });
-    //   });
+    this.unsubscribeAllComments = FirestoreManager.getAllCommentsToTableCell(
+      this.props.workspace.id,
+      this.props.cell.id
+    )
+      .orderBy('creationDate', 'asc')
+      .onSnapshot(querySnapshot => {
+        let comments = [];
+        querySnapshot.forEach(snapshot => {
+          comments.push({
+            id: snapshot.id,
+            ...snapshot.data()
+          });
+        });
+        this.setState({ comments, commentCount: comments.length });
+      });
   }
 
   componentWillUnmount() {
-    // this.unsubscribeAllComments();
+    this.unsubscribeAllComments();
   }
 
   render() {
