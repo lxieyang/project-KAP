@@ -25,5 +25,6 @@ export const TABLE_CELL_TYPES = {
 export const RATING_TYPES = {
   noRating: -1,
   positive: 1,
-  negative: 2
+  negative: 2,
+  info: 3
 };

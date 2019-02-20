@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import styles from './RatingLayer.css';
 
 import ThumbV1 from '../../../../../../../../../../components/UI/Thumbs/ThumbV1/ThumbV1';
+import InfoIcon from '../../../../../../../../../../components/UI/Thumbs/InfoIcon/InfoIcon';
 import * as FirestoreManager from '../../../../../../../../../../firebase/firestore_wrapper';
 
 // dnd stuff
@@ -82,21 +83,35 @@ class RatingLayer extends Component {
     const { connectDropTarget, canDrop, isOver } = this.props;
     let { ratingType, cell, pieces, editAccess } = this.props;
 
+    let backdropColor = 'fff';
+    let icon = <InfoIcon />;
+    switch (ratingType) {
+      case RATING_TYPES.positive:
+        backdropColor = '#ABEBC6';
+        icon = <ThumbV1 type={'up'} />;
+        break;
+      case RATING_TYPES.negative:
+        backdropColor = '#F5B7B1';
+        icon = <ThumbV1 type={'down'} />;
+        break;
+      case RATING_TYPES.info:
+        backdropColor = '#FCF3CF';
+        icon = <InfoIcon />;
+        break;
+      default:
+        break;
+    }
+
     return connectDropTarget(
       <div className={styles.RatingLayerContainer}>
         <div
           className={styles.RatingLayer}
           style={{
-            backgroundColor:
-              ratingType === RATING_TYPES.positive ? '#ABEBC6' : '#F5B7B1',
+            backgroundColor: backdropColor,
             opacity: isOver ? '1' : '0'
           }}
         >
-          <div style={{ width: '75px', height: '75px' }}>
-            <ThumbV1
-              type={ratingType === RATING_TYPES.positive ? 'up' : 'down'}
-            />
-          </div>
+          <div style={{ width: '50px', height: '50px' }}>{icon}</div>
         </div>
       </div>
     );

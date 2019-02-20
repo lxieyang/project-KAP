@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { sortBy } from 'lodash';
 import styles from './RegularCell.css';
 import ThumbV1 from '../../../../../../../../../components/UI/Thumbs/ThumbV1/ThumbV1';
+import InfoIcon from '../../../../../../../../../components/UI/Thumbs/InfoIcon/InfoIcon';
 
 import PieceItem from '../../../../../CollectionView/PiecesView/PieceItem/PieceItem';
 import RatingLayer from './RatingLayer/RatingLayer';
@@ -237,6 +238,9 @@ class RegularCell extends Component {
             <RatingLayer ratingType={RATING_TYPES.positive} {...this.props} />
           </div>
           <div className={styles.HoverLayerPane}>
+            <RatingLayer ratingType={RATING_TYPES.info} {...this.props} />
+          </div>
+          <div className={styles.HoverLayerPane}>
             <RatingLayer ratingType={RATING_TYPES.negative} {...this.props} />
           </div>
         </div>
@@ -250,6 +254,21 @@ class RegularCell extends Component {
                   pieces[p.pieceId] !== undefined &&
                   pieces[p.pieceId] !== null
                 ) {
+                  let icon = <InfoIcon />;
+                  switch (p.rating) {
+                    case RATING_TYPES.positive:
+                      icon = <ThumbV1 type={'up'} />;
+                      break;
+                    case RATING_TYPES.negative:
+                      icon = <ThumbV1 type={'down'} />;
+                      break;
+                    case RATING_TYPES.info:
+                      icon = <InfoIcon />;
+                      break;
+                    default:
+                      break;
+                  }
+
                   return (
                     <div key={`${p.pieceId}-${idx}`}>
                       <ContextMenuTrigger
@@ -261,11 +280,7 @@ class RegularCell extends Component {
                           data-tip
                           data-for={`${p.pieceId}`}
                         >
-                          <ThumbV1
-                            type={
-                              p.rating === RATING_TYPES.positive ? 'up' : 'down'
-                            }
-                          />
+                          {icon}
                         </div>
                       </ContextMenuTrigger>
                       {editAccess ? (
