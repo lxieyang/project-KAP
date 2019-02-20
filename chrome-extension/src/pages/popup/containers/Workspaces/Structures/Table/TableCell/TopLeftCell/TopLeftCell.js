@@ -1,14 +1,12 @@
 import React, { Component } from 'react';
-import styled from 'styled-components';
 import styles from './TopLeftCell.css';
-import { PIECE_COLOR } from '../../../../../../../../../shared/theme';
+import { PIECE_COLOR } from '../../../../../../../../../../shared-components/src/shared/theme';
 
 import Button from '@material-ui/core/Button';
 import Fab from '@material-ui/core/Fab';
 import AddIcon from '@material-ui/icons/Add';
 import { withStyles } from '@material-ui/core/styles';
-
-import * as FirestoreManager from '../../../../../../../../../firebase/firestore_wrapper';
+import * as FirestoreManager from '../../../../../../../../../../shared-components/src/firebase/firestore_wrapper';
 
 const materialStyles = theme => ({
   button: {

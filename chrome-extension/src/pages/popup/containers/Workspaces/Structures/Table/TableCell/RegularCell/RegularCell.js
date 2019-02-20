@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import styled from 'styled-components';
 import { sortBy, debounce } from 'lodash';
 import styles from './RegularCell.css';
-import ReactHoverObserver from 'react-hover-observer';
 import ThumbV1 from '../../../../../../../../../components/UI/Thumbs/ThumbV1/ThumbV1';
 
 import PieceItem from '../../../../../CollectionView/PiecesView/PieceItem/PieceItem';
@@ -12,7 +11,6 @@ import { RATING_TYPES } from '../../../../../../../../../shared/types';
 import { THEME_COLOR } from '../../../../../../../../../shared/theme';
 
 import ReactTooltip from 'react-tooltip';
-import HTMLTooltips from './components/HTMLTooltips';
 import { withStyles } from '@material-ui/core/styles';
 import { Chat } from 'mdi-material-ui';
 import Tooltip from '@material-ui/core/Tooltip';

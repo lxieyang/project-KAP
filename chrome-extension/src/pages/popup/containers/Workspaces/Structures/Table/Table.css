@@ -6,3 +6,31 @@
 .TableContentContainer {
   margin: 0px;
 }
+
+table.ComparisonTable {
+  border-collapse: collapse;
+  margin: 0px 0px;
+  font-size: inherit;
+}
+
+.ComparisonTable th,
+.ComparisonTable td {
+  position: relative;
+}
+
+.ComparisonTable th {
+  text-align: left;
+  /* padding: 3px 3px; */
+  border: 1px solid #ddd;
+}
+
+.ComparisonTable tr {
+  /* border-bottom: 1px solid #ddd; */
+}
+
+/* .ComparisonTable th, */
+.ComparisonTable td {
+  /* padding: 3px 3px; */
+  text-align: left;
+  border: 1px solid #ddd;
+}

@@ -373,7 +373,7 @@ class RowHeaderCell extends Component {
     const { anchorEl } = this.state;
     const open = Boolean(anchorEl);
 
-    if (cell === null || Object.keys(pieces).length === 0) {
+    if (cell === null || pieces === null) {
       return <td />;
     }
 

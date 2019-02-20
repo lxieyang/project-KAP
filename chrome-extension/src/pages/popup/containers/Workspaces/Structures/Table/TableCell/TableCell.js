@@ -1,12 +1,11 @@
 import React, { Component } from 'react';
-import styled from 'styled-components';
 
-import RegularCell from './RegularCell/RegularCell';
+// import RegularCell from './RegularCell/RegularCell';
 import TopLeftCell from './TopLeftCell/TopLeftCell';
-import RowHeaderCell from './RowHeaderCell/RowHeaderCell';
-import ColumnHeaderCell from './ColumnHeaderCell/ColumnHeaderCell';
-import { TABLE_CELL_TYPES } from '../../../../../../../../shared/types';
-import * as FirestoreManager from '../../../../../../../../firebase/firestore_wrapper';
+// import RowHeaderCell from './RowHeaderCell/RowHeaderCell';
+// import ColumnHeaderCell from './ColumnHeaderCell/ColumnHeaderCell';
+import { TABLE_CELL_TYPES } from '../../../../../../../../../shared-components/src/shared/types';
+import * as FirestoreManager from '../../../../../../../../../shared-components/src/firebase/firestore_wrapper';
 
 class TableCell extends Component {
   state = {
@@ -71,30 +70,33 @@ class TableCell extends Component {
         break;
       case TABLE_CELL_TYPES.columnHeader:
         cell = (
-          <ColumnHeaderCell
-            {...this.props}
-            comments={comments}
-            commentCount={commentCount}
-          />
+          <td>{this.props.cell.id}</td>
+          // <ColumnHeaderCell
+          //   {...this.props}
+          //   comments={comments}
+          //   commentCount={commentCount}
+          // />
         );
         break;
       case TABLE_CELL_TYPES.rowHeader:
         cell = (
-          <RowHeaderCell
-            {...this.props}
-            comments={comments}
-            commentCount={commentCount}
-          />
+          <td>{this.props.cell.id}</td>
+          // <RowHeaderCell
+          //   {...this.props}
+          //   comments={comments}
+          //   commentCount={commentCount}
+          // />
         );
         break;
       case TABLE_CELL_TYPES.regularCell:
       default:
         cell = (
-          <RegularCell
-            {...this.props}
-            comments={comments}
-            commentCount={commentCount}
-          />
+          <td>{this.props.cell.id}</td>
+          // <RegularCell
+          //   {...this.props}
+          //   comments={comments}
+          //   commentCount={commentCount}
+          // />
         );
         break;
     }

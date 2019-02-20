@@ -11,7 +11,7 @@ import styles from './Table.css';
 import Button from '@material-ui/core/Button';
 import { withStyles } from '@material-ui/core/styles';
 
-// import TableCell from './TableCell/TableCell';
+import TableCell from './TableCell/TableCell';
 
 const materialStyles = theme => ({
   button: {
@@ -29,7 +29,8 @@ const ActionButton = withStyles({
     padding: '0px 4px'
   },
   label: {
-    textTransform: 'capitalize'
+    textTransform: 'capitalize',
+    fontSize: '10px'
   }
 })(Button);
 
@@ -118,136 +119,126 @@ class Table extends Component {
       );
     }
 
-    // let tableHeaders = (
-    //   <tr>
-    //     {tableRows[0].data.map((cellId, idx) => {
-    //       let cell = cells[cellId];
-    //       return (
-    //         <TableCell
-    //           key={idx}
-    //           taskId={this.props.taskId}
-    //           workspace={workspace}
-    //           numRows={tableRows.length}
-    //           numColumns={tableRows[0].data.length}
-    //           pieces={this.props.pieces}
-    //           editAccess={editAccess}
-    //           commentAccess={commentAccess}
-    //           cell={cell}
-    //           rowIndex={0}
-    //           columnIndex={idx}
-    //           rowToDelete={this.state.rowToDelete}
-    //           columnToDelete={this.state.columnToDelete}
-    //           setRowToDelete={this.setRowToDelete}
-    //           setColumnToDelete={this.setColumnToDelete}
-    //           openScreenshot={this.props.openScreenshot}
-    //         />
-    //       );
-    //     })}
-    //     {editAccess ? (
-    //       <th
-    //         style={{
-    //           border: 'none',
-    //           position: 'relative'
-    //         }}
-    //       >
-    //         <div className={styles.AddColumnButtonContainer}>
-    //           <ActionButton
-    //             style={{ color: PIECE_COLOR.criterion }}
-    //             className={classes.button}
-    //             onClick={e => this.createNewTableColumn(e)}
-    //           >
-    //             Add a column
-    //           </ActionButton>
-    //         </div>
-    //       </th>
-    //     ) : null}
-    //   </tr>
-    // );
+    let tableHeaders = (
+      <tr>
+        {tableRows[0].data.map((cellId, idx) => {
+          let cell = cells[cellId];
+          return (
+            <TableCell
+              key={idx}
+              taskId={this.props.taskId}
+              workspace={workspace}
+              numRows={tableRows.length}
+              numColumns={tableRows[0].data.length}
+              pieces={this.props.pieces}
+              cell={cell}
+              rowIndex={0}
+              columnIndex={idx}
+              rowToDelete={this.state.rowToDelete}
+              columnToDelete={this.state.columnToDelete}
+              setRowToDelete={this.setRowToDelete}
+              setColumnToDelete={this.setColumnToDelete}
+              openScreenshot={this.props.openScreenshot}
+            />
+          );
+        })}
+        <th
+          style={{
+            border: 'none',
+            position: 'relative'
+          }}
+        >
+          <div className={styles.AddColumnButtonContainer}>
+            <ActionButton
+              style={{ color: PIECE_COLOR.criterion }}
+              className={classes.button}
+              onClick={e => this.createNewTableColumn(e)}
+            >
+              Add a column
+            </ActionButton>
+          </div>
+        </th>
+      </tr>
+    );
 
-    // let tableBody = (
-    //   <React.Fragment>
-    //     {tableRows.map((row, idx) => {
-    //       if (idx === 0) {
-    //         return null;
-    //       } else {
-    //         return (
-    //           <tr
-    //             key={idx}
-    //             style={{
-    //               transition: 'all 0.15s ease-in',
-    //               // border:
-    //               //   this.state.rowToDelete === idx
-    //               //     ? `1px solid ${THEME_COLOR.alertBackgroundColor}`
-    //               //     : null
-    //               backgroundColor:
-    //                 this.state.rowToDelete === idx
-    //                   ? THEME_COLOR.alertBackgroundColor
-    //                   : 'transparent'
-    //             }}
-    //           >
-    //             {row.data.map((cellId, indexInRow) => {
-    //               let cell = cells[cellId];
-    //               return (
-    //                 <TableCell
-    //                   key={`${idx}-${indexInRow}`}
-    //                   taskId={this.props.taskId}
-    //                   pieces={this.props.pieces}
-    //                   workspace={workspace}
-    //                   editAccess={editAccess}
-    //                   commentAccess={commentAccess}
-    //                   cell={cell}
-    //                   rowIndex={idx}
-    //                   columnIndex={indexInRow}
-    //                   rowToDelete={this.state.rowToDelete}
-    //                   columnToDelete={this.state.columnToDelete}
-    //                   setRowToDelete={this.setRowToDelete}
-    //                   setColumnToDelete={this.setColumnToDelete}
-    //                   openScreenshot={this.props.openScreenshot}
-    //                 />
-    //               );
-    //             })}
-    //           </tr>
-    //         );
-    //       }
-    //     })}
-    //     {editAccess ? (
-    //       <tr>
-    //         <td
-    //           style={{
-    //             position: 'relative',
-    //             border: 'none',
-    //             display: 'flex',
-    //             justifyContent: 'center'
-    //           }}
-    //         >
-    //           <div className={styles.AddRowButtonContainer}>
-    //             <ActionButton
-    //               style={{ color: PIECE_COLOR.option }}
-    //               className={classes.button}
-    //               onClick={e => this.createNewTableRow(e)}
-    //             >
-    //               Add a row
-    //             </ActionButton>
-    //           </div>
-    //         </td>
-    //       </tr>
-    //     ) : null}
-    //   </React.Fragment>
-    // );
+    let tableBody = (
+      <React.Fragment>
+        {tableRows.map((row, idx) => {
+          if (idx === 0) {
+            return null;
+          } else {
+            return (
+              <tr
+                key={idx}
+                style={{
+                  transition: 'all 0.15s ease-in',
+                  // border:
+                  //   this.state.rowToDelete === idx
+                  //     ? `1px solid ${THEME_COLOR.alertBackgroundColor}`
+                  //     : null
+                  backgroundColor:
+                    this.state.rowToDelete === idx
+                      ? THEME_COLOR.alertBackgroundColor
+                      : 'transparent'
+                }}
+              >
+                {row.data.map((cellId, indexInRow) => {
+                  let cell = cells[cellId];
+                  return (
+                    <TableCell
+                      key={`${idx}-${indexInRow}`}
+                      taskId={this.props.taskId}
+                      pieces={this.props.pieces}
+                      workspace={workspace}
+                      cell={cell}
+                      rowIndex={idx}
+                      columnIndex={indexInRow}
+                      rowToDelete={this.state.rowToDelete}
+                      columnToDelete={this.state.columnToDelete}
+                      setRowToDelete={this.setRowToDelete}
+                      setColumnToDelete={this.setColumnToDelete}
+                      openScreenshot={this.props.openScreenshot}
+                    />
+                  );
+                })}
+              </tr>
+            );
+          }
+        })}
+        <tr>
+          <td
+            style={{
+              position: 'relative',
+              border: 'none',
+              display: 'flex',
+              justifyContent: 'center'
+            }}
+          >
+            <div className={styles.AddRowButtonContainer}>
+              <ActionButton
+                style={{ color: PIECE_COLOR.option }}
+                className={classes.button}
+                onClick={e => this.createNewTableRow(e)}
+              >
+                Add a row
+              </ActionButton>
+            </div>
+          </td>
+        </tr>
+      </React.Fragment>
+    );
 
     return (
       <React.Fragment>
         <div className={styles.TableViewContainer}>
           Table content coming in future releases
           {/* Table Content */}
-          {/*
           <div className={styles.TableContentContainer}>
             <table className={styles.ComparisonTable}>
               <thead>{tableHeaders}</thead>
               <tbody>{tableBody}</tbody>
             </table>
           </div>
-          */}
         </div>
       </React.Fragment>
     );
