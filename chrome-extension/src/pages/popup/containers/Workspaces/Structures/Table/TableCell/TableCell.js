@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 
 // import RegularCell from './RegularCell/RegularCell';
 import TopLeftCell from './TopLeftCell/TopLeftCell';
-// import RowHeaderCell from './RowHeaderCell/RowHeaderCell';
+import RowHeaderCell from './RowHeaderCell/RowHeaderCell';
 import ColumnHeaderCell from './ColumnHeaderCell/ColumnHeaderCell';
 import { TABLE_CELL_TYPES } from '../../../../../../../../../shared-components/src/shared/types';
 import * as FirestoreManager from '../../../../../../../../../shared-components/src/firebase/firestore_wrapper';
@@ -27,46 +27,46 @@ class TableCell extends Component {
   };
 
   componentDidUpdate(prevProps, prevState) {
-    if (prevProps.cell.id !== this.props.cell.id) {
-      this.unsubscribeAllComments();
-      this.unsubscribeAllComments = FirestoreManager.getAllCommentsToTableCell(
-        this.props.workspace.id,
-        this.props.cell.id
-      )
-        .orderBy('creationDate', 'asc')
-        .onSnapshot(querySnapshot => {
-          let comments = [];
-          querySnapshot.forEach(snapshot => {
-            comments.push({
-              id: snapshot.id,
-              ...snapshot.data()
-            });
-          });
-          this.setState({ comments, commentCount: comments.length });
-        });
-    }
+    // if (prevProps.cell.id !== this.props.cell.id) {
+    //   this.unsubscribeAllComments();
+    //   this.unsubscribeAllComments = FirestoreManager.getAllCommentsToTableCell(
+    //     this.props.workspace.id,
+    //     this.props.cell.id
+    //   )
+    //     .orderBy('creationDate', 'asc')
+    //     .onSnapshot(querySnapshot => {
+    //       let comments = [];
+    //       querySnapshot.forEach(snapshot => {
+    //         comments.push({
+    //           id: snapshot.id,
+    //           ...snapshot.data()
+    //         });
+    //       });
+    //       this.setState({ comments, commentCount: comments.length });
+    //     });
+    // }
   }
 
   componentDidMount() {
-    this.unsubscribeAllComments = FirestoreManager.getAllCommentsToTableCell(
-      this.props.workspace.id,
-      this.props.cell.id
-    )
-      .orderBy('creationDate', 'asc')
-      .onSnapshot(querySnapshot => {
-        let comments = [];
-        querySnapshot.forEach(snapshot => {
-          comments.push({
-            id: snapshot.id,
-            ...snapshot.data()
-          });
-        });
-        this.setState({ comments, commentCount: comments.length });
-      });
+    // this.unsubscribeAllComments = FirestoreManager.getAllCommentsToTableCell(
+    //   this.props.workspace.id,
+    //   this.props.cell.id
+    // )
+    //   .orderBy('creationDate', 'asc')
+    //   .onSnapshot(querySnapshot => {
+    //     let comments = [];
+    //     querySnapshot.forEach(snapshot => {
+    //       comments.push({
+    //         id: snapshot.id,
+    //         ...snapshot.data()
+    //       });
+    //     });
+    //     this.setState({ comments, commentCount: comments.length });
+    //   });
   }
 
   componentWillUnmount() {
-    this.unsubscribeAllComments();
+    // this.unsubscribeAllComments();
   }
 
   render() {
@@ -89,18 +89,17 @@ class TableCell extends Component {
         break;
       case TABLE_CELL_TYPES.rowHeader:
         cell = (
-          <td>{smallBox}</td>
-          // <RowHeaderCell
-          //   {...this.props}
-          //   comments={comments}
-          //   commentCount={commentCount}
-          // />
+          <RowHeaderCell
+            {...this.props}
+            comments={comments}
+            commentCount={commentCount}
+          />
         );
         break;
       case TABLE_CELL_TYPES.regularCell:
       default:
         cell = (
-          <td>{smallBox}</td>
+          <td />
           // <RegularCell
           //   {...this.props}
           //   comments={comments}

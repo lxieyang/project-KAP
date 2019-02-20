@@ -271,7 +271,7 @@ class ColumnHeaderCell extends Component {
         }}
       >
         {deleteColumnActionContainer}
-        <div className={styles.ColumnHeaderCellContainer}> </div>
+        <div className={styles.ColumnHeaderCellContainer}> col header </div>
       </th>
     );
   }

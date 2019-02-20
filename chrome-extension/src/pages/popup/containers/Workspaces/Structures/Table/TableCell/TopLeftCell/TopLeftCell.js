@@ -60,7 +60,7 @@ class TopLeftCell extends Component {
       <div className={styles.AddColumnButtonContainer}>
         <ActionButton
           title={`Add a column`}
-          style={{ color: PIECE_COLOR.criterion }}
+          style={{ color: PIECE_COLOR.criterion, zIndex: 9999 }}
           className={classes.button}
           onClick={e => this.createNewTableColumnAtTheBeginning(e)}
         >
@@ -71,8 +71,8 @@ class TopLeftCell extends Component {
 
     return (
       <th className={styles.TopLeftCellContainer}>
-        {numColumns > 3 ? addColumnButton : null}
-        {numRows > 3 ? addRowButton : null}
+        {addColumnButton}
+        {addRowButton}
       </th>
     );
   }

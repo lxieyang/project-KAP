@@ -1,17 +1,20 @@
 .TableViewContainer {
   box-sizing: border-box;
-  margin: 4px;
+  /* margin: 4px; */
 }
 
 .TableContentContainer {
-  margin-top: 15px;
-  margin-left: 15px;
+  padding-top: 12px;
+  padding-left: 12px;
+  padding-right: 3px;
+  overflow-x: auto;
 }
 
 table.ComparisonTable {
   border-collapse: collapse;
   margin: 0px 0px;
   font-size: inherit;
+  width: 100%;
 }
 
 .ComparisonTable th,

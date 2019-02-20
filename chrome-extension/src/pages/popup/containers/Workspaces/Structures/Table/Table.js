@@ -144,6 +144,7 @@ class Table extends Component {
             />
           );
         })}
+        {/*
         <th
           style={{
             border: 'none',
@@ -160,7 +161,7 @@ class Table extends Component {
               <PlusCircle style={{ width: 11, height: 11 }} />
             </ActionButton>
           </div>
-        </th>
+        </th>*/}
       </tr>
     );
 
@@ -208,6 +209,7 @@ class Table extends Component {
             );
           }
         })}
+        {/*
         <tr>
           <td
             style={{
@@ -228,7 +230,7 @@ class Table extends Component {
               </ActionButton>
             </div>
           </td>
-        </tr>
+        </tr>*/}
       </React.Fragment>
     );
 
