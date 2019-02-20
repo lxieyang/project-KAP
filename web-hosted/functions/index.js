@@ -4,12 +4,37 @@ admin.initializeApp();
 
 let db = admin.firestore();
 
+exports.deleteTablePiecesAndComments = functions.firestore
+  .document("workspaces/{workspaceId}")
+  .onDelete(async (snap, context) => {
+    if (snap.data().workspaceType === 1) {
+      // WORKSPACE_TYPES.table === 1, TODO: change this later to be an actual import
+
+      // upon table deletion, clean pieces and comments in subcollections
+      try {
+        let workspaceId = context.params.workspaceId;
+        let querySnapshot = await snap.ref.collection("cells").get();
+        querySnapshot.forEach(async snapshot => {
+          snapshot.ref.delete();
+          let commentsSnapshot = await snapshot.ref
+            .collection("comments")
+            .get();
+          return commentsSnapshot.forEach(comment => {
+            comment.ref.delete();
+          });
+        });
+      } catch (e) {
+        console.log(e);
+      }
+    }
+  });
+
 exports.cleanTableByRemovingTrashedPieces = functions.firestore
   .document("pieces/{pieceId}")
   .onWrite(async (change, context) => {
     let pieceId = context.params.pieceId;
     if (
-      change.before.data().trashed === false &&
+      change.before.data().trashed !== true &&
       change.after.data().trashed === true
     ) {
       console.log(`should attempt to clean ${pieceId} if it's in the table`);

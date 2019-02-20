@@ -376,10 +376,7 @@ export const createNewTable = async ({ name, creatorId, taskId }) => {
 
 export const deleteTableById = async tableId => {
   getWorkspaceById(tableId).delete();
-  let querySnapshot = await getAllTableCellsInTableById(tableId).get();
-  for (let i = 0; i < querySnapshot.docs.length; i++) {
-    getAllTableCellsInTableById(tableId)
-      .doc(querySnapshot.docs[i].id)
-      .delete();
-  }
+
+  // recursive deletion of subcollections ('cells', 'cells/{cellId}/comments') are handled by
+  // 'deleteTablePiecesAndComments' in cloud functions
 };
