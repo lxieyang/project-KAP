@@ -3,6 +3,7 @@ import styles from './TopLeftCell.css';
 import { PIECE_COLOR } from '../../../../../../../../../../shared-components/src/shared/theme';
 
 import Button from '@material-ui/core/Button';
+import PlusCircle from 'mdi-material-ui/PlusCircle';
 import Fab from '@material-ui/core/Fab';
 import AddIcon from '@material-ui/icons/Add';
 import { withStyles } from '@material-ui/core/styles';
@@ -12,7 +13,7 @@ const materialStyles = theme => ({
   button: {
     marginTop: 0,
     marginBottom: 0,
-    marginRight: 8,
+    marginRight: 0,
     padding: '1px 4px 1px 4px',
     fontSize: 12
   }
@@ -21,10 +22,11 @@ const materialStyles = theme => ({
 const ActionButton = withStyles({
   root: {
     minWidth: '0',
-    padding: '0px 4px'
+    padding: '1px 1px'
   },
   label: {
-    textTransform: 'capitalize'
+    textTransform: 'capitalize',
+    fontSize: '10px'
   }
 })(Button);
 
@@ -39,31 +41,33 @@ class TopLeftCell extends Component {
   };
 
   render() {
-    const { classes, numRows, numColumns, editAccess } = this.props;
+    const { classes, numRows, numColumns } = this.props;
 
-    let addRowButton = editAccess ? (
+    let addRowButton = (
       <div className={styles.AddRowButtonContainer}>
         <ActionButton
+          title={`Add a row`}
           style={{ color: PIECE_COLOR.option }}
           className={classes.button}
           onClick={e => this.createNewTableRowAtTheBeginning(e)}
         >
-          Add a row
+          <PlusCircle style={{ width: 11, height: 11 }} />
         </ActionButton>
       </div>
-    ) : null;
+    );
 
-    let addColumnButton = editAccess ? (
+    let addColumnButton = (
       <div className={styles.AddColumnButtonContainer}>
         <ActionButton
+          title={`Add a column`}
           style={{ color: PIECE_COLOR.criterion }}
           className={classes.button}
           onClick={e => this.createNewTableColumnAtTheBeginning(e)}
         >
-          Add a column
+          <PlusCircle style={{ width: 11, height: 11 }} />
         </ActionButton>
       </div>
-    ) : null;
+    );
 
     return (
       <th className={styles.TopLeftCellContainer}>

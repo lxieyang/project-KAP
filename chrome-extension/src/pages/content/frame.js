@@ -30,7 +30,7 @@ const containerClass = css({
   top: '0px',
   right: '0px',
   height: '100%',
-  width: '400px',
+  width: '410px',
   padding: '3px',
   boxSizing: 'border-box',
   borderRadius: '3px',

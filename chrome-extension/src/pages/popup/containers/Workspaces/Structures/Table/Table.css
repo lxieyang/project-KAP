@@ -4,7 +4,8 @@
 }
 
 .TableContentContainer {
-  margin: 0px;
+  margin-top: 15px;
+  margin-left: 15px;
 }
 
 table.ComparisonTable {
@@ -30,7 +31,7 @@ table.ComparisonTable {
 
 /* .ComparisonTable th, */
 .ComparisonTable td {
-  /* padding: 3px 3px; */
+  padding: 0px 0px;
   text-align: left;
   border: 1px solid #ddd;
 }

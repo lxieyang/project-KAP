@@ -3,12 +3,18 @@ import React, { Component } from 'react';
 // import RegularCell from './RegularCell/RegularCell';
 import TopLeftCell from './TopLeftCell/TopLeftCell';
 // import RowHeaderCell from './RowHeaderCell/RowHeaderCell';
-// import ColumnHeaderCell from './ColumnHeaderCell/ColumnHeaderCell';
+import ColumnHeaderCell from './ColumnHeaderCell/ColumnHeaderCell';
 import { TABLE_CELL_TYPES } from '../../../../../../../../../shared-components/src/shared/types';
 import * as FirestoreManager from '../../../../../../../../../shared-components/src/firebase/firestore_wrapper';
 
 let smallBox = (
-  <div style={{ width: '50px', height: '50px', backgroundColor: 'blue' }} />
+  <div
+    style={{
+      width: '50px',
+      height: '50px'
+      // backgroundColor: 'blue'
+    }}
+  />
 );
 
 class TableCell extends Component {
@@ -74,12 +80,11 @@ class TableCell extends Component {
         break;
       case TABLE_CELL_TYPES.columnHeader:
         cell = (
-          <td>{smallBox}</td>
-          // <ColumnHeaderCell
-          //   {...this.props}
-          //   comments={comments}
-          //   commentCount={commentCount}
-          // />
+          <ColumnHeaderCell
+            {...this.props}
+            comments={comments}
+            commentCount={commentCount}
+          />
         );
         break;
       case TABLE_CELL_TYPES.rowHeader:

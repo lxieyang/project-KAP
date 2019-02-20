@@ -26,21 +26,17 @@
 
 .DeleteColumnIconContainer {
   position: absolute;
-  top: -30px;
+  top: -24px;
   left: 0px;
   right: 0px;
   display: flex;
   justify-content: center;
   align-items: center;
+  opacity: 0;
+  transition: all 0.1s ease-in;
 }
 
-.DeleteColumnIcon {
-  cursor: pointer;
-  opacity: 0.3;
-  transition: all 0.15s ease-in;
-}
-
-.DeleteColumnIcon:hover {
+.ColumnHeaderCell:hover .DeleteColumnIconContainer {
   opacity: 1;
 }
 

@@ -27,11 +27,17 @@
 .DeleteRowIconContainer {
   position: absolute;
   top: 0px;
-  left: -30px;
+  left: -24px;
   bottom: 0px;
   display: flex;
   justify-content: center;
   align-items: center;
+  opacity: 0;
+  transition: all 0.1s ease-in;
+}
+
+.RowHeaderCell:hover .DeleteRowIconContainer {
+  opacity: 1;
 }
 
 .DecideRowIconContainer {

@@ -9,6 +9,7 @@ import Spinner from '../../../../../../../../shared-components/src/components/UI
 import styles from './Table.css';
 
 import Button from '@material-ui/core/Button';
+import PlusCircle from 'mdi-material-ui/PlusCircle';
 
 import { withStyles } from '@material-ui/core/styles';
 
@@ -18,7 +19,7 @@ const materialStyles = theme => ({
   button: {
     marginTop: 0,
     marginBottom: 0,
-    marginRight: 8,
+    marginRight: 0,
     padding: '1px 4px 1px 4px',
     fontSize: 12
   }
@@ -27,7 +28,7 @@ const materialStyles = theme => ({
 const ActionButton = withStyles({
   root: {
     minWidth: '0',
-    padding: '0px 4px'
+    padding: '1px 1px'
   },
   label: {
     textTransform: 'capitalize',
@@ -151,11 +152,12 @@ class Table extends Component {
         >
           <div className={styles.AddColumnButtonContainer}>
             <ActionButton
+              title={`Add a column`}
               style={{ color: PIECE_COLOR.criterion }}
               className={classes.button}
               onClick={e => this.createNewTableColumn(e)}
             >
-              Add a column
+              <PlusCircle style={{ width: 11, height: 11 }} />
             </ActionButton>
           </div>
         </th>
@@ -217,11 +219,12 @@ class Table extends Component {
           >
             <div className={styles.AddRowButtonContainer}>
               <ActionButton
+                title={`Add a row`}
                 style={{ color: PIECE_COLOR.option }}
                 className={classes.button}
                 onClick={e => this.createNewTableRow(e)}
               >
-                Add a row
+                <PlusCircle style={{ width: 11, height: 11 }} />
               </ActionButton>
             </div>
           </td>
@@ -232,7 +235,6 @@ class Table extends Component {
     return (
       <React.Fragment>
         <div className={styles.TableViewContainer}>
-          Table content coming in future releases
           {/* Table Content */}
           <div className={styles.TableContentContainer}>
             <table className={styles.ComparisonTable}>

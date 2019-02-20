@@ -218,7 +218,7 @@ sidebarRoot.setAttribute('id', 'kap-sidebar-root');
 function shrinkBody(isOpen) {
   if (shouldShrinkBody) {
     if (isOpen) {
-      document.body.style.marginRight = '400px';
+      document.body.style.marginRight = '410px';
     } else {
       document.body.style.marginRight = '0px';
     }

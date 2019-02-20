@@ -8,10 +8,10 @@ import fasBookmark from '@fortawesome/fontawesome-free-solid/faBookmark';
 import { debounce } from 'lodash';
 import styles from './ColumnHeaderCell.css';
 
-import PieceItem from '../../../../../CollectionView/PiecesView/PieceItem/PieceItem';
-import Spinner from '../../../../../../../../../components/UI/Spinner/Spinner';
+// import PieceItem from '../../../../../CollectionView/PiecesView/PieceItem/PieceItem';
+import Spinner from '../../../../../../../../../../shared-components/src/components/UI/Spinner/Spinner';
 
-import * as FirestoreManager from '../../../../../../../../../firebase/firestore_wrapper';
+import * as FirestoreManager from '../../../../../../../../../../shared-components/src/firebase/firestore_wrapper';
 
 import { withStyles } from '@material-ui/core/styles';
 import IconButton from '@material-ui/core/IconButton';
@@ -32,22 +32,22 @@ import {
   PIECE_TYPES,
   TABLE_CELL_TYPES,
   ANNOTATION_TYPES
-} from '../../../../../../../../../shared/types';
+} from '../../../../../../../../../../shared-components/src/shared/types';
 import {
   THEME_COLOR,
   PIECE_COLOR
-} from '../../../../../../../../../shared/theme';
+} from '../../../../../../../../../../shared-components/src/shared/theme';
 
-import CellComments from '../CellComments/CellComments';
-import { getFirstName } from '../../../../../../../../../shared/utilities';
+// import CellComments from '../CellComments/CellComments';
+// import { getFirstName } from '../../../../../../../../../shared/utilities';
 
 const materialStyles = theme => ({
   iconButtons: {
-    padding: '4px'
+    padding: '3px'
   },
   iconInIconButtons: {
-    width: '14px',
-    height: '14px',
+    width: '11px',
+    height: '11px',
     color: 'rgb(187, 187, 187)'
   },
   button: {
@@ -69,126 +69,6 @@ const ActionButton = withStyles({
   }
 })(Button);
 
-const dropTarget = {
-  canDrop(props, monitor, component) {
-    // can't drop if no edit access
-    if (!props.editAccess) {
-      return false;
-    }
-
-    // can't drop if already exist
-    const item = monitor.getItem();
-    const dropPieceId = item.id;
-    const dropPieceCellId = item.cellId;
-    const dropPieceCellType = item.cellType;
-    const dropPieceCellColumnIndex = item.columnIndex;
-
-    const allPieces = props.pieces;
-    let cellPieces = props.cell.pieces
-      .filter(
-        p => allPieces[p.pieceId] !== undefined && allPieces[p.pieceId] !== null
-      )
-      .map(p => p.pieceId);
-
-    const pieceIds = props.cell.pieces.map(p => p.pieceId);
-    if (pieceIds.indexOf(dropPieceId) !== -1) {
-      return false;
-    }
-
-    if (
-      cellPieces.length === 0 &&
-      dropPieceCellId !== undefined &&
-      dropPieceCellType === TABLE_CELL_TYPES.columnHeader
-    ) {
-      // prevent dropping option from other option cells into this cell
-      return false;
-      // TODO: we CANNOT prevent dropping the same option into two option cells if both drops come from the piecesView
-    }
-
-    return true;
-  },
-
-  drop(props, monitor, component) {
-    const item = monitor.getItem();
-    const dropPieceId = item.id;
-    const dropPieceCellId = item.cellId;
-    const dropPieceCellType = item.cellType;
-    const dropPieceCellColumnIndex = item.columnIndex;
-
-    const allPieces = props.pieces;
-    let cellPieces = props.cell.pieces
-      .filter(
-        p => allPieces[p.pieceId] !== undefined && allPieces[p.pieceId] !== null
-      )
-      .map(p => p.pieceId);
-
-    if (cellPieces.length === 0) {
-      // no stuff in this cell
-      component.resetPieceInThisCell(dropPieceId);
-    } else if (cellPieces.length > 0 && dropPieceCellId === undefined) {
-      // there's existing piece, but dropping on from the pieceView
-      component.resetPieceInThisCell(dropPieceId);
-    } else if (
-      cellPieces.length > 0 &&
-      dropPieceCellId !== undefined &&
-      dropPieceCellType === TABLE_CELL_TYPES.columnHeader
-    ) {
-      // both are from the table, should switch columns
-      FirestoreManager.switchRowsInTable(
-        props.workspace.id,
-        props.columnIndex,
-        dropPieceCellColumnIndex
-      );
-    }
-
-    // let pieces = props.cell.pieces.map(p => p.pieceId);
-    // let content = props.cell.content;
-    // let thereIsContent = content !== undefined && content !== '';
-    // if (pieces.length === 0 && !thereIsContent) {
-    //   // no stuff in this cell
-    //   component.addPieceToThisCell(dropPieceId);
-    // } else if (pieces.length > 0 && dropPieceCellId === undefined) {
-    //   // there's existing piece, but dropping on from the pieceView
-    //   component.resetPieceInThisCell(dropPieceId);
-    // } else if (
-    //   pieces.length > 0 &&
-    //   dropPieceCellId !== undefined &&
-    //   dropPieceCellType === TABLE_CELL_TYPES.columnHeader
-    // ) {
-    //   // both are from the table, should switch rows
-    //   FirestoreManager.switchColumnsInTable(
-    //     props.workspace.id,
-    //     props.columnIndex,
-    //     dropPieceCellColumnIndex
-    //   );
-    // } else if (
-    //   pieces.length === 0 &&
-    //   thereIsContent &&
-    //   dropPieceCellId !== undefined &&
-    //   dropPieceCellType === TABLE_CELL_TYPES.columnHeader
-    // ) {
-    //   // both are from the table, should switch rows
-    //   FirestoreManager.switchColumnsInTable(
-    //     props.workspace.id,
-    //     props.columnIndex,
-    //     dropPieceCellColumnIndex
-    //   );
-    // }
-
-    return {
-      id: props.cell.id
-    };
-  }
-};
-
-const collectDrop = (connect, monitor) => {
-  return {
-    connectDropTarget: connect.dropTarget(),
-    isOver: monitor.isOver(),
-    canDrop: monitor.canDrop()
-  };
-};
-
 class ColumnHeaderCell extends Component {
   state = {
     contentEdit: this.props.cell.content,
@@ -203,13 +83,6 @@ class ColumnHeaderCell extends Component {
 
     // textarea focus
     textareaFocused: false
-  };
-
-  static propTypes = {
-    // Injected by React DnD:
-    connectDropTarget: PropTypes.func.isRequired,
-    isOver: PropTypes.bool.isRequired,
-    canDrop: PropTypes.bool.isRequired
   };
 
   componentDidUpdate(prevProps, prevState) {
@@ -352,16 +225,7 @@ class ColumnHeaderCell extends Component {
   };
 
   render() {
-    const { connectDropTarget, canDrop, isOver } = this.props;
-    let {
-      classes,
-      cell,
-      pieces,
-      editAccess,
-      commentAccess,
-      comments,
-      commentCount
-    } = this.props;
+    let { classes, cell, pieces, comments, commentCount } = this.props;
     const { anchorEl } = this.state;
     const open = Boolean(anchorEl);
 
@@ -369,9 +233,8 @@ class ColumnHeaderCell extends Component {
       return <td />;
     }
 
-    let deleteColumnActionContainer = editAccess ? (
+    let deleteColumnActionContainer = (
       <div className={styles.DeleteColumnIconContainer}>
-        {' '}
         <ReactHoverObserver
           {...{
             onMouseEnter: () => {
@@ -395,211 +258,23 @@ class ColumnHeaderCell extends Component {
           </div>
         </ReactHoverObserver>
       </div>
-    ) : null;
-
-    let commentsFromOthers = comments.filter(
-      c => c.authorId !== FirestoreManager.getCurrentUserId()
     );
 
-    let commentTooltipTitle = 'Make a comment';
-    if (commentCount > 0) {
-      if (commentsFromOthers.length === 1) {
-        let authorName = getFirstName(commentsFromOthers[0].authorName);
-        commentTooltipTitle = `1 comment from ${authorName}`;
-      } else if (commentsFromOthers.length > 1) {
-        commentTooltipTitle = `${
-          commentsFromOthers.length
-        } comments from others`;
-      }
-    }
-
-    let commentsActionContainer = commentAccess ? (
-      <div
-        className={styles.CommentsContainer}
-        style={{ zIndex: 1000, opacity: commentCount > 0 ? 1 : null }}
-      >
-        <div style={{ position: 'relative' }}>
-          <Tooltip title={commentTooltipTitle} placement={'top'}>
-            <IconButton
-              aria-label="Comment"
-              className={classes.iconButtons}
-              onClick={e => this.handleCommentClick(e)}
-            >
-              <Chat className={classes.iconInIconButtons} />
-            </IconButton>
-          </Tooltip>
-          <Popover
-            id={`${cell.id}-comments-popover`}
-            open={open}
-            anchorEl={anchorEl}
-            onClose={this.handleCommentClose}
-            anchorOrigin={{
-              vertical: 'top',
-              horizontal: 'left'
-            }}
-            transformOrigin={{
-              vertical: 'top',
-              horizontal: 'left'
-            }}
-          >
-            <CellComments
-              workspaceId={this.props.workspace.id}
-              cellId={cell.id}
-              comments={comments}
-              commentAccess={commentAccess}
-              cellType={cell.type}
-            />
-          </Popover>
-          <span
-            style={{ color: THEME_COLOR.badgeColor }}
-            className={styles.CommentCount}
-          >
-            {commentCount > 0 ? commentCount : null}
-          </span>
-        </div>
-      </div>
-    ) : null;
-
-    let cellPieces = cell.pieces.filter(
-      p => pieces[p.pieceId] !== undefined && pieces[p.pieceId] !== null
-    );
-
-    return connectDropTarget(
+    return (
       <th
         className={styles.ColumnHeaderCell}
         style={{
           backgroundColor:
             this.props.columnIndex === this.props.columnToDelete
               ? THEME_COLOR.alertBackgroundColor
-              : isOver && canDrop
-              ? '#aed6f1'
               : null
         }}
       >
         {deleteColumnActionContainer}
-        {commentsActionContainer}
-
-        {cellPieces.length > 0 ? (
-          <div className={styles.ColumnHeaderCellContainer}>
-            {cellPieces.map((p, idx) => {
-              return (
-                <React.Fragment key={`${p.pieceId}-${idx}`}>
-                  <ContextMenuTrigger
-                    id={`${cell.id}-context-menu`}
-                    holdToDisplay={-1}
-                  >
-                    <div
-                      style={{
-                        width: '250px',
-                        minHeight: '65px'
-                      }}
-                    >
-                      <PieceItem
-                        piece={pieces[p.pieceId]}
-                        editAccess={editAccess}
-                        commentAccess={commentAccess}
-                        cellId={cell.id}
-                        cellType={cell.type}
-                        rowIndex={this.props.rowIndex}
-                        columnIndex={this.props.columnIndex}
-                        openScreenshot={this.props.openScreenshot}
-                      />
-                    </div>
-                  </ContextMenuTrigger>
-                  {editAccess ? (
-                    <ContextMenu id={`${cell.id}-context-menu`}>
-                      <MenuItem
-                        onClick={e =>
-                          this.removePieceFromCellClickedHandler(e, p.pieceId)
-                        }
-                      >
-                        Remove from table
-                      </MenuItem>
-                    </ContextMenu>
-                  ) : null}
-                </React.Fragment>
-              );
-            })}
-          </div>
-        ) : (
-          <div className={styles.CellContentContainer}>
-            <div
-              className={[
-                styles.CellContentEditContainer,
-                this.state.contentEdit === '' ? styles.HoverToReveal : null
-              ].join(' ')}
-            >
-              <div className={styles.TextAreaContainer}>
-                <Avatar
-                  aria-label="type"
-                  style={{
-                    backgroundColor: PIECE_COLOR.criterion,
-                    width: '28px',
-                    height: '28px',
-                    color: 'white',
-                    marginRight: '4px',
-                    display:
-                      !editAccess && this.state.contentEdit === ''
-                        ? 'none'
-                        : null
-                  }}
-                  className={styles.Avatar}
-                >
-                  <FontAwesomeIcon
-                    icon={fasFlagCheckered}
-                    className={styles.IconInsideAvatar}
-                  />
-                </Avatar>
-                <Textarea
-                  disabled={!editAccess}
-                  inputRef={tag => (this.textarea = tag)}
-                  minRows={2}
-                  maxRows={5}
-                  placeholder={
-                    editAccess
-                      ? 'Type or drop a snippet card here to add a criterion'
-                      : ''
-                  }
-                  value={this.state.contentEdit}
-                  onKeyDown={this.keyPress}
-                  onFocus={() => this.setState({ textareaFocused: true })}
-                  onBlur={() => this.setState({ textareaFocused: false })}
-                  onChange={e => this.handleCellContentInputChange(e)}
-                  className={[
-                    styles.Textarea,
-                    editAccess ? styles.TextareaEditable : null
-                  ].join(' ')}
-                />
-              </div>
-
-              <div
-                className={styles.TextareaActionBar}
-                style={{ opacity: this.state.textareaFocused ? 1 : 0 }}
-              >
-                <ActionButton
-                  color="primary"
-                  className={classes.button}
-                  onClick={() => this.saveCellContentClickedHandler()}
-                >
-                  Add as a criterion
-                </ActionButton>
-
-                <ActionButton
-                  color="secondary"
-                  className={classes.button}
-                  onClick={() => this.cancelEditClickedHandler()}
-                >
-                  Cancel
-                </ActionButton>
-              </div>
-            </div>
-          </div>
-        )}
+        <div className={styles.ColumnHeaderCellContainer}> </div>
       </th>
     );
   }
 }
 
-export default withStyles(materialStyles)(
-  DropTarget(['PIECE_ITEM'], dropTarget, collectDrop)(ColumnHeaderCell)
-);
+export default withStyles(materialStyles)(ColumnHeaderCell);
