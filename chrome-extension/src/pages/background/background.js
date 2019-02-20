@@ -47,12 +47,28 @@ const updateTrackingStatus = () => {
     chrome.browserAction.setTitle({
       title: `${APP_NAME_SHORT} is active. Click to deactivate.`
     });
+
+    // clear badge
+    chrome.browserAction.setBadgeBackgroundColor({
+      color: [255, 255, 255, 0]
+    });
+    chrome.browserAction.setBadgeText({
+      text: ''
+    });
   } else {
     chrome.browserAction.setIcon({
       path: 'icon-inactive-128.png'
     });
     chrome.browserAction.setTitle({
       title: `${APP_NAME_SHORT} is inactive. Click to activate.`
+    });
+
+    // display badge
+    chrome.browserAction.setBadgeBackgroundColor({
+      color: [215, 91, 78, 1]
+    });
+    chrome.browserAction.setBadgeText({
+      text: 'off'
     });
   }
 
