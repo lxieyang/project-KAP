@@ -644,7 +644,14 @@ class Piece extends Component {
             </CardContent>
 
             {/* Original content in collapse */}
-            <Collapse in={this.state.expanded} timeout="auto">
+            <Collapse
+              in={
+                this.state.expanded ||
+                (isDragging && this.props.cellType === undefined)
+              }
+              timeout="auto"
+              unmountOnExit
+            >
               <div className={classesInCSS.CollapseContainer}>
                 {displayingScreenshot ? (
                   screenshotLoading ? (

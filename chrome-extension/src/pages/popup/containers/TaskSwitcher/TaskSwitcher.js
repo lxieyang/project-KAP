@@ -45,7 +45,7 @@ const TaskSwitcherContainer = styled.div`
   /* background-color: #ccc; */
   box-sizing: border-box;
   width: 100%;
-  padding: 0px 5px;
+  padding: 5px 5px;
   display: flex;
   justify-content: space-between;
   align-items: center;

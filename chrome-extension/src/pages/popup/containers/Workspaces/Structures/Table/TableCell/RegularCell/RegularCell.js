@@ -6,7 +6,7 @@ import ThumbV1 from '../../../../../../../../../../shared-components/src/compone
 import InfoIcon from '../../../../../../../../../../shared-components/src/components/UI/Thumbs/InfoIcon/InfoIcon';
 
 // import PieceItem from '../../../../../CollectionView/PiecesView/PieceItem/PieceItem';
-// import RatingLayer from './RatingLayer/RatingLayer';
+import RatingLayer from './RatingLayer/RatingLayer';
 import * as FirestoreManager from '../../../../../../../../../../shared-components/src/firebase/firestore_wrapper';
 import {
   PIECE_TYPES,
@@ -47,12 +47,39 @@ const materialStyles = theme => ({
   }
 });
 
+const dropTarget = {
+  canDrop(props, monitor, component) {
+    return true;
+  },
+
+  drop(props, monitor, component) {
+    return {
+      id: props.cell.id
+    };
+  }
+};
+
+const collectDrop = (connect, monitor) => {
+  return {
+    connectDropTarget: connect.dropTarget(),
+    isOver: monitor.isOver(),
+    canDrop: monitor.canDrop()
+  };
+};
+
 class RegularCell extends Component {
   state = {
     contentEdit: this.props.cell.content,
 
     // comment popover
     anchorEl: null
+  };
+
+  static propTypes = {
+    // Injected by React DnD:
+    connectDropTarget: PropTypes.func.isRequired,
+    isOver: PropTypes.bool.isRequired,
+    canDrop: PropTypes.bool.isRequired
   };
 
   componentDidUpdate(prevProps, prevState) {
@@ -111,6 +138,17 @@ class RegularCell extends Component {
       this.props.cell.id,
       pieceId
     );
+
+    // in case it's selected
+    if (
+      this.props.currentSelectedPieceInTable !== null &&
+      this.props.currentSelectedPieceInTable.pieceId === pieceId
+    ) {
+      this.props.setCurrentSelectedPieceInTable({
+        pieceId: null,
+        pieceType: null
+      });
+    }
   };
 
   ratingIconClickedHandler = (e, pieceId, pieceType) => {
@@ -129,6 +167,8 @@ class RegularCell extends Component {
   };
 
   render() {
+    const { connectDropTarget, canDrop, isOver } = this.props;
+
     let { classes, cell, pieces, comments, commentCount } = this.props;
     const { anchorEl } = this.state;
     const open = Boolean(anchorEl);
@@ -139,7 +179,7 @@ class RegularCell extends Component {
 
     let piecesList = cell.pieces;
 
-    return (
+    return connectDropTarget(
       <td
         className={styles.RegularCell}
         style={{
@@ -149,6 +189,22 @@ class RegularCell extends Component {
               : 'transparent'
         }}
       >
+        {/* hover to drop layer */}
+        <div
+          className={styles.HoverLayer}
+          style={{ zIndex: isOver ? 1000 : -1 }}
+        >
+          <div className={styles.HoverLayerPane}>
+            <RatingLayer ratingType={RATING_TYPES.positive} {...this.props} />
+          </div>
+          <div className={styles.HoverLayerPane}>
+            <RatingLayer ratingType={RATING_TYPES.info} {...this.props} />
+          </div>
+          <div className={styles.HoverLayerPane}>
+            <RatingLayer ratingType={RATING_TYPES.negative} {...this.props} />
+          </div>
+        </div>
+
         {/* regular */}
         <div className={styles.RegularContentContainer}>
           {piecesList.length > 0 ? (
@@ -258,4 +314,6 @@ class RegularCell extends Component {
   }
 }
 
-export default withStyles(materialStyles)(RegularCell);
+export default withStyles(materialStyles)(
+  DropTarget(['PIECE_ITEM'], dropTarget, collectDrop)(RegularCell)
+);

@@ -126,7 +126,9 @@ class RatingLayer extends Component {
             opacity: isOver ? '1' : '0'
           }}
         >
-          <div style={{ width: '50px', height: '50px' }}>{icon}</div>
+          <div style={{ width: '50px', height: '50px', marginTop: '5px' }}>
+            {icon}
+          </div>
         </div>
       </div>
     );

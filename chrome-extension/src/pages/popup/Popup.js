@@ -198,7 +198,7 @@ class Popup extends Component {
 
     // logged in
     return (
-      <React.Fragment>
+      <div style={{ display: 'flex', flexFlow: 'column', height: '100vh' }}>
         {appTitle}
         {/*<div
           style={{
@@ -221,7 +221,7 @@ class Popup extends Component {
           currentWorkspaceId={this.state.currentWorkspaceId}
           currentSelectedPieceInTable={this.state.currentSelectedPieceInTable}
         />
-      </React.Fragment>
+      </div>
     );
   }
 }

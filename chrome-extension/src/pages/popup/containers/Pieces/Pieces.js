@@ -34,24 +34,36 @@ const StyledTab = withStyles({
 })(Tab);
 
 const PiecesContainer = styled.div`
+  flex-grow: 1;
   /* background-color: rgb(242, 242, 242); */
   margin: 5px 0px;
   box-sizing: border-box;
   width: 100%;
-  height: 600px;
+  height: 100%;
+  /* height: 600px; */
   padding: 0px 6px;
-  /* display: flex;
-  justify-content: space-around;
-  align-items: center; */
+  display: flex;
+  flex-flow: column;
 `;
 
-const PiecesUL = styled.ul`
+const PiecesULContainer = styled.div`
+  position: relative;
+  flex-grow: 1;
+`;
+
+const PiecesUL = styled.div`
   list-style-type: none;
   padding: 0px;
   margin: 0px 0px;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  overflow: auto;
 `;
 
-const PieceLI = styled.li`
+const PieceLI = styled.div`
   margin: 0px;
   padding: 0px;
 `;
@@ -315,29 +327,37 @@ class Pieces extends Component {
             </Tabs>
           </div>
 
-          <PiecesUL>
-            {piecesList.map((p, idx) => {
-              return (
-                <PieceLI key={idx + p.id}>
-                  <ReactHoverObserver>
-                    <Piece
-                      piece={p}
-                      idx={idx}
-                      currentTaskId={currentTaskId}
-                      inTrashedTab={activeTabValue === TAB_VALUES.trashed}
-                      inAllTab={activeTabValue === TAB_VALUES.all}
-                      inUncategorizedTab={
-                        activeTabValue === TAB_VALUES.uncategorized
-                      }
-                      currentSelectedPieceInTable={currentSelectedPieceInTable}
-                      handleDeleteButtonClicked={this.handleDeleteButtonClicked}
-                      handleReviveButtonClicked={this.handleReviveButtonClicked}
-                    />
-                  </ReactHoverObserver>
-                </PieceLI>
-              );
-            })}
-          </PiecesUL>
+          <PiecesULContainer>
+            <PiecesUL>
+              {piecesList.map((p, idx) => {
+                return (
+                  <PieceLI key={idx + p.id}>
+                    <ReactHoverObserver>
+                      <Piece
+                        piece={p}
+                        idx={idx}
+                        currentTaskId={currentTaskId}
+                        inTrashedTab={activeTabValue === TAB_VALUES.trashed}
+                        inAllTab={activeTabValue === TAB_VALUES.all}
+                        inUncategorizedTab={
+                          activeTabValue === TAB_VALUES.uncategorized
+                        }
+                        currentSelectedPieceInTable={
+                          currentSelectedPieceInTable
+                        }
+                        handleDeleteButtonClicked={
+                          this.handleDeleteButtonClicked
+                        }
+                        handleReviveButtonClicked={
+                          this.handleReviveButtonClicked
+                        }
+                      />
+                    </ReactHoverObserver>
+                  </PieceLI>
+                );
+              })}
+            </PiecesUL>
+          </PiecesULContainer>
         </PiecesContainer>
 
         {/* snackbar */}

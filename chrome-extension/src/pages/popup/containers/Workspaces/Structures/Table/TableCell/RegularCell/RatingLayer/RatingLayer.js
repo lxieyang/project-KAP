@@ -1,33 +1,26 @@
 import React, { Component } from 'react';
-import styled from 'styled-components';
 import styles from './RatingLayer.css';
 
-import PieceItem from '../../../../../../CollectionView/PiecesView/PieceItem/PieceItem';
-
-import ThumbV1 from '../../../../../../../../../../components/UI/Thumbs/ThumbV1/ThumbV1';
-import * as FirestoreManager from '../../../../../../../../../../firebase/firestore_wrapper';
+import ThumbV1 from '../../../../../../../../../../../shared-components/src/components/UI/Thumbs/ThumbV1/ThumbV1';
+import InfoIcon from '../../../../../../../../../../../shared-components/src/components/UI/Thumbs/InfoIcon/InfoIcon';
+import * as FirestoreManager from '../../../../../../../../../../../shared-components/src/firebase/firestore_wrapper';
 
 // dnd stuff
-import { DragSource, DropTarget } from 'react-dnd';
+import { DropTarget } from 'react-dnd';
 import PropTypes from 'prop-types';
 import {
   RATING_TYPES,
   PIECE_TYPES
-} from '../../../../../../../../../../shared/types';
+} from '../../../../../../../../../../../shared-components/src/shared/types';
 
 const dropTarget = {
   canDrop(props, monitor, component) {
-    // can't drop if no edit access
-    if (!props.editAccess) {
-      return false;
-    }
-
     // can't drop if already exist
-    const item = monitor.getItem();
-    const pieces = props.cell.pieces.map(p => p.pieceId);
-    if (pieces.indexOf(item.id) !== -1) {
-      return false;
-    }
+    // const item = monitor.getItem();
+    // const pieces = props.cell.pieces.map(p => p.pieceId);
+    // if (pieces.indexOf(item.id) !== -1) {
+    //   return false;
+    // }
 
     return true;
   },
@@ -36,8 +29,14 @@ const dropTarget = {
     // console.log(`Dropped on cell ${props.cell.id}`);
     const item = monitor.getItem();
     // console.log(item);
-
-    component.addPieceToThisCell(item.id);
+    const pieces = props.cell.pieces.map(p => p.pieceId);
+    let idx = pieces.indexOf(item.id);
+    if (idx !== -1) {
+      // should switch rating type
+      component.switchRatingTypeOfPiece(item.id);
+    } else {
+      component.addPieceToThisCell(item.id);
+    }
 
     return {
       id: props.cell.id
@@ -77,28 +76,53 @@ class RatingLayer extends Component {
     this.changePieceType(pieceId);
   };
 
+  switchRatingTypeOfPiece = pieceId => {
+    FirestoreManager.switchPieceRatingType(
+      this.props.workspace.id,
+      this.props.cell.id,
+      pieceId,
+      this.props.ratingType
+    );
+  };
+
   changePieceType = (pieceId, to = PIECE_TYPES.snippet) => {
     FirestoreManager.switchPieceType(pieceId, null, to);
   };
 
   render() {
     const { connectDropTarget, canDrop, isOver } = this.props;
-    let { ratingType, cell, pieces, editAccess } = this.props;
+    let { ratingType, cell, pieces } = this.props;
+
+    let backdropColor = 'fff';
+    let icon = <InfoIcon />;
+    switch (ratingType) {
+      case RATING_TYPES.positive:
+        backdropColor = '#ABEBC6';
+        icon = <ThumbV1 type={'up'} />;
+        break;
+      case RATING_TYPES.negative:
+        backdropColor = '#F5B7B1';
+        icon = <ThumbV1 type={'down'} />;
+        break;
+      case RATING_TYPES.info:
+        backdropColor = '#FCF3CF';
+        icon = <InfoIcon />;
+        break;
+      default:
+        break;
+    }
 
     return connectDropTarget(
       <div className={styles.RatingLayerContainer}>
         <div
           className={styles.RatingLayer}
           style={{
-            backgroundColor:
-              ratingType === RATING_TYPES.positive ? '#ABEBC6' : '#F5B7B1',
+            backgroundColor: backdropColor,
             opacity: isOver ? '1' : '0'
           }}
         >
-          <div style={{ width: '75px', height: '75px' }}>
-            <ThumbV1
-              type={ratingType === RATING_TYPES.positive ? 'up' : 'down'}
-            />
+          <div style={{ width: '15px', height: '15px', marginTop: '5px' }}>
+            {icon}
           </div>
         </div>
       </div>
