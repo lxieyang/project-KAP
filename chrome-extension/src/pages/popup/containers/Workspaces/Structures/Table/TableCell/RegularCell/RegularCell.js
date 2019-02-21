@@ -169,7 +169,14 @@ class RegularCell extends Component {
   render() {
     const { connectDropTarget, canDrop, isOver } = this.props;
 
-    let { classes, cell, pieces, comments, commentCount } = this.props;
+    let {
+      classes,
+      cell,
+      pieces,
+      comments,
+      commentCount,
+      annotation_selected
+    } = this.props;
     const { anchorEl } = this.state;
     const open = Boolean(anchorEl);
 
@@ -193,7 +200,7 @@ class RegularCell extends Component {
         {/* hover to drop layer */}
         <div
           className={styles.HoverLayer}
-          style={{ zIndex: isOver ? 1000 : -1 }}
+          style={{ zIndex: isOver || annotation_selected ? 1000 : -1 }}
         >
           <div className={styles.HoverLayerPane}>
             <RatingLayer ratingType={RATING_TYPES.positive} {...this.props} />
@@ -211,7 +218,7 @@ class RegularCell extends Component {
           className={styles.RegularContentContainer}
           style={{
             transition: 'all 0.1s ease-in',
-            opacity: isOver ? 0.2 : null
+            opacity: isOver || annotation_selected ? 0.2 : null
           }}
         >
           {piecesList.length > 0 ? (

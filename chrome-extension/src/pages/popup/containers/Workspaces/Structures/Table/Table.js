@@ -146,6 +146,7 @@ class Table extends Component {
               setCurrentSelectedPieceInTable={
                 this.props.setCurrentSelectedPieceInTable
               }
+              annotation_selected={this.props.annotation_selected}
               openScreenshot={this.props.openScreenshot}
             />
           );
@@ -215,6 +216,7 @@ class Table extends Component {
                       setCurrentSelectedPieceInTable={
                         this.props.setCurrentSelectedPieceInTable
                       }
+                      annotation_selected={this.props.annotation_selected}
                       openScreenshot={this.props.openScreenshot}
                     />
                   );

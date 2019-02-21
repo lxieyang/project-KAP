@@ -10,4 +10,10 @@
   justify-content: center;
   align-items: flex-start;
   transition: opacity 0.15s ease-in;
+  opacity: 0;
+}
+
+.AnnotationSelectedRatingLayer:hover {
+  opacity: 1;
+  cursor: pointer;
 }

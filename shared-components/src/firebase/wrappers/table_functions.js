@@ -176,6 +176,10 @@ export const addPieceToTableCellById = async (
   rating = RATING_TYPES.noRating
 ) => {
   let pieces = (await getTableCellById(tableId, cellId).get()).data().pieces;
+  let pieceIds = pieces.map(p => p.pieceId);
+  if (pieceIds.indexOf(pieceId) !== -1) {
+    return;
+  }
   pieces.push({
     pieceId: pieceId,
     rating: rating

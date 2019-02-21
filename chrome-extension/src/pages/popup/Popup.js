@@ -28,7 +28,9 @@ class Popup extends Component {
 
     currentWorkspaceId: '0',
 
-    currentSelectedPieceInTable: null
+    currentSelectedPieceInTable: null,
+
+    annotation_selected: false
   };
 
   componentDidMount() {
@@ -40,6 +42,17 @@ class Popup extends Component {
     chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       if (request.msg === 'USER_LOGIN_STATUS_CHANGED') {
         this.signInOutUserWithCredential(request.idToken);
+      }
+    });
+
+    // authenticate upon signin
+    chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+      if (request.msg === 'ANNOTATION_SELECTED') {
+        this.setState({ annotation_selected: true });
+        // console.log('selected');
+      } else if (request.msg === 'ANNOTATION_UNSELECTED') {
+        this.setState({ annotation_selected: false });
+        // console.log('unselected');
       }
     });
   }
@@ -216,6 +229,7 @@ class Popup extends Component {
           setCurrentWorkspaceId={this.setCurrentWorkspaceId}
           setCurrentSelectedPieceInTable={this.setCurrentSelectedPieceInTable}
           currentSelectedPieceInTable={this.state.currentSelectedPieceInTable}
+          annotation_selected={this.state.annotation_selected}
         />
         <Pieces
           currentWorkspaceId={this.state.currentWorkspaceId}

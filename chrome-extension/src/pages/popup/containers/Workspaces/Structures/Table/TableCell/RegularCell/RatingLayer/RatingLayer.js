@@ -1,3 +1,4 @@
+/* global chrome */
 import React, { Component } from 'react';
 import styles from './RatingLayer.css';
 
@@ -89,9 +90,26 @@ class RatingLayer extends Component {
     FirestoreManager.switchPieceType(pieceId, null, to);
   };
 
+  putSelectedAnnotationHere = e => {
+    e.stopPropagation();
+    // console.log(
+    //   `should be put in cell '${this.props.cell.id}' as a type ${
+    //     this.props.ratingType
+    //   } rating`
+    // );
+    chrome.runtime.sendMessage({
+      msg: 'ANNOTATION_LOCATION_SELECTED',
+      payload: {
+        tableId: this.props.workspace.id,
+        cellId: this.props.cell.id,
+        ratingType: this.props.ratingType
+      }
+    });
+  };
+
   render() {
     const { connectDropTarget, canDrop, isOver } = this.props;
-    let { ratingType, cell, pieces } = this.props;
+    let { ratingType, cell, pieces, annotation_selected } = this.props;
 
     let backdropColor = 'fff';
     let icon = <InfoIcon />;
@@ -115,10 +133,14 @@ class RatingLayer extends Component {
     return connectDropTarget(
       <div className={styles.RatingLayerContainer}>
         <div
-          className={styles.RatingLayer}
+          className={[
+            styles.RatingLayer,
+            annotation_selected ? styles.AnnotationSelectedRatingLayer : null
+          ].join(' ')}
+          onClick={e => this.putSelectedAnnotationHere(e)}
           style={{
             backgroundColor: backdropColor,
-            opacity: isOver ? '1' : '0'
+            opacity: !annotation_selected && isOver ? 1 : null
           }}
         >
           <div style={{ width: '95%', marginTop: '5px' }}>{icon}</div>

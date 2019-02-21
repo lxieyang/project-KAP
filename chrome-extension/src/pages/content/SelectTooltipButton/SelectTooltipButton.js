@@ -49,10 +49,83 @@ class SelectTooltipButton extends Component {
       // console.log(annotation);
       this.setState({ annotation });
     }, 5);
+
+    // support for selecting annotation
+    chrome.runtime.sendMessage({
+      msg: 'ANNOTATION_SELECTED'
+    });
+
+    chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+      if (request.msg === 'ANNOTATION_LOCATION_SELECTED_IN_TABLE') {
+        const { tableId, cellId, ratingType } = request.payload;
+        if (this.state.annotation === null) {
+          // make sure annotation is collected
+          return false;
+        }
+
+        // preserve client rect
+        let rect = this.props.captureWindow
+          ? this.props.captureWindow.getBoundingClientRect()
+          : this.props.range.getBoundingClientRect();
+
+        FirestoreManager.createPiece(
+          this.state.annotation,
+          {
+            url: window.location.href,
+            hostname: window.location.hostname,
+            pathname: window.location.pathname,
+            pageTitle: document.title,
+            shouldUseScreenshot: this.state.shouldUseScreenshot
+          },
+          this.props.annotationType,
+          PIECE_TYPES.snippet
+        )
+          .then(pieceId => {
+            chrome.runtime.sendMessage({
+              msg: 'SHOW_SUCCESS_STATUS_BADGE',
+              success: true
+            });
+
+            // put into the table
+            FirestoreManager.addPieceToTableCellById(
+              tableId,
+              cellId,
+              pieceId,
+              ratingType
+            );
+          })
+          .catch(error => {
+            console.log(error);
+            chrome.runtime.sendMessage({
+              msg: 'SHOW_SUCCESS_STATUS_BADGE',
+              success: false
+            });
+          });
+        this.removeTooltipButton();
+
+        // take screenshot
+        setTimeout(() => {
+          chrome.runtime.sendMessage(
+            {
+              msg: 'SCREENSHOT_WITH_COORDINATES',
+              rect,
+              windowSize: this.props.windowSize,
+              pieceId: this.state.annotation.key
+            },
+            response => {}
+          );
+        }, 5);
+      }
+    });
   }
 
   componentWillUnmount() {
     window.removeEventListener('mousedown', this.mouseDown, true);
+
+    // send to background
+    chrome.runtime.sendMessage({
+      msg: 'ANNOTATION_UNSELECTED'
+    });
   }
 
   @autobind
