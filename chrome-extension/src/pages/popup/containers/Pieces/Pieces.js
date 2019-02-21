@@ -93,7 +93,7 @@ class Pieces extends Component {
 
     // snackbar control
     open: false,
-    timeoutDuration: 10000,
+    timeoutDuration: 4000,
     toDeletePieceId: '',
     toDeletePieceName: '',
 

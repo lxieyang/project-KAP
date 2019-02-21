@@ -55,69 +55,72 @@ class SelectTooltipButton extends Component {
       msg: 'ANNOTATION_SELECTED'
     });
 
-    chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-      if (request.msg === 'ANNOTATION_LOCATION_SELECTED_IN_TABLE') {
-        const { tableId, cellId, ratingType } = request.payload;
-        if (this.state.annotation === null) {
-          // make sure annotation is collected
-          return false;
-        }
-
-        // preserve client rect
-        let rect = this.props.captureWindow
-          ? this.props.captureWindow.getBoundingClientRect()
-          : this.props.range.getBoundingClientRect();
-
-        FirestoreManager.createPiece(
-          this.state.annotation,
-          {
-            url: window.location.href,
-            hostname: window.location.hostname,
-            pathname: window.location.pathname,
-            pageTitle: document.title,
-            shouldUseScreenshot: this.state.shouldUseScreenshot
-          },
-          this.props.annotationType,
-          PIECE_TYPES.snippet
-        )
-          .then(pieceId => {
-            chrome.runtime.sendMessage({
-              msg: 'SHOW_SUCCESS_STATUS_BADGE',
-              success: true
-            });
-
-            // put into the table
-            FirestoreManager.addPieceToTableCellById(
-              tableId,
-              cellId,
-              pieceId,
-              ratingType
-            );
-          })
-          .catch(error => {
-            console.log(error);
-            chrome.runtime.sendMessage({
-              msg: 'SHOW_SUCCESS_STATUS_BADGE',
-              success: false
-            });
-          });
-        this.removeTooltipButton();
-
-        // take screenshot
-        setTimeout(() => {
-          chrome.runtime.sendMessage(
-            {
-              msg: 'SCREENSHOT_WITH_COORDINATES',
-              rect,
-              windowSize: this.props.windowSize,
-              pieceId: this.state.annotation.key
-            },
-            response => {}
-          );
-        }, 5);
-      }
-    });
+    chrome.runtime.onMessage.addListener(this.annotationSelectionListener);
   }
+
+  annotationSelectionListener = (request, sender, sendResponse) => {
+    if (request.msg === 'ANNOTATION_LOCATION_SELECTED_IN_TABLE') {
+      const { tableId, cellId, ratingType } = request.payload;
+      console.log(tableId, cellId, ratingType);
+      if (this.state.annotation === null) {
+        // make sure annotation is collected
+        return false;
+      }
+
+      // preserve client rect
+      let rect = this.props.captureWindow
+        ? this.props.captureWindow.getBoundingClientRect()
+        : this.props.range.getBoundingClientRect();
+
+      FirestoreManager.createPiece(
+        this.state.annotation,
+        {
+          url: window.location.href,
+          hostname: window.location.hostname,
+          pathname: window.location.pathname,
+          pageTitle: document.title,
+          shouldUseScreenshot: this.state.shouldUseScreenshot
+        },
+        this.props.annotationType,
+        PIECE_TYPES.snippet
+      )
+        .then(pieceId => {
+          chrome.runtime.sendMessage({
+            msg: 'SHOW_SUCCESS_STATUS_BADGE',
+            success: true
+          });
+
+          // put into the table
+          FirestoreManager.addPieceToTableCellById(
+            tableId,
+            cellId,
+            pieceId,
+            ratingType
+          );
+        })
+        .catch(error => {
+          console.log(error);
+          chrome.runtime.sendMessage({
+            msg: 'SHOW_SUCCESS_STATUS_BADGE',
+            success: false
+          });
+        });
+      this.removeTooltipButton();
+
+      // take screenshot
+      setTimeout(() => {
+        chrome.runtime.sendMessage(
+          {
+            msg: 'SCREENSHOT_WITH_COORDINATES',
+            rect,
+            windowSize: this.props.windowSize,
+            pieceId: this.state.annotation.key
+          },
+          response => {}
+        );
+      }, 5);
+    }
+  };
 
   componentWillUnmount() {
     window.removeEventListener('mousedown', this.mouseDown, true);
@@ -126,14 +129,17 @@ class SelectTooltipButton extends Component {
     chrome.runtime.sendMessage({
       msg: 'ANNOTATION_UNSELECTED'
     });
+
+    chrome.runtime.onMessage.removeListener(this.annotationSelectionListener);
   }
 
   @autobind
   removeTooltipButton() {
-    if (this.props.captureWindow) {
-      this.props.captureWindow.remove();
-    }
-    ReactDOM.unmountComponentAtNode(ReactDOM.findDOMNode(this).parentNode);
+    this.props.removeTooltipButton();
+    // if (this.props.captureWindow) {
+    //   this.props.captureWindow.remove();
+    // }
+    // ReactDOM.unmountComponentAtNode(ReactDOM.findDOMNode(this).parentNode);
   }
 
   @autobind

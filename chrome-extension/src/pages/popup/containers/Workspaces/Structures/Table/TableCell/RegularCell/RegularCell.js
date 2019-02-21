@@ -206,10 +206,10 @@ class RegularCell extends Component {
             <RatingLayer ratingType={RATING_TYPES.positive} {...this.props} />
           </div>
           <div className={styles.HoverLayerPane}>
-            <RatingLayer ratingType={RATING_TYPES.info} {...this.props} />
+            <RatingLayer ratingType={RATING_TYPES.negative} {...this.props} />
           </div>
           <div className={styles.HoverLayerPane}>
-            <RatingLayer ratingType={RATING_TYPES.negative} {...this.props} />
+            <RatingLayer ratingType={RATING_TYPES.info} {...this.props} />
           </div>
         </div>
 

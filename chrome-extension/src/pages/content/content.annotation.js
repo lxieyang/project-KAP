@@ -92,6 +92,19 @@ function displayTooltipButtonBasedOnRectPosition(rect, props) {
     <SelectTooltipButton
       MathJaxUsed={MathJaxUsed}
       windowSize={{ width: window.innerWidth, height: window.innerHeight }}
+      removeTooltipButton={() => {
+        try {
+          if (
+            captureWindow !== undefined &&
+            document.querySelector('.siphon-selection-window') !== null
+          ) {
+            captureWindow.remove();
+          }
+          ReactDOM.unmountComponentAtNode(popOverAnchor);
+        } catch (e) {
+          console.log(e);
+        }
+      }}
       {...props}
     />,
     popOverAnchor
