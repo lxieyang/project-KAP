@@ -50,3 +50,64 @@
 .PieceNameContainerNotSelected {
   opacity: 0.3;
 }
+
+.CellContentContainer {
+  box-sizing: border-box;
+  min-width: 50px;
+  min-height: 40px;
+  /* max-width: 50px; */
+  /* max-height: 80px; */
+  max-height: 80px;
+
+  transition: all 0.1s ease-in;
+  /* border-left: none !important; */
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.CellContentEditContainer {
+  height: 100%;
+  width: 100%;
+  font-weight: 400;
+}
+
+.TextAreaContainer {
+  flex: 1;
+  margin-left: 0px;
+  display: flex;
+  align-items: flex-start;
+}
+
+.Textarea {
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  resize: none;
+  overflow: hidden;
+
+  font-size: 11px;
+  padding: 1px 1px;
+
+  border: 1px solid transparent;
+  border-radius: 2px;
+  color: #000;
+  background: transparent !important;
+}
+
+.Textarea::placeholder {
+  color: lightgray;
+}
+
+.Textarea:hover {
+  border-color: rgb(226, 226, 226);
+}
+
+.Textarea:focus {
+  color: #35383a;
+  background-color: #fff;
+  border-color: rgb(17, 100, 224);
+  outline: none;
+  overflow: auto;
+}
