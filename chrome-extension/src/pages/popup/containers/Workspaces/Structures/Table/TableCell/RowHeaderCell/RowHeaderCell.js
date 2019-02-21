@@ -356,7 +356,31 @@ class RowHeaderCell extends Component {
                 </MenuItem>
               </ContextMenu>
             </React.Fragment>
-          ) : null}
+          ) : (
+            <div className={styles.CellContentContainer}>
+              <div
+                className={[
+                  styles.CellContentEditContainer,
+                  this.state.contentEdit === '' ? styles.HoverToReveal : null
+                ].join(' ')}
+              >
+                <div className={styles.TextAreaContainer}>
+                  <Textarea
+                    inputRef={tag => (this.textarea = tag)}
+                    minRows={2}
+                    maxRows={5}
+                    placeholder={'Add an option'}
+                    value={this.state.contentEdit}
+                    onKeyDown={this.keyPress}
+                    onFocus={() => this.setState({ textareaFocused: true })}
+                    onBlur={() => this.setState({ textareaFocused: false })}
+                    onChange={e => this.handleCellContentInputChange(e)}
+                    className={styles.Textarea}
+                  />
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </td>
     );

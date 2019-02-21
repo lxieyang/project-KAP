@@ -486,27 +486,30 @@ class Piece extends Component {
                     </IconButton>
                   </Tooltip>
                   */}
-                  <Tooltip
-                    title={`${
-                      this.props.inTrashedTab === true
-                        ? 'Permanently Delete'
-                        : 'Trash'
-                    } this ${typeText}`}
-                    placement={'top'}
-                  >
-                    <IconButton
-                      aria-label="Trash"
-                      className={classes.iconButtons}
-                      onClick={() =>
-                        this.props.handleDeleteButtonClicked(
-                          piece.id,
-                          piece.name
-                        )
-                      }
+                  {this.props.currentSelectedPieceInTable === null ? (
+                    <Tooltip
+                      title={`${
+                        this.props.inTrashedTab === true
+                          ? 'Permanently Delete'
+                          : 'Trash'
+                      } this ${typeText}`}
+                      placement={'top'}
                     >
-                      <DeleteIcon className={classes.iconInIconButtons} />
-                    </IconButton>
-                  </Tooltip>
+                      <IconButton
+                        aria-label="Trash"
+                        className={classes.iconButtons}
+                        onClick={() =>
+                          this.props.handleDeleteButtonClicked(
+                            piece.id,
+                            piece.name
+                          )
+                        }
+                      >
+                        <DeleteIcon className={classes.iconInIconButtons} />
+                      </IconButton>
+                    </Tooltip>
+                  ) : null}
+
                   {this.props.inTrashedTab === true ? (
                     <Tooltip
                       title={`Un-trash this ${typeText}`}
