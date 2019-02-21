@@ -242,7 +242,13 @@ class RegularCell extends Component {
                 onKeyDown={this.keyPress}
                 onBlur={e => this.saveCellContentClickedHandler(e)}
                 onChange={e => this.handleCellContentInputChange(e)}
-                className={[styles.Textarea].join(' ')}
+                className={[
+                  styles.Textarea,
+                  this.state.contentEdit !== '' &&
+                  this.props.currentSelectedPieceInTable !== null
+                    ? styles.TextareaShouldBeOpaque
+                    : null
+                ].join(' ')}
               />
             </div>
           </div>

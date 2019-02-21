@@ -56,7 +56,6 @@
   cursor: pointer;
 }
 
-/* .AttitudeInTableCellIsShowing, */
 .AttitudeInTableCell:hover,
 .AttitudeInTableCellSelected {
   transform: scale(1.2);
@@ -68,8 +67,6 @@
 }
 
 .TooltipOverAttitude {
-  /* position: fixed; */
-  /* overflow: auto; */
   max-width: 300px;
   max-height: 600px;
   overflow: auto;
@@ -134,6 +131,10 @@
   border-color: rgb(17, 100, 224);
   outline: none;
   overflow: auto;
+}
+
+.TextareaShouldBeOpaque {
+  opacity: 0.3;
 }
 
 .CommentsContainer {

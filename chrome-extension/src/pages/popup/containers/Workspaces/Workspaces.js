@@ -33,7 +33,7 @@ const WorkspacesContainer = styled.div`
 const WorkspacesContentContainer = styled.div`
   /* background-color: #ddd; */
   width: 100%;
-  max-height: 360px;
+  max-height: 400px;
   overflow: auto;
 `;
 

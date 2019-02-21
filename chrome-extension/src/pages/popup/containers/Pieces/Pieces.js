@@ -324,6 +324,7 @@ class Pieces extends Component {
                       idx={idx}
                       currentTaskId={currentTaskId}
                       inTrashedTab={activeTabValue === TAB_VALUES.trashed}
+                      inAllTab={activeTabValue === TAB_VALUES.all}
                       currentSelectedPieceInTable={currentSelectedPieceInTable}
                       handleDeleteButtonClicked={this.handleDeleteButtonClicked}
                       handleReviveButtonClicked={this.handleReviveButtonClicked}

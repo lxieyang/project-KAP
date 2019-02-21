@@ -8,11 +8,10 @@
   min-width: 50px;
   min-height: 40px;
   /* max-width: 80px; */
-  /*max-height: 60px; */
-  font-weight: 300;
+  max-height: 80px;
+  overflow: hidden;
+  text-overflow: ellipsis;
   transition: all 0.1s ease-in;
-  white-space: pre-wrap;
-  word-break: break-all;
 }
 
 .DeleteRowIconContainer {
@@ -29,4 +28,24 @@
 
 .RowHeaderCell:hover .DeleteRowIconContainer {
   opacity: 1;
+}
+
+.PieceNameContainer {
+  padding: 2px;
+  font-size: 11px;
+  font-weight: 400;
+  white-space: pre-wrap;
+  word-break: break-all;
+  cursor: pointer;
+}
+
+/* .AttitudeInTableCellIsShowing, */
+.PieceNameContainer:hover,
+.PieceNameContainerSelected {
+  background-color: #f8cf8c;
+  border-radius: 2px;
+}
+
+.PieceNameContainerNotSelected {
+  opacity: 0.3;
 }

@@ -134,7 +134,11 @@ const getHTML = htmls => {
 
 class Piece extends Component {
   state = {
-    expanded: this.props.currentSelectedPieceInTable !== null ? true : false,
+    expanded:
+      this.props.currentSelectedPieceInTable !== null &&
+      this.props.inAllTab === true
+        ? true
+        : false,
 
     anchorEl: null,
 

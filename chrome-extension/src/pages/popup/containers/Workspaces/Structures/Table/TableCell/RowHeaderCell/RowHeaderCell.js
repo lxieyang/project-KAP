@@ -234,6 +234,21 @@ class RowHeaderCell extends Component {
     );
   };
 
+  pieceNameContainerClickedHandler = (e, pieceId, pieceType) => {
+    e.stopPropagation();
+    if (
+      this.props.currentSelectedPieceInTable === null ||
+      this.props.currentSelectedPieceInTable.pieceId !== pieceId
+    ) {
+      this.props.setCurrentSelectedPieceInTable({ pieceId, pieceType });
+    } else {
+      this.props.setCurrentSelectedPieceInTable({
+        pieceId: null,
+        pieceType: null
+      });
+    }
+  };
+
   render() {
     let { classes, cell, pieces, comments, commentCount } = this.props;
     const { anchorEl } = this.state;
@@ -270,6 +285,11 @@ class RowHeaderCell extends Component {
       </div>
     );
 
+    let pieceInCell = null;
+    if (cell.pieces.length > 0) {
+      pieceInCell = pieces[cell.pieces[0].pieceId];
+    }
+
     return (
       <td
         className={styles.RowHeaderCell}
@@ -281,10 +301,35 @@ class RowHeaderCell extends Component {
         }}
       >
         {deleteRowActionContainer}
+
         <div className={styles.RowHeaderCellContainer}>
-          {cell.pieces.length > 0
-            ? getFirstNWords(10, pieces[cell.pieces[0].pieceId].name)
-            : null}
+          {pieceInCell !== null ? (
+            <div
+              className={[
+                styles.PieceNameContainer,
+                this.props.currentSelectedPieceInTable !== null &&
+                this.props.currentSelectedPieceInTable.pieceId ===
+                  pieceInCell.id
+                  ? styles.PieceNameContainerSelected
+                  : null,
+                this.props.currentSelectedPieceInTable !== null &&
+                this.props.currentSelectedPieceInTable.pieceId !==
+                  pieceInCell.id
+                  ? styles.PieceNameContainerNotSelected
+                  : null
+              ].join(' ')}
+              title={pieceInCell.name}
+              onClick={e =>
+                this.pieceNameContainerClickedHandler(
+                  e,
+                  pieceInCell.id,
+                  pieceInCell.pieceType
+                )
+              }
+            >
+              {getFirstNWords(10, pieceInCell.name)}
+            </div>
+          ) : null}
         </div>
       </td>
     );
