@@ -8,6 +8,7 @@ import TaskSwitcher from './containers/TaskSwitcher/TaskSwitcher';
 import Workspaces from './containers/Workspaces/Workspaces';
 import Pieces from './containers/Pieces/Pieces';
 import styles from './Popup.css';
+import './ContextMenu.css';
 import { APP_NAME_SHORT } from '../../../../shared-components/src/shared/constants';
 import Spinner from '../../../../shared-components/src/components/UI/Spinner/Spinner';
 import firebase from '../../../../shared-components/src/firebase/firebase';

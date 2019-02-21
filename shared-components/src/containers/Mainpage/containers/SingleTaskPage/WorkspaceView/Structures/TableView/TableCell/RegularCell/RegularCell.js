@@ -304,7 +304,7 @@ class RegularCell extends Component {
                         place="bottom"
                         type="light"
                         effect="solid"
-                        delayHide={200}
+                        delayHide={100}
                         id={`${p.pieceId}`}
                         className={styles.TooltipOverAttitude}
                         getContent={() => {
