@@ -224,6 +224,17 @@ class RowHeaderCell extends Component {
       this.props.cell.id,
       pieceId
     );
+
+    // in case it's selected
+    if (
+      this.props.currentSelectedPieceInTable !== null &&
+      this.props.currentSelectedPieceInTable.pieceId === pieceId
+    ) {
+      this.props.setCurrentSelectedPieceInTable({
+        pieceId: null,
+        pieceType: null
+      });
+    }
   };
 
   switchOptionCheckedStatus = () => {
@@ -304,31 +315,47 @@ class RowHeaderCell extends Component {
 
         <div className={styles.RowHeaderCellContainer}>
           {pieceInCell !== null ? (
-            <div
-              className={[
-                styles.PieceNameContainer,
-                this.props.currentSelectedPieceInTable !== null &&
-                this.props.currentSelectedPieceInTable.pieceId ===
-                  pieceInCell.id
-                  ? styles.PieceNameContainerSelected
-                  : null,
-                this.props.currentSelectedPieceInTable !== null &&
-                this.props.currentSelectedPieceInTable.pieceId !==
-                  pieceInCell.id
-                  ? styles.PieceNameContainerNotSelected
-                  : null
-              ].join(' ')}
-              title={pieceInCell.name}
-              onClick={e =>
-                this.pieceNameContainerClickedHandler(
-                  e,
-                  pieceInCell.id,
-                  pieceInCell.pieceType
-                )
-              }
-            >
-              {getFirstNWords(10, pieceInCell.name)}
-            </div>
+            <React.Fragment>
+              <ContextMenuTrigger
+                id={`${cell.id}-context-menu`}
+                holdToDisplay={-1}
+              >
+                <div
+                  className={[
+                    styles.PieceNameContainer,
+                    this.props.currentSelectedPieceInTable !== null &&
+                    this.props.currentSelectedPieceInTable.pieceId ===
+                      pieceInCell.id
+                      ? styles.PieceNameContainerSelected
+                      : null,
+                    this.props.currentSelectedPieceInTable !== null &&
+                    this.props.currentSelectedPieceInTable.pieceId !==
+                      pieceInCell.id
+                      ? styles.PieceNameContainerNotSelected
+                      : null
+                  ].join(' ')}
+                  title={pieceInCell.name}
+                  onClick={e =>
+                    this.pieceNameContainerClickedHandler(
+                      e,
+                      pieceInCell.id,
+                      pieceInCell.pieceType
+                    )
+                  }
+                >
+                  {getFirstNWords(10, pieceInCell.name)}
+                </div>
+              </ContextMenuTrigger>
+              <ContextMenu id={`${cell.id}-context-menu`}>
+                <MenuItem
+                  onClick={e =>
+                    this.removePieceFromCellClickedHandler(e, pieceInCell.id)
+                  }
+                >
+                  Remove from table
+                </MenuItem>
+              </ContextMenu>
+            </React.Fragment>
           ) : null}
         </div>
       </td>

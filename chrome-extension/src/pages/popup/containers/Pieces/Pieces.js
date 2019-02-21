@@ -48,6 +48,7 @@ const PiecesContainer = styled.div`
 const PiecesUL = styled.ul`
   list-style-type: none;
   padding: 0px;
+  margin: 0px 0px;
 `;
 
 const PieceLI = styled.li`

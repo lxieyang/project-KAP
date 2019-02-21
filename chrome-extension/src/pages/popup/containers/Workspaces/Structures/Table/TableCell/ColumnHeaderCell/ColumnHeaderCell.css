@@ -43,7 +43,7 @@
 /* .AttitudeInTableCellIsShowing, */
 .PieceNameContainer:hover,
 .PieceNameContainerSelected {
-  background-color: #8cdff8;
+  background-color: #aed6f1;
   border-radius: 2px;
 }
 
