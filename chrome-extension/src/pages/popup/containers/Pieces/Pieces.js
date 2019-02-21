@@ -10,6 +10,7 @@ import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
+import { isEqual } from 'lodash';
 
 import Countdown from 'react-countdown-now';
 
@@ -61,6 +62,7 @@ const styles = theme => ({
 });
 
 const TAB_VALUES = {
+  invalid: -1,
   all: 1,
   trashed: 2,
   uncategorized: 3,
@@ -83,7 +85,8 @@ class Pieces extends Component {
     toDeletePieceName: '',
 
     // tab control
-    activeTabValue: TAB_VALUES.uncategorized
+    activeTabValue: TAB_VALUES.uncategorized,
+    lastActiveTabValue: TAB_VALUES.invalid
   };
 
   handleTabChange = (event, activeTabValue) => {
@@ -178,6 +181,38 @@ class Pieces extends Component {
     if (prevProps.currentWorkspaceId !== this.props.currentWorkspaceId) {
       this.getAllPiecesInCurrentTable(this.props.currentWorkspaceId);
     }
+
+    if (
+      !isEqual(
+        prevProps.currentSelectedPieceInTable,
+        this.props.currentSelectedPieceInTable
+      )
+    ) {
+      if (this.props.currentSelectedPieceInTable !== null) {
+        // console.log(
+        //   `should display piece ${
+        //     this.props.currentSelectedPieceInTable.pieceId
+        //   }`
+        // );
+        this.setState(prevState => {
+          return {
+            lastActiveTabValue:
+              prevState.lastActiveTabValue === TAB_VALUES.invalid
+                ? prevState.activeTabValue
+                : prevState.lastActiveTabValue,
+            activeTabValue: TAB_VALUES.all
+          };
+        });
+      } else {
+        // console.log('reset');
+        this.setState(prevState => {
+          return {
+            activeTabValue: prevState.lastActiveTabValue,
+            lastActiveTabValue: TAB_VALUES.invalid
+          };
+        });
+      }
+    }
   }
 
   getAllPiecesInCurrentTable = tableId => {
@@ -217,7 +252,11 @@ class Pieces extends Component {
       currentTaskId,
       activeTabValue
     } = this.state;
-    let { classes } = this.props;
+    let { classes, currentSelectedPieceInTable } = this.props;
+    let idOfCurrentSelectedPieceInTable =
+      currentSelectedPieceInTable !== null
+        ? currentSelectedPieceInTable.pieceId
+        : null;
 
     let piecesList = pieces;
     switch (activeTabValue) {
@@ -240,6 +279,12 @@ class Pieces extends Component {
         break;
 
       case TAB_VALUES.all:
+        if (idOfCurrentSelectedPieceInTable !== null) {
+          piecesList = pieces.filter(
+            p => p.id === idOfCurrentSelectedPieceInTable
+          );
+        }
+        break;
       default:
         break;
     }
@@ -279,6 +324,7 @@ class Pieces extends Component {
                       idx={idx}
                       currentTaskId={currentTaskId}
                       inTrashedTab={activeTabValue === TAB_VALUES.trashed}
+                      currentSelectedPieceInTable={currentSelectedPieceInTable}
                       handleDeleteButtonClicked={this.handleDeleteButtonClicked}
                       handleReviveButtonClicked={this.handleReviveButtonClicked}
                     />

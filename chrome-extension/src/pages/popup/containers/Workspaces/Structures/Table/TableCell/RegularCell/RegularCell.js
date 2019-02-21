@@ -113,6 +113,21 @@ class RegularCell extends Component {
     );
   };
 
+  ratingIconClickedHandler = (e, pieceId, pieceType) => {
+    e.stopPropagation();
+    if (
+      this.props.currentSelectedPieceInTable === null ||
+      this.props.currentSelectedPieceInTable.pieceId !== pieceId
+    ) {
+      this.props.setCurrentSelectedPieceInTable({ pieceId, pieceType });
+    } else {
+      this.props.setCurrentSelectedPieceInTable({
+        pieceId: null,
+        pieceType: null
+      });
+    }
+  };
+
   render() {
     let { classes, cell, pieces, comments, commentCount } = this.props;
     const { anchorEl } = this.state;
@@ -139,10 +154,8 @@ class RegularCell extends Component {
           {piecesList.length > 0 ? (
             <div className={styles.EvidenceIconContainer}>
               {sortBy(piecesList, ['rating']).map((p, idx) => {
-                if (
-                  pieces[p.pieceId] !== undefined &&
-                  pieces[p.pieceId] !== null
-                ) {
+                let piece = pieces[p.pieceId];
+                if (piece !== undefined && piece !== null) {
                   let icon = <InfoIcon />;
                   switch (p.rating) {
                     case RATING_TYPES.positive:
@@ -163,7 +176,28 @@ class RegularCell extends Component {
                         id={`${cell.id}-${p.pieceId}-${idx}-context-menu`}
                         holdToDisplay={-1}
                       >*/}
-                      <div className={[styles.AttitudeInTableCell].join(' ')}>
+                      <div
+                        className={[
+                          styles.AttitudeInTableCell,
+                          this.props.currentSelectedPieceInTable !== null &&
+                          this.props.currentSelectedPieceInTable.pieceId ===
+                            piece.id
+                            ? styles.AttitudeInTableCellSelected
+                            : null,
+                          this.props.currentSelectedPieceInTable !== null &&
+                          this.props.currentSelectedPieceInTable.pieceId !==
+                            piece.id
+                            ? styles.AttitudeInTableCellNotSelected
+                            : null
+                        ].join(' ')}
+                        onClick={e =>
+                          this.ratingIconClickedHandler(
+                            e,
+                            piece.id,
+                            piece.pieceType
+                          )
+                        }
+                      >
                         {icon}
                       </div>
                       {/*</ContextMenuTrigger>*/}
@@ -188,36 +222,29 @@ class RegularCell extends Component {
             </div>
           ) : null}
 
-          {/*
           <div
             className={[
               styles.CellContentEditContainer,
               this.state.contentEdit === '' ? styles.HoverToReveal : null
             ].join(' ')}
           >
-            <div className={styles.TextAreaContainer}>
+            <div
+              className={styles.TextAreaContainer}
+              title={this.state.contentEdit}
+            >
               <Textarea
-                disabled={!editAccess}
                 inputRef={tag => (this.textarea = tag)}
-                minRows={2}
-                maxRows={5}
-                placeholder={
-                  editAccess && piecesList.length === 0
-                    ? 'Type or drop a snippet card here as evidence'
-                    : ''
-                }
+                minRows={1}
+                maxRows={3}
+                placeholder={''}
                 value={this.state.contentEdit}
                 onKeyDown={this.keyPress}
                 onBlur={e => this.saveCellContentClickedHandler(e)}
                 onChange={e => this.handleCellContentInputChange(e)}
-                className={[
-                  styles.Textarea,
-                  editAccess ? styles.TextareaEditable : null
-                ].join(' ')}
+                className={[styles.Textarea].join(' ')}
               />
             </div>
           </div>
-          */}
         </div>
       </td>
     );

@@ -140,6 +140,12 @@ class Table extends Component {
               columnToDelete={this.state.columnToDelete}
               setRowToDelete={this.setRowToDelete}
               setColumnToDelete={this.setColumnToDelete}
+              currentSelectedPieceInTable={
+                this.props.currentSelectedPieceInTable
+              }
+              setCurrentSelectedPieceInTable={
+                this.props.setCurrentSelectedPieceInTable
+              }
               openScreenshot={this.props.openScreenshot}
             />
           );
@@ -201,6 +207,12 @@ class Table extends Component {
                       columnToDelete={this.state.columnToDelete}
                       setRowToDelete={this.setRowToDelete}
                       setColumnToDelete={this.setColumnToDelete}
+                      currentSelectedPieceInTable={
+                        this.props.currentSelectedPieceInTable
+                      }
+                      setCurrentSelectedPieceInTable={
+                        this.props.setCurrentSelectedPieceInTable
+                      }
                       openScreenshot={this.props.openScreenshot}
                     />
                   );

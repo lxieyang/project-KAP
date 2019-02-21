@@ -346,6 +346,12 @@ class Workspaces extends Component {
                             pieces={pieces}
                             workspace={workspace}
                             workspaceTypeString={'table'}
+                            setCurrentSelectedPieceInTable={
+                              this.props.setCurrentSelectedPieceInTable
+                            }
+                            currentSelectedPieceInTable={
+                              this.props.currentSelectedPieceInTable
+                            }
                           />
                         </WorkspacesContentContainer>
                       ) : null}

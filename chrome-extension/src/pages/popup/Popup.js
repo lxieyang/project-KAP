@@ -24,7 +24,9 @@ class Popup extends Component {
 
     loadingUserInfo: true,
 
-    currentWorkspaceId: '0'
+    currentWorkspaceId: '0',
+
+    currentSelectedPieceInTable: null
   };
 
   componentDidMount() {
@@ -122,6 +124,19 @@ class Popup extends Component {
     this.setState({ currentWorkspaceId: workspaceId });
   };
 
+  setCurrentSelectedPieceInTable = ({ pieceId, pieceType }) => {
+    // console.log(pieceId, ' ', pieceType);
+    if (pieceId !== null) {
+      this.setState({
+        currentSelectedPieceInTable: { pieceId, pieceType }
+      });
+    } else {
+      this.setState({
+        currentSelectedPieceInTable: null
+      });
+    }
+  };
+
   render() {
     if (this.state.loadingUserInfo) {
       return (
@@ -195,8 +210,15 @@ class Popup extends Component {
           Successfully logged into {APP_NAME_SHORT}.
         </div>*/}
         <TaskSwitcher setCurrentTaskId={this.setCurrentTaskId} />
-        <Workspaces setCurrentWorkspaceId={this.setCurrentWorkspaceId} />
-        <Pieces currentWorkspaceId={this.state.currentWorkspaceId} />
+        <Workspaces
+          setCurrentWorkspaceId={this.setCurrentWorkspaceId}
+          setCurrentSelectedPieceInTable={this.setCurrentSelectedPieceInTable}
+          currentSelectedPieceInTable={this.state.currentSelectedPieceInTable}
+        />
+        <Pieces
+          currentWorkspaceId={this.state.currentWorkspaceId}
+          currentSelectedPieceInTable={this.state.currentSelectedPieceInTable}
+        />
       </React.Fragment>
     );
   }
