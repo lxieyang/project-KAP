@@ -51,20 +51,20 @@ class TopLeftCell extends Component {
           className={classes.button}
           onClick={e => this.createNewTableRowAtTheBeginning(e)}
         >
-          <PlusCircle style={{ width: 11, height: 11 }} />
+          <PlusCircle style={{ width: 20, height: 20 }} />
         </ActionButton>
       </div>
     );
 
     let addColumnButton = (
-      <div className={styles.AddColumnButtonContainer}>
+      <div className={styles.AddColumnButtonContainer} style={{ zIndex: 99 }}>
         <ActionButton
           title={`Add a column`}
           style={{ color: PIECE_COLOR.criterion, zIndex: 9999 }}
           className={classes.button}
           onClick={e => this.createNewTableColumnAtTheBeginning(e)}
         >
-          <PlusCircle style={{ width: 11, height: 11 }} />
+          <PlusCircle style={{ width: 20, height: 20 }} />
         </ActionButton>
       </div>
     );

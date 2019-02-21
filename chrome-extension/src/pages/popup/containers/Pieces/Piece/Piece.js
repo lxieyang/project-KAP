@@ -367,32 +367,42 @@ class Piece extends Component {
         break;
     }
 
-    return connectDragPreview(
+    return (
       <div>
         <React.Fragment>
-          <Card className={classes.card}>
+          <Card
+            className={classes.card}
+            style={{ border: isDragging ? '3px solid red' : null }}
+          >
             <CardContent
               style={{ display: 'flex', padding: '0px', position: 'relative' }}
               className={classes.cardContent}
             >
               {connectDragSource(
                 <div style={{ cursor: 'move' }}>
-                  <Avatar
-                    aria-label="type"
-                    style={{
-                      backgroundColor: color,
-                      width: '28px',
-                      height: '28px',
-                      color: 'white'
-                    }}
-                    className={classesInCSS.Avatar}
-                    onClick={this.handleTypeAvatarClick}
-                  >
-                    <FontAwesomeIcon
-                      icon={icon}
-                      className={classesInCSS.IconInsideAvatar}
-                    />
-                  </Avatar>
+                  <div style={{ marginTop: '8px', marginLeft: '5px' }}>
+                    {connectDragPreview(
+                      <div>
+                        <Avatar
+                          aria-label="type"
+                          style={{
+                            backgroundColor: color,
+                            width: '28px',
+                            height: '28px',
+                            color: 'white'
+                          }}
+                          className={classesInCSS.Avatar}
+                          onClick={this.handleTypeAvatarClick}
+                        >
+                          <FontAwesomeIcon
+                            icon={icon}
+                            className={classesInCSS.IconInsideAvatar}
+                          />
+                        </Avatar>
+                      </div>
+                    )}
+                  </div>
+
                   <Menu
                     id={`long-menu-${piece.id}`}
                     anchorEl={anchorEl}

@@ -246,7 +246,13 @@ class RegularCell extends Component {
         </div>
 
         {/* regular */}
-        <div className={styles.RegularContentContainer}>
+        <div
+          className={styles.RegularContentContainer}
+          style={{
+            transition: 'all 0.1s ease-in',
+            opacity: isOver ? 0.3 : null
+          }}
+        >
           {piecesList.length > 0 ? (
             <div className={styles.EvidenceIconContainer}>
               {sortBy(piecesList, ['rating']).map((p, idx) => {

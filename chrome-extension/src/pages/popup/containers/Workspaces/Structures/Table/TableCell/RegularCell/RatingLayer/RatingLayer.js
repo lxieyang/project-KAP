@@ -105,7 +105,7 @@ class RatingLayer extends Component {
         icon = <ThumbV1 type={'down'} />;
         break;
       case RATING_TYPES.info:
-        backdropColor = '#FCF3CF';
+        backdropColor = '#FCE500';
         icon = <InfoIcon />;
         break;
       default:
@@ -121,9 +121,7 @@ class RatingLayer extends Component {
             opacity: isOver ? '1' : '0'
           }}
         >
-          <div style={{ width: '15px', height: '15px', marginTop: '5px' }}>
-            {icon}
-          </div>
+          <div style={{ width: '95%', marginTop: '5px' }}>{icon}</div>
         </div>
       </div>
     );

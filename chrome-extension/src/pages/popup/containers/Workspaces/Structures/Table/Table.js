@@ -198,6 +198,8 @@ class Table extends Component {
                     <TableCell
                       key={`${idx}-${indexInRow}`}
                       taskId={this.props.taskId}
+                      numRows={tableRows.length}
+                      numColumns={tableRows[0].data.length}
                       pieces={this.props.pieces}
                       workspace={workspace}
                       cell={cell}

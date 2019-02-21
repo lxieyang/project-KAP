@@ -110,7 +110,7 @@ class RatingLayer extends Component {
         icon = <ThumbV1 type={'down'} />;
         break;
       case RATING_TYPES.info:
-        backdropColor = '#FCF3CF';
+        backdropColor = '#FCE500';
         icon = <InfoIcon />;
         break;
       default:

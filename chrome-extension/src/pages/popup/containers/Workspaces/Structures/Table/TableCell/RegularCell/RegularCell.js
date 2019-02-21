@@ -183,6 +183,7 @@ class RegularCell extends Component {
       <td
         className={styles.RegularCell}
         style={{
+          // zoom: isOver ? 3 : null,
           backgroundColor:
             this.props.columnIndex === this.props.columnToDelete
               ? THEME_COLOR.alertBackgroundColor
@@ -206,7 +207,13 @@ class RegularCell extends Component {
         </div>
 
         {/* regular */}
-        <div className={styles.RegularContentContainer}>
+        <div
+          className={styles.RegularContentContainer}
+          style={{
+            transition: 'all 0.1s ease-in',
+            opacity: isOver ? 0.2 : null
+          }}
+        >
           {piecesList.length > 0 ? (
             <div className={styles.EvidenceIconContainer}>
               {sortBy(piecesList, ['rating']).map((p, idx) => {

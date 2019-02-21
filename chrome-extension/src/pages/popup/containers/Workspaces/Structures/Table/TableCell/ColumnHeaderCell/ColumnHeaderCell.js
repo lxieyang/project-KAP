@@ -406,7 +406,7 @@ class ColumnHeaderCell extends Component {
               : null
         }}
       >
-        {deleteColumnActionContainer}
+        {this.props.numColumns > 2 ? deleteColumnActionContainer : null}
 
         <div className={styles.ColumnHeaderCellContainer}>
           {pieceInCell !== null ? (

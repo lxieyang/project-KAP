@@ -413,7 +413,7 @@ class RowHeaderCell extends Component {
             : null
         }}
       >
-        {deleteRowActionContainer}
+        {this.props.numRows > 2 ? deleteRowActionContainer : null}
 
         <div className={styles.RowHeaderCellContainer}>
           {pieceInCell !== null ? (
