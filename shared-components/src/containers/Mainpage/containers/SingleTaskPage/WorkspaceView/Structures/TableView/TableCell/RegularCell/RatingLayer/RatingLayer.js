@@ -21,11 +21,11 @@ const dropTarget = {
     }
 
     // can't drop if already exist
-    const item = monitor.getItem();
-    const pieces = props.cell.pieces.map(p => p.pieceId);
-    if (pieces.indexOf(item.id) !== -1) {
-      return false;
-    }
+    // const item = monitor.getItem();
+    // const pieces = props.cell.pieces.map(p => p.pieceId);
+    // if (pieces.indexOf(item.id) !== -1) {
+    //   return false;
+    // }
 
     return true;
   },
@@ -34,8 +34,14 @@ const dropTarget = {
     // console.log(`Dropped on cell ${props.cell.id}`);
     const item = monitor.getItem();
     // console.log(item);
-
-    component.addPieceToThisCell(item.id);
+    const pieces = props.cell.pieces.map(p => p.pieceId);
+    let idx = pieces.indexOf(item.id);
+    if (idx !== -1) {
+      // should switch rating type
+      component.switchRatingTypeOfPiece(item.id);
+    } else {
+      component.addPieceToThisCell(item.id);
+    }
 
     return {
       id: props.cell.id
@@ -73,6 +79,15 @@ class RatingLayer extends Component {
 
     // change type to snippet
     this.changePieceType(pieceId);
+  };
+
+  switchRatingTypeOfPiece = pieceId => {
+    FirestoreManager.switchPieceRatingType(
+      this.props.workspace.id,
+      this.props.cell.id,
+      pieceId,
+      this.props.ratingType
+    );
   };
 
   changePieceType = (pieceId, to = PIECE_TYPES.snippet) => {

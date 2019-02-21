@@ -183,6 +183,22 @@ export const addPieceToTableCellById = async (
   return updatePiecesTableCellById(tableId, cellId, pieces);
 };
 
+export const switchPieceRatingType = async (
+  tableId,
+  cellId,
+  pieceId,
+  rating = RATING_TYPES.noRating
+) => {
+  let pieces = (await getTableCellById(tableId, cellId).get()).data().pieces;
+  for (let i = 0; i < pieces.length; i++) {
+    if (pieces[i].pieceId === pieceId) {
+      pieces[i].rating = rating;
+      break;
+    }
+  }
+  return updatePiecesTableCellById(tableId, cellId, pieces);
+};
+
 export const deletePieceInTableCellById = async (tableId, cellId, pieceId) => {
   let pieces = (await getTableCellById(tableId, cellId).get()).data().pieces;
   pieces = pieces.filter(p => p.pieceId !== pieceId);

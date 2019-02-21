@@ -172,35 +172,36 @@ class RegularCell extends Component {
                   }
                   return (
                     <React.Fragment key={`${p.pieceId}-${idx}`}>
-                      {/*<ContextMenuTrigger
+                      <ContextMenuTrigger
+                        renderTag={'span'}
                         id={`${cell.id}-${p.pieceId}-${idx}-context-menu`}
                         holdToDisplay={-1}
-                      >*/}
-                      <div
-                        className={[
-                          styles.AttitudeInTableCell,
-                          this.props.currentSelectedPieceInTable !== null &&
-                          this.props.currentSelectedPieceInTable.pieceId ===
-                            piece.id
-                            ? styles.AttitudeInTableCellSelected
-                            : null,
-                          this.props.currentSelectedPieceInTable !== null &&
-                          this.props.currentSelectedPieceInTable.pieceId !==
-                            piece.id
-                            ? styles.AttitudeInTableCellNotSelected
-                            : null
-                        ].join(' ')}
-                        onClick={e =>
-                          this.ratingIconClickedHandler(
-                            e,
-                            piece.id,
-                            piece.pieceType
-                          )
-                        }
                       >
-                        {icon}
-                      </div>
-                      {/*</ContextMenuTrigger>*/}
+                        <div
+                          className={[
+                            styles.AttitudeInTableCell,
+                            this.props.currentSelectedPieceInTable !== null &&
+                            this.props.currentSelectedPieceInTable.pieceId ===
+                              piece.id
+                              ? styles.AttitudeInTableCellSelected
+                              : null,
+                            this.props.currentSelectedPieceInTable !== null &&
+                            this.props.currentSelectedPieceInTable.pieceId !==
+                              piece.id
+                              ? styles.AttitudeInTableCellNotSelected
+                              : null
+                          ].join(' ')}
+                          onClick={e =>
+                            this.ratingIconClickedHandler(
+                              e,
+                              piece.id,
+                              piece.pieceType
+                            )
+                          }
+                        >
+                          {icon}
+                        </div>
+                      </ContextMenuTrigger>
 
                       <ContextMenu
                         id={`${cell.id}-${p.pieceId}-${idx}-context-menu`}

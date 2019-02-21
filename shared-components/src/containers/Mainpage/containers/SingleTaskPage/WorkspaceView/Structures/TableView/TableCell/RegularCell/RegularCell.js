@@ -301,7 +301,7 @@ class RegularCell extends Component {
                         </ContextMenu>
                       ) : null}
                       <ReactTooltip
-                        place="right"
+                        place="bottom"
                         type="light"
                         effect="solid"
                         delayHide={200}
