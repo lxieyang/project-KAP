@@ -68,6 +68,100 @@ const ActionButton = withStyles({
   }
 })(Button);
 
+const dropTarget = {
+  canDrop(props, monitor, component) {
+    // can't drop if already exist
+    const item = monitor.getItem();
+    const dropPieceId = item.id;
+    const dropPieceCellId = item.cellId;
+    const dropPieceCellType = item.cellType;
+    const dropPieceCellColumnIndex = item.columnIndex;
+
+    const allPieces = props.pieces;
+    let cellPieces = props.cell.pieces
+      .filter(
+        p => allPieces[p.pieceId] !== undefined && allPieces[p.pieceId] !== null
+      )
+      .map(p => p.pieceId);
+
+    const pieceIds = props.cell.pieces.map(p => p.pieceId);
+    if (pieceIds.indexOf(dropPieceId) !== -1) {
+      return false;
+    }
+
+    // if (
+    //   cellPieces.length === 0 &&
+    //   dropPieceCellId !== undefined &&
+    //   dropPieceCellType === TABLE_CELL_TYPES.columnHeader
+    // ) {
+    //   // prevent dropping option from other option cells into this cell
+    //   return false;
+    //   // TODO: we CANNOT prevent dropping the same option into two option cells if both drops come from the piecesView
+    // }
+
+    return true;
+  },
+
+  drop(props, monitor, component) {
+    const item = monitor.getItem();
+    const dropPieceId = item.id;
+    const dropPieceCellId = item.cellId;
+    const dropPieceCellType = item.cellType;
+    const dropPieceCellColumnIndex = item.columnIndex;
+
+    const allPieces = props.pieces;
+    let cellPieces = props.cell.pieces
+      .filter(
+        p => allPieces[p.pieceId] !== undefined && allPieces[p.pieceId] !== null
+      )
+      .map(p => p.pieceId);
+
+    if (cellPieces.length === 0 && dropPieceCellId === undefined) {
+      // no stuff in this cell, dropping from piecesView
+      component.resetPieceInThisCell(dropPieceId);
+    } else if (
+      cellPieces.length === 0 &&
+      dropPieceCellId !== undefined &&
+      dropPieceCellType === TABLE_CELL_TYPES.columnHeader
+    ) {
+      // no stuff in this cell, dropping from other column header cells
+      // should switch columns
+      FirestoreManager.switchColumnsInTable(
+        props.workspace.id,
+        props.columnIndex,
+        dropPieceCellColumnIndex
+      );
+    } else if (cellPieces.length > 0 && dropPieceCellId === undefined) {
+      // there's existing piece, but dropping on from the pieceView
+      // should replace with the new one
+      component.resetPieceInThisCell(dropPieceId);
+    } else if (
+      cellPieces.length > 0 &&
+      dropPieceCellId !== undefined &&
+      dropPieceCellType === TABLE_CELL_TYPES.columnHeader
+    ) {
+      // both are from the table, should switch columns
+      FirestoreManager.switchColumnsInTable(
+        props.workspace.id,
+        props.columnIndex,
+        dropPieceCellColumnIndex
+      );
+    }
+
+    return {
+      id: props.cell.id
+    };
+  }
+};
+
+const collectDrop = (connect, monitor) => {
+  return {
+    connectDropTarget: connect.dropTarget(),
+    isOver: monitor.isOver(),
+    canDrop: monitor.canDrop()
+  };
+};
+
 class ColumnHeaderCell extends Component {
   state = {
     contentEdit: this.props.cell.content,
@@ -82,6 +176,13 @@ class ColumnHeaderCell extends Component {
 
     // textarea focus
     textareaFocused: false
+  };
+
+  static propTypes = {
+    // Injected by React DnD:
+    connectDropTarget: PropTypes.func.isRequired,
+    isOver: PropTypes.bool.isRequired,
+    canDrop: PropTypes.bool.isRequired
   };
 
   componentDidUpdate(prevProps, prevState) {
@@ -250,6 +351,8 @@ class ColumnHeaderCell extends Component {
   };
 
   render() {
+    const { connectDropTarget, canDrop, isOver } = this.props;
+
     let { classes, cell, pieces, comments, commentCount } = this.props;
     const { anchorEl } = this.state;
     const open = Boolean(anchorEl);
@@ -290,7 +393,7 @@ class ColumnHeaderCell extends Component {
       pieceInCell = pieces[cell.pieces[0].pieceId];
     }
 
-    return (
+    return connectDropTarget(
       <th
         className={styles.ColumnHeaderCell}
         style={{
@@ -298,6 +401,8 @@ class ColumnHeaderCell extends Component {
           backgroundColor:
             this.props.columnIndex === this.props.columnToDelete
               ? THEME_COLOR.alertBackgroundColor
+              : isOver && canDrop
+              ? '#aed6f1'
               : null
         }}
       >
@@ -377,4 +482,6 @@ class ColumnHeaderCell extends Component {
   }
 }
 
-export default withStyles(materialStyles)(ColumnHeaderCell);
+export default withStyles(materialStyles)(
+  DropTarget(['PIECE_ITEM'], dropTarget, collectDrop)(ColumnHeaderCell)
+);
