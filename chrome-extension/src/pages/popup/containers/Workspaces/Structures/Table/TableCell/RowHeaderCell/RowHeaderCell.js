@@ -70,6 +70,98 @@ const ActionButton = withStyles({
   }
 })(Button);
 
+const dropTarget = {
+  canDrop(props, monitor, component) {
+    // can't drop if already exist
+    const item = monitor.getItem();
+    const dropPieceId = item.id;
+    const dropPieceCellId = item.cellId;
+    const dropPieceCellType = item.cellType;
+    const dropPieceCellRowIndex = item.rowIndex;
+
+    const allPieces = props.pieces;
+    let cellPieces = props.cell.pieces
+      .filter(
+        p => allPieces[p.pieceId] !== undefined && allPieces[p.pieceId] !== null
+      )
+      .map(p => p.pieceId);
+
+    const pieceIds = props.cell.pieces.map(p => p.pieceId);
+    if (pieceIds.indexOf(dropPieceId) !== -1) {
+      // prevent dropping the same thing
+      return false;
+    }
+
+    // if (
+    //   cellPieces.length === 0 &&
+    //   dropPieceCellId !== undefined &&
+    //   dropPieceCellType === TABLE_CELL_TYPES.rowHeader
+    // ) {
+    //   // prevent dropping option from other option cells into this cell
+    //   return false;
+    //   // TODO: we CANNOT prevent dropping the same option into two option cells if both drops come from the piecesView
+    // }
+
+    return true;
+  },
+
+  drop(props, monitor, component) {
+    const item = monitor.getItem();
+    const dropPieceId = item.id;
+    const dropPieceCellId = item.cellId;
+    const dropPieceCellType = item.cellType;
+    const dropPieceCellRowIndex = item.rowIndex;
+
+    const allPieces = props.pieces;
+    let cellPieces = props.cell.pieces
+      .filter(
+        p => allPieces[p.pieceId] !== undefined && allPieces[p.pieceId] !== null
+      )
+      .map(p => p.pieceId);
+
+    if (cellPieces.length === 0 && dropPieceCellId === undefined) {
+      // no stuff in this cell, dropping from piecesView
+      component.resetPieceInThisCell(dropPieceId);
+    } else if (
+      cellPieces.length === 0 &&
+      dropPieceCellId !== undefined &&
+      dropPieceCellType === TABLE_CELL_TYPES.rowHeader
+    ) {
+      FirestoreManager.switchRowsInTable(
+        props.workspace.id,
+        props.rowIndex,
+        dropPieceCellRowIndex
+      );
+    } else if (cellPieces.length > 0 && dropPieceCellId === undefined) {
+      // there's existing piece, but dropping on from the pieceView
+      component.resetPieceInThisCell(dropPieceId);
+    } else if (
+      cellPieces.length > 0 &&
+      dropPieceCellId !== undefined &&
+      dropPieceCellType === TABLE_CELL_TYPES.rowHeader
+    ) {
+      // both are from the table, should switch rows
+      FirestoreManager.switchRowsInTable(
+        props.workspace.id,
+        props.rowIndex,
+        dropPieceCellRowIndex
+      );
+    }
+
+    return {
+      id: props.cell.id
+    };
+  }
+};
+
+const collectDrop = (connect, monitor) => {
+  return {
+    connectDropTarget: connect.dropTarget(),
+    isOver: monitor.isOver(),
+    canDrop: monitor.canDrop()
+  };
+};
+
 class RowHeaderCell extends Component {
   state = {
     contentEdit: this.props.cell.content,
@@ -84,6 +176,13 @@ class RowHeaderCell extends Component {
 
     // textarea focus
     textareaFocused: false
+  };
+
+  static propTypes = {
+    // Injected by React DnD:
+    connectDropTarget: PropTypes.func.isRequired,
+    isOver: PropTypes.bool.isRequired,
+    canDrop: PropTypes.bool.isRequired
   };
 
   componentDidUpdate(prevProps, prevState) {
@@ -261,6 +360,7 @@ class RowHeaderCell extends Component {
   };
 
   render() {
+    const { connectDropTarget, canDrop, isOver } = this.props;
     let { classes, cell, pieces, comments, commentCount } = this.props;
     const { anchorEl } = this.state;
     const open = Boolean(anchorEl);
@@ -301,13 +401,15 @@ class RowHeaderCell extends Component {
       pieceInCell = pieces[cell.pieces[0].pieceId];
     }
 
-    return (
+    return connectDropTarget(
       <td
         className={styles.RowHeaderCell}
         style={{
           borderLeft: `3px solid ${PIECE_COLOR.option}`,
           backgroundColor: cell.checked
             ? THEME_COLOR.optionChosenBackgroundColor
+            : isOver && canDrop
+            ? '#f8c471'
             : null
         }}
       >
@@ -387,4 +489,6 @@ class RowHeaderCell extends Component {
   }
 }
 
-export default withStyles(materialStyles)(RowHeaderCell);
+export default withStyles(materialStyles)(
+  DropTarget(['PIECE_ITEM'], dropTarget, collectDrop)(RowHeaderCell)
+);

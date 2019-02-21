@@ -153,39 +153,6 @@ const dropTarget = {
       );
     }
 
-    // let pieces = props.cell.pieces.map(p => p.pieceId);
-    // let content = props.cell.content;
-    // let thereIsContent = content !== undefined && content !== '';
-    // if (pieces.length === 0 && !thereIsContent) {
-    //   // no stuff in this cell
-    //   component.addPieceToThisCell(dropPieceId);
-    // } else if (pieces.length > 0 && dropPieceCellId === undefined) {
-    //   // there's existing piece, but dropping on from the pieceView
-    //   component.resetPieceInThisCell(dropPieceId);
-    // } else if (
-    //   pieces.length > 0 &&
-    //   dropPieceCellId !== undefined &&
-    //   dropPieceCellType === TABLE_CELL_TYPES.rowHeader
-    // ) {
-    //   // both are from the table, should switch rows
-    //   FirestoreManager.switchRowsInTable(
-    //     props.workspace.id,
-    //     props.rowIndex,
-    //     dropPieceCellRowIndex
-    //   );
-    // } else if (
-    //   pieces.length === 0 &&
-    //   thereIsContent &&
-    //   dropPieceCellId !== undefined &&
-    //   dropPieceCellType === TABLE_CELL_TYPES.rowHeader
-    // ) {
-    //   // both are from the table, should switch rows
-    //   FirestoreManager.switchRowsInTable(
-    //     props.workspace.id,
-    //     props.rowIndex,
-    //     dropPieceCellRowIndex
-    //   );
-    // }
     return {
       id: props.cell.id
     };
