@@ -26,18 +26,15 @@ import Collapse from '@material-ui/core/Collapse';
 import Avatar from '@material-ui/core/Avatar';
 import IconButton from '@material-ui/core/IconButton';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import MoreVertIcon from '@material-ui/icons/MoreVert';
 import Button from '@material-ui/core/Button';
 import Icon from '@material-ui/core/Icon';
 import SaveIcon from '@material-ui/icons/Save';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import DeleteIcon from '@material-ui/icons/Delete';
-import EditIcon from '@material-ui/icons/Edit';
 import Chat from 'mdi-material-ui/Chat';
 import Looks from 'mdi-material-ui/Looks';
 import Tooltip from '@material-ui/core/Tooltip';
-import Divider from '@material-ui/core/Divider';
 
 import Textarea from 'react-textarea-autosize';
 
@@ -45,6 +42,15 @@ import { GET_FAVICON_URL_PREFIX } from '../../../../../../../shared-components/s
 import Spinner from '../../../../../../../shared-components/src/components/UI/Spinner/Spinner';
 
 import moment from 'moment';
+
+// dnd stuff
+import {
+  DragSource,
+  ConnectDragPreview,
+  ConnectDragSource,
+  DropTarget
+} from 'react-dnd';
+import PropTypes from 'prop-types';
 
 const styles = theme => ({
   card: {
@@ -132,6 +138,45 @@ const getHTML = htmls => {
   return { __html: htmlString };
 };
 
+//
+//
+//
+//
+//
+/* drag and drop */
+const dragSource = {
+  beginDrag(props) {
+    return {
+      id: props.piece.id,
+      cellId: props.cellId,
+      cellType: props.cellType,
+      rowIndex: props.rowIndex,
+      columnIndex: props.columnIndex
+    };
+  },
+  canDrag(props, monitor) {
+    return true;
+  },
+
+  endDrag(props, monitor, component) {
+    const item = monitor.getDropResult();
+    if (item !== null && item.id !== null && item.id !== undefined) {
+      // dropped in a table cell
+      if (props.inTrashedTab) {
+        FirestoreManager.revivePieceById(props.piece.id);
+      }
+    }
+  }
+};
+
+const collectDrag = (connect, monitor) => {
+  return {
+    connectDragSource: connect.dragSource(),
+    connectDragPreview: connect.dragPreview(),
+    isDragging: monitor.isDragging()
+  };
+};
+
 class Piece extends Component {
   state = {
     expanded:
@@ -158,6 +203,12 @@ class Piece extends Component {
 
     // comment
     commentCount: 0
+  };
+
+  static propTypes = {
+    // Injected by React DnD:
+    connectDragSource: PropTypes.func.isRequired,
+    isDragging: PropTypes.bool.isRequired
   };
 
   componentDidMount() {
@@ -235,9 +286,11 @@ class Piece extends Component {
     this.setState({ editingPieceName: false, expanded });
   };
 
-  // piece type
+  // piece type switch in uncategorized tab
   handleTypeAvatarClick = event => {
-    this.setState({ anchorEl: event.currentTarget });
+    if (this.props.inUncategorizedTab) {
+      this.setState({ anchorEl: event.currentTarget });
+    }
   };
 
   handleTypeAvatarClose = () => {
@@ -277,6 +330,8 @@ class Piece extends Component {
   };
 
   render() {
+    const { connectDragSource, connectDragPreview, isDragging } = this.props; // dnd
+
     let { piece, classes, isHovering } = this.props;
     const {
       anchorEl,
@@ -312,105 +367,108 @@ class Piece extends Component {
         break;
     }
 
-    return (
-      <React.Fragment>
-        <Card className={classes.card}>
-          <CardContent
-            style={{ display: 'flex', padding: '0px', position: 'relative' }}
-            className={classes.cardContent}
-          >
-            <div>
-              <Avatar
-                aria-label="type"
-                style={{
-                  backgroundColor: color,
-                  width: '28px',
-                  height: '28px',
-                  color: 'white'
-                }}
-                className={classesInCSS.Avatar}
-                onClick={this.handleTypeAvatarClick}
-              >
-                <FontAwesomeIcon
-                  icon={icon}
-                  className={classesInCSS.IconInsideAvatar}
-                />
-              </Avatar>
-              <Menu
-                id={`long-menu-${piece.id}`}
-                anchorEl={anchorEl}
-                open={open}
-                onClose={this.handleTypeAvatarClose}
-                PaperProps={{
-                  style: {
-                    maxHeight: 120,
-                    width: 90
-                  }
-                }}
-              >
-                {options.map(option => (
-                  <MenuItem
-                    key={option.text}
-                    selected={piece.pieceType === option.type}
-                    onClick={e =>
-                      this.switchPieceTypeClickedHandler(
-                        piece.id,
-                        piece.pieceType,
-                        option.type
-                      )
-                    }
+    return connectDragPreview(
+      <div>
+        <React.Fragment>
+          <Card className={classes.card}>
+            <CardContent
+              style={{ display: 'flex', padding: '0px', position: 'relative' }}
+              className={classes.cardContent}
+            >
+              {connectDragSource(
+                <div style={{ cursor: 'move' }}>
+                  <Avatar
+                    aria-label="type"
                     style={{
-                      padding: '4px 4px',
-                      fontSize: '12px',
-                      display: 'flex',
-                      alignItems: 'center'
+                      backgroundColor: color,
+                      width: '28px',
+                      height: '28px',
+                      color: 'white'
+                    }}
+                    className={classesInCSS.Avatar}
+                    onClick={this.handleTypeAvatarClick}
+                  >
+                    <FontAwesomeIcon
+                      icon={icon}
+                      className={classesInCSS.IconInsideAvatar}
+                    />
+                  </Avatar>
+                  <Menu
+                    id={`long-menu-${piece.id}`}
+                    anchorEl={anchorEl}
+                    open={open}
+                    onClose={this.handleTypeAvatarClose}
+                    PaperProps={{
+                      style: {
+                        maxHeight: 120,
+                        width: 90
+                      }
                     }}
                   >
-                    <Avatar
-                      aria-label="type"
-                      style={{
-                        backgroundColor: option.color,
-                        width: '24px',
-                        height: '24px',
-                        color: 'white',
-                        display: 'flex',
-                        justifyContent: 'center',
-                        alignItems: 'center'
-                      }}
-                    >
-                      <FontAwesomeIcon
-                        icon={option.icon}
-                        style={{ fontSize: '12px' }}
-                      />
-                    </Avatar>
-                    &nbsp; {option.text}
-                  </MenuItem>
-                ))}
-              </Menu>
-            </div>
+                    {options.map(option => (
+                      <MenuItem
+                        key={option.text}
+                        selected={piece.pieceType === option.type}
+                        onClick={e =>
+                          this.switchPieceTypeClickedHandler(
+                            piece.id,
+                            piece.pieceType,
+                            option.type
+                          )
+                        }
+                        style={{
+                          padding: '4px 4px',
+                          fontSize: '12px',
+                          display: 'flex',
+                          alignItems: 'center'
+                        }}
+                      >
+                        <Avatar
+                          aria-label="type"
+                          style={{
+                            backgroundColor: option.color,
+                            width: '24px',
+                            height: '24px',
+                            color: 'white',
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignItems: 'center'
+                          }}
+                        >
+                          <FontAwesomeIcon
+                            icon={option.icon}
+                            style={{ fontSize: '12px' }}
+                          />
+                        </Avatar>
+                        &nbsp; {option.text}
+                      </MenuItem>
+                    ))}
+                  </Menu>
+                </div>
+              )}
 
-            <div
-              style={{
-                flex: '1'
-              }}
-            >
-              {' '}
-              {this.state.editingPieceName ? (
-                <div className={classesInCSS.PieceNameEditContainer}>
-                  <div className={classesInCSS.TextAreaContainer}>
-                    <Textarea
-                      inputRef={tag => (this.textarea = tag)}
-                      minRows={1}
-                      maxRows={4}
-                      placeholder={'Add a name'}
-                      value={this.state.pieceName}
-                      onKeyDown={this.keyPress}
-                      onBlur={() => this.savePieceNameClickedHandler()}
-                      onChange={e => this.handlePieceNameInputChange(e)}
-                      className={classesInCSS.Textarea}
-                    />
-                  </div>
-                  {/*
+              <div
+                style={{
+                  flex: '1'
+                }}
+              >
+                {' '}
+                {this.state.editingPieceName ? (
+                  <div className={classesInCSS.PieceNameEditContainer}>
+                    <div className={classesInCSS.TextAreaContainer}>
+                      <Textarea
+                        inputRef={tag => (this.textarea = tag)}
+                        minRows={1}
+                        maxRows={4}
+                        placeholder={'Add a name'}
+                        value={this.state.pieceName}
+                        onKeyDown={this.keyPress}
+                        onBlur={() => this.savePieceNameClickedHandler()}
+                        onChange={e => this.handlePieceNameInputChange(e)}
+                        className={classesInCSS.Textarea}
+                      />
+                    </div>
+                    {/*
                   <div className={classesInCSS.TextareaActionSection}>
                     <ActionButton
                       color="secondary"
@@ -427,55 +485,55 @@ class Piece extends Component {
                       Save
                     </ActionButton>
                   </div>*/}
-                </div>
-              ) : (
+                  </div>
+                ) : (
+                  <div
+                    title={`Edit ${typeText} name`}
+                    className={classesInCSS.PieceContentBox}
+                    onClick={() => this.editPieceNameClickedHandler()}
+                  >
+                    <LinesEllipsis
+                      text={piece.name}
+                      maxLine={2}
+                      ellipsis="..."
+                      trimRight
+                      basedOn="words"
+                    />
+                  </div>
+                )}
                 <div
-                  title={`Edit ${typeText} name`}
-                  className={classesInCSS.PieceContentBox}
-                  onClick={() => this.editPieceNameClickedHandler()}
-                >
-                  <LinesEllipsis
-                    text={piece.name}
-                    maxLine={2}
-                    ellipsis="..."
-                    trimRight
-                    basedOn="words"
-                  />
-                </div>
-              )}
-              <div
-                className={classesInCSS.InfoActionBar}
-                style={{
-                  opacity: this.state.expanded || isHovering ? '1' : '0.5'
-                }}
-              >
-                <div
+                  className={classesInCSS.InfoActionBar}
                   style={{
-                    fontSize: '12px',
-                    display: 'flex',
-                    alignItems: 'center'
+                    opacity: this.state.expanded || isHovering ? '1' : '0.5'
                   }}
                 >
-                  {!this.state.expanded ? (
-                    <div style={{ position: 'relative' }}>
-                      <Tooltip title="Make a comment" placement={'top'}>
-                        <IconButton
-                          aria-label="Comment"
-                          className={classes.iconButtons}
-                          onClick={() => this.addCommentClickedHandler()}
+                  <div
+                    style={{
+                      fontSize: '12px',
+                      display: 'flex',
+                      alignItems: 'center'
+                    }}
+                  >
+                    {!this.state.expanded ? (
+                      <div style={{ position: 'relative' }}>
+                        <Tooltip title="Make a comment" placement={'top'}>
+                          <IconButton
+                            aria-label="Comment"
+                            className={classes.iconButtons}
+                            onClick={() => this.addCommentClickedHandler()}
+                          >
+                            <Chat className={classes.iconInIconButtons} />
+                          </IconButton>
+                        </Tooltip>
+                        <span
+                          style={{ color: THEME_COLOR.badgeColor }}
+                          className={classesInCSS.CommentCount}
                         >
-                          <Chat className={classes.iconInIconButtons} />
-                        </IconButton>
-                      </Tooltip>
-                      <span
-                        style={{ color: THEME_COLOR.badgeColor }}
-                        className={classesInCSS.CommentCount}
-                      >
-                        {commentCount > 0 ? commentCount : null}
-                      </span>
-                    </div>
-                  ) : null}
-                  {/*
+                          {commentCount > 0 ? commentCount : null}
+                        </span>
+                      </div>
+                    ) : null}
+                    {/*
                   <Tooltip title={`Edit ${typeText} name`} placement={'top'}>
                     <IconButton
                       aria-label="Edit"
@@ -486,166 +544,169 @@ class Piece extends Component {
                     </IconButton>
                   </Tooltip>
                   */}
-                  {this.props.currentSelectedPieceInTable === null ? (
-                    <Tooltip
-                      title={`${
-                        this.props.inTrashedTab === true
-                          ? 'Permanently Delete'
-                          : 'Trash'
-                      } this ${typeText}`}
-                      placement={'top'}
-                    >
-                      <IconButton
-                        aria-label="Trash"
-                        className={classes.iconButtons}
-                        onClick={() =>
-                          this.props.handleDeleteButtonClicked(
-                            piece.id,
-                            piece.name
-                          )
-                        }
+                    {this.props.currentSelectedPieceInTable === null ? (
+                      <Tooltip
+                        title={`${
+                          this.props.inTrashedTab === true
+                            ? 'Permanently Delete'
+                            : 'Trash'
+                        } this ${typeText}`}
+                        placement={'top'}
                       >
-                        <DeleteIcon className={classes.iconInIconButtons} />
-                      </IconButton>
-                    </Tooltip>
-                  ) : null}
+                        <IconButton
+                          aria-label="Trash"
+                          className={classes.iconButtons}
+                          onClick={() =>
+                            this.props.handleDeleteButtonClicked(
+                              piece.id,
+                              piece.name
+                            )
+                          }
+                        >
+                          <DeleteIcon className={classes.iconInIconButtons} />
+                        </IconButton>
+                      </Tooltip>
+                    ) : null}
 
-                  {this.props.inTrashedTab === true ? (
-                    <Tooltip
-                      title={`Un-trash this ${typeText}`}
-                      placement={'top'}
-                    >
-                      <IconButton
-                        aria-label="Revive"
-                        className={classes.iconButtons}
-                        onClick={() =>
-                          this.props.handleReviveButtonClicked(piece.id)
-                        }
+                    {this.props.inTrashedTab === true ? (
+                      <Tooltip
+                        title={`Un-trash this ${typeText}`}
+                        placement={'top'}
                       >
-                        <Looks className={classes.iconInIconButtons} />
-                      </IconButton>
-                    </Tooltip>
-                  ) : null}
-                </div>
-                <div style={{ display: 'flex', alignItems: 'center' }}>
-                  {piece.references.url !== false ? (
-                    <Tooltip
-                      title={`${
-                        piece.references.pageTitle
-                      }  ---  Click to open`}
-                      placement={'top'}
-                    >
-                      <a
-                        href={piece.references.url}
-                        target="__blank"
-                        className={classesInCSS.SiteIcon}
+                        <IconButton
+                          aria-label="Revive"
+                          className={classes.iconButtons}
+                          onClick={() =>
+                            this.props.handleReviveButtonClicked(piece.id)
+                          }
+                        >
+                          <Looks className={classes.iconInIconButtons} />
+                        </IconButton>
+                      </Tooltip>
+                    ) : null}
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center' }}>
+                    {piece.references.url !== false ? (
+                      <Tooltip
+                        title={`${
+                          piece.references.pageTitle
+                        }  ---  Click to open`}
+                        placement={'top'}
                       >
-                        <img
-                          src={GET_FAVICON_URL_PREFIX + piece.references.url}
-                          alt={'favicon'}
+                        <a
+                          href={piece.references.url}
+                          target="__blank"
                           className={classesInCSS.SiteIcon}
-                        />
-                      </a>
-                    </Tooltip>
-                  ) : null}
+                        >
+                          <img
+                            src={GET_FAVICON_URL_PREFIX + piece.references.url}
+                            alt={'favicon'}
+                            className={classesInCSS.SiteIcon}
+                          />
+                        </a>
+                      </Tooltip>
+                    ) : null}
 
-                  <div className={classesInCSS.Moment}>
-                    {piece.creationDate
-                      ? moment(piece.creationDate.toDate()).fromNow()
-                      : null}
+                    <div className={classesInCSS.Moment}>
+                      {piece.creationDate
+                        ? moment(piece.creationDate.toDate()).fromNow()
+                        : null}
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
 
-            <div
-              style={{
-                flexBasis: '24px',
-                marginLeft: 'auto',
-                order: '3',
-                paddingTop: '3px',
-                opacity: isHovering ? '1' : '0.3'
-                // position: 'absolute',
-                // top: '4px',
-                // right: '4px',
-                // zIndex: '99999'
-              }}
-            >
-              <IconButton
-                size="small"
-                className={classnames(classes.expand, {
-                  [classes.expandOpen]: this.state.expanded
-                })}
-                onClick={this.handleExpandClick}
-                aria-expanded={this.state.expanded}
-                aria-label="Show more"
+              <div
+                style={{
+                  flexBasis: '24px',
+                  marginLeft: 'auto',
+                  order: '3',
+                  paddingTop: '3px',
+                  opacity: isHovering ? '1' : '0.3'
+                  // position: 'absolute',
+                  // top: '4px',
+                  // right: '4px',
+                  // zIndex: '99999'
+                }}
               >
-                <ExpandMoreIcon className={classes.expandIcon} />
-              </IconButton>
-            </div>
-          </CardContent>
+                <IconButton
+                  size="small"
+                  className={classnames(classes.expand, {
+                    [classes.expandOpen]: this.state.expanded
+                  })}
+                  onClick={this.handleExpandClick}
+                  aria-expanded={this.state.expanded}
+                  aria-label="Show more"
+                >
+                  <ExpandMoreIcon className={classes.expandIcon} />
+                </IconButton>
+              </div>
+            </CardContent>
 
-          {/* Original content in collapse */}
-          <Collapse in={this.state.expanded} timeout="auto">
-            <div className={classesInCSS.CollapseContainer}>
-              {displayingScreenshot ? (
-                screenshotLoading ? (
-                  <div
-                    style={{
-                      width: '100%',
-                      height: '200px',
-                      display: 'flex',
-                      justifyContent: 'space-around',
-                      alignItems: 'center'
-                    }}
-                  >
-                    <Spinner size={'30px'} />
-                  </div>
-                ) : (
-                  <React.Fragment>
+            {/* Original content in collapse */}
+            <Collapse in={this.state.expanded} timeout="auto">
+              <div className={classesInCSS.CollapseContainer}>
+                {displayingScreenshot ? (
+                  screenshotLoading ? (
                     <div
-                      className={classesInCSS.OriginalScreenshotContainer}
-                      style={{ maxHeight: `${maxScreenshotHeight}px` }}
+                      style={{
+                        width: '100%',
+                        height: '200px',
+                        display: 'flex',
+                        justifyContent: 'space-around',
+                        alignItems: 'center'
+                      }}
                     >
-                      <img
-                        alt={piece.id}
-                        src={screenshot.imageDataUrl}
-                        style={{
-                          height: `${Math.min(
-                            Math.floor(screenshot.dimensions.rectHeight),
-                            maxScreenshotHeight
-                          )}px`
-                        }}
-                        onClick={() =>
-                          this.screenshotImageClickedHandler(piece.id)
-                        }
-                      />
+                      <Spinner size={'30px'} />
                     </div>
-                  </React.Fragment>
-                )
-              ) : (
-                <div className={classesInCSS.OriginalContentContainer}>
-                  <div
-                    className={classesInCSS.HTMLPreview}
-                    dangerouslySetInnerHTML={getHTML(piece.html)}
-                  />
-                </div>
-              )}
-            </div>
-          </Collapse>
+                  ) : (
+                    <React.Fragment>
+                      <div
+                        className={classesInCSS.OriginalScreenshotContainer}
+                        style={{ maxHeight: `${maxScreenshotHeight}px` }}
+                      >
+                        <img
+                          alt={piece.id}
+                          src={screenshot.imageDataUrl}
+                          style={{
+                            height: `${Math.min(
+                              Math.floor(screenshot.dimensions.rectHeight),
+                              maxScreenshotHeight
+                            )}px`
+                          }}
+                          onClick={() =>
+                            this.screenshotImageClickedHandler(piece.id)
+                          }
+                        />
+                      </div>
+                    </React.Fragment>
+                  )
+                ) : (
+                  <div className={classesInCSS.OriginalContentContainer}>
+                    <div
+                      className={classesInCSS.HTMLPreview}
+                      dangerouslySetInnerHTML={getHTML(piece.html)}
+                    />
+                  </div>
+                )}
+              </div>
+            </Collapse>
 
-          <div>
-            <Comment
-              expanded={this.state.expanded}
-              expandPiece={this.expandPiece}
-              pieceId={piece.id}
-              isHovering={isHovering}
-            />
-          </div>
-        </Card>
-      </React.Fragment>
+            <div>
+              <Comment
+                expanded={this.state.expanded}
+                expandPiece={this.expandPiece}
+                pieceId={piece.id}
+                isHovering={isHovering}
+              />
+            </div>
+          </Card>
+        </React.Fragment>
+      </div>
     );
   }
 }
 
-export default withStyles(styles)(Piece);
+export default withStyles(styles)(
+  DragSource('PIECE_ITEM', dragSource, collectDrag)(Piece)
+);

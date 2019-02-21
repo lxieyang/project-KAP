@@ -1,7 +1,5 @@
 /* global chrome */
 import React, { Component } from 'react';
-import FontAwesomeIcon from '@fortawesome/react-fontawesome';
-import fasExternalLinkSquareAlt from '@fortawesome/fontawesome-free-solid/faExternalLinkSquareAlt';
 
 import AppHeader from '../../../../shared-components/src/components/UI/AppHeader/AppHeader';
 import TaskSwitcher from './containers/TaskSwitcher/TaskSwitcher';
@@ -12,6 +10,9 @@ import './ContextMenu.css';
 import { APP_NAME_SHORT } from '../../../../shared-components/src/shared/constants';
 import Spinner from '../../../../shared-components/src/components/UI/Spinner/Spinner';
 import firebase from '../../../../shared-components/src/firebase/firebase';
+
+import HTML5Backend from 'react-dnd-html5-backend';
+import { DragDropContext } from 'react-dnd';
 
 import * as FirestoreManager from '../../../../shared-components/src/firebase/firestore_wrapper';
 
@@ -225,4 +226,4 @@ class Popup extends Component {
   }
 }
 
-export default Popup;
+export default DragDropContext(HTML5Backend)(Popup);

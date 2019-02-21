@@ -326,6 +326,9 @@ class Pieces extends Component {
                       currentTaskId={currentTaskId}
                       inTrashedTab={activeTabValue === TAB_VALUES.trashed}
                       inAllTab={activeTabValue === TAB_VALUES.all}
+                      inUncategorizedTab={
+                        activeTabValue === TAB_VALUES.uncategorized
+                      }
                       currentSelectedPieceInTable={currentSelectedPieceInTable}
                       handleDeleteButtonClicked={this.handleDeleteButtonClicked}
                       handleReviveButtonClicked={this.handleReviveButtonClicked}
