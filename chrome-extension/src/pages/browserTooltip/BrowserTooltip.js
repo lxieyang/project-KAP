@@ -17,7 +17,11 @@ class BrowserTooltip extends Component {
     userName: null,
     userProfilePhotoURL: null,
 
-    loadingUserInfo: true
+    loadingUserInfo: true,
+
+    hostname: null,
+    url: null,
+    shouldTrack: false
   };
 
   componentDidMount() {
@@ -25,6 +29,21 @@ class BrowserTooltip extends Component {
       { msg: 'GET_USER_INFO', from: 'browserTooltip' },
       response => {
         this.retrieveLoginInfo(response.idToken);
+      }
+    );
+
+    chrome.runtime.sendMessage(
+      {
+        msg: 'GET_TRACKING_STATUS',
+        from: 'browserTooltip'
+      },
+      response => {
+        let { hostname, url, shouldTrack } = response;
+        this.setState({
+          hostname,
+          url,
+          shouldTrack
+        });
       }
     );
   }
@@ -98,6 +117,9 @@ class BrowserTooltip extends Component {
         <LoggedIn
           userName={this.state.userName}
           photoURL={this.state.photoURL}
+          hostname={this.state.hostname}
+          url={this.state.url}
+          shouldTrack={this.state.shouldTrack}
         />
       );
     }

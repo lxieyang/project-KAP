@@ -18,6 +18,37 @@ import {
   Store
 } from 'siphon-tools';
 
+//
+//
+//
+//
+//
+/* send host name to background to determine unakite operation status info */
+const sendHostnameTobackground = () => {
+  chrome.runtime.sendMessage({
+    msg: 'ACTIVE_TAB_HOSTNAME',
+    hostname: window.location.hostname,
+    url: window.location.href,
+    cleanUrl: window.location.origin + window.location.pathname
+  });
+};
+
+sendHostnameTobackground();
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+  if (request.msg === 'GET_ACTIVE_TAB_HOSTNAME') {
+    sendHostnameTobackground();
+  }
+});
+
+// document.addEventListener('visibilitychange', function(){
+
+// })
+
+//
+//
+//
+//
+//
 /** Inject Fontawesome stylesheet
  * Previous using: https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css
  */
@@ -102,7 +133,7 @@ function displayTooltipButtonBasedOnRectPosition(rect, props) {
           }
           ReactDOM.unmountComponentAtNode(popOverAnchor);
         } catch (e) {
-          console.log(e);
+          // console.log(e);
         }
       }}
       {...props}
@@ -175,16 +206,16 @@ const signInOutUserWithCredential = idToken => {
         firebase.auth.GoogleAuthProvider.credential(idToken)
       )
       .then(result => {
-        console.log(
-          `[CONTENT_ANNOTATION] User ${result.user.displayName} (${
-            result.user.uid
-          }) logged in.`
-        );
+        // console.log(
+        //   `[CONTENT_ANNOTATION] User ${result.user.displayName} (${
+        //     result.user.uid
+        //   }) logged in.`
+        // );
 
         SiphonTools.enable();
       })
       .catch(error => {
-        console.log(error);
+        // console.log(error);
       });
   } else {
     // logged out
@@ -192,11 +223,11 @@ const signInOutUserWithCredential = idToken => {
       .auth()
       .signOut()
       .then(() => {
-        console.log('[CONTENT_ANNOTATION] User logged out.');
+        // console.log('[CONTENT_ANNOTATION] User logged out.');
         SiphonTools.disable();
       })
       .catch(error => {
-        console.log(error);
+        // console.log(error);
       });
   }
 };
@@ -256,19 +287,23 @@ function unmountSidebar() {
   SiphonTools.disable();
 }
 
-chrome.runtime.sendMessage({ msg: 'SHOULD_I_TRACK' }, response => {
-  if (response.SHOULD_I_TRACK === false) {
-    unmountSidebar();
-  } else if (response.SHOULD_I_TRACK === true) {
-    mountSidebar();
-  }
-});
+// chrome.runtime.sendMessage({ msg: 'SHOULD_I_TRACK' }, response => {
+//   if (response.SHOULD_I_TRACK === false) {
+//     unmountSidebar();
+//   } else if (response.SHOULD_I_TRACK === true) {
+//     mountSidebar();
+//   }
+// });
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.msg === 'TURN_OFF_KAP_TRACKING') {
-    unmountSidebar();
+    if (request.hostname === window.location.hostname) {
+      unmountSidebar();
+    }
   } else if (request.msg === 'TURN_ON_KAP_TRACKING') {
-    mountSidebar();
+    if (request.hostname === window.location.hostname) {
+      mountSidebar();
+    }
   } else if (request.msg === 'TURN_ON_BODY_SHRINK') {
     shouldShrinkBody = true;
   } else if (request.msg === 'TURN_OFF_BODY_SHRINK') {

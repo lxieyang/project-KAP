@@ -36,10 +36,43 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 //
 //
 //
-/* Enable / Disable Tracking */
-let trackingIsActive = true;
+/* keep track of the active tab */
+let activeTabId = null;
+let activeTabHostname = null;
+let activeTabUrl = null;
+chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
+  activeTabId = tabs[0].id;
+});
 
-const updateTrackingStatus = () => {
+const activeTabListener = activeInfo => {
+  activeTabId = activeInfo.tabId;
+  console.log(`switch to ${activeTabId}`);
+  activeTabHostname = null;
+  activeTabUrl = null;
+  chrome.tabs.sendMessage(activeTabId, {
+    msg: `GET_ACTIVE_TAB_HOSTNAME`
+  });
+};
+
+chrome.tabs.onActivated.addListener(activeTabListener);
+
+chrome.windows.onFocusChanged.addListener(windowId => {
+  console.log(`switched to window ${windowId}`);
+  chrome.tabs.onActivated.removeListener(activeTabListener);
+  chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
+    activeTabId = tabs[0].id;
+    console.log(`switch to ${activeTabId}`);
+    activeTabHostname = null;
+    activeTabUrl = null;
+    chrome.tabs.sendMessage(activeTabId, {
+      msg: `GET_ACTIVE_TAB_HOSTNAME`
+    });
+  });
+
+  chrome.tabs.onActivated.addListener(activeTabListener);
+});
+
+const updateTrackingStatus = (trackingIsActive, hostname) => {
   if (trackingIsActive === true) {
     chrome.browserAction.setIcon({
       path: 'icon-128.png'
@@ -76,60 +109,77 @@ const updateTrackingStatus = () => {
   chrome.tabs.query({}, function(tabs) {
     for (var i = 0; i < tabs.length; ++i) {
       chrome.tabs.sendMessage(tabs[i].id, {
-        msg: `TURN_${trackingIsActive ? 'ON' : 'OFF'}_KAP_TRACKING`
+        msg: `TURN_${trackingIsActive ? 'ON' : 'OFF'}_KAP_TRACKING`,
+        hostname
       });
     }
   });
 };
 
-// check chrome storage to see if should enable tracking
-chrome.storage.local.get(['trackingIsActive'], function(result) {
-  console.log('trackingIsActive:', result.trackingIsActive);
-  if (result.trackingIsActive !== undefined) {
-    trackingIsActive = result.trackingIsActive;
+let trackingStatusDict = {};
+chrome.storage.sync.get(['trackingStatusDict'], function(result) {
+  let dict = result.trackingStatusDict;
+  if (dict === undefined) {
+    chrome.storage.sync.set({ trackingStatusDict }, function() {});
+  } else {
+    trackingStatusDict = dict;
   }
-  updateTrackingStatus();
 });
-
-/*
-// toggle tracking status upon browser icon click
-chrome.browserAction.onClicked.addListener(function(tab) {
-  trackingIsActive = !trackingIsActive;
-  updateTrackingStatus();
-  // update in chrome storage
-  chrome.storage.local.set({ trackingIsActive }, function() {
-    //  Data's been saved boys and girls, go on home
-    console.log('trackingIsActive has been set to:', trackingIsActive);
-  });
-});
-*/
 
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
-  if (request.msg === 'TRACKING_STATUS_CHANGED') {
-    let setToVale = request.setTo;
-    trackingIsActive = setToVale;
-    updateTrackingStatus();
-    // update in chrome storage
-    chrome.storage.local.set({ trackingIsActive }, function() {
-      //  Data's been saved boys and girls, go on home
-      console.log('trackingIsActive has been set to:', trackingIsActive);
+  if (request.msg === 'ACTIVE_TAB_HOSTNAME') {
+    if (sender.tab.id === activeTabId) {
+      let hostname = request.hostname;
+      let url = request.cleanUrl;
+      activeTabHostname = hostname;
+      activeTabUrl = url;
+
+      // check tracking status dict
+      let shouldTrack = true;
+      if (
+        trackingStatusDict[hostname] !== undefined &&
+        trackingStatusDict[hostname] === false
+      ) {
+        shouldTrack = false;
+      }
+
+      // send turn on/off instructions to the tabs
+      updateTrackingStatus(shouldTrack, hostname);
+    }
+  }
+
+  if (
+    request.msg === 'GET_TRACKING_STATUS' &&
+    request.from === 'browserTooltip'
+  ) {
+    // check tracking status dict
+    let shouldTrack = true;
+    if (
+      trackingStatusDict[activeTabHostname] !== undefined &&
+      trackingStatusDict[activeTabHostname] === false
+    ) {
+      shouldTrack = false;
+    }
+    // send hostname and tracking status to browserTooltip
+    sendResponse({
+      hostname: activeTabHostname,
+      url: activeTabUrl,
+      shouldTrack
     });
   }
 
-  if (request.msg === 'GET_TRACKING_STATUS') {
-    sendResponse({ trackingIsActive });
-  }
-});
+  if (request.msg === 'TRACKING_STATUS_CHANGED_BY_USER') {
+    let hostname = request.hostname;
+    let setTo = request.setTo;
+    if (setTo === false) {
+      trackingStatusDict[hostname] = false;
+    } else {
+      delete trackingStatusDict[hostname];
+    }
+    chrome.storage.sync.set({ trackingStatusDict }, function() {});
 
-chrome.tabs.onCreated.addListener(tab => {
-  chrome.tabs.sendMessage(tab.id, {
-    msg: `TURN_${trackingIsActive ? 'ON' : 'OFF'}_KAP_TRACKING`
-  });
-});
-
-chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  if (request.msg === 'SHOULD_I_TRACK') {
-    sendResponse({ SHOULD_I_TRACK: trackingIsActive });
+    // send turn on/off instructions to the tabs
+    updateTrackingStatus(setTo, hostname);
   }
 });
 

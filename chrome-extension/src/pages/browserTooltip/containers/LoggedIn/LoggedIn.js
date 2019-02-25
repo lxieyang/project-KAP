@@ -1,8 +1,11 @@
 /* global chrome */
 import React, { Component } from 'react';
 import styled from 'styled-components';
-import { APP_NAME_SHORT } from '../../../../../../shared-components/src/shared/constants';
-import { getFirstName } from '../../../../../../shared-components/src/shared/utilities';
+import {
+  APP_NAME_SHORT,
+  GET_FAVICON_URL_PREFIX
+} from '../../../../../../shared-components/src/shared/constants';
+import { getHostnameWithoutWWW } from '../../../../../../shared-components/src/shared/utilities';
 
 import Settings from 'mdi-material-ui/Settings';
 import Logout from 'mdi-material-ui/LogoutVariant';
@@ -37,30 +40,32 @@ const FooterButtonIcon = styled.div`
 
 class LoggedIn extends Component {
   state = {
-    trackingIsActive: false,
-    trackingStatusIsLoading: true
+    trackingIsActive: this.props.shouldTrack
+    // trackingStatusIsLoading: true
   };
 
   componentDidMount() {
-    chrome.runtime.sendMessage(
-      {
-        msg: 'GET_TRACKING_STATUS'
-      },
-      response => {
-        this.setState({
-          trackingStatusIsLoading: false,
-          trackingIsActive: response.trackingIsActive
-        });
-      }
-    );
+    // chrome.runtime.sendMessage(
+    //   {
+    //     msg: 'GET_TRACKING_STATUS'
+    //   },
+    //   response => {
+    //     this.setState({
+    //       trackingStatusIsLoading: false,
+    //       trackingIsActive: response.trackingIsActive
+    //     });
+    //   }
+    // );
   }
 
   handleChange = event => {
     let setToValue = event.target.checked;
     this.setState({ trackingIsActive: setToValue });
+
     chrome.runtime.sendMessage({
-      msg: 'TRACKING_STATUS_CHANGED',
-      setTo: setToValue
+      msg: 'TRACKING_STATUS_CHANGED_BY_USER',
+      setTo: setToValue,
+      hostname: this.props.hostname
     });
   };
 
@@ -77,20 +82,48 @@ class LoggedIn extends Component {
   };
 
   render() {
-    const { userName, photoURL } = this.props;
+    // const { userName, photoURL } = this.props;
     return (
       <React.Fragment>
         <div style={{ padding: '10px 18px' }}>
-          {!this.state.trackingStatusIsLoading && (
+          {this.props.hostname !== null ? (
             <QuickSettingBlockContainer>
-              <div style={{ flexGrow: 1 }}>Enable {APP_NAME_SHORT} </div>
+              <div
+                style={{
+                  flexGrow: 1,
+                  display: 'flex',
+                  alignItems: 'center',
+                  flexWrap: 'wrap'
+                }}
+              >
+                <span style={{ fontWeight: 300, marginRight: '4px' }}>
+                  Enable {APP_NAME_SHORT} on
+                </span>
+                {this.props.hostname && (
+                  <img
+                    src={`${GET_FAVICON_URL_PREFIX}${this.props.url}`}
+                    alt="favicon"
+                    style={{ width: '12px', height: '12px' }}
+                  />
+                )}
+
+                <span style={{ fontWeight: 500, marginLeft: '4px' }}>
+                  {getHostnameWithoutWWW(this.props.hostname)}
+                </span>
+              </div>
               <div>
                 <Switch
                   checked={this.state.trackingIsActive}
                   onChange={this.handleChange}
                   value="unakite-status"
-                  disabled={this.state.trackingStatusIsLoading}
+                  // disabled={this.state.trackingStatusIsLoading}
                 />
+              </div>
+            </QuickSettingBlockContainer>
+          ) : (
+            <QuickSettingBlockContainer>
+              <div style={{ flexGrow: 1 }}>
+                {APP_NAME_SHORT} is disabled on this domain.
               </div>
             </QuickSettingBlockContainer>
           )}

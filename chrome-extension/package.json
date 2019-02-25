@@ -1,6 +1,6 @@
 {
   "name": "project-kap",
-  "version": "2.0.4",
+  "version": "2.0.5",
   "description": "Help developers organize and structure information related to programming decisions.",
   "license": "MIT",
   "repository": {
@@ -31,6 +31,7 @@
     "firebaseui": "^2.7.0",
     "fixed-data-table-2": "^0.8.16",
     "font-awesome": "^4.7.0",
+    "get-website-favicon": "0.0.7",
     "glamor": "^2.20.40",
     "image-clipper": "^0.4.3",
     "immutability-helper": "^2.9.0",
