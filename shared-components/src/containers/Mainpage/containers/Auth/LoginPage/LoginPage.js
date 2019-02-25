@@ -69,7 +69,7 @@ class LoginPage extends Component {
                 <strong>{APP_NAME_SHORT}</strong> helps you collect and organize
                 online resources into meaningful structures while programming.
                 <br />
-                Please Sign in with your Google account.
+                Please sign in with your Google account.
               </div>
             </div>
           </div>

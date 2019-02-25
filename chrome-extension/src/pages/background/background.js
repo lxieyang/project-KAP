@@ -216,6 +216,17 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 //
 //
 /* Log in / out */
+const alertAllTabs = idToken => {
+  chrome.tabs.query({}, function(tabs) {
+    for (var i = 0; i < tabs.length; ++i) {
+      chrome.tabs.sendMessage(tabs[i].id, {
+        msg: `USER_LOGIN_STATUS_CHANGED`,
+        idToken
+      });
+    }
+  });
+};
+
 const signInOutUserWithCredential = idToken => {
   if (idToken !== null) {
     // logged in
@@ -227,6 +238,18 @@ const signInOutUserWithCredential = idToken => {
       .then(result => {
         console.log(`[BACKGROUND] User ${result.user.displayName} logged in.`);
         FirestoreManager.updateUserProfile();
+        chrome.storage.local.set(
+          {
+            user: {
+              displayName: result.user.displayName,
+              photoURL: result.user.photoURL
+            }
+          },
+          function() {
+            console.log('user info update in chrome.storage.local');
+            alertAllTabs(idToken);
+          }
+        );
       })
       .catch(error => {
         console.log(error);
@@ -238,6 +261,15 @@ const signInOutUserWithCredential = idToken => {
       .signOut()
       .then(() => {
         console.log('[BACKGROUND] User logged out.');
+        chrome.storage.local.set(
+          {
+            user: null
+          },
+          function() {
+            console.log('user info update in chrome.storage.local');
+            alertAllTabs(idToken);
+          }
+        );
       })
       .catch(error => {
         console.log(error);
@@ -246,16 +278,8 @@ const signInOutUserWithCredential = idToken => {
 };
 
 /* Logging in/out on all tabs*/
-const updateLogInStatus = (idToken, user) => {
+const updateLogInStatus = idToken => {
   signInOutUserWithCredential(idToken);
-  chrome.tabs.query({}, function(tabs) {
-    for (var i = 0; i < tabs.length; ++i) {
-      chrome.tabs.sendMessage(tabs[i].id, {
-        msg: `USER_LOGIN_STATUS_CHANGED`,
-        idToken
-      });
-    }
-  });
 };
 
 // handle login/out request
@@ -263,17 +287,38 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
   if (request.msg === 'USER_LOGGED_IN') {
     localStorage.setItem('idToken', request.credential.idToken);
     updateLogInStatus(request.credential.idToken);
+
+    // auth page
+    if (request.from === 'auth_page') {
+      chrome.tabs.remove(sender.tab.id);
+    }
   }
 
   if (request.msg === 'USER_LOGGED_OUT') {
     localStorage.removeItem('idToken');
     updateLogInStatus(null);
+
+    // auth page
+    if (request.from === 'auth_page') {
+      chrome.tabs.remove(sender.tab.id);
+    }
   }
 
   if (request.msg === 'GET_USER_INFO') {
     sendResponse({
       idToken: localStorage.getItem('idToken')
     });
+  }
+
+  if (request.msg === 'GO_TO_AUTH_PAGE_TO_LOG_IN') {
+    chrome.tabs.create(
+      {
+        url: chrome.extension.getURL('auth.html')
+      },
+      tab => {
+        // Tab opened.
+      }
+    );
   }
 });
 

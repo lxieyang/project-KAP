@@ -36,6 +36,14 @@ if (fileSystem.existsSync(secretsPath)) {
 var options = {
   entry: {
     popup: path.join(__dirname, 'src', 'pages', 'popup', 'index.js'),
+    auth: path.join(__dirname, 'src', 'pages', 'auth', 'index.js'),
+    browserTooltip: path.join(
+      __dirname,
+      'src',
+      'pages',
+      'browserTooltip',
+      'index.js'
+    ),
     options: path.join(__dirname, 'src', 'pages', 'options', 'index.js'),
     background: path.join(
       __dirname,
@@ -207,6 +215,22 @@ var options = {
       template: path.join(__dirname, 'src', 'pages', 'popup', 'index.html'),
       filename: 'popup.html',
       chunks: ['popup']
+    }),
+    new HtmlWebpackPlugin({
+      template: path.join(__dirname, 'src', 'pages', 'auth', 'index.html'),
+      filename: 'auth.html',
+      chunks: ['auth']
+    }),
+    new HtmlWebpackPlugin({
+      template: path.join(
+        __dirname,
+        'src',
+        'pages',
+        'browserTooltip',
+        'index.html'
+      ),
+      filename: 'browserTooltip.html',
+      chunks: ['browserTooltip']
     }),
     new HtmlWebpackPlugin({
       template: path.join(__dirname, 'src', 'pages', 'options', 'index.html'),

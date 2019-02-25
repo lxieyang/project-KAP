@@ -46,16 +46,22 @@ class Popup extends Component {
     });
 
     // authenticate upon signin
-    chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-      if (request.msg === 'ANNOTATION_SELECTED') {
-        this.setState({ annotation_selected: true });
-        // console.log('selected');
-      } else if (request.msg === 'ANNOTATION_UNSELECTED') {
-        this.setState({ annotation_selected: false });
-        // console.log('unselected');
-      }
-    });
+    chrome.runtime.onMessage.addListener(this.annotationSelectionListener);
   }
+
+  componentWillUnmount() {
+    chrome.runtime.onMessage.removeListener(this.annotationSelectionListener);
+  }
+
+  annotationSelectionListener = (request, sender, sendResponse) => {
+    if (request.msg === 'ANNOTATION_SELECTED') {
+      this.setState({ annotation_selected: true });
+      // console.log('selected');
+    } else if (request.msg === 'ANNOTATION_UNSELECTED') {
+      this.setState({ annotation_selected: false });
+      // console.log('unselected');
+    }
+  };
 
   signInOutUserWithCredential = idToken => {
     if (idToken !== null) {
