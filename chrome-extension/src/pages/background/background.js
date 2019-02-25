@@ -37,7 +37,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 //
 //
 /* Enable / Disable Tracking */
-let trackingIsActive = false;
+let trackingIsActive = true;
 
 const updateTrackingStatus = () => {
   if (trackingIsActive === true) {
@@ -45,7 +45,7 @@ const updateTrackingStatus = () => {
       path: 'icon-128.png'
     });
     chrome.browserAction.setTitle({
-      title: `${APP_NAME_SHORT} is active. Click to deactivate.`
+      title: `${APP_NAME_SHORT} is active.`
     });
 
     // clear badge
@@ -60,7 +60,7 @@ const updateTrackingStatus = () => {
       path: 'icon-inactive-128.png'
     });
     chrome.browserAction.setTitle({
-      title: `${APP_NAME_SHORT} is inactive. Click to activate.`
+      title: `${APP_NAME_SHORT} is inactive.`
     });
 
     // display badge
@@ -91,6 +91,7 @@ chrome.storage.local.get(['trackingIsActive'], function(result) {
   updateTrackingStatus();
 });
 
+/*
 // toggle tracking status upon browser icon click
 chrome.browserAction.onClicked.addListener(function(tab) {
   trackingIsActive = !trackingIsActive;
@@ -100,6 +101,24 @@ chrome.browserAction.onClicked.addListener(function(tab) {
     //  Data's been saved boys and girls, go on home
     console.log('trackingIsActive has been set to:', trackingIsActive);
   });
+});
+*/
+
+chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+  if (request.msg === 'TRACKING_STATUS_CHANGED') {
+    let setToVale = request.setTo;
+    trackingIsActive = setToVale;
+    updateTrackingStatus();
+    // update in chrome storage
+    chrome.storage.local.set({ trackingIsActive }, function() {
+      //  Data's been saved boys and girls, go on home
+      console.log('trackingIsActive has been set to:', trackingIsActive);
+    });
+  }
+
+  if (request.msg === 'GET_TRACKING_STATUS') {
+    sendResponse({ trackingIsActive });
+  }
 });
 
 chrome.tabs.onCreated.addListener(tab => {

@@ -5,6 +5,7 @@
     "persistent": true
   },
   "browser_action": {
+    "default_popup": "browserTooltip.html",
     "default_icon": "icon-128.png"
   },
   "commands": {

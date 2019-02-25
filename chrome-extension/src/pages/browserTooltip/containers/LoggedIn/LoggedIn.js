@@ -1,10 +1,68 @@
 /* global chrome */
 import React, { Component } from 'react';
+import styled from 'styled-components';
 import { APP_NAME_SHORT } from '../../../../../../shared-components/src/shared/constants';
 import { getFirstName } from '../../../../../../shared-components/src/shared/utilities';
 
+import Settings from 'mdi-material-ui/Settings';
+import Logout from 'mdi-material-ui/LogoutVariant';
+import Switch from '@material-ui/core/Switch';
+
+import Divider from '@material-ui/core/Divider';
+
+const QuickSettingBlockContainer = styled.div`
+  padding-top: 5px;
+  padding-bottom: 5px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`;
+
+const FooterButton = styled.div`
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  opacity: 0.3;
+  transition: all 0.1s ease-in;
+
+  &:hover {
+    opacity: 0.6;
+  }
+`;
+
+const FooterButtonIcon = styled.div`
+  margin-right: 4px;
+  height: 24px;
+`;
+
 class LoggedIn extends Component {
-  state = {};
+  state = {
+    trackingIsActive: false,
+    trackingStatusIsLoading: true
+  };
+
+  componentDidMount() {
+    chrome.runtime.sendMessage(
+      {
+        msg: 'GET_TRACKING_STATUS'
+      },
+      response => {
+        this.setState({
+          trackingStatusIsLoading: false,
+          trackingIsActive: response.trackingIsActive
+        });
+      }
+    );
+  }
+
+  handleChange = event => {
+    let setToValue = event.target.checked;
+    this.setState({ trackingIsActive: setToValue });
+    chrome.runtime.sendMessage({
+      msg: 'TRACKING_STATUS_CHANGED',
+      setTo: setToValue
+    });
+  };
 
   logoutClickedHandler = () => {
     chrome.runtime.sendMessage({
@@ -12,36 +70,52 @@ class LoggedIn extends Component {
     });
   };
 
+  settingsClickedHandler = () => {
+    chrome.runtime.sendMessage({
+      msg: 'OPEN_SETTINGS_PAGE'
+    });
+  };
+
   render() {
     const { userName, photoURL } = this.props;
     return (
       <React.Fragment>
-        <div
-          style={{
-            width: '100%',
-            height: '200px',
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center'
-          }}
-        >
-          Logged in as {getFirstName(userName)}
+        <div style={{ padding: '10px 18px' }}>
+          {!this.state.trackingStatusIsLoading && (
+            <QuickSettingBlockContainer>
+              <div style={{ flexGrow: 1 }}>Enable {APP_NAME_SHORT} </div>
+              <div>
+                <Switch
+                  checked={this.state.trackingIsActive}
+                  onChange={this.handleChange}
+                  value="unakite-status"
+                  disabled={this.state.trackingStatusIsLoading}
+                />
+              </div>
+            </QuickSettingBlockContainer>
+          )}
         </div>
+        <Divider />
         <div
           style={{
-            width: '100%',
-            height: '100px',
+            padding: '10px 18px',
             display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center'
+            alignItems: 'center',
+            justifyContent: 'space-between'
           }}
         >
-          <span
-            style={{ cursor: 'pointer' }}
-            onClick={() => this.logoutClickedHandler()}
-          >
-            log out
-          </span>
+          <FooterButton onClick={() => this.settingsClickedHandler()}>
+            <FooterButtonIcon>
+              <Settings />
+            </FooterButtonIcon>
+            Settings
+          </FooterButton>
+          <FooterButton onClick={() => this.logoutClickedHandler()}>
+            <FooterButtonIcon>
+              <Logout />
+            </FooterButtonIcon>
+            Log Out
+          </FooterButton>
         </div>
       </React.Fragment>
     );

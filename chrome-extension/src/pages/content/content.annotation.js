@@ -251,6 +251,7 @@ function mountSidebar() {
 }
 
 function unmountSidebar() {
+  document.body.style.marginRight = '0px';
   ReactDOM.unmountComponentAtNode(sidebarRoot);
   SiphonTools.disable();
 }
