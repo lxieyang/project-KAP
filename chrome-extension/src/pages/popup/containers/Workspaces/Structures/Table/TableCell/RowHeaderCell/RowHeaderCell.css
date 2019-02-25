@@ -35,8 +35,12 @@
   transition: all 0.1s ease-in;
 }
 
-.RowHeaderCell:hover .DeleteRowIconContainer {
+.RowHeaderCell:hover .DeleteRowIconContainerHover {
   opacity: 1;
+}
+
+.DeleteRowIconContainerHidden {
+  display: none !important;
 }
 
 .PieceNameContainer {
@@ -46,13 +50,13 @@
   white-space: pre-wrap;
   word-break: break-all;
   cursor: pointer;
+  border-radius: 2px;
 }
 
 /* .AttitudeInTableCellIsShowing, */
 .PieceNameContainer:hover,
 .PieceNameContainerSelected {
   background-color: #f8cf8c;
-  border-radius: 2px;
 }
 
 .PieceNameContainerNotSelected {

@@ -97,6 +97,16 @@ class Table extends Component {
     );
   };
 
+  tableClicked = e => {
+    e.stopPropagation();
+    if (this.props.currentSelectedPieceInTable !== null) {
+      this.props.setCurrentSelectedPieceInTable({
+        pieceId: null,
+        pieceType: null
+      });
+    }
+  };
+
   render() {
     let { workspace, workspaceTypeString, classes } = this.props;
     const { cells } = this.state;
@@ -252,7 +262,10 @@ class Table extends Component {
 
     return (
       <React.Fragment>
-        <div className={styles.TableViewContainer}>
+        <div
+          className={styles.TableViewContainer}
+          onClick={e => this.tableClicked(e)}
+        >
           {/* Table Content */}
           <div className={styles.TableContentContainer}>
             <table className={styles.ComparisonTable}>

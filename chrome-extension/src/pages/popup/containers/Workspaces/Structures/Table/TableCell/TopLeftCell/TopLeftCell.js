@@ -44,7 +44,14 @@ class TopLeftCell extends Component {
     const { classes, numRows, numColumns } = this.props;
 
     let addRowButton = (
-      <div className={styles.AddRowButtonContainer}>
+      <div
+        className={[
+          styles.AddRowButtonContainer,
+          this.props.currentSelectedPieceInTable !== null
+            ? styles.DoNotDisplay
+            : null
+        ].join(' ')}
+      >
         <ActionButton
           title={`Add a row`}
           style={{ color: PIECE_COLOR.option }}
@@ -57,7 +64,15 @@ class TopLeftCell extends Component {
     );
 
     let addColumnButton = (
-      <div className={styles.AddColumnButtonContainer} style={{ zIndex: 99 }}>
+      <div
+        className={[
+          styles.AddColumnButtonContainer,
+          this.props.currentSelectedPieceInTable !== null
+            ? styles.DoNotDisplay
+            : null
+        ].join(' ')}
+        style={{ zIndex: 99 }}
+      >
         <ActionButton
           title={`Add a column`}
           style={{ color: PIECE_COLOR.criterion, zIndex: 9999 }}

@@ -36,8 +36,12 @@
   transition: all 0.1s ease-in;
 }
 
-.ColumnHeaderCell:hover .DeleteColumnIconContainer {
+.ColumnHeaderCell:hover .DeleteColumnIconContainerHover {
   opacity: 1;
+}
+
+.DeleteColumnIconContainerHidden {
+  display: none !important;
 }
 
 .PieceNameContainer {

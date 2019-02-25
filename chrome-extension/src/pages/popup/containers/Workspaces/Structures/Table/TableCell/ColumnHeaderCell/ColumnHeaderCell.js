@@ -362,7 +362,14 @@ class ColumnHeaderCell extends Component {
     }
 
     let deleteColumnActionContainer = (
-      <div className={styles.DeleteColumnIconContainer}>
+      <div
+        className={[
+          styles.DeleteColumnIconContainer,
+          this.props.currentSelectedPieceInTable === null
+            ? styles.DeleteColumnIconContainerHover
+            : styles.DeleteColumnIconContainerHidden
+        ].join(' ')}
+      >
         <ReactHoverObserver
           {...{
             onMouseEnter: () => {
@@ -388,9 +395,13 @@ class ColumnHeaderCell extends Component {
       </div>
     );
 
+    let cellPieces = cell.pieces.filter(
+      p => pieces[p.pieceId] !== undefined && pieces[p.pieceId] !== null
+    );
+
     let pieceInCell = null;
-    if (cell.pieces.length > 0) {
-      pieceInCell = pieces[cell.pieces[0].pieceId];
+    if (cellPieces.length > 0) {
+      pieceInCell = pieces[cellPieces[0].pieceId];
     }
 
     return connectDropTarget(

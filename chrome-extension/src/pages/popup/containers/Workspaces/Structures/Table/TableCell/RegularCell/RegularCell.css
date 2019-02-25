@@ -121,7 +121,7 @@
   color: lightgray;
 }
 
-.Textarea:hover {
+.TextareaHover:hover {
   border-color: rgb(226, 226, 226);
 }
 

@@ -305,6 +305,7 @@ class RegularCell extends Component {
             >
               <Textarea
                 inputRef={tag => (this.textarea = tag)}
+                disabled={this.props.currentSelectedPieceInTable !== null}
                 minRows={1}
                 maxRows={3}
                 placeholder={''}
@@ -314,6 +315,9 @@ class RegularCell extends Component {
                 onChange={e => this.handleCellContentInputChange(e)}
                 className={[
                   styles.Textarea,
+                  this.props.currentSelectedPieceInTable === null
+                    ? styles.TextareaHover
+                    : null,
                   this.state.contentEdit !== '' &&
                   this.props.currentSelectedPieceInTable !== null
                     ? styles.TextareaShouldBeOpaque
