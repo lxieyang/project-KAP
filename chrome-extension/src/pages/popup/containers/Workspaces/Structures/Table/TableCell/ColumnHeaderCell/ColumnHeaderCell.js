@@ -262,12 +262,14 @@ class ColumnHeaderCell extends Component {
   };
 
   deleteTableColumnByIndex = event => {
-    FirestoreManager.deleteColumnInTableByIndex(
-      this.props.workspace.id,
-      this.props.columnIndex
-    );
+    if (window.confirm(`Are you sure you want to delete this row?`)) {
+      FirestoreManager.deleteColumnInTableByIndex(
+        this.props.workspace.id,
+        this.props.columnIndex
+      );
 
-    this.props.setColumnToDelete(-1);
+      this.props.setColumnToDelete(-1);
+    }
   };
 
   addPieceToThisCell = pieceId => {
