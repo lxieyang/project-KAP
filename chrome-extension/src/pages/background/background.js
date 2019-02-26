@@ -8,6 +8,9 @@ import {
   makeScreenshotWithCoordinates
 } from './captureScreenshot';
 
+/* global variables */
+let loggedIn = false;
+
 let showSuccessStatusInIconBadgeTimeout = 0;
 function showSuccessStatusInIconBadge(success = true) {
   // change to success
@@ -72,48 +75,57 @@ chrome.windows.onFocusChanged.addListener(windowId => {
   chrome.tabs.onActivated.addListener(activeTabListener);
 });
 
-const updateTrackingStatus = (trackingIsActive, hostname) => {
-  if (trackingIsActive === true) {
-    chrome.browserAction.setIcon({
-      path: 'icon-128.png'
-    });
-    chrome.browserAction.setTitle({
-      title: `${APP_NAME_SHORT} is active.`
-    });
-
-    // clear badge
-    chrome.browserAction.setBadgeBackgroundColor({
-      color: [255, 255, 255, 0]
-    });
-    chrome.browserAction.setBadgeText({
-      text: ''
-    });
-  } else {
-    chrome.browserAction.setIcon({
-      path: 'icon-inactive-128.png'
-    });
-    chrome.browserAction.setTitle({
-      title: `${APP_NAME_SHORT} is inactive.`
-    });
-
-    // display badge
-    chrome.browserAction.setBadgeBackgroundColor({
-      color: [215, 91, 78, 1]
-    });
-    chrome.browserAction.setBadgeText({
-      text: 'off'
-    });
-  }
-
+const switchKAPSidebarStatus = (trackingIsActive, hostname = null) => {
   // toggle tracking status on all tables
   chrome.tabs.query({}, function(tabs) {
     for (var i = 0; i < tabs.length; ++i) {
       chrome.tabs.sendMessage(tabs[i].id, {
-        msg: `TURN_${trackingIsActive ? 'ON' : 'OFF'}_KAP_TRACKING`,
+        msg: `TURN_${trackingIsActive ? 'ON' : 'OFF'}_KAP_SIDEBAR`,
         hostname
       });
     }
   });
+};
+
+const updateTrackingStatus = (trackingIsActive, hostname) => {
+  if (loggedIn) {
+    if (trackingIsActive === true) {
+      chrome.browserAction.setIcon({
+        path: 'icon-128.png'
+      });
+      // chrome.browserAction.setTitle({
+      //   title: `${APP_NAME_SHORT} is active.`
+      // });
+
+      // clear badge
+      chrome.browserAction.setBadgeBackgroundColor({
+        color: [255, 255, 255, 0]
+      });
+      chrome.browserAction.setBadgeText({
+        text: ''
+      });
+    } else {
+      chrome.browserAction.setIcon({
+        path: 'icon-inactive-128.png'
+      });
+      // chrome.browserAction.setTitle({
+      //   title: `${APP_NAME_SHORT} is inactive.`
+      // });
+
+      // display badge
+      chrome.browserAction.setBadgeBackgroundColor({
+        color: [215, 91, 78, 1]
+      });
+      chrome.browserAction.setBadgeText({
+        text: 'off'
+      });
+    }
+    switchKAPSidebarStatus(trackingIsActive, hostname);
+  } else {
+    chrome.browserAction.setIcon({
+      path: 'icon-128.png'
+    });
+  }
 };
 
 let trackingStatusDict = {};
@@ -164,6 +176,22 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     sendResponse({
       hostname: activeTabHostname,
       url: activeTabUrl,
+      shouldTrack
+    });
+  }
+
+  if (request.msg === 'SHOULD_TRACK' && request.from === 'contentScript') {
+    let hostname = request.hostname;
+    // check tracking status dict
+    let shouldTrack = true;
+    if (
+      trackingStatusDict[hostname] !== undefined &&
+      trackingStatusDict[hostname] === false
+    ) {
+      shouldTrack = false;
+    }
+    // send hostname and tracking status to browserTooltip
+    sendResponse({
       shouldTrack
     });
   }
@@ -306,6 +334,7 @@ const signInOutUserWithCredential = idToken => {
       )
       .then(result => {
         console.log(`[BACKGROUND] User ${result.user.displayName} logged in.`);
+
         FirestoreManager.updateUserProfile();
         chrome.storage.local.set(
           {
@@ -316,6 +345,14 @@ const signInOutUserWithCredential = idToken => {
           },
           function() {
             console.log('user info update in chrome.storage.local');
+            // update loggedIn status
+            loggedIn = true;
+
+            // clear title
+            chrome.browserAction.setTitle({
+              title: ''
+            });
+
             alertAllTabs(idToken);
           }
         );
@@ -330,12 +367,34 @@ const signInOutUserWithCredential = idToken => {
       .signOut()
       .then(() => {
         console.log('[BACKGROUND] User logged out.');
+
         chrome.storage.local.set(
           {
             user: null
           },
           function() {
             console.log('user info update in chrome.storage.local');
+            // update loggedIn status
+            loggedIn = false;
+
+            // set icon
+            chrome.browserAction.setIcon({
+              path: 'icon-128.png'
+            });
+
+            // set title
+            chrome.browserAction.setTitle({
+              title: `${APP_NAME_SHORT} not logged in.`
+            });
+
+            // clear badge
+            chrome.browserAction.setBadgeBackgroundColor({
+              color: [255, 255, 255, 0]
+            });
+            chrome.browserAction.setBadgeText({
+              text: ''
+            });
+
             alertAllTabs(idToken);
           }
         );
@@ -352,6 +411,7 @@ const updateLogInStatus = idToken => {
 };
 
 // handle login/out request
+let lastActiveTabId = -1;
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
   if (request.msg === 'USER_LOGGED_IN') {
     localStorage.setItem('idToken', request.credential.idToken);
@@ -359,6 +419,9 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 
     // auth page
     if (request.from === 'auth_page') {
+      try {
+        chrome.tabs.update(lastActiveTabId, { active: true });
+      } catch (e) {}
       chrome.tabs.remove(sender.tab.id);
     }
   }
@@ -369,6 +432,9 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 
     // auth page
     if (request.from === 'auth_page') {
+      try {
+        chrome.tabs.update(lastActiveTabId, { active: true });
+      } catch (e) {}
       chrome.tabs.remove(sender.tab.id);
     }
   }
@@ -380,6 +446,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
   }
 
   if (request.msg === 'GO_TO_AUTH_PAGE_TO_LOG_IN') {
+    lastActiveTabId = activeTabId;
     chrome.tabs.create(
       {
         url: chrome.extension.getURL('auth.html')

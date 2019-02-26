@@ -103,7 +103,7 @@ class LoggedIn extends Component {
                   <img
                     src={`${GET_FAVICON_URL_PREFIX}${this.props.url}`}
                     alt="favicon"
-                    style={{ width: '12px', height: '12px' }}
+                    style={{ width: '14px', height: '14px' }}
                   />
                 )}
 

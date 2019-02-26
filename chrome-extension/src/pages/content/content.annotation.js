@@ -36,6 +36,7 @@ const sendHostnameTobackground = () => {
 sendHostnameTobackground();
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.msg === 'GET_ACTIVE_TAB_HOSTNAME') {
+    // console.log('get active tab hostname');
     sendHostnameTobackground();
   }
 });
@@ -187,12 +188,14 @@ SiphonTools.initializeSelectors([
 //
 /* log in / out */
 // check id token from background
+let loggedIn = false;
 chrome.runtime.sendMessage({ msg: 'GET_USER_INFO' }, response => {
   signInOutUserWithCredential(response.idToken);
 });
 // authenticate upon signin
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.msg === 'USER_LOGIN_STATUS_CHANGED') {
+    // console.log('logged in status changed');
     signInOutUserWithCredential(request.idToken);
   }
 });
@@ -212,7 +215,22 @@ const signInOutUserWithCredential = idToken => {
         //   }) logged in.`
         // );
 
+        loggedIn = true;
         SiphonTools.enable();
+
+        chrome.runtime.sendMessage(
+          {
+            msg: 'SHOULD_TRACK',
+            from: 'contentScript',
+            hostname: window.location.hostname
+          },
+          response => {
+            let shouldTrack = response.shouldTrack;
+            if (shouldTrack) {
+              mountSidebar();
+            }
+          }
+        );
       })
       .catch(error => {
         // console.log(error);
@@ -224,7 +242,10 @@ const signInOutUserWithCredential = idToken => {
       .signOut()
       .then(() => {
         // console.log('[CONTENT_ANNOTATION] User logged out.');
+
+        loggedIn = false;
         SiphonTools.disable();
+        unmountSidebar();
       })
       .catch(error => {
         // console.log(error);
@@ -282,9 +303,13 @@ function mountSidebar() {
 }
 
 function unmountSidebar() {
-  document.body.style.marginRight = '0px';
-  ReactDOM.unmountComponentAtNode(sidebarRoot);
-  SiphonTools.disable();
+  try {
+    document.body.style.marginRight = '0px';
+    ReactDOM.unmountComponentAtNode(sidebarRoot);
+    SiphonTools.disable();
+  } catch (e) {
+    console.log(e);
+  }
 }
 
 // chrome.runtime.sendMessage({ msg: 'SHOULD_I_TRACK' }, response => {
@@ -296,12 +321,12 @@ function unmountSidebar() {
 // });
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  if (request.msg === 'TURN_OFF_KAP_TRACKING') {
+  if (request.msg === 'TURN_OFF_KAP_SIDEBAR') {
     if (request.hostname === window.location.hostname) {
       unmountSidebar();
     }
-  } else if (request.msg === 'TURN_ON_KAP_TRACKING') {
-    if (request.hostname === window.location.hostname) {
+  } else if (request.msg === 'TURN_ON_KAP_SIDEBAR') {
+    if (request.hostname === window.location.hostname && loggedIn === true) {
       mountSidebar();
     }
   } else if (request.msg === 'TURN_ON_BODY_SHRINK') {
