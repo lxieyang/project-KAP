@@ -169,50 +169,92 @@ class RegularCell extends Component {
       <div
         className={styles.CommentsContainer}
         style={{
-          zIndex: 1000,
           opacity: commentCount > 0 ? 1 : null,
           display: commentAccess !== true && commentCount === 0 ? 'none' : null
         }}
       >
-        <div style={{ position: 'relative' }}>
-          <Tooltip title={commentTooltipTitle} placement={'top'}>
-            <IconButton
-              aria-label="Comment"
-              className={classes.iconButtons}
-              onClick={e => this.handleCommentClick(e)}
+        {commentCount > 0 ? (
+          <React.Fragment>
+            <div
+              style={{ position: 'relative' }}
+              data-tip
+              data-for={`${cell.id}-comments`}
             >
-              <Chat className={classes.iconInIconButtons} />
-            </IconButton>
-          </Tooltip>
-          <Popover
-            id={`${cell.id}-comments-popover`}
-            open={open}
-            anchorEl={anchorEl}
-            onClose={this.handleCommentClose}
-            anchorOrigin={{
-              vertical: 'top',
-              horizontal: 'left'
-            }}
-            transformOrigin={{
-              vertical: 'top',
-              horizontal: 'left'
-            }}
-          >
-            <CellComments
-              workspaceId={this.props.workspace.id}
-              cellId={cell.id}
-              comments={comments}
-              commentAccess={commentAccess}
-              cellType={cell.type}
-            />
-          </Popover>
-          <span
-            style={{ color: THEME_COLOR.badgeColor }}
-            className={styles.CommentCount}
-          >
-            {commentCount > 0 ? commentCount : null}
-          </span>
-        </div>
+              <IconButton aria-label="Comment" className={classes.iconButtons}>
+                <Chat className={classes.iconInIconButtons} />
+              </IconButton>
+              <span
+                style={{ color: THEME_COLOR.badgeColor }}
+                className={styles.CommentCount}
+              >
+                {commentCount > 0 ? commentCount : null}
+              </span>
+            </div>
+            <ReactTooltip
+              place="bottom"
+              type="light"
+              effect="solid"
+              delayHide={100}
+              id={`${cell.id}-comments`}
+              className={styles.TooltipOverAttitude}
+              getContent={() => {
+                return (
+                  <CellComments
+                    workspaceId={this.props.workspace.id}
+                    cellId={cell.id}
+                    comments={comments}
+                    commentAccess={commentAccess}
+                    cellType={cell.type}
+                  />
+                );
+              }}
+            />{' '}
+          </React.Fragment>
+        ) : (
+          <React.Fragment>
+            <div style={{ position: 'relative' }}>
+              <Tooltip title={commentTooltipTitle} placement={'top'}>
+                <IconButton
+                  aria-label="Comment"
+                  className={classes.iconButtons}
+                  onClick={e => this.handleCommentClick(e)}
+                >
+                  <Chat className={classes.iconInIconButtons} />
+                </IconButton>
+              </Tooltip>
+
+              <Popover
+                id={`${cell.id}-comments-popover`}
+                open={open}
+                anchorEl={anchorEl}
+                onClose={this.handleCommentClose}
+                anchorOrigin={{
+                  vertical: 'top',
+                  horizontal: 'left'
+                }}
+                transformOrigin={{
+                  vertical: 'top',
+                  horizontal: 'left'
+                }}
+              >
+                <CellComments
+                  workspaceId={this.props.workspace.id}
+                  cellId={cell.id}
+                  comments={comments}
+                  commentAccess={commentAccess}
+                  cellType={cell.type}
+                />
+              </Popover>
+
+              <span
+                style={{ color: THEME_COLOR.badgeColor }}
+                className={styles.CommentCount}
+              >
+                {commentCount > 0 ? commentCount : null}
+              </span>
+            </div>
+          </React.Fragment>
+        )}
       </div>
     );
 

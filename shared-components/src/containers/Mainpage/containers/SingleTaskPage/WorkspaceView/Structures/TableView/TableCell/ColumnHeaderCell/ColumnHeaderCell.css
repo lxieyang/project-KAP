@@ -177,3 +177,24 @@
   opacity: 0.8;
   transform: scale(0.75);
 }
+
+.TooltipOverAttitude {
+  /* position: fixed; */
+  /* overflow: auto; */
+  max-width: 300px;
+  max-height: 600px;
+  overflow: auto;
+  margin: 0px 0px !important;
+  padding: 0px 0px !important;
+  border-radius: 5px !important;
+  box-shadow: 0 4px 10px 0 rgba(0, 0, 0, 0.2), 0 4px 20px 0 rgba(0, 0, 0, 0.19) !important;
+  opacity: 1 !important;
+  background-color: white !important;
+  pointer-events: auto !important;
+  z-index: 1200 !important;
+}
+
+.TooltipOverAttitude:hover {
+  visibility: visible !important;
+  opacity: 1 !important;
+}

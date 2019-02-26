@@ -74,7 +74,8 @@ class CellComments extends Component {
       commentAccess,
       classes,
       workspaceId,
-      cellId
+      cellId,
+      cellType
     } = this.props;
 
     let CommentList = (
@@ -88,6 +89,7 @@ class CellComments extends Component {
               idx={idx}
               workspaceId={workspaceId}
               cellId={cellId}
+              cellType={cellType}
               expanded={true}
             />
           );

@@ -8,6 +8,7 @@ import Avatar from '@material-ui/core/Avatar';
 import LinesEllipsis from 'react-lines-ellipsis';
 import IconButton from '@material-ui/core/IconButton';
 import Button from '@material-ui/core/Button';
+import Tooltip from '@material-ui/core/Tooltip';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
@@ -18,8 +19,17 @@ import Textarea from 'react-textarea-autosize';
 
 import classesInCSS from './CellCommentItem.css';
 import moment from 'moment';
+import { TABLE_CELL_TYPES } from '../../../../../../../../../../shared/types';
 
 const styles = theme => ({
+  iconButtons: {
+    padding: '4px'
+  },
+  iconInIconButtons: {
+    width: '14px',
+    height: '14px',
+    color: 'rgb(187, 187, 187)'
+  },
   button: {
     marginTop: 0,
     marginBottom: 0,
@@ -218,52 +228,99 @@ class CellCommentItem extends Component {
               >
                 {item.authorId === FirestoreManager.getCurrentUserId() ? (
                   <React.Fragment>
-                    <Menu
-                      id={`${item.id}-long-menu`}
-                      anchorEl={anchorEl}
-                      open={open}
-                      onClose={this.handleClose}
-                      style={{ padding: '2px' }}
-                      PaperProps={{
-                        style: {
-                          maxHeight: 24 * 4.5,
-                          width: 70
-                        }
-                      }}
-                    >
-                      {options.map(option => (
-                        <MenuItem
-                          key={option.text}
-                          selected={false}
-                          onClick={e =>
-                            this.handleAction(
-                              option.action,
-                              item.id,
-                              item.content,
-                              e
-                            )
-                          }
-                          style={{
-                            padding: '4px 4px',
-                            fontSize: '12px',
-                            display: 'flex',
-                            alignItems: 'center',
-                            opacity: '0.8'
+                    {this.props.cellType === TABLE_CELL_TYPES.regularCell ||
+                    this.props.cellType === TABLE_CELL_TYPES.rowHeader ||
+                    this.props.cellType === TABLE_CELL_TYPES.columnHeader ? (
+                      <React.Fragment>
+                        <Tooltip title="Edit this comment" placement={'top'}>
+                          <IconButton
+                            aria-label="Comment"
+                            className={classes.iconButtons}
+                            onClick={e =>
+                              this.handleAction(
+                                'edit',
+                                item.id,
+                                item.content,
+                                e
+                              )
+                            }
+                          >
+                            <PencilCircleOutline
+                              className={classes.iconInIconButtons}
+                            />
+                          </IconButton>
+                        </Tooltip>
+                        <Tooltip title="Delete this comment" placement={'top'}>
+                          <IconButton
+                            aria-label="Delete"
+                            className={classes.iconButtons}
+                            onClick={e =>
+                              this.handleAction(
+                                'delete',
+                                item.id,
+                                item.content,
+                                e
+                              )
+                            }
+                          >
+                            <DeleteCircleOutline
+                              className={classes.iconInIconButtons}
+                            />
+                          </IconButton>
+                        </Tooltip>
+                      </React.Fragment>
+                    ) : (
+                      <React.Fragment>
+                        <Menu
+                          id={`${item.id}-long-menu`}
+                          anchorEl={anchorEl}
+                          open={open}
+                          onClose={this.handleClose}
+                          style={{ padding: '2px' }}
+                          PaperProps={{
+                            style: {
+                              maxHeight: 24 * 4.5,
+                              width: 70
+                            }
                           }}
                         >
-                          {option.icon} &nbsp; {option.text}
-                        </MenuItem>
-                      ))}
-                    </Menu>
-                    <IconButton
-                      aria-label="More"
-                      aria-owns={open ? 'long-menu' : undefined}
-                      aria-haspopup="true"
-                      style={{ padding: '6px' }}
-                      onClick={this.handleClick}
-                    >
-                      <MoreVertIcon style={{ width: '16px', height: '16px' }} />
-                    </IconButton>
+                          {options.map(option => (
+                            <MenuItem
+                              key={option.text}
+                              selected={false}
+                              onClick={e =>
+                                this.handleAction(
+                                  option.action,
+                                  item.id,
+                                  item.content,
+                                  e
+                                )
+                              }
+                              style={{
+                                padding: '4px 4px',
+                                fontSize: '12px',
+                                display: 'flex',
+                                alignItems: 'center',
+                                opacity: '0.8'
+                              }}
+                            >
+                              {option.icon} &nbsp; {option.text}
+                            </MenuItem>
+                          ))}
+                        </Menu>
+                        <IconButton
+                          aria-label="More"
+                          aria-owns={open ? 'long-menu' : undefined}
+                          aria-haspopup="true"
+                          style={{ padding: '6px' }}
+                          onClick={this.handleClick}
+                        >
+                          <MoreVertIcon
+                            style={{ width: '16px', height: '16px' }}
+                          />
+                        </IconButton>
+                      </React.Fragment>
+                    )}
                   </React.Fragment>
                 ) : null}
               </div>
