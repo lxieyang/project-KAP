@@ -682,19 +682,21 @@ class Piece extends Component {
                         className={classesInCSS.OriginalScreenshotContainer}
                         style={{ maxHeight: `${maxScreenshotHeight}px` }}
                       >
-                        <img
-                          alt={piece.id}
-                          src={screenshot.imageDataUrl}
-                          style={{
-                            height: `${Math.min(
-                              Math.floor(screenshot.dimensions.rectHeight),
-                              maxScreenshotHeight
-                            )}px`
-                          }}
-                          onClick={() =>
-                            this.screenshotImageClickedHandler(piece.id)
-                          }
-                        />
+                        {screenshot && (
+                          <img
+                            alt={piece.id}
+                            src={screenshot.imageDataUrl}
+                            style={{
+                              height: `${Math.min(
+                                Math.floor(screenshot.dimensions.rectHeight),
+                                maxScreenshotHeight
+                              )}px`
+                            }}
+                            onClick={() =>
+                              this.screenshotImageClickedHandler(piece.id)
+                            }
+                          />
+                        )}
                       </div>
                     </React.Fragment>
                   )
