@@ -264,7 +264,7 @@ class Table extends Component {
       <React.Fragment>
         <div
           className={styles.TableViewContainer}
-          onClick={e => this.tableClicked(e)}
+          // onClick={e => this.tableClicked(e)}
         >
           {/* Table Content */}
           <div className={styles.TableContentContainer}>

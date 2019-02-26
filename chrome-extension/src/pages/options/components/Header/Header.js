@@ -1,42 +1,149 @@
+/* global chrome */
 import React, { Component } from 'react';
-import Aux from '../../../../../../shared-components/src/hoc/Aux/Aux';
+
+import { withStyles } from '@material-ui/core/styles';
+import AppBar from '@material-ui/core/AppBar';
+import Button from '@material-ui/core/Button';
+import Avatar from '@material-ui/core/Avatar';
+import Toolbar from '@material-ui/core/Toolbar';
+import Typography from '@material-ui/core/Typography';
+import IconButton from '@material-ui/core/IconButton';
+import MenuIcon from '@material-ui/icons/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
+import Menu from '@material-ui/core/Menu';
+import Logout from 'mdi-material-ui/LogoutVariant';
+import ViewGrid from 'mdi-material-ui/ViewGrid';
+
 import Logo from '../../../../../../shared-components/src/components/UI/Logo/Logo';
 import ProfileImg from '../../../../../../shared-components/src/assets/images/profile-img.png';
-import { APP_NAME_LONG } from '../../../../../../shared-components/src/shared/constants';
+import { APP_NAME_SHORT } from '../../../../../../shared-components/src/shared/constants';
+import { getFirstName } from '../../../../../../shared-components/src/shared/utilities';
 import styles from './Header.css';
 
+const materialStyles = {
+  toolbar: {
+    minHeight: 40,
+    paddingLeft: 16,
+    paddingRight: 12
+  },
+  appAvatar: {
+    width: 30,
+    height: 30
+  },
+  grow: {
+    flexGrow: 1
+  },
+  pageTitle: {
+    marginLeft: 10
+  },
+  iconButton: {
+    padding: 6,
+    borderRadius: 4,
+    margin: '4px 4px'
+  },
+  userAvatar: {
+    width: 22,
+    height: 22
+  },
+  username: {
+    marginLeft: 4,
+    fontWeight: 300,
+    fontSize: 16
+  },
+  menuItem: {
+    padding: '4px 8px',
+    fontWeight: 300
+  }
+};
+
 class Header extends Component {
+  state = {
+    anchorEl: null
+  };
+
+  handleMenu = event => {
+    this.setState({ anchorEl: event.currentTarget });
+  };
+
+  handleClose = () => {
+    this.setState({ anchorEl: null });
+  };
+
+  logoutClickedHandler = () => {
+    chrome.runtime.sendMessage({
+      msg: 'USER_LOGGED_OUT'
+    });
+  };
+
   render() {
     const { userName, userProfilePhotoURL } = this.props;
 
-    return (
-      <Aux>
-        <header className={styles.Header}>
-          <div style={{
-            display: 'flex',
-            alignItems: 'center'
-          }}>
-            <div 
-              className={styles.LogoBox}>
-              <Logo 
-                hover={true} size='38px'/>
-            </div>
-            &nbsp; &nbsp;
-            <strong>{APP_NAME_LONG}</strong>
-          </div>
+    const { classes } = this.props;
+    const { anchorEl } = this.state;
+    const open = Boolean(anchorEl);
 
-          <div 
-            className={styles.Profile}>
-            <img 
-              src={userProfilePhotoURL !== null ? userProfilePhotoURL : ProfileImg} 
-              alt="" 
-              className={styles.ProfileImg}/> 
-            <span>{userName}</span>
+    return (
+      <AppBar position="static" color="default">
+        <Toolbar className={classes.toolbar} title={APP_NAME_SHORT}>
+          <Avatar alt="app" className={classes.appAvatar}>
+            <Logo size="30px" />
+          </Avatar>
+
+          <Typography
+            variant="h6"
+            color="inherit"
+            className={classes.pageTitle}
+          >
+            Settings
+          </Typography>
+
+          <Typography variant="h6" color="inherit" className={classes.grow} />
+
+          <div>
+            <IconButton
+              aria-owns={open ? 'menu-appbar' : undefined}
+              aria-haspopup="true"
+              onClick={this.handleMenu}
+              className={classes.iconButton}
+              color="inherit"
+            >
+              <Avatar
+                alt="avatar"
+                src={userProfilePhotoURL ? userProfilePhotoURL : ProfileImg}
+                className={classes.userAvatar}
+              />
+              <div className={classes.username}>{getFirstName(userName)}</div>
+            </IconButton>
+
+            <Menu
+              id="menu-appbar"
+              anchorEl={anchorEl}
+              anchorOrigin={{
+                vertical: 'top',
+                horizontal: 'right'
+              }}
+              transformOrigin={{
+                vertical: 'top',
+                horizontal: 'right'
+              }}
+              open={open}
+              onClose={this.handleClose}
+            >
+              <MenuItem
+                onClick={() => {
+                  this.logoutClickedHandler();
+                  this.handleClose();
+                }}
+                className={classes.menuItem}
+              >
+                <Logout /> &nbsp; Log out
+              </MenuItem>
+            </Menu>
           </div>
-        </header>
-      </Aux>
-    )
+        </Toolbar>
+      </AppBar>
+    );
   }
 }
 
-export default Header;
+export default withStyles(materialStyles)(Header);

@@ -158,6 +158,16 @@ class Popup extends Component {
     }
   };
 
+  popClickedHandler = e => {
+    e.stopPropagation();
+    if (this.state.currentSelectedPieceInTable !== null) {
+      this.setCurrentSelectedPieceInTable({
+        pieceId: null,
+        pieceType: null
+      });
+    }
+  };
+
   render() {
     if (this.state.loadingUserInfo) {
       return (
@@ -217,7 +227,10 @@ class Popup extends Component {
 
     // logged in
     return (
-      <div style={{ display: 'flex', flexFlow: 'column', height: '100vh' }}>
+      <div
+        style={{ display: 'flex', flexFlow: 'column', height: '100vh' }}
+        onClick={e => this.popClickedHandler(e)}
+      >
         {appTitle}
         {/*<div
           style={{

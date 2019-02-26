@@ -2,7 +2,7 @@
 import React, { Component } from 'react';
 import { RadioGroup, Radio } from 'react-radio-group';
 import styles from './Options.css';
-import SelectTooltipButton from '../content/SelectTooltipButton/SelectTooltipButton';
+import Header from './components/Header/Header';
 
 class Options extends Component {
   state = {
@@ -109,6 +109,7 @@ class Options extends Component {
 
     return (
       <React.Fragment>
+        <Header userName={userName} userProfilePhotoURL={userProfilePhotoURL} />
         <div className={styles.OptionsPageContainer}>
           <div className={styles.OptionContainer}>
             <div className={styles.OptionLabel}>Sidebar open behavior:</div>
