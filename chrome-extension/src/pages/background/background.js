@@ -445,7 +445,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     });
   }
 
-  if (request.msg === 'GO_TO_AUTH_PAGE_TO_LOG_IN') {
+  if (request.msg === 'GO_TO_AUTH_PAGE') {
     lastActiveTabId = activeTabId;
     chrome.tabs.create(
       {

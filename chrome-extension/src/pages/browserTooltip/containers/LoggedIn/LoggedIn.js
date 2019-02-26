@@ -71,7 +71,7 @@ class LoggedIn extends Component {
 
   logoutClickedHandler = () => {
     chrome.runtime.sendMessage({
-      msg: 'GO_TO_AUTH_PAGE_TO_LOG_IN'
+      msg: 'GO_TO_AUTH_PAGE'
     });
   };
 

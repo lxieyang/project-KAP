@@ -6,11 +6,31 @@ import SelectTooltipButton from '../content/SelectTooltipButton/SelectTooltipBut
 
 class Options extends Component {
   state = {
+    userName: null,
+    userProfilePhotoURL: null,
+
+    loadingUserInfo: true,
+
+    // settings
     sidebarBehavior: 'overlay',
     sidebarEscapeKeyToggle: true
   };
 
   componentDidMount() {
+    chrome.runtime.sendMessage(
+      { msg: 'GET_USER_INFO', from: 'auth' },
+      response => {
+        this.retrieveLoginInfo(response.idToken);
+      }
+    );
+
+    // authenticate upon signin
+    chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+      if (request.msg === 'USER_LOGIN_STATUS_CHANGED') {
+        this.retrieveLoginInfo(request.idToken);
+      }
+    });
+
     chrome.runtime.sendMessage({ msg: 'SHOULD_SHRINK_BODY' }, response => {
       let shouldShrinkBody = response.SHOULD_SHRINK_BODY;
       this.setState({
@@ -30,6 +50,33 @@ class Options extends Component {
     );
   }
 
+  retrieveLoginInfo = idToken => {
+    if (idToken === null || idToken === undefined) {
+      // not logged in
+
+      this.setState({
+        loadingUserInfo: false,
+        userName: null,
+        userProfilePhotoURL: null
+      });
+
+      // should redirect to auth page to log in
+      setTimeout(() => {
+        window.location.replace(chrome.extension.getURL('auth.html'));
+      }, 2000);
+    } else {
+      // logged in
+      chrome.storage.local.get(['user'], result => {
+        let user = result.user;
+        this.setState({
+          loadingUserInfo: false,
+          userName: user.displayName,
+          userProfilePhotoURL: user.photoURL
+        });
+      });
+    }
+  };
+
   handleSidebarBehaviorChange = value => {
     this.setState({ sidebarBehavior: value });
     chrome.runtime.sendMessage({
@@ -47,6 +94,19 @@ class Options extends Component {
   };
 
   render() {
+    const { loadingUserInfo, userName, userProfilePhotoURL } = this.state;
+    if (loadingUserInfo) {
+      return null;
+    }
+
+    if (!loadingUserInfo && userName === null) {
+      return (
+        <div className={styles.RedirectingPromptContainer}>
+          Redirecting to log in page...
+        </div>
+      );
+    }
+
     return (
       <React.Fragment>
         <div className={styles.OptionsPageContainer}>

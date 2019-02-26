@@ -16,3 +16,18 @@
 .OptionOptions label {
   margin-right: 5px;
 }
+
+.RedirectingPromptContainer {
+  width: 100%;
+  height: 400px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  animation: blinker 1s linear infinite;
+}
+
+@keyframes blinker {
+  50% {
+    opacity: 0;
+  }
+}
