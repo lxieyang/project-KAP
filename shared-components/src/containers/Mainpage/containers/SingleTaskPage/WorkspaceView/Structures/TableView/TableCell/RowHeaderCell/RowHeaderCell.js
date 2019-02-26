@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import ReactHoverObserver from 'react-hover-observer';
 import FontAwesomeIcon from '@fortawesome/react-fontawesome';
 import fasListUl from '@fortawesome/fontawesome-free-solid/faListUl';
+import indicator from 'ordinal/indicator';
 import styles from './RowHeaderCell.css';
 
 import PieceItem from '../../../../../CollectionView/PiecesView/PieceItem/PieceItem';
@@ -110,6 +111,32 @@ const dropTarget = {
     return true;
   },
 
+  hover(props, monitor, component) {
+    const item = monitor.getItem();
+    const dropPieceCellId = item.cellId;
+    const dropPieceCellType = item.cellType;
+    const dropPieceCellRowIndex = item.rowIndex;
+
+    const allPieces = props.pieces;
+    let cellPieces = props.cell.pieces
+      .filter(
+        p => allPieces[p.pieceId] !== undefined && allPieces[p.pieceId] !== null
+      )
+      .map(p => p.pieceId);
+
+    if (
+      cellPieces.length > 0 &&
+      dropPieceCellId !== undefined &&
+      dropPieceCellType === TABLE_CELL_TYPES.rowHeader &&
+      dropPieceCellRowIndex !== props.rowIndex &&
+      props.rowToSwitchA === -1 &&
+      props.rowToSwitchB === -1
+    ) {
+      // both are from the table, should indicate switch columns
+      props.setRowToSwitch(props.rowIndex, dropPieceCellRowIndex);
+    }
+  },
+
   drop(props, monitor, component) {
     const item = monitor.getItem();
     const dropPieceId = item.id;
@@ -193,6 +220,11 @@ class RowHeaderCell extends Component {
   componentDidUpdate(prevProps, prevState) {
     if (prevProps.cell.content !== this.props.cell.content) {
       this.setState({ contentEdit: this.props.cell.content });
+    }
+
+    if (prevProps.isOver === true && this.props.isOver === false) {
+      // didn't drop and left
+      this.props.setRowToSwitch(-1, -1);
     }
   }
 
@@ -356,6 +388,10 @@ class RowHeaderCell extends Component {
       return <td />;
     }
 
+    let cellPieces = cell.pieces.filter(
+      p => pieces[p.pieceId] !== undefined && pieces[p.pieceId] !== null
+    );
+
     let deleteRowActionContainer = editAccess ? (
       <div className={styles.DeleteRowIconContainer}>
         <ReactHoverObserver
@@ -382,6 +418,24 @@ class RowHeaderCell extends Component {
         </ReactHoverObserver>
       </div>
     ) : null;
+
+    let reorderRowPromptContainer = (
+      <div className={styles.ReorderRowPromptContainer}>
+        {this.props.rowToSwitchA === this.props.rowIndex ? (
+          <div className={styles.ReorderPrompt}>
+            switch row {this.props.rowToSwitchB}
+            <sup>{indicator(this.props.rowToSwitchB)}</sup> and{' '}
+            {this.props.rowIndex}
+            <sup>{indicator(this.props.rowIndex)}</sup>
+          </div>
+        ) : (
+          <div className={styles.IndexIndicator}>
+            {this.props.rowIndex}
+            <sup>{indicator(this.props.rowIndex)}</sup>
+          </div>
+        )}
+      </div>
+    );
 
     let commentsFromOthers = comments.filter(
       c => c.authorId !== FirestoreManager.getCurrentUserId()
@@ -482,24 +536,26 @@ class RowHeaderCell extends Component {
       </div>
     ) : null;
 
-    // pieces = { ...pieces, ...this.state.manualPieces };
-
-    let cellPieces = cell.pieces.filter(
-      p => pieces[p.pieceId] !== undefined && pieces[p.pieceId] !== null
-    );
-
     return connectDropTarget(
       <td
         className={styles.RowHeaderCell}
         style={{
           backgroundColor: cell.checked
             ? THEME_COLOR.optionChosenBackgroundColor
-            : isOver && canDrop
+            : (isOver && canDrop) ||
+              this.props.rowIndex === this.props.rowToSwitchA
             ? '#f8c471'
+            : this.props.rowIndex === this.props.rowToSwitchB
+            ? '#E89339'
             : null
         }}
       >
-        {deleteRowActionContainer}
+        {this.props.rowToSwitchA === -1 &&
+          this.props.rowToSwitchB === -1 &&
+          deleteRowActionContainer}
+        {this.props.rowToSwitchA !== -1 &&
+          this.props.rowToSwitchB !== -1 &&
+          reorderRowPromptContainer}
         {commentsActionContainer}
         {decideRowActionContainer}
 

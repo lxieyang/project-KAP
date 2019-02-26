@@ -40,6 +40,32 @@
   opacity: 1;
 }
 
+.ReorderRowPromptContainer {
+  position: absolute;
+  font-weight: 500;
+  font-size: 12px;
+  top: 0px;
+  left: -24px;
+  bottom: 0px;
+  width: 24px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.ReorderPrompt {
+  animation: blinker 1s linear infinite;
+}
+
+@keyframes blinker {
+  50% {
+    opacity: 0;
+  }
+}
+
+.IndexIndicator {
+}
+
 .DecideRowIconContainer {
   position: absolute;
   bottom: 0px;

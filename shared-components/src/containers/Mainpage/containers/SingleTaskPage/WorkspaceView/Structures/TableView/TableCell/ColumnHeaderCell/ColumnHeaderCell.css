@@ -1,6 +1,6 @@
 .ColumnHeaderCell {
   position: relative;
-  transition: all 0.15s ease-in;
+  transition: all 0.1s ease-in;
 }
 
 .HoverToReveal {
@@ -38,6 +38,31 @@
 
 .ColumnHeaderCell:hover .DeleteColumnIconContainer {
   opacity: 1;
+}
+
+.ReorderColumnPromptContainer {
+  position: absolute;
+  font-weight: 500;
+  font-size: 12px;
+  top: -24px;
+  left: 0px;
+  right: 0px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.ReorderPrompt {
+  animation: blinker 1s linear infinite;
+}
+
+@keyframes blinker {
+  50% {
+    opacity: 0;
+  }
+}
+
+.IndexIndicator {
 }
 
 .CellContentContainer {

@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import ReactHoverObserver from 'react-hover-observer';
 import FontAwesomeIcon from '@fortawesome/react-fontawesome';
 import fasFlagCheckered from '@fortawesome/fontawesome-free-solid/faFlagCheckered';
+import indicator from 'ordinal/indicator';
 import styles from './ColumnHeaderCell.css';
 
 import PieceItem from '../../../../../CollectionView/PiecesView/PieceItem/PieceItem';
@@ -103,6 +104,32 @@ const dropTarget = {
     return true;
   },
 
+  hover(props, monitor, component) {
+    const item = monitor.getItem();
+    const dropPieceCellId = item.cellId;
+    const dropPieceCellType = item.cellType;
+    const dropPieceCellColumnIndex = item.columnIndex;
+
+    const allPieces = props.pieces;
+    let cellPieces = props.cell.pieces
+      .filter(
+        p => allPieces[p.pieceId] !== undefined && allPieces[p.pieceId] !== null
+      )
+      .map(p => p.pieceId);
+
+    if (
+      cellPieces.length > 0 &&
+      dropPieceCellId !== undefined &&
+      dropPieceCellType === TABLE_CELL_TYPES.columnHeader &&
+      dropPieceCellColumnIndex !== props.columnIndex &&
+      props.columnToSwitchA === -1 &&
+      props.columnToSwitchB === -1
+    ) {
+      // both are from the table, should indicate switch columns
+      props.setColumnToSwitch(props.columnIndex, dropPieceCellColumnIndex);
+    }
+  },
+
   drop(props, monitor, component) {
     const item = monitor.getItem();
     const dropPieceId = item.id;
@@ -187,8 +214,14 @@ class ColumnHeaderCell extends Component {
   };
 
   componentDidUpdate(prevProps, prevState) {
-    if (prevProps.cell.content !== this.props.cell.content)
+    if (prevProps.cell.content !== this.props.cell.content) {
       this.setState({ contentEdit: this.props.cell.content });
+    }
+
+    if (prevProps.isOver === true && this.props.isOver === false) {
+      // didn't drop and left
+      this.props.setColumnToSwitch(-1, -1);
+    }
   }
 
   componentDidMount() {
@@ -343,6 +376,10 @@ class ColumnHeaderCell extends Component {
       return <td />;
     }
 
+    let cellPieces = cell.pieces.filter(
+      p => pieces[p.pieceId] !== undefined && pieces[p.pieceId] !== null
+    );
+
     let deleteColumnActionContainer = editAccess ? (
       <div className={styles.DeleteColumnIconContainer}>
         {' '}
@@ -370,6 +407,24 @@ class ColumnHeaderCell extends Component {
         </ReactHoverObserver>
       </div>
     ) : null;
+
+    let reorderColumnPromptContainer = (
+      <div className={styles.ReorderColumnPromptContainer}>
+        {this.props.columnToSwitchA === this.props.columnIndex ? (
+          <div className={styles.ReorderPrompt}>
+            switch column {this.props.columnToSwitchB}
+            <sup>{indicator(this.props.columnToSwitchB)}</sup> and{' '}
+            {this.props.columnIndex}
+            <sup>{indicator(this.props.columnIndex)}</sup>
+          </div>
+        ) : (
+          <div className={styles.IndexIndicator}>
+            {this.props.columnIndex}
+            <sup>{indicator(this.props.columnIndex)}</sup>
+          </div>
+        )}
+      </div>
+    );
 
     let commentsFromOthers = comments.filter(
       c => c.authorId !== FirestoreManager.getCurrentUserId()
@@ -434,10 +489,6 @@ class ColumnHeaderCell extends Component {
       </div>
     ) : null;
 
-    let cellPieces = cell.pieces.filter(
-      p => pieces[p.pieceId] !== undefined && pieces[p.pieceId] !== null
-    );
-
     return connectDropTarget(
       <th
         className={styles.ColumnHeaderCell}
@@ -445,12 +496,20 @@ class ColumnHeaderCell extends Component {
           backgroundColor:
             this.props.columnIndex === this.props.columnToDelete
               ? THEME_COLOR.alertBackgroundColor
-              : isOver && canDrop
+              : (isOver && canDrop) ||
+                this.props.columnIndex === this.props.columnToSwitchA
               ? '#aed6f1'
+              : this.props.columnIndex === this.props.columnToSwitchB
+              ? '#89D6E6'
               : null
         }}
       >
-        {deleteColumnActionContainer}
+        {this.props.columnToSwitchA === -1 &&
+          this.props.columnToSwitchB === -1 &&
+          deleteColumnActionContainer}
+        {this.props.columnToSwitchA !== -1 &&
+          this.props.columnToSwitchB !== -1 &&
+          reorderColumnPromptContainer}
         {commentsActionContainer}
 
         {cellPieces.length > 0 ? (
