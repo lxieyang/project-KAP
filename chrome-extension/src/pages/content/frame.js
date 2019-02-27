@@ -7,6 +7,7 @@ import Logo from '../../../../shared-components/src/components/UI/Logo/Logo';
 import FontAwesomeIcon from '@fortawesome/react-fontawesome';
 import faChevronLeft from '@fortawesome/fontawesome-free-solid/faChevronLeft';
 import faChevronRight from '@fortawesome/fontawesome-free-solid/faChevronRight';
+import Resizable from 're-resizable';
 import styles from './frame.css';
 
 const flexContainer = css({
@@ -30,8 +31,8 @@ const containerClass = css({
   top: '0px',
   right: '0px',
   height: '100%',
-  width: '410px',
-  padding: '3px',
+  // width: '410px',
+  padding: '3px 3px 3px 0px',
   boxSizing: 'border-box',
   borderRadius: '3px',
   transform: 'translateX(115%)',
@@ -88,102 +89,13 @@ const toggleButtonInnerClass = css({
 });
 
 const FRAME_TOGGLE_FUNCTION = 'chromeIframeSheetToggle';
-const FRAME_TOGGLE_WINDER_FUNCTION = 'chromeIframeSheetToggleWinder';
 
 export class Frame extends Component {
-  render() {
-    const { isVisible, isMinimized } = this.state;
-    const {
-      url,
-      className,
-      containerClassName,
-      containerStyle,
-      iframeClassName,
-      iframeStyle,
-      children,
-      containerChildren
-    } = this.props;
-
-    return (
-      <React.Fragment>
-        <div
-          className={cx({
-            [toggleButtonClass]: true
-          })}
-          title={`${
-            this.state.isMinimized ? 'Open' : 'Hide'
-          } ${APP_NAME_SHORT} sidebar`}
-          // onClick={this.toggleMinimizedStatus}
-          onClick={this.onFrameClick}
-        >
-          <div
-            className={cx({
-              [toggleButtonInnerClass]: true
-            })}
-            style={{ margin: '5px' }}
-          >
-            <div
-              style={{
-                overflow: 'hidden',
-                whiteSpace: 'nowrap',
-                display: 'flex',
-                alignItems: 'center'
-              }}
-            >
-              <FontAwesomeIcon
-                icon={this.state.isMinimized ? faChevronLeft : faChevronRight}
-                style={{ marginRight: '5px' }}
-              />
-              <div style={{ width: '20px' }}>
-                <Logo size={'20px'} />
-              </div>
-              <div style={{ marginLeft: '5px' }}>
-                {` ${
-                  this.state.isMinimized ? 'Open' : 'Close'
-                } ${APP_NAME_SHORT} sidebar`}
-              </div>
-            </div>
-          </div>
-        </div>
-        <div
-          className={cx({
-            [containerClass]: true,
-            [containerVisibleClass]: isVisible,
-            [containerMinimizedClass]: isMinimized,
-            [containerClassName]: true
-          })}
-          style={{
-            ...containerStyle,
-            width: this.state.wider ? '600px' : null
-          }}
-          onClick={this.onFrameClick}
-        >
-          <iframe
-            title={'kap-sidebar-iframe'}
-            className={cx({
-              [iframeClass]: true,
-              [iframeClassName]: true
-            })}
-            style={iframeStyle}
-            src={url}
-            ref={frame => (this.frame = frame)}
-            onLoad={this.onLoad}
-          />
-
-          {containerChildren}
-        </div>
-
-        {children}
-      </React.Fragment>
-    );
-  }
-
   state = {
     isVisible: false,
     isMinimized: true, // default is minimized,
 
-    // wider
-    wider: false
+    isDragging: false
   };
 
   static defaultProps = {
@@ -220,7 +132,6 @@ export class Frame extends Component {
     const { delay, onMount } = this.props;
 
     window[FRAME_TOGGLE_FUNCTION] = this.toggleFrame;
-    window[FRAME_TOGGLE_WINDER_FUNCTION] = this.toggleFrameWinder;
 
     onMount({
       mask: this.mask,
@@ -260,17 +171,7 @@ export class Frame extends Component {
     window[FRAME_TOGGLE_FUNCTION]();
   };
 
-  onMaskClick = () => {
-    this.setState({
-      isMinimized: true
-    });
-  };
-
   onFrameClick = () => {
-    // this.setState({
-    //   isMinimized: false
-    // });
-
     this.toggleFrame();
   };
 
@@ -286,14 +187,6 @@ export class Frame extends Component {
     }
   };
 
-  toggleFrameWinder = () => {
-    this.setState(prevState => {
-      return {
-        wider: !prevState.wider
-      };
-    });
-  };
-
   static isReady() {
     return typeof window[FRAME_TOGGLE_FUNCTION] !== 'undefined';
   }
@@ -304,10 +197,121 @@ export class Frame extends Component {
     }
   }
 
-  static toggleWider() {
-    if (window[FRAME_TOGGLE_WINDER_FUNCTION]) {
-      window[FRAME_TOGGLE_WINDER_FUNCTION]();
-    }
+  render() {
+    const { isVisible, isMinimized, isDragging } = this.state;
+    const {
+      url,
+      className,
+      containerClassName,
+      containerStyle,
+      iframeClassName,
+      iframeStyle,
+      children,
+      containerChildren
+    } = this.props;
+
+    return (
+      <React.Fragment>
+        {!isDragging && (
+          <div
+            className={cx({
+              [toggleButtonClass]: true
+            })}
+            title={`${
+              this.state.isMinimized ? 'Open' : 'Hide'
+            } ${APP_NAME_SHORT} sidebar`}
+          >
+            <div
+              className={cx({
+                [toggleButtonInnerClass]: true
+              })}
+              style={{ margin: '5px' }}
+              onClick={this.onFrameClick}
+            >
+              <div
+                style={{
+                  overflow: 'hidden',
+                  whiteSpace: 'nowrap',
+                  display: 'flex',
+                  alignItems: 'center'
+                }}
+              >
+                <FontAwesomeIcon
+                  icon={this.state.isMinimized ? faChevronLeft : faChevronRight}
+                  style={{ marginRight: '5px' }}
+                />
+                <div style={{ width: '20px' }}>
+                  <Logo size={'20px'} />
+                </div>
+                <div style={{ marginLeft: '5px' }}>
+                  {` ${
+                    this.state.isMinimized ? 'Open' : 'Close'
+                  } ${APP_NAME_SHORT} sidebar`}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+        <div
+          className={cx({
+            [containerClass]: true,
+            [containerVisibleClass]: isVisible,
+            [containerMinimizedClass]: isMinimized,
+            [containerClassName]: true
+          })}
+          style={{
+            ...containerStyle
+          }}
+        >
+          <Resizable
+            minWidth={410}
+            maxWidth={800}
+            defaultSize={{
+              width: 410,
+              height: '100%'
+            }}
+            enable={{
+              top: false,
+              right: false,
+              bottom: false,
+              left: isMinimized ? false : true,
+              topRight: false,
+              bottomRight: false,
+              bottomLeft: false,
+              topLeft: false
+            }}
+            style={{
+              borderLeft: this.state.isDragging ? '4px solid #2196F3' : null
+            }}
+            // onResize={e => {
+            //   e.stopPropagation();
+            // }}
+            onResizeStart={e => {
+              this.setState({ isDragging: true });
+            }}
+            onResizeStop={e => {
+              this.setState({ isDragging: false });
+            }}
+          >
+            <iframe
+              title={'kap-sidebar-iframe'}
+              className={cx({
+                [iframeClass]: true,
+                [iframeClassName]: true
+              })}
+              style={iframeStyle}
+              src={url}
+              ref={frame => (this.frame = frame)}
+              onLoad={this.onLoad}
+            />
+          </Resizable>
+
+          {containerChildren}
+        </div>
+
+        {children}
+      </React.Fragment>
+    );
   }
 }
 

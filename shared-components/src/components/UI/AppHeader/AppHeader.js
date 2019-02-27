@@ -57,7 +57,7 @@ class AppHeader extends Component {
         >
           <div
             className={styles.HeaderText}
-            onClick={event => props.openInNewTabClickedHandler()}
+            // onClick={event => props.openInNewTabClickedHandler()}
           >
             <Logo size={props.logoSize} hover={props.hover} /> &nbsp;
             <strong>{APP_NAME_SHORT}</strong>
