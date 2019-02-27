@@ -4,6 +4,10 @@ import styles from './RatingLayer.css';
 
 import ThumbV1 from '../../../../../../../../../../../shared-components/src/components/UI/Thumbs/ThumbV1/ThumbV1';
 import InfoIcon from '../../../../../../../../../../../shared-components/src/components/UI/Thumbs/InfoIcon/InfoIcon';
+import { thumbUpSrc } from '../../../../../../../../../../../shared-components/src/components/UI/Thumbs/ThumbV1/ThumbV1';
+import { thumbDownSrc } from '../../../../../../../../../../../shared-components/src/components/UI/Thumbs/ThumbV1/ThumbV1';
+import { infoIconSrc } from '../../../../../../../../../../../shared-components/src/components/UI/Thumbs/InfoIcon/InfoIcon';
+
 import * as FirestoreManager from '../../../../../../../../../../../shared-components/src/firebase/firestore_wrapper';
 
 // dnd stuff
@@ -112,19 +116,37 @@ class RatingLayer extends Component {
     let { ratingType, cell, pieces, annotation_selected } = this.props;
 
     let backdropColor = 'fff';
-    let icon = <InfoIcon />;
+    // let icon = <InfoIcon />;
+    // switch (ratingType) {
+    //   case RATING_TYPES.positive:
+    //     backdropColor = '#ABEBC6';
+    //     icon = <ThumbV1 type={'up'} />;
+    //     break;
+    //   case RATING_TYPES.negative:
+    //     backdropColor = '#F5B7B1';
+    //     icon = <ThumbV1 type={'down'} />;
+    //     break;
+    //   case RATING_TYPES.info:
+    //     backdropColor = '#FCE500';
+    //     icon = <InfoIcon />;
+    //     break;
+    //   default:
+    //     break;
+    // }
+
+    let icon = infoIconSrc;
     switch (ratingType) {
       case RATING_TYPES.positive:
         backdropColor = '#ABEBC6';
-        icon = <ThumbV1 type={'up'} />;
+        icon = thumbUpSrc;
         break;
       case RATING_TYPES.negative:
         backdropColor = '#F5B7B1';
-        icon = <ThumbV1 type={'down'} />;
+        icon = thumbDownSrc;
         break;
       case RATING_TYPES.info:
         backdropColor = '#FCE500';
-        icon = <InfoIcon />;
+        icon = infoIconSrc;
         break;
       default:
         break;
@@ -143,7 +165,28 @@ class RatingLayer extends Component {
             opacity: !annotation_selected && isOver ? 1 : null
           }}
         >
-          <div style={{ width: '95%', marginTop: '5px' }}>{icon}</div>
+          <div
+            style={{
+              width: '95%',
+              height: '100%',
+              paddingTop: '5px',
+              boxSizing: 'border-box'
+            }}
+          >
+            {/* icon */}
+            <div
+              // https://stackoverflow.com/questions/9994493/scale-image-to-fit-a-bounding-box/10016640#10016640
+              style={{
+                backgroundColor: 'transparent',
+                backgroundImage: `url(${icon})`,
+                backgroundRepeat: 'no-repeat',
+                backgroundPositionX: 'center',
+                backgroundSize: 'contain',
+                height: '100%',
+                width: '100%'
+              }}
+            />
+          </div>
         </div>
       </div>
     );
