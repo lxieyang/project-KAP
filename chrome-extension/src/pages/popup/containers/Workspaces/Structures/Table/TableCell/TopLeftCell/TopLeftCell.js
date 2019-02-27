@@ -4,8 +4,6 @@ import { PIECE_COLOR } from '../../../../../../../../../../shared-components/src
 
 import Button from '@material-ui/core/Button';
 import PlusCircle from 'mdi-material-ui/PlusCircle';
-import Fab from '@material-ui/core/Fab';
-import AddIcon from '@material-ui/icons/Add';
 import { withStyles } from '@material-ui/core/styles';
 import * as FirestoreManager from '../../../../../../../../../../shared-components/src/firebase/firestore_wrapper';
 

@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { debounce } from 'lodash';
 import { withRouter } from 'react-router-dom';
 import moment from 'moment';
 import classnames from 'classnames';
@@ -203,7 +204,21 @@ class PieceItem extends Component {
     if (this.props.cellType === TABLE_CELL_TYPES.regularCell) {
       this.setState({ expanded: true });
     }
+
+    this.inputCallback = debounce(event => {
+      FirestoreManager.updatePieceName(
+        this.props.piece.id,
+        this.state.pieceName
+      );
+    }, 1000);
   }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (prevProps.piece.name !== this.props.piece.name) {
+      this.setState({ pieceName: this.props.piece.name });
+    }
+  }
+
 
   componentWillUnmount() {
     this.unsubscribeScreenshot();
@@ -236,9 +251,11 @@ class PieceItem extends Component {
   };
 
   handlePieceNameInputChange = event => {
+    event.persist();
     this.setState({
       pieceName: event.target.value
     });
+    this.inputCallback(event);
   };
 
   savePieceNameClickedHandler = () => {

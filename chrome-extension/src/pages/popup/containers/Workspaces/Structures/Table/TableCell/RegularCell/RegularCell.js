@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import styled from 'styled-components';
 import { sortBy, debounce } from 'lodash';
 import styles from './RegularCell.css';
 import ThumbV1 from '../../../../../../../../../../shared-components/src/components/UI/Thumbs/ThumbV1/ThumbV1';
@@ -19,12 +18,7 @@ import {
   PIECE_COLOR
 } from '../../../../../../../../../../shared-components/src/shared/theme';
 
-import ReactTooltip from 'react-tooltip';
 import { withStyles } from '@material-ui/core/styles';
-import Chat from 'mdi-material-ui/Chat';
-import Tooltip from '@material-ui/core/Tooltip';
-import IconButton from '@material-ui/core/IconButton';
-import Popover from '@material-ui/core/Popover';
 
 import Textarea from 'react-textarea-autosize';
 import { ContextMenu, MenuItem, ContextMenuTrigger } from 'react-contextmenu';

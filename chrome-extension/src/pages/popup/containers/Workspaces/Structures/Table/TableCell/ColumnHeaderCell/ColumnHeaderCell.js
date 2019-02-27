@@ -1,10 +1,5 @@
 import React, { Component } from 'react';
-import styled from 'styled-components';
 import ReactHoverObserver from 'react-hover-observer';
-import FontAwesomeIcon from '@fortawesome/react-fontawesome';
-import fasListUl from '@fortawesome/fontawesome-free-solid/faListUl';
-import fasFlagCheckered from '@fortawesome/fontawesome-free-solid/faFlagCheckered';
-import fasBookmark from '@fortawesome/fontawesome-free-solid/faBookmark';
 import { debounce } from 'lodash';
 import styles from './ColumnHeaderCell.css';
 
@@ -15,11 +10,8 @@ import * as FirestoreManager from '../../../../../../../../../../shared-componen
 
 import { withStyles } from '@material-ui/core/styles';
 import IconButton from '@material-ui/core/IconButton';
-import Avatar from '@material-ui/core/Avatar';
 import DeleteIcon from '@material-ui/icons/Delete';
-import Chat from 'mdi-material-ui/Chat';
 import Tooltip from '@material-ui/core/Tooltip';
-import Popover from '@material-ui/core/Popover';
 import Textarea from 'react-textarea-autosize';
 import Button from '@material-ui/core/Button';
 

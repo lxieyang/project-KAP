@@ -2,8 +2,6 @@
 import React, { Component } from 'react';
 import styles from './RatingLayer.css';
 
-import ThumbV1 from '../../../../../../../../../../../shared-components/src/components/UI/Thumbs/ThumbV1/ThumbV1';
-import InfoIcon from '../../../../../../../../../../../shared-components/src/components/UI/Thumbs/InfoIcon/InfoIcon';
 import { thumbUpSrc } from '../../../../../../../../../../../shared-components/src/components/UI/Thumbs/ThumbV1/ThumbV1';
 import { thumbDownSrc } from '../../../../../../../../../../../shared-components/src/components/UI/Thumbs/ThumbV1/ThumbV1';
 import { infoIconSrc } from '../../../../../../../../../../../shared-components/src/components/UI/Thumbs/InfoIcon/InfoIcon';

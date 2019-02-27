@@ -1,5 +1,6 @@
 /* global chrome */
 import React, { Component } from 'react';
+import { debounce } from 'lodash';
 import FontAwesomeIcon from '@fortawesome/react-fontawesome';
 import fasListUl from '@fortawesome/fontawesome-free-solid/faListUl';
 import fasFlagCheckered from '@fortawesome/fontawesome-free-solid/faFlagCheckered';
@@ -231,6 +232,19 @@ class Piece extends Component {
     ).onSnapshot(querySnapshot => {
       this.setState({ commentCount: querySnapshot.docs.length });
     });
+
+    this.inputCallback = debounce(event => {
+      FirestoreManager.updatePieceName(
+        this.props.piece.id,
+        this.state.pieceName
+      );
+    }, 1000);
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (prevProps.piece.name !== this.props.piece.name) {
+      this.setState({ pieceName: this.props.piece.name });
+    }
   }
 
   componentWillUnmount() {
@@ -264,9 +278,11 @@ class Piece extends Component {
   };
 
   handlePieceNameInputChange = event => {
+    event.persist();
     this.setState({
       pieceName: event.target.value
     });
+    this.inputCallback(event);
   };
 
   savePieceNameClickedHandler = () => {
