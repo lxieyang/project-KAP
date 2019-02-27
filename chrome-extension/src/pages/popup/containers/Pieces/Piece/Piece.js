@@ -368,7 +368,11 @@ class Piece extends Component {
     }
 
     return (
-      <div>
+      <div
+        onClick={e => {
+          e.stopPropagation();
+        }}
+      >
         <React.Fragment>
           <Card
             className={classes.card}
