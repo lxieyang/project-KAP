@@ -167,7 +167,10 @@ class ColumnHeaderCell extends Component {
     addingManualPiece: false,
 
     // textarea focus
-    textareaFocused: false
+    textareaFocused: false,
+
+    // pieceNameEdit
+    pieceNameEdit: null
   };
 
   static propTypes = {
@@ -178,8 +181,25 @@ class ColumnHeaderCell extends Component {
   };
 
   componentDidUpdate(prevProps, prevState) {
-    if (prevProps.cell.content !== this.props.cell.content)
+    if (prevProps.cell.content !== this.props.cell.content) {
       this.setState({ contentEdit: this.props.cell.content });
+    }
+
+    let prevCell = prevProps.cell;
+    let prevPieces = prevProps.pieces;
+    let { cell, pieces } = this.props;
+    let prevPieceInCell = this.getPieceInCell(prevCell, prevPieces);
+    let pieceInCell = this.getPieceInCell(cell, pieces);
+    if (
+      (prevPieceInCell !== null &&
+        pieceInCell !== null &&
+        prevPieceInCell.name !== pieceInCell.name) ||
+      (prevPieceInCell === null && pieceInCell !== null)
+    ) {
+      this.setState({ pieceNameEdit: pieceInCell.name });
+    } else if (prevPieceInCell !== null && pieceInCell === null) {
+      this.setState({ pieceNameEdit: null });
+    }
   }
 
   componentDidMount() {
@@ -190,7 +210,40 @@ class ColumnHeaderCell extends Component {
         this.textarea.focus();
       }
     }, 50);
+
+    let { cell, pieces } = this.props;
+    if (cell !== null && pieces !== null) {
+      let pieceInCell = this.getPieceInCell(cell, pieces);
+      if (pieceInCell !== null) {
+        this.setState({ pieceNameEdit: pieceInCell.name });
+      }
+    }
+
+    this.inputCallback = debounce((event, id) => {
+      FirestoreManager.updatePieceName(id, this.state.pieceNameEdit);
+    }, 1000);
   }
+
+  handlePieceNameInputChange = (event, id) => {
+    event.persist();
+    this.setState({
+      pieceNameEdit: event.target.value
+    });
+    this.inputCallback(event, id);
+  };
+
+  getPieceInCell = (cell, pieces) => {
+    let cellPieces = cell.pieces.filter(
+      p => pieces[p.pieceId] !== undefined && pieces[p.pieceId] !== null
+    );
+
+    let pieceInCell = null;
+    if (cellPieces.length > 0) {
+      pieceInCell = pieces[cellPieces[0].pieceId];
+    }
+
+    return pieceInCell;
+  };
 
   handleCommentClick = event => {
     this.setState({
@@ -443,7 +496,28 @@ class ColumnHeaderCell extends Component {
                     )
                   }
                 >
-                  {getFirstNWords(10, pieceInCell.name)}
+                  {this.props.currentSelectedPieceInTable !== null &&
+                  this.props.currentSelectedPieceInTable.pieceId ===
+                    pieceInCell.id ? (
+                    <Textarea
+                      onClick={e => e.stopPropagation()}
+                      minRows={2}
+                      maxRows={5}
+                      placeholder={''}
+                      value={this.state.pieceNameEdit}
+                      onKeyDown={e => {
+                        if (e.key === 'Enter' && !e.shiftKey) {
+                          e.target.blur();
+                        }
+                      }}
+                      onChange={e =>
+                        this.handlePieceNameInputChange(e, pieceInCell.id)
+                      }
+                      className={styles.Textarea}
+                    />
+                  ) : (
+                    getFirstNWords(10, pieceInCell.name)
+                  )}
                 </div>
               </ContextMenuTrigger>
               <ContextMenu id={`${cell.id}-context-menu`}>
