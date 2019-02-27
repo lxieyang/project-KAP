@@ -194,6 +194,12 @@ class Auth extends Component {
                   Currently logged in as
                   <img
                     src={this.state.userProfilePhotoURL}
+                    onError={e => {
+                      e.target.onerror = null;
+                      e.target.src = `https://ui-avatars.com/api/?name=${
+                        this.state.userName
+                      }?bold=true`;
+                    }}
                     alt="avatar"
                     style={{
                       borderRadius: '50%',

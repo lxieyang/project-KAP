@@ -131,6 +131,12 @@ class AppHeader extends Component {
                         ? props.userProfilePhotoURL
                         : ProfileImg
                     }
+                    onError={e => {
+                      e.target.onerror = null;
+                      e.target.src = `https://ui-avatars.com/api/?name=${
+                        props.userName
+                      }?bold=true`;
+                    }}
                     alt=""
                     className={styles.ProfileImg}
                   />

@@ -169,6 +169,12 @@ class CellCommentItem extends Component {
                 >
                   <img
                     src={item.authorAvatarURL}
+                    onError={e => {
+                      e.target.onerror = null;
+                      e.target.src = `https://ui-avatars.com/api/?name=${
+                        item.authorName
+                      }?bold=true`;
+                    }}
                     alt={item.authorId}
                     style={{ width: '100%', height: '100%' }}
                   />

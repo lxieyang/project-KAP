@@ -110,6 +110,10 @@ class Header extends Component {
               <Avatar
                 alt="avatar"
                 src={userProfilePhotoURL ? userProfilePhotoURL : ProfileImg}
+                onError={e => {
+                  e.target.onerror = null;
+                  e.target.src = `https://ui-avatars.com/api/?name=${userName}?bold=true`;
+                }}
                 className={classes.userAvatar}
               />
               <div className={classes.username}>{getFirstName(userName)}</div>

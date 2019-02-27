@@ -371,6 +371,10 @@ class Header extends Component {
                       ? userProfilePhotoURL
                       : ProfileImg
                   }
+                  onError={e => {
+                    e.target.onerror = null;
+                    e.target.src = `https://ui-avatars.com/api/?name=${userName}?bold=true`;
+                  }}
                   alt=""
                   className={styles.ProfileImg}
                 />
