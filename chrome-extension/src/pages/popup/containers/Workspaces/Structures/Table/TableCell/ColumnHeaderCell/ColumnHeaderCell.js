@@ -165,6 +165,7 @@ class ColumnHeaderCell extends Component {
     manualPieceId: '',
     manualPieces: {},
     addingManualPiece: false,
+    enterKeyHit: false,
 
     // textarea focus
     textareaFocused: false,
@@ -222,6 +223,10 @@ class ColumnHeaderCell extends Component {
     this.inputCallback = debounce((event, id) => {
       FirestoreManager.updatePieceName(id, this.state.pieceNameEdit);
     }, 1000);
+
+    this.saveContentCallback = debounce(event => {
+      this.saveCellContentAsPiece();
+    }, 1000);
   }
 
   handlePieceNameInputChange = (event, id) => {
@@ -259,14 +264,15 @@ class ColumnHeaderCell extends Component {
 
   keyPress(e) {
     if (e.key === 'Enter' && !e.shiftKey) {
-      this.saveCellContentAsPiece();
+      this.setState({ enterKeyHit: true });
+      e.target.blur();
     }
   }
 
   handleCellContentInputChange = e => {
-    // e.persist();
+    e.persist();
     this.setState({ contentEdit: e.target.value });
-    // this.saveContentCallback(e);
+    this.saveContentCallback(e);
   };
 
   saveCellContentAsPiece = () => {
@@ -342,6 +348,21 @@ class ColumnHeaderCell extends Component {
             this.props.cell.id,
             ''
           );
+
+          if (!this.state.enterKeyHit) {
+            this.pieceNameContainerClickedHandler(
+              null,
+              pieceId,
+              PIECE_TYPES.criterion
+            );
+
+            // focus the textarea
+            setTimeout(() => {
+              this.textareaForPieceName.focus();
+            }, 50);
+          }
+
+          this.setState({ enterKeyHit: false });
         }
       })
       .catch(() => {
@@ -352,6 +373,8 @@ class ColumnHeaderCell extends Component {
             this.props.cell.id,
             ''
           );
+
+          this.setState({ enterKeyHit: false });
         }
       });
 
@@ -383,7 +406,9 @@ class ColumnHeaderCell extends Component {
   };
 
   pieceNameContainerClickedHandler = (e, pieceId, pieceType) => {
-    e.stopPropagation();
+    if (e) {
+      e.stopPropagation();
+    }
     if (
       this.props.currentSelectedPieceInTable === null ||
       this.props.currentSelectedPieceInTable.pieceId !== pieceId
@@ -500,6 +525,7 @@ class ColumnHeaderCell extends Component {
                   this.props.currentSelectedPieceInTable.pieceId ===
                     pieceInCell.id ? (
                     <Textarea
+                      inputRef={tag => (this.textareaForPieceName = tag)}
                       onClick={e => e.stopPropagation()}
                       minRows={2}
                       maxRows={5}
@@ -546,8 +572,6 @@ class ColumnHeaderCell extends Component {
                     placeholder={'Add a criterion'}
                     value={this.state.contentEdit}
                     onKeyDown={this.keyPress}
-                    onFocus={() => this.setState({ textareaFocused: true })}
-                    onBlur={() => this.setState({ textareaFocused: false })}
                     onChange={e => this.handleCellContentInputChange(e)}
                     className={styles.Textarea}
                   />
