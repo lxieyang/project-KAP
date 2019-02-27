@@ -88,7 +88,7 @@ class TaskSwitcher extends Component {
 
     // snackbar
     open: false,
-    timeoutDuration: 10000,
+    timeoutDuration: 6000,
     toDeleteTaskId: '',
     toDeleteTaskLabel: ''
   };
@@ -229,95 +229,6 @@ class TaskSwitcher extends Component {
 
     return (
       <React.Fragment>
-        <TaskSwitcherContainer>
-          <Tooltip title="Open Task Detail Page" placement={'bottom'}>
-            <a
-              href={`https://unakite-v2.firebaseapp.com/tasks/${
-                currentTask.value
-              }`}
-              target="__blank"
-            >
-              <IconButton aria-label="Open" className={classes.iconButtons}>
-                <OpenInNew className={classes.iconInIconButtons} />
-              </IconButton>
-            </a>
-          </Tooltip>
-          <Dropdown
-            className={classesInCSS.DropdownRoot}
-            controlClassName={classesInCSS.DropdownControl}
-            placeholderClassName={classesInCSS.DropdownPlaceholder}
-            menuClassName={classesInCSS.DropdownMenu}
-            options={this.state.options}
-            onChange={this._onSelect}
-            value={currentTask}
-            placeholder="No active task"
-          />
-          <VariousButtonsContainer>
-            <Tooltip
-              title={`${
-                currentTask.data.isStarred ? 'Unstar' : 'Star'
-              } this task`}
-              placement={'bottom'}
-            >
-              <IconButton
-                aria-label="Star"
-                className={classes.iconButtons}
-                onClick={e =>
-                  this.toggleTaskStarStatus(
-                    currentTask.value,
-                    currentTask.data.isStarred
-                  )
-                }
-              >
-                {currentTask.data.isStarred ? (
-                  <Star
-                    className={classes.iconInIconButtons}
-                    style={{
-                      color: THEME_COLOR.starColor
-                    }}
-                  />
-                ) : (
-                  <StarOutline className={classes.iconInIconButtons} />
-                )}
-              </IconButton>
-            </Tooltip>
-            <Tooltip title="Edit task name" placement={'bottom'}>
-              <IconButton
-                aria-label="Edit"
-                className={classes.iconButtons}
-                onClick={e =>
-                  this.updateTaskName(currentTask.value, currentTask.label)
-                }
-              >
-                <EditIcon className={classes.iconInIconButtons} />
-              </IconButton>
-            </Tooltip>
-            <Tooltip title="Delete this task" placement={'bottom'}>
-              <IconButton
-                aria-label="Delete"
-                className={classes.iconButtons}
-                onClick={() =>
-                  this.handleDeleteButtonClicked(
-                    currentTask.value,
-                    currentTask.label
-                  )
-                }
-              >
-                <DeleteIcon className={classes.iconInIconButtons} />
-              </IconButton>
-            </Tooltip>
-            <Tooltip title="All tasks" placement={'bottom'}>
-              <a
-                href={`https://unakite-v2.firebaseapp.com/alltasks`}
-                target="__blank"
-              >
-                <IconButton aria-label="Grid" className={classes.iconButtons}>
-                  <ViewGrid className={classes.iconInIconButtons} />
-                </IconButton>
-              </a>
-            </Tooltip>
-          </VariousButtonsContainer>
-        </TaskSwitcherContainer>
         {!this.state.tasksLoading && this.state.taskCount === 0 ? (
           <TaskCreatePrompt>
             <div>
@@ -332,7 +243,97 @@ class TaskSwitcher extends Component {
               few minutes.
             </div>
           </TaskCreatePrompt>
-        ) : null}
+        ) : (
+          <TaskSwitcherContainer>
+            <Tooltip title="Open Task Detail Page" placement={'bottom'}>
+              <a
+                href={`https://unakite-v2.firebaseapp.com/tasks/${
+                  currentTask.value
+                }`}
+                target="__blank"
+              >
+                <IconButton aria-label="Open" className={classes.iconButtons}>
+                  <OpenInNew className={classes.iconInIconButtons} />
+                </IconButton>
+              </a>
+            </Tooltip>
+            <Dropdown
+              className={classesInCSS.DropdownRoot}
+              controlClassName={classesInCSS.DropdownControl}
+              placeholderClassName={classesInCSS.DropdownPlaceholder}
+              menuClassName={classesInCSS.DropdownMenu}
+              options={this.state.options}
+              onChange={this._onSelect}
+              value={currentTask}
+              placeholder="No active task"
+            />
+            <VariousButtonsContainer>
+              <Tooltip
+                title={`${
+                  currentTask.data.isStarred ? 'Unstar' : 'Star'
+                } this task`}
+                placement={'bottom'}
+              >
+                <IconButton
+                  aria-label="Star"
+                  className={classes.iconButtons}
+                  onClick={e =>
+                    this.toggleTaskStarStatus(
+                      currentTask.value,
+                      currentTask.data.isStarred
+                    )
+                  }
+                >
+                  {currentTask.data.isStarred ? (
+                    <Star
+                      className={classes.iconInIconButtons}
+                      style={{
+                        color: THEME_COLOR.starColor
+                      }}
+                    />
+                  ) : (
+                    <StarOutline className={classes.iconInIconButtons} />
+                  )}
+                </IconButton>
+              </Tooltip>
+              <Tooltip title="Edit task name" placement={'bottom'}>
+                <IconButton
+                  aria-label="Edit"
+                  className={classes.iconButtons}
+                  onClick={e =>
+                    this.updateTaskName(currentTask.value, currentTask.label)
+                  }
+                >
+                  <EditIcon className={classes.iconInIconButtons} />
+                </IconButton>
+              </Tooltip>
+              <Tooltip title="Delete this task" placement={'bottom'}>
+                <IconButton
+                  aria-label="Delete"
+                  className={classes.iconButtons}
+                  onClick={() =>
+                    this.handleDeleteButtonClicked(
+                      currentTask.value,
+                      currentTask.label
+                    )
+                  }
+                >
+                  <DeleteIcon className={classes.iconInIconButtons} />
+                </IconButton>
+              </Tooltip>
+              <Tooltip title="All tasks" placement={'bottom'}>
+                <a
+                  href={`https://unakite-v2.firebaseapp.com/alltasks`}
+                  target="__blank"
+                >
+                  <IconButton aria-label="Grid" className={classes.iconButtons}>
+                    <ViewGrid className={classes.iconInIconButtons} />
+                  </IconButton>
+                </a>
+              </Tooltip>
+            </VariousButtonsContainer>
+          </TaskSwitcherContainer>
+        )}
         <Snackbar
           anchorOrigin={{
             vertical: 'top',

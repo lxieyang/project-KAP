@@ -89,7 +89,7 @@ class Pieces extends Component {
     pieces: [],
     trashedPieces: [],
     piecesInCurrentWorkspace: {},
-    currentTaskId: '',
+    currentTaskId: null,
 
     // snackbar control
     open: false,
@@ -153,39 +153,57 @@ class Pieces extends Component {
   componentDidMount() {
     this.unsubscribeCurrentTaskId = FirestoreManager.getCurrentUserCurrentTaskId().onSnapshot(
       doc => {
-        let currentTaskId = doc.data().id;
-        this.setState({ currentTaskId });
+        this.setState({
+          pieces: [],
+          trashedPieces: [],
+          piecesInCurrentWorkspace: {},
+          currentTaskId: null,
 
-        this.unsubscribeAllPieces = FirestoreManager.getAllPiecesInTask(
-          currentTaskId
-        )
-          .orderBy('creationDate', 'desc')
-          .onSnapshot(querySnapshot => {
-            let pieces = [];
-            querySnapshot.forEach(doc => {
-              pieces.push({ id: doc.id, ...doc.data() });
+          // snackbar control
+          open: false,
+          timeoutDuration: 4000,
+          toDeletePieceId: '',
+          toDeletePieceName: '',
+
+          // tab control
+          activeTabValue: TAB_VALUES.uncategorized,
+          lastActiveTabValue: TAB_VALUES.invalid
+        });
+        if (doc.exists) {
+          let currentTaskId = doc.data().id;
+          this.setState({ currentTaskId });
+
+          this.unsubscribeAllPieces = FirestoreManager.getAllPiecesInTask(
+            currentTaskId
+          )
+            .orderBy('creationDate', 'desc')
+            .onSnapshot(querySnapshot => {
+              let pieces = [];
+              querySnapshot.forEach(doc => {
+                pieces.push({ id: doc.id, ...doc.data() });
+              });
+              this.setState({ pieces });
             });
-            this.setState({ pieces });
-          });
 
-        this.unsubscribeTrashedPieces = FirestoreManager.getAllTrashedPiecesInTask(
-          currentTaskId
-        )
-          .orderBy('creationDate', 'desc')
-          .onSnapshot(querySnapshot => {
-            let trashedPieces = [];
-            querySnapshot.forEach(doc => {
-              trashedPieces.push({
-                id: doc.id,
-                ...doc.data()
+          this.unsubscribeTrashedPieces = FirestoreManager.getAllTrashedPiecesInTask(
+            currentTaskId
+          )
+            .orderBy('creationDate', 'desc')
+            .onSnapshot(querySnapshot => {
+              let trashedPieces = [];
+              querySnapshot.forEach(doc => {
+                trashedPieces.push({
+                  id: doc.id,
+                  ...doc.data()
+                });
+              });
+              this.setState({
+                trashedPieces
               });
             });
-            this.setState({
-              trashedPieces
-            });
-          });
 
-        this.getAllPiecesInCurrentTable(this.props.currentWorkspaceId);
+          this.getAllPiecesInCurrentTable(this.props.currentWorkspaceId);
+        }
       }
     );
   }
@@ -250,11 +268,9 @@ class Pieces extends Component {
 
   componentWillUnmount() {
     this.unsubscribeCurrentTaskId();
-    this.unsubscribeAllPieces();
-    this.unsubscribeTrashedPieces();
-    if (this.unsubscribeTablePieces) {
-      this.unsubscribeTablePieces();
-    }
+    if (this.unsubscribeAllPieces) this.unsubscribeAllPieces();
+    if (this.unsubscribeTrashedPieces) this.unsubscribeTrashedPieces();
+    if (this.unsubscribeTablePieces) this.unsubscribeTablePieces();
   }
 
   render() {
@@ -302,7 +318,7 @@ class Pieces extends Component {
         break;
     }
 
-    return (
+    return currentTaskId !== null ? (
       <React.Fragment>
         <PiecesContainer>
           <div>
@@ -418,7 +434,7 @@ class Pieces extends Component {
           ]}
         />
       </React.Fragment>
-    );
+    ) : null;
   }
 }
 

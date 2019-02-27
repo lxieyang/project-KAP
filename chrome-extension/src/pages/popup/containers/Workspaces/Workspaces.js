@@ -83,7 +83,7 @@ class Workspaces extends Component {
     pieces: null,
 
     // edit access
-    taskId: '',
+    taskId: null,
 
     // collapse
     expanded: true
@@ -102,79 +102,90 @@ class Workspaces extends Component {
   componentDidMount() {
     this.unsubscribeCurrentTaskId = FirestoreManager.getCurrentUserCurrentTaskId().onSnapshot(
       doc => {
-        let taskId = doc.data().id;
-        this.setState({ taskId: taskId });
-
-        // get all pieces
-        this.unsubscribePieces = FirestoreManager.getAllPiecesInTask(
-          taskId
-        ).onSnapshot(querySnapshot => {
-          let pieces = this.state.pieces ? { ...this.state.pieces } : {};
-          querySnapshot.docChanges().forEach(change => {
-            if (change.type === 'added' || change.type === 'modified') {
-              let p = {
-                ...change.doc.data(),
-                id: change.doc.id
-              };
-              pieces[change.doc.id] = p;
-            } else if (change.type === 'removed') {
-              delete pieces[change.doc.id];
-            }
-          });
-
-          this.setState({ pieces });
+        this.setState({
+          activeWorkspaceId: '0',
+          workspaces: [],
+          workspacesLoading: true,
+          pieces: null,
+          taskId: null,
+          expanded: true
         });
 
-        // get all workspaces
-        this.setState({ workspacesLoading: true }); // set to loading when taskId changed
-        this.unsubscribeWorkspaces = FirestoreManager.getAllWorkspacesInTask(
-          taskId
-        )
-          .orderBy('creationDate', 'asc')
-          .onSnapshot(querySnapshot => {
-            let workspaces = [];
-            querySnapshot.forEach(snapshot => {
-              workspaces.push({
-                id: snapshot.id,
-                ...snapshot.data()
-              });
+        if (doc.exists) {
+          let taskId = doc.data().id;
+          this.setState({ taskId: taskId });
+
+          // get all pieces
+          this.unsubscribePieces = FirestoreManager.getAllPiecesInTask(
+            taskId
+          ).onSnapshot(querySnapshot => {
+            let pieces = this.state.pieces ? { ...this.state.pieces } : {};
+            querySnapshot.docChanges().forEach(change => {
+              if (change.type === 'added' || change.type === 'modified') {
+                let p = {
+                  ...change.doc.data(),
+                  id: change.doc.id
+                };
+                pieces[change.doc.id] = p;
+              } else if (change.type === 'removed') {
+                delete pieces[change.doc.id];
+              }
             });
 
-            let activeWorkspaceId = this.state.activeWorkspaceId;
-            if (this.isWorkspaceStillPresent(workspaces, activeWorkspaceId)) {
-              // not going to change
-              this.setState({ workspaces, workspacesLoading: false });
-            } else {
-              if (workspaces.length > 0) {
-                // set to last one created
-                this.setState({
-                  workspaces,
-                  activeWorkspaceId: workspaces[workspaces.length - 1].id,
-                  workspacesLoading: false
-                });
-
-                this.props.setCurrentWorkspaceId(
-                  workspaces[workspaces.length - 1].id
-                );
-              } else {
-                // set to '0'
-                this.setState({
-                  workspaces,
-                  activeWorkspaceId: '0',
-                  workspacesLoading: false
-                });
-                this.props.setCurrentWorkspaceId('0');
-              }
-            }
+            this.setState({ pieces });
           });
+
+          // get all workspaces
+          this.setState({ workspacesLoading: true }); // set to loading when taskId changed
+          this.unsubscribeWorkspaces = FirestoreManager.getAllWorkspacesInTask(
+            taskId
+          )
+            .orderBy('creationDate', 'asc')
+            .onSnapshot(querySnapshot => {
+              let workspaces = [];
+              querySnapshot.forEach(snapshot => {
+                workspaces.push({
+                  id: snapshot.id,
+                  ...snapshot.data()
+                });
+              });
+
+              let activeWorkspaceId = this.state.activeWorkspaceId;
+              if (this.isWorkspaceStillPresent(workspaces, activeWorkspaceId)) {
+                // not going to change
+                this.setState({ workspaces, workspacesLoading: false });
+              } else {
+                if (workspaces.length > 0) {
+                  // set to last one created
+                  this.setState({
+                    workspaces,
+                    activeWorkspaceId: workspaces[workspaces.length - 1].id,
+                    workspacesLoading: false
+                  });
+
+                  this.props.setCurrentWorkspaceId(
+                    workspaces[workspaces.length - 1].id
+                  );
+                } else {
+                  // set to '0'
+                  this.setState({
+                    workspaces,
+                    activeWorkspaceId: '0',
+                    workspacesLoading: false
+                  });
+                  this.props.setCurrentWorkspaceId('0');
+                }
+              }
+            });
+        }
       }
     );
   }
 
   componentWillUnmount() {
     this.unsubscribeCurrentTaskId();
-    this.unsubscribePieces();
-    this.unsubscribeWorkspaces();
+    if (this.unsubscribePieces) this.unsubscribePieces();
+    if (this.unsubscribeWorkspaces) this.unsubscribeWorkspaces();
   }
 
   isWorkspaceStillPresent = (workspaces, activeWorkspaceId) => {
@@ -202,7 +213,13 @@ class Workspaces extends Component {
   };
 
   render() {
-    const { taskId, pieces, activeWorkspaceId, workspacesLoading } = this.state;
+    const {
+      taskId,
+      pieces,
+      workspaces,
+      activeWorkspaceId,
+      workspacesLoading
+    } = this.state;
 
     const { classes } = this.props;
 
@@ -222,7 +239,7 @@ class Workspaces extends Component {
       );
     }
 
-    return (
+    return taskId !== null ? (
       <React.Fragment>
         <WorkspacesContainer>
           <div style={{ width: '100%', display: 'flex', alignItems: 'center' }}>
@@ -241,7 +258,7 @@ class Workspaces extends Component {
                   icon={<AddIcon />}
                   style={{ minWidth: '40px' }}
                 />
-                {this.state.workspaces.map((workspace, idx) => {
+                {workspaces.map((workspace, idx) => {
                   let workspaceIcon = <TableLarge />;
                   let workspaceTypeString = 'table';
                   switch (workspace.type) {
@@ -334,7 +351,7 @@ class Workspaces extends Component {
               </WorkspacesContentContainer>
             ) : null}
 
-            {this.state.workspaces.map((workspace, idx) => {
+            {workspaces.map((workspace, idx) => {
               let retVal = null;
               switch (workspace.workspaceType) {
                 case WORKSPACE_TYPES.table:
@@ -370,7 +387,7 @@ class Workspaces extends Component {
           <Divider />
         </WorkspacesContainer>
       </React.Fragment>
-    );
+    ) : null;
   }
 }
 

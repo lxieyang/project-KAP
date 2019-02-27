@@ -18,6 +18,9 @@ export const getCurrentUserCreatedTasks = () => {
 };
 
 export const updateCurrentUserCurrentTaskId = taskId => {
+  if (taskId === null) {
+    return getCurrentUserCurrentTaskId().delete();
+  }
   return getCurrentUserCurrentTaskId().set(
     {
       id: taskId
@@ -61,7 +64,11 @@ export const deleteTaskById = taskId => {
         .limit(1)
         .get()
         .then(querySnapshot => {
-          updateCurrentUserCurrentTaskId(querySnapshot.docs[0].id);
+          if (querySnapshot.empty) {
+            updateCurrentUserCurrentTaskId(null);
+          } else {
+            updateCurrentUserCurrentTaskId(querySnapshot.docs[0].id);
+          }
         });
 
       updateTaskUpdateTime(taskId);

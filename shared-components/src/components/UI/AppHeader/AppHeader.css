@@ -1,6 +1,6 @@
 .AppHeader {
   margin-bottom: 10px;
-  height: 36px;
+  min-height: 36px;
   padding: 6px 10px 6px 10px;
   display: flex;
   align-items: center;
