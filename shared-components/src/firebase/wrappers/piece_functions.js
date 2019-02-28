@@ -96,6 +96,21 @@ export const deletePieceForeverById = pieceId => {
     });
 };
 
+export const clearTrashedPiecesForeverByTaskId = async taskId => {
+  let trashedPieces = await getAllTrashedPiecesInTask(taskId).get();
+  // Get a new write batch
+  let batch = db.batch();
+  trashedPieces.forEach(snapshot => {
+    batch.delete(snapshot.ref);
+    batch.delete(getScreenshotById(snapshot.id));
+  });
+
+  // Commit the batch
+  batch.commit().then(function() {
+    // console.log('cleared');
+  });
+};
+
 export const revivePieceById = pieceId => {
   getPieceById(pieceId)
     .update({

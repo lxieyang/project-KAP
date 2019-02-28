@@ -9,6 +9,7 @@ import styles from './PiecesView.css';
 
 import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
+import DeleteIcon from '@material-ui/icons/Delete';
 import Snackbar from '@material-ui/core/Snackbar';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
@@ -79,6 +80,16 @@ const HighZIndexSnackbar = withStyles({
     zIndex: '99999'
   }
 })(Snackbar);
+
+const ActionButton = withStyles({
+  root: {
+    minWidth: '0',
+    padding: '0px 6px 0px 3px'
+  },
+  label: {
+    textTransform: 'capitalize'
+  }
+})(Button);
 
 const TAB_VALUES = {
   all: 1,
@@ -218,6 +229,15 @@ class PiecesView extends Component {
     }
   };
 
+  clearTrashedPiecesclickedHandler = () => {
+    if (
+      window.confirm(`Are you sure you want to delete ALL the trashed pieces?`)
+    ) {
+      // should delete all pieces in the trash can permanently
+      FirestoreManager.clearTrashedPiecesForeverByTaskId(this.state.taskId);
+    }
+  };
+
   handleReviveButtonClicked = pieceId => {
     FirestoreManager.revivePieceById(pieceId);
   };
@@ -312,6 +332,28 @@ class PiecesView extends Component {
           </div>
 
           <PiecesUL>
+            {activeTabValue === TAB_VALUES.trashed && piecesList.length > 0 && (
+              <div
+                style={{
+                  width: '100%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  paddingBottom: '10px'
+                }}
+              >
+                <div style={{ flexGrow: 1 }} />
+                <div>
+                  <ActionButton
+                    variant="contained"
+                    color="secondary"
+                    onClick={() => this.clearTrashedPiecesclickedHandler()}
+                  >
+                    <DeleteIcon style={{ width: '18px', height: '18px' }} />
+                    Clear trash
+                  </ActionButton>
+                </div>
+              </div>
+            )}
             {piecesList.map((p, idx) => {
               return (
                 <PieceLI key={idx + p.id}>
