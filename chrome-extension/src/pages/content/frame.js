@@ -95,7 +95,9 @@ export class Frame extends Component {
     isVisible: false,
     isMinimized: true, // default is minimized,
 
-    isDragging: false
+    isDragging: false,
+    width: 410,
+    height: '100%'
   };
 
   static defaultProps = {
@@ -143,6 +145,15 @@ export class Frame extends Component {
         isVisible: true
       });
     }, delay);
+
+    try {
+      let widthObj = localStorage.getItem('kap-sidebar-width');
+      if (widthObj !== undefined) {
+        this.setState({ width: JSON.parse(widthObj).width });
+      }
+    } catch (e) {
+      localStorage.removeItem('kap-sidebar-width');
+    }
   }
 
   componentWillUnmount() {
@@ -266,10 +277,7 @@ export class Frame extends Component {
           <Resizable
             minWidth={410}
             maxWidth={800}
-            defaultSize={{
-              width: 410,
-              height: '100%'
-            }}
+            size={{ width: this.state.width, height: this.state.height }}
             enable={{
               top: false,
               right: false,
@@ -289,8 +297,17 @@ export class Frame extends Component {
             onResizeStart={e => {
               this.setState({ isDragging: true });
             }}
-            onResizeStop={e => {
-              this.setState({ isDragging: false });
+            onResizeStop={(e, direction, ref, d) => {
+              let width =
+                parseInt(this.state.width, 10) + parseInt(d.width, 10);
+              this.setState({
+                width: width,
+                isDragging: false
+              });
+              localStorage.setItem(
+                'kap-sidebar-width',
+                JSON.stringify({ width: width })
+              );
             }}
           >
             <iframe
