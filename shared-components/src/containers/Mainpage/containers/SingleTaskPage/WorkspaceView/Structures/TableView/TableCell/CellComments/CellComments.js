@@ -125,6 +125,7 @@ class CellComments extends Component {
                   Save
                 </ActionButton>
 
+                {/* // Niki doesn't want this, says it's confusing
                 <ActionButton
                   color="secondary"
                   className={classes.button}
@@ -132,6 +133,7 @@ class CellComments extends Component {
                 >
                   Cancel
                 </ActionButton>
+                */}
               </div>
             </div>
           ) : null}

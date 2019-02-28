@@ -16,14 +16,14 @@
 .TextAreaContainer {
   margin: 2px 8px 2px 8px;
   display: flex;
-  justify-content: center;
+  /* justify-content: center; */
   align-items: center;
 }
 
 .Textarea {
   display: block;
   box-sizing: border-box;
-  width: 97%;
+  width: 100%;
   resize: none;
   overflow: auto;
 
@@ -45,7 +45,7 @@
 
 .TextareaActionBar {
   margin-top: 6px;
-  margin-left: 12px;
+  margin-left: 8px;
   display: flex;
   justify-content: flex-start;
   align-items: center;

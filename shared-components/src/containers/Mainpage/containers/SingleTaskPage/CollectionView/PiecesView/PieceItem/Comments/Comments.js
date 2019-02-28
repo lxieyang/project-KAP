@@ -8,6 +8,7 @@ import Textarea from 'react-textarea-autosize';
 import * as FirestoreManager from '../../../../../../../../firebase/firestore_wrapper';
 import CommentItem from './CommentItem/CommentItem';
 import classesInCSS from './Comments.css';
+import { TABLE_CELL_TYPES } from '../../../../../../../../shared/types';
 
 const styles = theme => ({
   button: {
@@ -116,12 +117,19 @@ class Comments extends Component {
     );
 
     let compactView =
-      this.props.cellType === undefined ? (
+      this.props.cellType === undefined ||
+      this.props.cellType === TABLE_CELL_TYPES.rowHeader ||
+      this.props.cellType === TABLE_CELL_TYPES.columnHeader ? (
         <React.Fragment>
           <div
             className={classesInCSS.CommentBox}
             style={{
-              opacity: isHovering ? '1' : '0.5'
+              opacity:
+                isHovering ||
+                this.props.cellType === TABLE_CELL_TYPES.rowHeader ||
+                this.props.cellType === TABLE_CELL_TYPES.columnHeader
+                  ? '1'
+                  : '0.5'
             }}
           >
             {CommentList}
@@ -157,6 +165,7 @@ class Comments extends Component {
                   Save
                 </ActionButton>
 
+                {/* // Niki doesn't want this, says it's confusing
                 <ActionButton
                   color="secondary"
                   className={classes.button}
@@ -164,6 +173,7 @@ class Comments extends Component {
                 >
                   Cancel
                 </ActionButton>
+                */}
               </div>
             </div>
           ) : null}

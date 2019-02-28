@@ -164,6 +164,7 @@ class Comment extends Component {
                 Save
               </ActionButton>
 
+              {/* // Niki doesn't want this, says it's confusing
               <ActionButton
                 color="secondary"
                 className={classes.button}
@@ -171,6 +172,7 @@ class Comment extends Component {
               >
                 Cancel
               </ActionButton>
+              */}
             </div>
           </div>
         </div>

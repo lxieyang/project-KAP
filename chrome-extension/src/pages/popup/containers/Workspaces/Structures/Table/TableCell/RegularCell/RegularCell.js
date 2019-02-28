@@ -83,13 +83,13 @@ class RegularCell extends Component {
 
   componentDidMount() {
     this.keyPress = this.keyPress.bind(this);
-    // this.saveContentCallback = debounce(event => {
-    //   FirestoreManager.setTableCellContentById(
-    //     this.props.workspace.id,
-    //     this.props.cell.id,
-    //     event.target.value
-    //   );
-    // }, 500);
+    this.saveContentCallback = debounce(event => {
+      FirestoreManager.setTableCellContentById(
+        this.props.workspace.id,
+        this.props.cell.id,
+        event.target.value
+      );
+    }, 1000);
   }
 
   handleCommentClick = event => {
@@ -111,9 +111,9 @@ class RegularCell extends Component {
   }
 
   handleCellContentInputChange = e => {
-    // e.persist();
+    e.persist();
     this.setState({ contentEdit: e.target.value });
-    // this.saveContentCallback(e);
+    this.saveContentCallback(e);
   };
 
   saveCellContentClickedHandler = e => {

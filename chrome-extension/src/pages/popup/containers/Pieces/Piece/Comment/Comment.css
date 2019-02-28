@@ -14,16 +14,16 @@
 }
 
 .TextAreaContainer {
-  margin: 2px 8px 2px 8px;
+  margin: 2px 12px 2px 12px;
   display: flex;
-  justify-content: center;
+  /* justify-content: center; */
   align-items: center;
 }
 
 .Textarea {
   display: block;
   box-sizing: border-box;
-  width: 97%;
+  width: 100%;
   resize: none;
   overflow: auto;
 

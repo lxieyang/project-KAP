@@ -219,7 +219,6 @@ class PieceItem extends Component {
     }
   }
 
-
   componentWillUnmount() {
     this.unsubscribeScreenshot();
     this.unsubscribeAllComments();
