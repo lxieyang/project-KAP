@@ -341,6 +341,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 });
 
 window.addEventListener('keydown', event => {
+  console.log(event.key);
   if (event.key === 'Escape' && !event.ctrlKey) {
     if (
       captureWindow !== undefined &&
@@ -351,9 +352,11 @@ window.addEventListener('keydown', event => {
     }
   }
 
-  if (event.ctrlKey && event.key === 'Escape') {
+  if (
+    (event.ctrlKey && event.key === '`') ||
+    (event.ctrlKey && event.key === 'Escape')
+  ) {
     if (shouldUseEscapeKeyToToggleSidebar) {
-      // Frame.toggle(true);
       Frame.toggle();
     }
   }
