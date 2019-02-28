@@ -1,6 +1,6 @@
 {
   "name": "project-kap",
-  "version": "2.0.16",
+  "version": "2.0.17",
   "description": "Help developers organize and structure information related to programming decisions.",
   "license": "MIT",
   "repository": {
@@ -46,6 +46,7 @@
     "postcss-flexbugs-fixes": "^3.3.1",
     "postcss-loader": "^2.1.6",
     "prop-types": "^15.6.2",
+    "query-string": "^5.1.1",
     "re-resizable": "^4.11.0",
     "react": "^16.7.0",
     "react-awesome-popover": "^2.0.6",

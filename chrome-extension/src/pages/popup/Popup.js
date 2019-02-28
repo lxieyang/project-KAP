@@ -21,6 +21,7 @@ class Popup extends Component {
     userId: null,
     userName: null,
     userProfilePhotoURL: null,
+    idToken: null,
 
     currentTaskId: null,
 
@@ -64,6 +65,7 @@ class Popup extends Component {
   };
 
   signInOutUserWithCredential = idToken => {
+    this.setState({ idToken });
     if (idToken !== null) {
       // logged in
       firebase
@@ -243,7 +245,10 @@ class Popup extends Component {
         >
           Successfully logged into {APP_NAME_SHORT}.
         </div>*/}
-        <TaskSwitcher setCurrentTaskId={this.setCurrentTaskId} />
+        <TaskSwitcher
+          setCurrentTaskId={this.setCurrentTaskId}
+          idToken={this.state.idToken}
+        />
         <Workspaces
           setCurrentWorkspaceId={this.setCurrentWorkspaceId}
           setCurrentSelectedPieceInTable={this.setCurrentSelectedPieceInTable}

@@ -11,9 +11,12 @@ class CollectionView extends Component {
   render() {
     return (
       <React.Fragment>
-        <TaskStatusView />
+        <TaskStatusView userId={this.props.userId} />
         <Divider light />
-        <PiecesView currentWorkspaceId={this.props.currentWorkspaceId} />
+        <PiecesView
+          userId={this.props.userId}
+          currentWorkspaceId={this.props.currentWorkspaceId}
+        />
       </React.Fragment>
     );
   }

@@ -49,11 +49,13 @@ class SingleTaskPage extends Component {
           >
             <div className={styles.LeftPane}>
               <CollectionView
+                userId={this.props.userId}
                 currentWorkspaceId={this.state.currentWorkspaceId}
               />
             </div>
             <div className={styles.RightPane}>
               <WorkspaceView
+                userId={this.props.userId}
                 setCurrentWorkspaceId={this.setCurrentWorkspaceId}
               />
             </div>

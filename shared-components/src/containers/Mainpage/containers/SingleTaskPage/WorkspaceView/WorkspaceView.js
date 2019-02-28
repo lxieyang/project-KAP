@@ -74,7 +74,25 @@ class WorkspaceView extends Component {
   };
 
   componentDidMount() {
+    this.updateTask();
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (prevProps.userId !== this.props.userId) {
+      this.updateTask();
+    }
+  }
+
+  componentWillUnmount() {
+    if (this.unsubscribeTaskId) this.unsubscribeTaskId();
+    if (this.unsubscribePieces) this.unsubscribePieces();
+    if (this.unsubscribeWorkspaces) this.unsubscribeWorkspaces();
+  }
+
+  updateTask = () => {
     let taskId = getTaskIdFromPath(this.props.history.location.pathname);
+
+    if (this.unsubscribeTaskId) this.unsubscribeTaskId();
     this.unsubscribeTaskId = FirestoreManager.getTaskById(taskId).onSnapshot(
       snapshot => {
         if (snapshot.exists) {
@@ -88,6 +106,7 @@ class WorkspaceView extends Component {
       }
     );
 
+    if (this.unsubscribePieces) this.unsubscribePieces();
     this.unsubscribePieces = FirestoreManager.getAllPiecesInTask(
       taskId
     ).onSnapshot(querySnapshot => {
@@ -115,6 +134,7 @@ class WorkspaceView extends Component {
       this.setState({ pieces });
     });
 
+    if (this.unsubscribeWorkspaces) this.unsubscribeWorkspaces();
     this.unsubscribeWorkspaces = FirestoreManager.getAllWorkspacesInTask(taskId)
       .orderBy('creationDate', 'asc')
       .onSnapshot(querySnapshot => {
@@ -153,13 +173,7 @@ class WorkspaceView extends Component {
           }
         }
       });
-  }
-
-  componentWillUnmount() {
-    this.unsubscribeTaskId();
-    this.unsubscribePieces();
-    this.unsubscribeWorkspaces();
-  }
+  };
 
   isWorkspaceStillPresent = (workspaces, activeWorkspaceId) => {
     if (activeWorkspaceId === '0') {

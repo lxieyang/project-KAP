@@ -1,5 +1,6 @@
 /* global chrome */
 import React, { Component } from 'react';
+import queryString from 'query-string';
 import { Route, Switch, withRouter, Redirect } from 'react-router-dom';
 import Spinner from '../../components/UI/Spinner/Spinner';
 import Layout from './containers/Layout/Layout';
@@ -24,7 +25,9 @@ class Mainpage extends Component {
     loading: true,
 
     displayingTaskId: null,
-    displayingTaskName: null
+    displayingTaskName: null,
+
+    user: null
   };
 
   componentDidMount() {
@@ -38,16 +41,43 @@ class Mainpage extends Component {
 
         this.setState({
           authenticated: true,
+          user,
           loading: false
         });
       } else {
         this.setState({
           authenticated: false,
+          user: null,
           loading: false
         });
       }
     });
+
+    // log in if idToken is provided by the link
+    let idToken = queryString.parse(window.location.search).idToken;
+    this.signInUserWithCredential(idToken);
   }
+
+  signInUserWithCredential = idToken => {
+    if (idToken !== null && idToken !== undefined) {
+      // logged in
+      firebase
+        .auth()
+        .signInAndRetrieveDataWithCredential(
+          firebase.auth.GoogleAuthProvider.credential(idToken)
+        )
+        .then(result => {
+          // let user = result.user;
+          let cleanUrl = `${window.location.protocol}//${window.location.host}${
+            window.location.pathname
+          }`;
+          window.history.pushState({ path: cleanUrl }, '', cleanUrl);
+        })
+        .catch(error => {
+          console.log(error);
+        });
+    }
+  };
 
   componentWillUnmount() {
     this.removeAuthListerner();
@@ -82,6 +112,7 @@ class Mainpage extends Component {
           render={routeProps => (
             <SingleTaskPage
               {...routeProps}
+              userId={this.state.user.uid}
               setDisplayingTaskIdAndName={this.setDisplayingTaskIdAndName}
             />
           )}
@@ -100,13 +131,16 @@ class Mainpage extends Component {
             render={routeProps => (
               <SingleTaskPage
                 {...routeProps}
+                userId={this.state.user.uid}
                 setDisplayingTaskIdAndName={this.setDisplayingTaskIdAndName}
               />
             )}
           />
           <Route
             path={appRoutes.ALL_TASKS}
-            render={routeProps => <AllTasksPage {...routeProps} />}
+            render={routeProps => (
+              <AllTasksPage {...routeProps} userId={this.state.user.uid} />
+            )}
           />
 
           <Redirect to={this.state.homepage} />

@@ -41,12 +41,6 @@ class AllTasksPage extends Component {
     toDeleteTaskName: ''
   };
 
-  componentWillUnmount() {
-    this.unsubscribeTasks();
-    this.unsubscribeCurrentTaskId();
-    this.handleSnackbarClose();
-  }
-
   handleDeleteButtonClicked = (taskId, taskName) => {
     if (window.confirm(`Are you sure you want to delete "${taskName}"?`)) {
       this.setState({ open: true });
@@ -74,6 +68,23 @@ class AllTasksPage extends Component {
   };
 
   componentDidMount() {
+    this.updateTasks();
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (prevProps.userId !== this.props.userId) {
+      this.updateTasks();
+    }
+  }
+
+  componentWillUnmount() {
+    if (this.unsubscribeTasks) this.unsubscribeTasks();
+    if (this.unsubscribeCurrentTaskId) this.unsubscribeCurrentTaskId();
+    this.handleSnackbarClose();
+  }
+
+  updateTasks = () => {
+    if (this.unsubscribeTasks) this.unsubscribeTasks();
     this.unsubscribeTasks = FirestoreManager.getCurrentUserCreatedTasks()
       // .orderBy('updateDate', 'desc')
       .onSnapshot(querySnapshot => {
@@ -87,6 +98,7 @@ class AllTasksPage extends Component {
         this.setState({ tasks, tasksLoading: false });
       });
 
+    if (this.unsubscribeCurrentTaskId) this.unsubscribeCurrentTaskId();
     this.unsubscribeCurrentTaskId = FirestoreManager.getCurrentUserCurrentTaskId().onSnapshot(
       doc => {
         if (doc.exists) {
@@ -94,7 +106,7 @@ class AllTasksPage extends Component {
         }
       }
     );
-  }
+  };
 
   createNewTaskButtonClickedHandler = () => {
     let taskName = prompt('New task name:');

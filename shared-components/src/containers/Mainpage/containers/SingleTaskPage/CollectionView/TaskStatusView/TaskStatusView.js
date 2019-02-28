@@ -43,7 +43,22 @@ class TaskStatusView extends Component {
 
   componentDidMount() {
     this.keyPress = this.keyPress.bind(this);
+    this.updateTask();
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (prevProps.userId !== this.props.userId) {
+      this.updateTask();
+    }
+  }
+
+  componentWillUnmount() {
+    if (this.unsubscribeTaskId) this.unsubscribeTaskId();
+  }
+
+  updateTask = () => {
     let taskId = getTaskIdFromPath(this.props.history.location.pathname);
+    if (this.unsubscribeTaskId) this.unsubscribeTaskId();
     this.unsubscribeTaskId = FirestoreManager.getTaskById(taskId).onSnapshot(
       snapshot => {
         if (snapshot.exists) {
@@ -70,7 +85,7 @@ class TaskStatusView extends Component {
         }
       }
     );
-  }
+  };
 
   // also allow Enter to submit
   keyPress(e) {
@@ -78,10 +93,6 @@ class TaskStatusView extends Component {
     if (e.key === 'Enter' && !e.shiftKey) {
       this.textarea.blur();
     }
-  }
-
-  componentWillUnmount() {
-    this.unsubscribeTaskId();
   }
 
   toggleTaskStarStatus = (taskId, currentStarStatus) => {
