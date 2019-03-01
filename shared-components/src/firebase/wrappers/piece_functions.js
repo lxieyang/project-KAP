@@ -183,6 +183,21 @@ export const updatePieceName = (pieceId, newName) => {
 //
 //
 //
+/* piece text */
+export const updatePieceText = (pieceId, newText) => {
+  getPieceById(pieceId)
+    .update({
+      text: newText,
+      updateDate: firebase.firestore.FieldValue.serverTimestamp()
+    })
+    .then(() => {
+      updateTaskUpdateTimeUponPieceManipulation(pieceId);
+    });
+};
+
+//
+//
+//
 /* commenting */
 export const addCommentToAPieceById = (pieceId, newCommentContent) => {
   getPieceById(pieceId)

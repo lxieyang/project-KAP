@@ -194,6 +194,9 @@ class Piece extends Component {
     pieceNameBeforeStartEditing: this.props.piece.name,
     originalExpandedStatus: false,
 
+    // edit piece text
+    pieceText: this.props.piece.text,
+
     // screenshot control
     maxScreenshotHeight: 300,
     screenshot: null,
@@ -233,10 +236,17 @@ class Piece extends Component {
       this.setState({ commentCount: querySnapshot.docs.length });
     });
 
-    this.inputCallback = debounce(event => {
+    this.pieceNameinputCallback = debounce(event => {
       FirestoreManager.updatePieceName(
         this.props.piece.id,
         this.state.pieceName
+      );
+    }, 1000);
+
+    this.pieceTextInputCallback = debounce(event => {
+      FirestoreManager.updatePieceText(
+        this.props.piece.id,
+        this.state.pieceText
       );
     }, 1000);
   }
@@ -244,6 +254,10 @@ class Piece extends Component {
   componentDidUpdate(prevProps, prevState) {
     if (prevProps.piece.name !== this.props.piece.name) {
       this.setState({ pieceName: this.props.piece.name });
+    }
+
+    if (prevProps.piece.text !== this.props.piece.text) {
+      this.setState({ pieceText: this.props.piece.text });
     }
   }
 
@@ -256,13 +270,13 @@ class Piece extends Component {
   keyPress(e) {
     // if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
     if (e.key === 'Enter' && !e.shiftKey) {
-      this.savePieceNameClickedHandler();
+      e.target.blur();
     }
   }
 
   // piece name
   editPieceNameClickedHandler = () => {
-    let expanded = this.state.expanded;
+    let expanded = true; //this.state.expanded;
     let pieceNameBeforeStartEditing = this.state.pieceName;
     this.setState({
       editingPieceName: true,
@@ -282,7 +296,7 @@ class Piece extends Component {
     this.setState({
       pieceName: event.target.value
     });
-    this.inputCallback(event);
+    this.pieceNameinputCallback(event);
   };
 
   savePieceNameClickedHandler = () => {
@@ -300,6 +314,19 @@ class Piece extends Component {
   cancelPieceNameEditClickedHandler = () => {
     let expanded = this.state.originalExpandedStatus;
     this.setState({ editingPieceName: false, expanded });
+  };
+
+  // piece text
+  handlePieceTextInputChange = event => {
+    event.persist();
+    this.setState({
+      pieceText: event.target.value
+    });
+    this.pieceTextInputCallback(event);
+  };
+
+  savePieceTextClickedHandler = () => {
+    FirestoreManager.updatePieceText(this.props.piece.id, this.state.pieceText);
   };
 
   // piece type switch in uncategorized tab
@@ -683,48 +710,69 @@ class Piece extends Component {
               unmountOnExit
             >
               <div className={classesInCSS.CollapseContainer}>
-                {displayingScreenshot ? (
-                  screenshotLoading ? (
-                    <div
-                      style={{
-                        width: '100%',
-                        height: '200px',
-                        display: 'flex',
-                        justifyContent: 'space-around',
-                        alignItems: 'center'
-                      }}
-                    >
-                      <Spinner size={'30px'} />
-                    </div>
-                  ) : (
-                    <React.Fragment>
-                      <div
-                        className={classesInCSS.OriginalScreenshotContainer}
-                        style={{ maxHeight: `${maxScreenshotHeight}px` }}
-                      >
-                        {screenshot && (
-                          <img
-                            alt={piece.id}
-                            src={screenshot.imageDataUrl}
-                            style={{
-                              height: `${Math.min(
-                                Math.floor(screenshot.dimensions.rectHeight),
-                                maxScreenshotHeight
-                              )}px`
-                            }}
-                            onClick={() =>
-                              this.screenshotImageClickedHandler(piece.id)
-                            }
-                          />
-                        )}
+                {piece.annotationType !== ANNOTATION_TYPES.Manual ? (
+                  <React.Fragment>
+                    {displayingScreenshot ? (
+                      screenshotLoading ? (
+                        <div
+                          style={{
+                            width: '100%',
+                            height: '200px',
+                            display: 'flex',
+                            justifyContent: 'space-around',
+                            alignItems: 'center'
+                          }}
+                        >
+                          <Spinner size={'30px'} />
+                        </div>
+                      ) : (
+                        <React.Fragment>
+                          <div
+                            className={classesInCSS.OriginalScreenshotContainer}
+                            style={{ maxHeight: `${maxScreenshotHeight}px` }}
+                          >
+                            {screenshot && (
+                              <img
+                                alt={piece.id}
+                                src={screenshot.imageDataUrl}
+                                style={{
+                                  height: `${Math.min(
+                                    Math.floor(
+                                      screenshot.dimensions.rectHeight
+                                    ),
+                                    maxScreenshotHeight
+                                  )}px`
+                                }}
+                                onClick={() =>
+                                  this.screenshotImageClickedHandler(piece.id)
+                                }
+                              />
+                            )}
+                          </div>
+                        </React.Fragment>
+                      )
+                    ) : (
+                      <div className={classesInCSS.OriginalContentContainer}>
+                        <div
+                          className={classesInCSS.HTMLPreview}
+                          dangerouslySetInnerHTML={getHTML(piece.html)}
+                        />
                       </div>
-                    </React.Fragment>
-                  )
+                    )}
+                  </React.Fragment>
                 ) : (
-                  <div className={classesInCSS.OriginalContentContainer}>
-                    <div
-                      className={classesInCSS.HTMLPreview}
-                      dangerouslySetInnerHTML={getHTML(piece.html)}
+                  <div
+                    className={classesInCSS.TextareaForPieceContentContainer}
+                  >
+                    <Textarea
+                      minRows={1}
+                      maxRows={8}
+                      placeholder={' '}
+                      value={this.state.pieceText}
+                      onKeyDown={this.keyPress}
+                      onBlur={() => this.savePieceTextClickedHandler()}
+                      onChange={e => this.handlePieceTextInputChange(e)}
+                      className={classesInCSS.TextareaForPieceContent}
                     />
                   </div>
                 )}
