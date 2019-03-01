@@ -39,7 +39,7 @@ class Options extends Component {
     });
 
     chrome.runtime.sendMessage(
-      { msg: 'SHOULD_SHSHOULD_TOGGLE_SIDEBAR_WITH_ESC_KEYRINK_BODY' },
+      { msg: 'SHOULD_TOGGLE_SIDEBAR_WITH_ESC_KEY' },
       response => {
         let shouldUseEscapeKeyToToggleSidebar =
           response.SHOULD_TOGGLE_SIDEBAR_WITH_ESC_KEY;
