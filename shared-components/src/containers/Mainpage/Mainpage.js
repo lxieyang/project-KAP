@@ -112,7 +112,7 @@ class Mainpage extends Component {
           render={routeProps => (
             <SingleTaskPage
               {...routeProps}
-              userId={this.state.user.uid}
+              userId={this.state.user ? this.state.user.uid : null}
               setDisplayingTaskIdAndName={this.setDisplayingTaskIdAndName}
             />
           )}
@@ -131,7 +131,7 @@ class Mainpage extends Component {
             render={routeProps => (
               <SingleTaskPage
                 {...routeProps}
-                userId={this.state.user.uid}
+                userId={this.state.user ? this.state.user.uid : null}
                 setDisplayingTaskIdAndName={this.setDisplayingTaskIdAndName}
               />
             )}
@@ -139,7 +139,10 @@ class Mainpage extends Component {
           <Route
             path={appRoutes.ALL_TASKS}
             render={routeProps => (
-              <AllTasksPage {...routeProps} userId={this.state.user.uid} />
+              <AllTasksPage
+                {...routeProps}
+                userId={this.state.user ? this.state.user.uid : null}
+              />
             )}
           />
 

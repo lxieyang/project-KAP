@@ -3,22 +3,18 @@ import React, { Component } from 'react';
 
 import { withStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
-import Button from '@material-ui/core/Button';
 import Avatar from '@material-ui/core/Avatar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
-import MenuIcon from '@material-ui/icons/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
 import Logout from 'mdi-material-ui/LogoutVariant';
-import ViewGrid from 'mdi-material-ui/ViewGrid';
 
 import Logo from '../../../../../../shared-components/src/components/UI/Logo/Logo';
 import ProfileImg from '../../../../../../shared-components/src/assets/images/profile-img.png';
 import { APP_NAME_SHORT } from '../../../../../../shared-components/src/shared/constants';
 import { getFirstName } from '../../../../../../shared-components/src/shared/utilities';
-import styles from './Header.css';
 
 const materialStyles = {
   toolbar: {
