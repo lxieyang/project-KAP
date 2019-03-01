@@ -9,13 +9,24 @@ import { getHostnameWithoutWWW } from '../../../../../../shared-components/src/s
 
 import Settings from 'mdi-material-ui/Settings';
 import Logout from 'mdi-material-ui/LogoutVariant';
+import ViewGrid from 'mdi-material-ui/ViewGrid';
 import Switch from '@material-ui/core/Switch';
+import IconButton from '@material-ui/core/IconButton';
+import Star from 'mdi-material-ui/Star';
+import MenuItem from '@material-ui/core/MenuItem';
+import Menu from '@material-ui/core/Menu';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 
 import Divider from '@material-ui/core/Divider';
+import { THEME_COLOR } from '../../../../../../shared-components/src/shared/theme';
+
+const QuickSettingsContainer = styled.div`
+  padding: 0px 18px;
+`;
 
 const QuickSettingBlockContainer = styled.div`
-  padding-top: 5px;
-  padding-bottom: 5px;
+  padding-top: 8px;
+  padding-bottom: 8px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -40,22 +51,58 @@ const FooterButtonIcon = styled.div`
 
 class LoggedIn extends Component {
   state = {
-    trackingIsActive: this.props.shouldTrack
+    trackingIsActive: this.props.shouldTrack,
     // trackingStatusIsLoading: true
+
+    tasks: [],
+    taskCount: 0,
+    currentTaskId: null,
+
+    anchorEl: null,
+    selectedIndex: 0
+  };
+
+  handleClickListItem = event => {
+    this.setState({ anchorEl: event.currentTarget });
+  };
+
+  handleMenuItemClick = (event, index, taskId) => {
+    this.setState({
+      selectedIndex: index,
+      currentTaskId: taskId,
+      anchorEl: null
+    });
+    chrome.runtime.sendMessage({
+      msg: 'UPDATE_CURRENT_USER_CURRENT_TASK_ID',
+      taskId
+    });
+  };
+
+  handleClose = () => {
+    this.setState({ anchorEl: null });
+  };
+
+  taskNameClickedHandler = taskId => {
+    chrome.runtime.sendMessage({
+      msg: 'Go_TO_SINGLE_TASK_PAGE',
+      taskId
+    });
   };
 
   componentDidMount() {
-    // chrome.runtime.sendMessage(
-    //   {
-    //     msg: 'GET_TRACKING_STATUS'
-    //   },
-    //   response => {
-    //     this.setState({
-    //       trackingStatusIsLoading: false,
-    //       trackingIsActive: response.trackingIsActive
-    //     });
-    //   }
-    // );
+    chrome.storage.local.get(
+      ['tasks', 'taskCount', 'currentTaskId'],
+      results => {
+        this.setState({
+          tasks: results.tasks,
+          taskCount: results.taskCount,
+          currentTaskId: results.currentTaskId,
+          selectedIndex: results.tasks
+            .map(t => t.id)
+            .indexOf(results.currentTaskId)
+        });
+      }
+    );
   }
 
   handleChange = event => {
@@ -69,9 +116,9 @@ class LoggedIn extends Component {
     });
   };
 
-  logoutClickedHandler = () => {
+  allTasksClickedHandler = () => {
     chrome.runtime.sendMessage({
-      msg: 'GO_TO_AUTH_PAGE'
+      msg: 'Go_TO_ALL_TASKS_PAGE'
     });
   };
 
@@ -82,10 +129,11 @@ class LoggedIn extends Component {
   };
 
   render() {
-    // const { userName, photoURL } = this.props;
+    const { anchorEl } = this.state;
+
     return (
       <React.Fragment>
-        <div style={{ padding: '10px 18px' }}>
+        <QuickSettingsContainer>
           {this.props.hostname !== null ? (
             <QuickSettingBlockContainer>
               <div
@@ -122,13 +170,139 @@ class LoggedIn extends Component {
             </QuickSettingBlockContainer>
           ) : (
             <QuickSettingBlockContainer>
-              <div style={{ flexGrow: 1 }}>
+              <div style={{ flexGrow: 1, fontWeight: 300 }}>
                 {APP_NAME_SHORT} is disabled on this domain.
               </div>
             </QuickSettingBlockContainer>
           )}
-        </div>
-        <Divider />
+          {this.state.tasks.length > 0 ? (
+            <React.Fragment>
+              <Divider light />
+              <div style={{ margin: '10px 0px' }}>
+                <div
+                  style={{
+                    fontSize: 11,
+                    fontWeight: 300,
+                    opacity: 0.7,
+                    marginBottom: '3px'
+                  }}
+                >
+                  Currently working on:
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                  <div
+                    title={`Show task details`}
+                    style={{
+                      flexGrow: 1,
+                      marginRight: '4px',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center'
+                    }}
+                    onClick={() =>
+                      this.taskNameClickedHandler(
+                        this.state.tasks[this.state.selectedIndex].id
+                      )
+                    }
+                  >
+                    {this.state.tasks[this.state.selectedIndex].isStarred ? (
+                      <div
+                        style={{
+                          width: '20px',
+                          height: '20px',
+                          marginRight: '3px',
+                          flexShrink: '0'
+                        }}
+                      >
+                        <Star
+                          style={{
+                            width: '100%',
+                            height: '100%',
+                            color: THEME_COLOR.starColor
+                          }}
+                        />
+                      </div>
+                    ) : null}
+                    <div style={{ flexGrow: 1 }}>
+                      {this.state.tasks[this.state.selectedIndex].name}
+                    </div>
+                  </div>
+                  <div>
+                    <IconButton
+                      title={'Change tasks'}
+                      size="small"
+                      style={{ padding: '3px' }}
+                      aria-label="More"
+                      aria-haspopup="true"
+                      onClick={this.handleClickListItem}
+                    >
+                      <ExpandMoreIcon />
+                    </IconButton>
+                    <Menu
+                      id="lock-menu"
+                      anchorOrigin={{
+                        vertical: 'top',
+                        horizontal: 'right'
+                      }}
+                      transformOrigin={{
+                        vertical: 'top',
+                        horizontal: 'right'
+                      }}
+                      anchorEl={anchorEl}
+                      open={Boolean(anchorEl)}
+                      onClose={this.handleClose}
+                      PaperProps={{
+                        style: {
+                          maxHeight: 100,
+                          width: '100%'
+                        }
+                      }}
+                    >
+                      {this.state.tasks.map((task, index) => (
+                        <MenuItem
+                          style={{
+                            height: 'auto',
+                            whiteSpace: 'pre-wrap',
+                            padding: '4px 8px',
+                            fontSize: '14px',
+                            display: 'flex',
+                            alignItems: 'center'
+                          }}
+                          key={task.id}
+                          selected={index === this.state.selectedIndex}
+                          onClick={event =>
+                            this.handleMenuItemClick(event, index, task.id)
+                          }
+                        >
+                          <div
+                            style={{
+                              width: '16px',
+                              height: '16px',
+                              marginRight: '6px',
+                              flexShrink: '0'
+                            }}
+                          >
+                            {task.isStarred ? (
+                              <Star
+                                style={{
+                                  width: '100%',
+                                  height: '100%',
+                                  color: THEME_COLOR.starColor
+                                }}
+                              />
+                            ) : null}
+                          </div>
+                          <div style={{ flexGrow: 1 }}>{task.name}</div>
+                        </MenuItem>
+                      ))}
+                    </Menu>
+                  </div>
+                </div>
+              </div>
+            </React.Fragment>
+          ) : null}
+        </QuickSettingsContainer>
+        <Divider light />
         <div
           style={{
             padding: '10px 18px',
@@ -143,11 +317,11 @@ class LoggedIn extends Component {
             </FooterButtonIcon>
             Settings
           </FooterButton>
-          <FooterButton onClick={() => this.logoutClickedHandler()}>
+          <FooterButton onClick={() => this.allTasksClickedHandler()}>
             <FooterButtonIcon>
-              <Logout />
+              <ViewGrid />
             </FooterButtonIcon>
-            Log Out
+            All Tasks
           </FooterButton>
         </div>
       </React.Fragment>

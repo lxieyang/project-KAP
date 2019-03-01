@@ -1,4 +1,5 @@
 /* global chrome */
+import queryString from 'query-string';
 import { APP_NAME_SHORT } from '../../../../shared-components/src/shared/constants';
 import firebase from '../../../../shared-components/src/firebase/firebase';
 import * as FirestoreManager from '../../../../shared-components/src/firebase/firestore_wrapper';
@@ -10,6 +11,9 @@ import {
 
 /* global variables */
 let loggedIn = false;
+let userTasks = [];
+let userTaskCount = 0;
+let userCurrentTaskId = null;
 
 let showSuccessStatusInIconBadgeTimeout = 0;
 function showSuccessStatusInIconBadge(success = true) {
@@ -312,7 +316,49 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 //
 //
 //
-/* Log in / out */
+/* Log in / out + tasks */
+const updateTasks = () => {
+  FirestoreManager.getCurrentUserCreatedTasks()
+    .orderBy('updateDate', 'desc')
+    .onSnapshot(querySnapshot => {
+      let tasks = [];
+      let taskCount = 0;
+      querySnapshot.forEach(function(doc) {
+        tasks.push({
+          id: doc.id,
+          ...doc.data()
+        });
+        taskCount += 1;
+      });
+      userTasks = tasks;
+      userTaskCount = taskCount;
+      chrome.storage.local.set({
+        tasks,
+        taskCount
+      });
+    });
+
+  // set up current task listener
+  FirestoreManager.getCurrentUserCurrentTaskId().onSnapshot(
+    doc => {
+      if (doc.exists) {
+        userCurrentTaskId = doc.data().id;
+        chrome.storage.local.set({
+          currentTaskId: doc.data().id
+        });
+      } else {
+        userCurrentTaskId = null;
+        chrome.storage.local.set({
+          currentTaskId: null
+        });
+      }
+    },
+    error => {
+      console.log(error);
+    }
+  );
+};
+
 const alertAllTabs = idToken => {
   chrome.tabs.query({}, function(tabs) {
     for (var i = 0; i < tabs.length; ++i) {
@@ -325,7 +371,7 @@ const alertAllTabs = idToken => {
 };
 
 const signInOutUserWithCredential = idToken => {
-  if (idToken !== null) {
+  if (idToken !== null && idToken !== undefined) {
     // logged in
     firebase
       .auth()
@@ -336,9 +382,13 @@ const signInOutUserWithCredential = idToken => {
         console.log(`[BACKGROUND] User ${result.user.displayName} logged in.`);
 
         FirestoreManager.updateUserProfile();
+
+        updateTasks();
+
         chrome.storage.local.set(
           {
             user: {
+              idToken: idToken,
               displayName: result.user.displayName,
               photoURL: result.user.photoURL
             }
@@ -562,5 +612,58 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       msg: `ANNOTATION_LOCATION_SELECTED_IN_TABLE`,
       payload: request.payload
     });
+  }
+});
+
+//
+//
+//
+//
+//
+/* connect to unakite-v2.com & task switcher support */
+let isProduction = process.env.NODE_ENV === 'production' ? true : false;
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+  if (request.msg === 'Go_TO_ALL_TASKS_PAGE') {
+    chrome.storage.local.get(['user'], result => {
+      let user = result.user;
+      if (user) {
+        let url =
+          (isProduction
+            ? `https://unakite-v2.firebaseapp.com/alltasks`
+            : `http://localhost:3001/alltasks`) +
+          `?${queryString.stringify({ idToken: user.idToken })}`;
+        chrome.tabs.create(
+          {
+            url
+          },
+          tab => {
+            // Tab opened.
+          }
+        );
+      }
+    });
+  } else if (request.msg === 'Go_TO_SINGLE_TASK_PAGE') {
+    let taskId = request.taskId;
+    chrome.storage.local.get(['user'], result => {
+      let user = result.user;
+      if (user) {
+        let url =
+          (isProduction
+            ? `https://unakite-v2.firebaseapp.com/tasks/`
+            : `http://localhost:3001/tasks/`) +
+          `${taskId}` +
+          `?${queryString.stringify({ idToken: user.idToken })}`;
+        chrome.tabs.create(
+          {
+            url
+          },
+          tab => {
+            // Tab opened.
+          }
+        );
+      }
+    });
+  } else if (request.msg === 'UPDATE_CURRENT_USER_CURRENT_TASK_ID') {
+    FirestoreManager.updateCurrentUserCurrentTaskId(request.taskId);
   }
 });

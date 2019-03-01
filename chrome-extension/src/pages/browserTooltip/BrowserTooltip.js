@@ -10,7 +10,48 @@ import styles from './BrowserTooltip.css';
 import NotLoggedIn from './containers/NotLoggedIn/NotLoggedIn';
 import LoggedIn from './containers/LoggedIn/LoggedIn';
 
+import { withStyles } from '@material-ui/core/styles';
+import Avatar from '@material-ui/core/Avatar';
+import MenuItem from '@material-ui/core/MenuItem';
+import Menu from '@material-ui/core/Menu';
+import Logout from 'mdi-material-ui/LogoutVariant';
+import IconButton from '@material-ui/core/IconButton';
 import Divider from '@material-ui/core/Divider';
+
+const materialStyles = {
+  toolbar: {
+    minHeight: 40,
+    paddingLeft: 16,
+    paddingRight: 12
+  },
+  appAvatar: {
+    width: 30,
+    height: 30
+  },
+  grow: {
+    flexGrow: 1
+  },
+  pageTitle: {
+    marginLeft: 10
+  },
+  iconButton: {
+    padding: 4,
+    borderRadius: 4
+  },
+  userAvatar: {
+    width: 22,
+    height: 22
+  },
+  username: {
+    marginLeft: 4,
+    fontWeight: 300,
+    fontSize: 15
+  },
+  menuItem: {
+    padding: '4px 8px',
+    fontWeight: 300
+  }
+};
 
 class BrowserTooltip extends Component {
   state = {
@@ -21,7 +62,23 @@ class BrowserTooltip extends Component {
 
     hostname: null,
     url: null,
-    shouldTrack: false
+    shouldTrack: false,
+
+    anchorEl: null
+  };
+
+  handleMenu = event => {
+    this.setState({ anchorEl: event.currentTarget });
+  };
+
+  handleClose = () => {
+    this.setState({ anchorEl: null });
+  };
+
+  logoutClickedHandler = () => {
+    chrome.runtime.sendMessage({
+      msg: 'GO_TO_AUTH_PAGE'
+    });
   };
 
   componentDidMount() {
@@ -70,6 +127,10 @@ class BrowserTooltip extends Component {
   };
 
   render() {
+    const { classes } = this.props;
+    const { anchorEl, userProfilePhotoURL, userName } = this.state;
+    const open = Boolean(anchorEl);
+
     let isLoggedIn = !(
       this.state.userName === null || this.state.userName === 'invalid'
     );
@@ -88,30 +149,54 @@ class BrowserTooltip extends Component {
             {APP_NAME_SHORT}
           </span>
           {!this.state.loadingUserInfo && isLoggedIn ? (
-            <div style={{ display: 'flex', alignItems: 'center' }}>
-              <img
-                src={this.state.userProfilePhotoURL}
-                onError={e => {
-                  e.target.onerror = null;
-                  e.target.src = `https://ui-avatars.com/api/?name=${
-                    this.state.userName
-                  }?bold=true`;
+            <div>
+              <IconButton
+                aria-owns={open ? 'menu-appbar' : undefined}
+                aria-haspopup="true"
+                onClick={this.handleMenu}
+                className={classes.iconButton}
+                color="inherit"
+              >
+                <Avatar
+                  alt="avatar"
+                  src={userProfilePhotoURL}
+                  onError={e => {
+                    e.target.onerror = null;
+                    e.target.src = `https://ui-avatars.com/api/?name=${userName}?bold=true`;
+                  }}
+                  className={classes.userAvatar}
+                />
+                <div className={classes.username}>{getFirstName(userName)}</div>
+              </IconButton>
+
+              <Menu
+                id="menu-appbar"
+                anchorEl={anchorEl}
+                anchorOrigin={{
+                  vertical: 'bottom',
+                  horizontal: 'left'
                 }}
-                alt="avatar"
-                style={{
-                  borderRadius: '50%',
-                  width: '20px',
-                  height: '20px',
-                  margin: '0px 4px'
+                transformOrigin={{
+                  vertical: 'top',
+                  horizontal: 'left'
                 }}
-              />
-              <span style={{ fontWeight: 300 }}>
-                {getFirstName(this.state.userName)}
-              </span>
+                open={open}
+                onClose={this.handleClose}
+              >
+                <MenuItem
+                  onClick={() => {
+                    this.logoutClickedHandler();
+                    this.handleClose();
+                  }}
+                  className={classes.menuItem}
+                >
+                  <Logout /> &nbsp; Log out
+                </MenuItem>
+              </Menu>
             </div>
           ) : null}
         </div>
-        <Divider />
+        <Divider light />
       </React.Fragment>
     );
 
@@ -147,4 +232,4 @@ class BrowserTooltip extends Component {
   }
 }
 
-export default BrowserTooltip;
+export default withStyles(materialStyles)(BrowserTooltip);

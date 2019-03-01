@@ -1,3 +1,4 @@
+/* global chrome */
 import React, { Component } from 'react';
 import FontAwesomeIcon from '@fortawesome/react-fontawesome';
 import fasCog from '@fortawesome/fontawesome-free-solid/faCog';
@@ -40,7 +41,13 @@ class AppHeader extends Component {
     this.switchPopoverOpenStatus();
     setTimeout(() => {
       this.props.openSettingsPageClickedHandler();
-    }, 300);
+    }, 50);
+  };
+
+  openInNewTabClickedHandler = () => {
+    chrome.runtime.sendMessage({
+      msg: 'Go_TO_ALL_TASKS_PAGE'
+    });
   };
 
   render() {
@@ -57,12 +64,12 @@ class AppHeader extends Component {
         >
           <div
             className={styles.HeaderText}
-            // onClick={event => props.openInNewTabClickedHandler()}
+            onClick={() => this.openInNewTabClickedHandler()}
           >
             <Logo size={props.logoSize} hover={props.hover} /> &nbsp;
             <strong>{APP_NAME_SHORT}</strong>
             &nbsp;
-            {/*<span className={styles.AppVersion}>(v2-beta)</span>*/}
+            <span className={styles.AppVersion}>v2</span>
           </div>
           <div
             style={{

@@ -1,3 +1,4 @@
+/* global chrome */
 import React, { Component } from 'react';
 import queryString from 'query-string';
 import styled from 'styled-components';
@@ -249,20 +250,18 @@ class TaskSwitcher extends Component {
         ) : (
           <TaskSwitcherContainer>
             <Tooltip title="Open Task Detail Page" placement={'bottom'}>
-              <a
-                href={
-                  (isProduction
-                    ? 'https://unakite-v2.firebaseapp.com/tasks/'
-                    : 'http://localhost:3001/tasks/') +
-                  `${currentTask.value}` +
-                  `?${queryString.stringify({ idToken: this.props.idToken })}`
-                }
-                target="__blank"
+              <IconButton
+                aria-label="Open"
+                className={classes.iconButtons}
+                onClick={() => {
+                  chrome.runtime.sendMessage({
+                    msg: 'Go_TO_SINGLE_TASK_PAGE',
+                    taskId: currentTask.value
+                  });
+                }}
               >
-                <IconButton aria-label="Open" className={classes.iconButtons}>
-                  <OpenInNew className={classes.iconInIconButtons} />
-                </IconButton>
-              </a>
+                <OpenInNew className={classes.iconInIconButtons} />
+              </IconButton>
             </Tooltip>
             <Dropdown
               className={classesInCSS.DropdownRoot}
@@ -329,21 +328,17 @@ class TaskSwitcher extends Component {
                 </IconButton>
               </Tooltip>
               <Tooltip title="All tasks" placement={'bottom'}>
-                <a
-                  href={
-                    isProduction
-                      ? `https://unakite-v2.firebaseapp.com/alltasks`
-                      : `http://localhost:3001/alltasks` +
-                        `?${queryString.stringify({
-                          idToken: this.props.idToken
-                        })}`
-                  }
-                  target="__blank"
+                <IconButton
+                  aria-label="Grid"
+                  className={classes.iconButtons}
+                  onClick={() => {
+                    chrome.runtime.sendMessage({
+                      msg: 'Go_TO_ALL_TASKS_PAGE'
+                    });
+                  }}
                 >
-                  <IconButton aria-label="Grid" className={classes.iconButtons}>
-                    <ViewGrid className={classes.iconInIconButtons} />
-                  </IconButton>
-                </a>
+                  <ViewGrid className={classes.iconInIconButtons} />
+                </IconButton>
               </Tooltip>
             </VariousButtonsContainer>
           </TaskSwitcherContainer>
