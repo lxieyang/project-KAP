@@ -1,6 +1,7 @@
 import firebase from '../firebase';
 import {
   db,
+  getCurrentUser,
   getCurrentUserId,
   getCurrentUserCurrentTaskId
 } from '../firestore_wrapper';
@@ -8,6 +9,10 @@ const uuid = require('uuid/v4');
 
 export const getTaskById = taskId => {
   return db.collection('tasks').doc(taskId);
+};
+
+export const getAllCommentsToTask = taskId => {
+  return getTaskById(taskId).collection('comments');
 };
 
 export const getCurrentUserCreatedTasks = () => {
@@ -35,6 +40,61 @@ export const updateTaskName = (taskId, newTaskName) => {
     .update({
       name: newTaskName
     })
+    .then(() => {
+      updateTaskUpdateTime(taskId);
+    });
+};
+
+//
+//
+//
+/* commenting */
+export const addCommentToATaskById = (taskId, newCommentContent) => {
+  getTaskById(taskId)
+    .collection('comments')
+    .add({
+      content: newCommentContent,
+      creationDate: firebase.firestore.FieldValue.serverTimestamp(),
+      updateDate: firebase.firestore.FieldValue.serverTimestamp(),
+      authorId: getCurrentUserId(),
+      authorName: getCurrentUser().displayName,
+      authorAvatarURL: getCurrentUser().photoURL
+    })
+    .then(() => {
+      getTaskById(taskId).update({
+        updateDate: firebase.firestore.FieldValue.serverTimestamp()
+      });
+      updateTaskUpdateTime(taskId);
+    });
+};
+
+export const updateCommentToATaskById = (
+  taskId,
+  commentId,
+  newCommentContent
+) => {
+  getTaskById(taskId)
+    .collection('comments')
+    .doc(commentId)
+    .update({
+      content: newCommentContent,
+      authorName: getCurrentUser().displayName,
+      authorAvatarURL: getCurrentUser().photoURL,
+      updateDate: firebase.firestore.FieldValue.serverTimestamp()
+    })
+    .then(() => {
+      getTaskById(taskId).update({
+        updateDate: firebase.firestore.FieldValue.serverTimestamp()
+      });
+      updateTaskUpdateTime(taskId);
+    });
+};
+
+export const deleteCommentToATaskById = (taskId, commentId) => {
+  return getTaskById(taskId)
+    .collection('comments')
+    .doc(commentId)
+    .delete()
     .then(() => {
       updateTaskUpdateTime(taskId);
     });

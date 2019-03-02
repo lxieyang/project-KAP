@@ -28,3 +28,27 @@
   background-color: rgb(192, 240, 192) !important;
   font-weight: 600;
 }
+
+.CommentCount {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  box-sizing: border-box;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  font-size: 14px;
+  font-weight: 500;
+  border-radius: 50%;
+  padding: 2px;
+  opacity: 0.8;
+  transform: scale(0.75);
+}
+
+.TaskCommentsContainer {
+  max-height: 450px;
+  overflow: auto;
+}

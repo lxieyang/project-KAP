@@ -15,17 +15,20 @@ import ViewGrid from 'mdi-material-ui/ViewGrid';
 import Star from 'mdi-material-ui/Star';
 import StarOutline from 'mdi-material-ui/StarOutline';
 import OpenInNew from 'mdi-material-ui/OpenInNew';
+import Chat from 'mdi-material-ui/Chat';
 import Tooltip from '@material-ui/core/Tooltip';
+import Collapse from '@material-ui/core/Collapse';
 import Button from '@material-ui/core/Button';
 import Snackbar from '@material-ui/core/Snackbar';
 import CloseIcon from '@material-ui/icons/Close';
-import Divider from '@material-ui/core/Divider';
 
 import Countdown from 'react-countdown-now';
 
 import { THEME_COLOR } from '../../../../../../shared-components/src/shared/theme';
 
 import * as FirestoreManager from '../../../../../../shared-components/src/firebase/firestore_wrapper';
+
+import TaskComments from './TaskComments/TaskComments';
 
 import classesInCSS from './TaskSwitcher.css';
 
@@ -84,6 +87,8 @@ class TaskSwitcher extends Component {
   state = {
     options: [createNewTaskOption],
     currentOptionId: createNewTaskOption.value,
+    currentTaskCommentsCount: 0,
+    commentsExpanded: false,
 
     taskCount: 0,
     tasksLoading: true,
@@ -135,6 +140,10 @@ class TaskSwitcher extends Component {
     this.unsubscribeUserCurrentTaskIdListener();
   }
 
+  setCurrentTaskCommentsCount = count => {
+    this.setState({ currentTaskCommentsCount: count });
+  };
+
   _onSelect = selectedTask => {
     let prevTaskId = this.state.currentOptionId;
     if (selectedTask.value === createNewTaskOption.value) {
@@ -161,6 +170,7 @@ class TaskSwitcher extends Component {
       }
     } else {
       // this.setState({ currentOptionId: selectedTask.value });
+      this.setState({ commentsExpanded: false });
       FirestoreManager.updateCurrentUserCurrentTaskId(selectedTask.value);
     }
   };
@@ -185,6 +195,14 @@ class TaskSwitcher extends Component {
     if (taskName !== null && taskName !== '' && taskName !== currentName) {
       FirestoreManager.updateTaskName(taskId, taskName);
     }
+  };
+
+  toggleCommentsExpandedStatus = () => {
+    this.setState(prevState => {
+      return {
+        commentsExpanded: !prevState.commentsExpanded
+      };
+    });
   };
 
   toggleTaskStarStatus = (taskId, currentStarStatus) => {
@@ -232,7 +250,7 @@ class TaskSwitcher extends Component {
         : this.state.options[0];
 
     return (
-      <React.Fragment>
+      <div>
         {!this.state.tasksLoading && this.state.taskCount === 0 ? (
           <TaskCreatePrompt>
             <div>
@@ -313,6 +331,31 @@ class TaskSwitcher extends Component {
                   <EditIcon className={classes.iconInIconButtons} />
                 </IconButton>
               </Tooltip>
+              <div style={{ position: 'relative' }}>
+                <Tooltip title="Comments" placement={'bottom'}>
+                  <IconButton
+                    style={{
+                      backgroundColor: this.state.commentsExpanded
+                        ? 'rgb(235, 235, 235)'
+                        : null
+                    }}
+                    aria-label="Comment"
+                    className={classes.iconButtons}
+                    onClick={() => this.toggleCommentsExpandedStatus()}
+                  >
+                    <Chat className={classes.iconInIconButtons} />
+                  </IconButton>
+                </Tooltip>
+                <span
+                  style={{ color: THEME_COLOR.badgeColor }}
+                  className={classesInCSS.CommentCount}
+                >
+                  {this.state.currentOptionId !== createNewTaskOption.value &&
+                  this.state.currentTaskCommentsCount > 0
+                    ? this.state.currentTaskCommentsCount
+                    : null}
+                </span>
+              </div>
               <Tooltip title="Delete this task" placement={'bottom'}>
                 <IconButton
                   aria-label="Delete"
@@ -343,6 +386,19 @@ class TaskSwitcher extends Component {
             </VariousButtonsContainer>
           </TaskSwitcherContainer>
         )}
+        {this.state.currentOptionId !== createNewTaskOption.value && (
+          <Collapse in={this.state.commentsExpanded} timeout="auto">
+            <div className={classesInCSS.TaskCommentsContainer}>
+              <TaskComments
+                currentAuthor={FirestoreManager.getCurrentUser()}
+                taskId={this.state.currentOptionId}
+                commentAccess={true}
+                setCurrentTaskCommentsCount={this.setCurrentTaskCommentsCount}
+              />
+            </div>
+          </Collapse>
+        )}
+
         <Snackbar
           anchorOrigin={{
             vertical: 'top',
@@ -389,7 +445,7 @@ class TaskSwitcher extends Component {
             </IconButton>
           ]}
         />
-      </React.Fragment>
+      </div>
     );
   }
 }

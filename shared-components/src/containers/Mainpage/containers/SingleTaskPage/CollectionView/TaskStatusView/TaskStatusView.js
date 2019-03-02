@@ -12,6 +12,7 @@ import StarOutline from 'mdi-material-ui/StarOutline';
 import Tooltip from '@material-ui/core/Tooltip';
 
 import Textarea from 'react-textarea-autosize';
+import TaskComments from './TaskComments/TaskComments';
 
 const materialStyles = theme => ({
   iconButtons: {
@@ -36,6 +37,7 @@ class TaskStatusView extends Component {
 
     // task editing privilege
     editAccess: false,
+    commentAccess: false,
 
     // author detail
     author: null
@@ -66,7 +68,8 @@ class TaskStatusView extends Component {
           this.setState({
             task,
             taskNameEdit: task.name,
-            editAccess: task.creator === FirestoreManager.getCurrentUserId()
+            editAccess: task.creator === FirestoreManager.getCurrentUserId(),
+            commentAccess: FirestoreManager.getCurrentUserId() !== null
           });
 
           FirestoreManager.getUserProfileById(task.creator)
@@ -116,7 +119,13 @@ class TaskStatusView extends Component {
   };
 
   render() {
-    const { task, taskNameEdit, editAccess, author } = this.state;
+    const {
+      task,
+      taskNameEdit,
+      editAccess,
+      commentAccess,
+      author
+    } = this.state;
     const { classes } = this.props;
 
     if (task === null) {
@@ -192,6 +201,13 @@ class TaskStatusView extends Component {
               className={styles.Textarea}
             />
           </div>
+        </div>
+        <div className={styles.TaskCommentsContainer}>
+          <TaskComments
+            currentAuthor={FirestoreManager.getCurrentUser()}
+            taskId={this.state.task.id}
+            commentAccess={commentAccess}
+          />
         </div>
       </React.Fragment>
     );

@@ -34,7 +34,9 @@ class Comments extends Component {
   state = {
     comments: [],
 
-    editCommentValue: ''
+    editCommentValue: '',
+
+    isEditingCommentItem: false
   };
 
   componentDidMount() {
@@ -54,6 +56,10 @@ class Comments extends Component {
         this.setState({ comments });
       });
   }
+
+  switchIsEditingCommentItemStatus = to => {
+    this.setState({ isEditingCommentItem: to });
+  };
 
   // also allow Enter to submit
   keyPress(e) {
@@ -108,6 +114,9 @@ class Comments extends Component {
               expanded={expanded}
               expandPiece={expandPiece}
               isHovering={isHovering}
+              switchIsEditingCommentItemStatus={
+                this.switchIsEditingCommentItemStatus
+              }
               cellId={this.props.cellId}
               cellType={this.props.cellType}
             />
@@ -141,31 +150,35 @@ class Comments extends Component {
       <React.Fragment>
         <div>
           <div className={classesInCSS.CommentBox}>{CommentList}</div>
-          {commentAccess ? (
+          {commentAccess && !this.state.isEditingCommentItem ? (
             <div className={classesInCSS.EditCommentBox}>
               <div className={classesInCSS.TextAreaContainer}>
                 <Textarea
-                  autoFocus
                   inputRef={tag => (this.textarea = tag)}
                   minRows={1}
                   maxRows={3}
                   placeholder={'Add a comment'}
                   value={this.state.editCommentValue}
                   onKeyDown={this.keyPress}
+                  onMouseEnter={e => {
+                    e.target.focus();
+                  }}
                   onChange={e => this.handleInputChange(e)}
                   className={classesInCSS.Textarea}
                 />
               </div>
-              <div className={classesInCSS.TextareaActionBar}>
-                <ActionButton
-                  color="primary"
-                  className={classes.button}
-                  onClick={() => this.saveEditClickedHandler()}
-                >
-                  Save
-                </ActionButton>
+              {this.state.editCommentValue !== null &&
+                this.state.editCommentValue !== '' && (
+                  <div className={classesInCSS.TextareaActionBar}>
+                    <ActionButton
+                      color="primary"
+                      className={classes.button}
+                      onClick={() => this.saveEditClickedHandler()}
+                    >
+                      Save
+                    </ActionButton>
 
-                {/* // Niki doesn't want this, says it's confusing
+                    {/* // Niki doesn't want this, says it's confusing
                 <ActionButton
                   color="secondary"
                   className={classes.button}
@@ -174,7 +187,8 @@ class Comments extends Component {
                   Cancel
                 </ActionButton>
                 */}
-              </div>
+                  </div>
+                )}
             </div>
           ) : null}
         </div>

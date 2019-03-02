@@ -23,7 +23,7 @@ import Table from './Structures/Table/Table';
 
 const WorkspacesContainer = styled.div`
   margin: 0px 0px;
-  margin-top: 10px;
+  margin-top: 0px;
   box-sizing: border-box;
   width: 100%;
   padding: 0px;

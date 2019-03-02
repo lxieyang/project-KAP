@@ -16,7 +16,7 @@ import {
   PIECE_COLOR,
   THEME_COLOR
 } from '../../../../../../../shared-components/src/shared/theme';
-import Comment from './Comment/Comment';
+import Comments from './Comments/Comments';
 import classesInCSS from './Piece.css';
 
 import classnames from 'classnames';
@@ -780,7 +780,7 @@ class Piece extends Component {
             </Collapse>
 
             <div>
-              <Comment
+              <Comments
                 expanded={this.state.expanded}
                 expandPiece={this.expandPiece}
                 pieceId={piece.id}
