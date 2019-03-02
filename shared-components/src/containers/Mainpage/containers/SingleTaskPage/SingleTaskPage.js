@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 import { getTaskIdFromPath } from './matchPath';
+import Spinner from '../../../../components/UI/Spinner/Spinner';
 import styles from './SingleTaskPage.css';
 import * as FirestoreManager from '../../../../firebase/firestore_wrapper';
 
@@ -12,7 +13,10 @@ import WorkspaceView from './WorkspaceView/WorkspaceView';
 
 class SingleTaskPage extends Component {
   state = {
-    currentWorkspaceId: '0'
+    currentWorkspaceId: '0',
+
+    taskLoading: true,
+    taskExists: false
   };
 
   componentDidMount() {
@@ -21,8 +25,16 @@ class SingleTaskPage extends Component {
     this.unsubscribeTaskId = FirestoreManager.getTaskById(taskId).onSnapshot(
       snapshot => {
         if (snapshot.exists) {
-          let taskName = snapshot.data().name;
-          this.props.setDisplayingTaskIdAndName(taskId, taskName);
+          let task = { id: snapshot.id, ...snapshot.data() };
+          this.setState({
+            taskLoading: false,
+            taskExists: task.trashed ? false : true
+          });
+          if (!task.trashed) {
+            this.props.setDisplayingTaskIdAndName(task.id, task.name);
+          }
+        } else {
+          this.setState({ taskLoading: false, taskExists: false });
         }
       }
     );
@@ -37,6 +49,27 @@ class SingleTaskPage extends Component {
   }
 
   render() {
+    const { taskLoading, taskExists } = this.state;
+
+    if (taskLoading) {
+      return (
+        <div className={styles.TaskNotExistsContainer}>
+          <Spinner size="40px" />
+        </div>
+      );
+    }
+
+    if (!taskExists) {
+      return (
+        <div className={styles.TaskNotExistsContainer}>
+          <div style={{ width: '80%', textAlign: 'center' }}>
+            Oops, the task you want to visit has not been created yet, or the
+            owner has deleted it.
+          </div>
+        </div>
+      );
+    }
+
     return (
       <React.Fragment>
         <div className={styles.SingleTaskPageContainer}>
