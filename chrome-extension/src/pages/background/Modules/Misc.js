@@ -1,6 +1,10 @@
 /* global chrome */
 import queryString from 'query-string';
 import * as FirestoreManager from '../../../../../shared-components/src/firebase/firestore_wrapper';
+import {
+  getTaskLink,
+  getAllTasksLink
+} from '../../../../../shared-components/src/shared/utilities';
 
 //
 //
@@ -8,7 +12,7 @@ import * as FirestoreManager from '../../../../../shared-components/src/firebase
 //
 //
 /* open pages & task switcher support */
-let isProduction = process.env.NODE_ENV === 'production' ? true : false;
+// let isProduction = process.env.NODE_ENV === 'production' ? true : false;
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.msg === 'OPEN_SETTINGS_PAGE') {
     chrome.tabs.create(
@@ -24,9 +28,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       let user = result.user;
       if (user) {
         let url =
-          (isProduction
-            ? `https://unakite-v2.firebaseapp.com/alltasks`
-            : `http://localhost:3001/alltasks`) +
+          getAllTasksLink() +
           `?${queryString.stringify({ idToken: user.idToken })}`;
         chrome.tabs.create(
           {
@@ -44,10 +46,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       let user = result.user;
       if (user) {
         let url =
-          (isProduction
-            ? `https://unakite-v2.firebaseapp.com/tasks/`
-            : `http://localhost:3001/tasks/`) +
-          `${taskId}` +
+          getTaskLink(taskId) +
           `?${queryString.stringify({ idToken: user.idToken })}`;
         chrome.tabs.create(
           {

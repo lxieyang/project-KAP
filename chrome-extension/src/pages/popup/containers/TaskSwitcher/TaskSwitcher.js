@@ -294,8 +294,8 @@ class TaskSwitcher extends Component {
             <VariousButtonsContainer>
               <Tooltip
                 title={`${
-                  currentTask.data.isStarred ? 'Unstar' : 'Star'
-                } this task`}
+                  currentTask.data.isStarred ? 'Remove from Starred' : 'Add to Starred'
+                }`}
                 placement={'bottom'}
               >
                 <IconButton

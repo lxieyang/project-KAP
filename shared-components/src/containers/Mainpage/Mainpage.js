@@ -15,6 +15,7 @@ import { DragDropContext } from 'react-dnd';
 import firebase from '../../firebase/firebase';
 import * as FirestoreManager from '../../firebase/firestore_wrapper';
 import { APP_NAME_SHORT } from '../../shared/constants';
+import { getCleanURLOfCurrentPage } from '../../shared/utilities';
 
 class Mainpage extends Component {
   state = {
@@ -68,9 +69,7 @@ class Mainpage extends Component {
         )
         .then(result => {
           // let user = result.user;
-          let cleanUrl = `${window.location.protocol}//${window.location.host}${
-            window.location.pathname
-          }`;
+          let cleanUrl = getCleanURLOfCurrentPage();
           window.history.pushState({ path: cleanUrl }, '', cleanUrl);
         })
         .catch(error => {

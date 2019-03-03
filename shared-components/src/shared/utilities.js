@@ -1,4 +1,7 @@
 import $ from 'jquery';
+
+const isProduction = process.env.NODE_ENV === 'production' ? true : false;
+
 // https://stackoverflow.com/questions/6045477/extract-keyword-from-google-search-in-javascript?rq=1
 export const getParameterByName = (name, url) => {
   name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
@@ -75,6 +78,36 @@ export const getFirstSentence = str => {
 
 export const capitalizeFirstLetter = string => {
   return string.charAt(0).toUpperCase() + string.slice(1);
+};
+
+export const getCleanURLOfCurrentPage = () => {
+  return `${window.location.protocol}//${window.location.host}${
+    window.location.pathname
+  }`;
+};
+
+export const copyToClipboard = str => {
+  let el = document.createElement('textarea');
+  el.value = str;
+  el.setAttribute('readonly', '');
+  el.style.position = 'absolute';
+  el.style.left = '-9999px';
+  document.body.appendChild(el);
+  el.select();
+  document.execCommand('copy');
+  document.body.removeChild(el);
+};
+
+export const getTaskLink = taskId => {
+  return isProduction
+    ? `https://unakite-v2.firebaseapp.com/tasks/`
+    : `http://localhost:3001/tasks/` + `${taskId}`;
+};
+
+export const getAllTasksLink = () => {
+  return isProduction
+    ? `https://unakite-v2.firebaseapp.com/alltasks`
+    : `http://localhost:3001/alltasks`;
 };
 
 export const googleIcon =

@@ -2,17 +2,29 @@ import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 import { getTaskIdFromPath } from '../../matchPath';
 import * as FirestoreManager from '../../../../../../firebase/firestore_wrapper';
+import {
+  getCleanURLOfCurrentPage,
+  getTaskLink,
+  copyToClipboard
+} from '../../../../../../shared/utilities';
 import { THEME_COLOR } from '../../../../../../shared/theme';
 import styles from './TaskStatusView.css';
 
 import { withStyles } from '@material-ui/core/styles';
 import IconButton from '@material-ui/core/IconButton';
 import Star from 'mdi-material-ui/Star';
+import Link from 'mdi-material-ui/Link';
 import StarOutline from 'mdi-material-ui/StarOutline';
 import Tooltip from '@material-ui/core/Tooltip';
 
+import { ToastContainer, toast, Flip } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { CopyToClipboard } from 'react-copy-to-clipboard';
+
 import Textarea from 'react-textarea-autosize';
 import TaskComments from './TaskComments/TaskComments';
+
+let container;
 
 const materialStyles = theme => ({
   iconButtons: {
@@ -42,6 +54,11 @@ class TaskStatusView extends Component {
     // author detail
     author: null
   };
+
+  constructor(props) {
+    super(props);
+    this.toastContainer = React.createRef();
+  }
 
   componentDidMount() {
     this.keyPress = this.keyPress.bind(this);
@@ -118,6 +135,22 @@ class TaskStatusView extends Component {
     this.textarea.scrollTo(0, 0);
   };
 
+  getSharableLinkClickedHandler = taskName => {
+    toast.success(
+      <div>
+        Link for <strong>{taskName}</strong> copied to clipboard!
+      </div>,
+      {
+        position: 'top-center',
+        autoClose: 2000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: false
+      }
+    );
+  };
+
   render() {
     const {
       task,
@@ -158,9 +191,11 @@ class TaskStatusView extends Component {
       <React.Fragment>
         <div className={styles.TaskStatusViewContainer}>
           <div className={styles.VariousButtonsContainer}>
-            {editAccess ? (
+            {editAccess && (
               <Tooltip
-                title={`${task.isStarred ? 'Unstar' : 'Star'}`}
+                title={`${
+                  task.isStarred ? 'Remove from Starred' : 'Add to Starred'
+                }`}
                 placement={'bottom'}
               >
                 <IconButton
@@ -182,7 +217,7 @@ class TaskStatusView extends Component {
                   )}
                 </IconButton>
               </Tooltip>
-            ) : null}
+            )}
           </div>
           <div
             className={styles.TaskNameContainer}
@@ -201,6 +236,34 @@ class TaskStatusView extends Component {
               className={styles.Textarea}
             />
           </div>
+          {editAccess && (
+            <React.Fragment>
+              <Tooltip title={`Get sharable link`} placement={'bottom'}>
+                <IconButton
+                  aria-label="Share"
+                  className={classes.iconButtons}
+                  onClick={() =>
+                    this.getSharableLinkClickedHandler(taskNameEdit)
+                  }
+                >
+                  <CopyToClipboard text={getTaskLink(this.state.task.id)}>
+                    <Link className={classes.iconInIconButtons} />
+                  </CopyToClipboard>
+                </IconButton>
+              </Tooltip>
+              <ToastContainer
+                position="top-center"
+                transition={Flip}
+                autoClose={2000}
+                hideProgressBar
+                newestOnTop
+                closeOnClick
+                rtl={false}
+                pauseOnVisibilityChange
+                pauseOnHover
+              />
+            </React.Fragment>
+          )}
         </div>
         <div className={styles.TaskCommentsContainer}>
           <TaskComments

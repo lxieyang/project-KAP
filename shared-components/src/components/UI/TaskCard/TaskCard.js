@@ -1,35 +1,36 @@
 import React, { Component } from 'react';
 
 import { withRouter } from 'react-router-dom';
-import * as appRoutes from '../../../shared/routes';
 import FontAwesomeIcon from '@fortawesome/react-fontawesome';
-import fasCircleNotch from '@fortawesome/fontawesome-free-solid/faCircleNotch';
 import fasListUl from '@fortawesome/fontawesome-free-solid/faListUl';
 import fasFlagCheckered from '@fortawesome/fontawesome-free-solid/faFlagCheckered';
 import fasBookmark from '@fortawesome/fontawesome-free-solid/faBookmark';
-import fasDiagnoses from '@fortawesome/fontawesome-free-solid/faDiagnoses';
-import fasCheck from '@fortawesome/fontawesome-free-solid/faCheck';
 import styles from './TaskCard.css';
 import moment from 'moment';
-import { DragSource, DropTarget } from 'react-dnd';
 import * as FirestoreManager from '../../../firebase/firestore_wrapper';
 import { PIECE_COLOR, THEME_COLOR } from '../../../shared/theme';
 import { PIECE_TYPES } from '../../../shared/types';
+import { copyToClipboard, getTaskLink } from '../../../shared/utilities';
 
 import { withStyles } from '@material-ui/core/styles';
-import classnames from 'classnames';
 import Card from '@material-ui/core/Card';
 import CardHeader from '@material-ui/core/CardHeader';
 import CardContent from '@material-ui/core/CardContent';
-import StarIcon from '@material-ui/icons/Star';
 import Star from 'mdi-material-ui/Star';
 import StarOutline from 'mdi-material-ui/StarOutline';
+import Link from 'mdi-material-ui/Link';
+import PencilCircleOutline from 'mdi-material-ui/PencilCircleOutline';
+import DeleteCircleOutline from 'mdi-material-ui/DeleteCircleOutline';
 import Avatar from '@material-ui/core/Avatar';
 import IconButton from '@material-ui/core/IconButton';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import Divider from '@material-ui/core/Divider';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
+
+import { ToastContainer, toast, Flip } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { CopyToClipboard } from 'react-copy-to-clipboard';
 
 const materialStyles = theme => ({
   card: {
@@ -164,6 +165,23 @@ class TaskCard extends Component {
     FirestoreManager.toggleTaskStarStatus(taskId, to);
   };
 
+  getSharableLinkClickedHandler = (taskId, taskName) => {
+    this.handleClose();
+    toast.success(
+      <div>
+        Link for <strong>{taskName}</strong> copied to clipboard!
+      </div>,
+      {
+        position: 'top-center',
+        autoClose: 2000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: false
+      }
+    );
+  };
+
   render() {
     const { task, currentTaskId, classes } = this.props;
 
@@ -175,6 +193,9 @@ class TaskCard extends Component {
         <StyledCardHeader
           avatar={
             <IconButton
+              title={`${
+                task.isStarred ? 'Remove from Starred' : 'Add to Starred'
+              }`}
               className={classes.headerButtons}
               onClick={() =>
                 this.toggleTaskStarStatus(task.id, !task.isStarred)
@@ -210,7 +231,8 @@ class TaskCard extends Component {
                 PaperProps={{
                   style: {
                     maxHeight: 200,
-                    width: 80
+                    width: 'auto',
+                    fontSize: 12
                   }
                 }}
               >
@@ -218,33 +240,56 @@ class TaskCard extends Component {
                   onClick={() =>
                     this.handleEditTaskNameButtonClicked(task.id, task.name)
                   }
-                  style={{
-                    padding: '4px 4px',
-                    fontSize: '12px',
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center'
-                  }}
+                  style={{ fontSize: 12, padding: '2px 6px' }}
                   className={styles.MenuItem}
                 >
-                  Edit name
+                  <PencilCircleOutline
+                    className={styles.MenuItemIcon}
+                    style={{ width: '16px', height: '16px' }}
+                  />{' '}
+                  Edit Name
                 </MenuItem>
+                <CopyToClipboard text={getTaskLink(task.id)}>
+                  <MenuItem
+                    onClick={() =>
+                      this.getSharableLinkClickedHandler(task.id, task.name)
+                    }
+                    style={{ fontSize: 12, padding: '2px 6px' }}
+                    className={styles.MenuItem}
+                  >
+                    <Link
+                      className={styles.MenuItemIcon}
+                      style={{ width: '16px', height: '16px' }}
+                    />{' '}
+                    Get Sharable Link
+                  </MenuItem>
+                </CopyToClipboard>
                 <MenuItem
                   onClick={() =>
                     this.handleDeleteButtonClicked(task.id, task.name)
                   }
-                  style={{
-                    padding: '4px 4px',
-                    fontSize: '12px',
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center'
-                  }}
+                  style={{ fontSize: 12, padding: '2px 6px' }}
                   className={styles.MenuItem}
                 >
+                  <DeleteCircleOutline
+                    className={styles.MenuItemIcon}
+                    style={{ width: '16px', height: '16px' }}
+                  />{' '}
                   Delete
                 </MenuItem>
               </Menu>
+              <ToastContainer
+                style={{ fontSize: '16px' }}
+                position="top-center"
+                transition={Flip}
+                autoClose={2000}
+                hideProgressBar
+                newestOnTop
+                closeOnClick
+                rtl={false}
+                pauseOnVisibilityChange
+                pauseOnHover
+              />
             </React.Fragment>
           }
           title={
