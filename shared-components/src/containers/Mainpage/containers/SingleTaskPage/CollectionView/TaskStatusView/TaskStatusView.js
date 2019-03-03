@@ -2,11 +2,7 @@ import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 import { getTaskIdFromPath } from '../../matchPath';
 import * as FirestoreManager from '../../../../../../firebase/firestore_wrapper';
-import {
-  getCleanURLOfCurrentPage,
-  getTaskLink,
-  copyToClipboard
-} from '../../../../../../shared/utilities';
+import { getTaskLink } from '../../../../../../shared/utilities';
 import { THEME_COLOR } from '../../../../../../shared/theme';
 import styles from './TaskStatusView.css';
 
@@ -23,8 +19,6 @@ import { CopyToClipboard } from 'react-copy-to-clipboard';
 
 import Textarea from 'react-textarea-autosize';
 import TaskComments from './TaskComments/TaskComments';
-
-let container;
 
 const materialStyles = theme => ({
   iconButtons: {
@@ -54,11 +48,6 @@ class TaskStatusView extends Component {
     // author detail
     author: null
   };
-
-  constructor(props) {
-    super(props);
-    this.toastContainer = React.createRef();
-  }
 
   componentDidMount() {
     this.keyPress = this.keyPress.bind(this);

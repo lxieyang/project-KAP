@@ -10,7 +10,7 @@ import moment from 'moment';
 import * as FirestoreManager from '../../../firebase/firestore_wrapper';
 import { PIECE_COLOR, THEME_COLOR } from '../../../shared/theme';
 import { PIECE_TYPES } from '../../../shared/types';
-import { copyToClipboard, getTaskLink } from '../../../shared/utilities';
+import { getTaskLink } from '../../../shared/utilities';
 
 import { withStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';

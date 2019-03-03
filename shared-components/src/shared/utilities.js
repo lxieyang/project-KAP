@@ -99,9 +99,11 @@ export const copyToClipboard = str => {
 };
 
 export const getTaskLink = taskId => {
-  return isProduction
-    ? `https://unakite-v2.firebaseapp.com/tasks/`
-    : `http://localhost:3001/tasks/` + `${taskId}`;
+  return (
+    (isProduction
+      ? `https://unakite-v2.firebaseapp.com/tasks/`
+      : `http://localhost:3001/tasks/`) + `${taskId}`
+  );
 };
 
 export const getAllTasksLink = () => {
