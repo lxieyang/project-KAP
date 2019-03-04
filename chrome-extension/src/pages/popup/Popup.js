@@ -31,7 +31,8 @@ class Popup extends Component {
 
     currentSelectedPieceInTable: null,
 
-    annotation_selected: false
+    annotation_selected: false,
+    selected_annotation_id: null
   };
 
   componentDidMount() {
@@ -58,8 +59,11 @@ class Popup extends Component {
     if (request.msg === 'ANNOTATION_SELECTED') {
       this.setState({ annotation_selected: true });
       // console.log('selected');
+    } else if (request.msg === 'SELECTED_ANNOTATION_ID_UPDATED') {
+      this.setState({ selected_annotation_id: request.pieceId });
     } else if (request.msg === 'ANNOTATION_UNSELECTED') {
       this.setState({ annotation_selected: false });
+      this.setState({ selected_annotation_id: null });
       // console.log('unselected');
     }
   };
@@ -254,10 +258,12 @@ class Popup extends Component {
           setCurrentSelectedPieceInTable={this.setCurrentSelectedPieceInTable}
           currentSelectedPieceInTable={this.state.currentSelectedPieceInTable}
           annotation_selected={this.state.annotation_selected}
+          selected_annotation_id={this.state.selected_annotation_id}
         />
         <Pieces
           currentWorkspaceId={this.state.currentWorkspaceId}
           currentSelectedPieceInTable={this.state.currentSelectedPieceInTable}
+          selected_annotation_id={this.state.selected_annotation_id}
         />
       </div>
     );

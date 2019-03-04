@@ -13,7 +13,8 @@ import { DropTarget } from 'react-dnd';
 import PropTypes from 'prop-types';
 import {
   RATING_TYPES,
-  PIECE_TYPES
+  PIECE_TYPES,
+  TABLE_CELL_TYPES
 } from '../../../../../../../../../../../shared-components/src/shared/types';
 
 const dropTarget = {
@@ -104,6 +105,7 @@ class RatingLayer extends Component {
       payload: {
         tableId: this.props.workspace.id,
         cellId: this.props.cell.id,
+        cellType: TABLE_CELL_TYPES.regularCell,
         ratingType: this.props.ratingType
       }
     });

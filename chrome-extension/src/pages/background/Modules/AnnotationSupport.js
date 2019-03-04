@@ -14,6 +14,12 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     chrome.runtime.sendMessage({
       msg: 'ANNOTATION_SELECTED'
     });
+  } else if (request.msg === 'SELECTED_ANNOTATION_ID_UPDATED') {
+    // console.log('annotation unselected');
+    chrome.runtime.sendMessage({
+      msg: 'SELECTED_ANNOTATION_ID_UPDATED',
+      pieceId: request.pieceId
+    });
   } else if (request.msg === 'ANNOTATION_UNSELECTED') {
     // console.log('annotation unselected');
     annotation_selected = false;

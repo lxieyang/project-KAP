@@ -198,3 +198,18 @@
   visibility: visible !important;
   opacity: 1 !important;
 }
+
+.AnnotationSelectedLayer {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  opacity: 0;
+  background-color: #f8c471;
+}
+
+.AnnotationSelectedLayer:hover {
+  opacity: 1;
+  cursor: pointer;
+}

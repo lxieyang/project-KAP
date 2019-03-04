@@ -1,3 +1,4 @@
+/* global chrome */
 import React, { Component } from 'react';
 import ReactHoverObserver from 'react-hover-observer';
 import { debounce } from 'lodash';
@@ -23,7 +24,8 @@ import PropTypes from 'prop-types';
 import {
   PIECE_TYPES,
   TABLE_CELL_TYPES,
-  ANNOTATION_TYPES
+  ANNOTATION_TYPES,
+  RATING_TYPES
 } from '../../../../../../../../../../shared-components/src/shared/types';
 import {
   THEME_COLOR,
@@ -409,6 +411,10 @@ class ColumnHeaderCell extends Component {
     if (e) {
       e.stopPropagation();
     }
+
+    if (this.props.annotation_selected) {
+      return;
+    }
     if (
       this.props.currentSelectedPieceInTable === null ||
       this.props.currentSelectedPieceInTable.pieceId !== pieceId
@@ -422,10 +428,36 @@ class ColumnHeaderCell extends Component {
     }
   };
 
+  putSelectedAnnotationHere = e => {
+    e.stopPropagation();
+    // console.log(
+    //   `should be put in cell '${this.props.cell.id}' as a type ${
+    //     this.props.ratingType
+    //   } rating`
+    // );
+    chrome.runtime.sendMessage({
+      msg: 'ANNOTATION_LOCATION_SELECTED',
+      payload: {
+        tableId: this.props.workspace.id,
+        cellId: this.props.cell.id,
+        cellType: TABLE_CELL_TYPES.rowHeader,
+        ratingType: RATING_TYPES.noRating
+      }
+    });
+  };
+
   render() {
     const { connectDropTarget, canDrop, isOver } = this.props;
 
-    let { classes, cell, pieces, comments, commentCount } = this.props;
+    let {
+      classes,
+      cell,
+      pieces,
+      comments,
+      commentCount,
+      annotation_selected,
+      selected_annotation_id
+    } = this.props;
     const { anchorEl } = this.state;
     const open = Boolean(anchorEl);
 
@@ -484,7 +516,10 @@ class ColumnHeaderCell extends Component {
           backgroundColor:
             this.props.columnIndex === this.props.columnToDelete
               ? THEME_COLOR.alertBackgroundColor
-              : isOver && canDrop
+              : (isOver && canDrop) ||
+                (annotation_selected &&
+                  pieceInCell !== null &&
+                  selected_annotation_id === pieceInCell.id)
               ? '#aed6f1'
               : null
         }}
@@ -499,6 +534,14 @@ class ColumnHeaderCell extends Component {
                 holdToDisplay={-1}
               >
                 <div
+                  style={{
+                    opacity:
+                      annotation_selected &&
+                      selected_annotation_id !== pieceInCell.id
+                        ? '0.2'
+                        : null,
+                    cursor: annotation_selected ? 'auto' : null
+                  }}
                   className={[
                     styles.PieceNameContainer,
                     this.props.currentSelectedPieceInTable !== null &&
@@ -556,6 +599,11 @@ class ColumnHeaderCell extends Component {
                 </MenuItem>
               </ContextMenu>
             </React.Fragment>
+          ) : annotation_selected ? (
+            <div
+              className={styles.AnnotationSelectedLayer}
+              onClick={e => this.putSelectedAnnotationHere(e)}
+            />
           ) : (
             <div className={styles.CellContentContainer}>
               <div

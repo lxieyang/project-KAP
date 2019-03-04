@@ -169,7 +169,8 @@ class RegularCell extends Component {
       pieces,
       comments,
       commentCount,
-      annotation_selected
+      annotation_selected,
+      selected_annotation_id
     } = this.props;
     const { anchorEl } = this.state;
     const open = Boolean(anchorEl);
@@ -211,8 +212,8 @@ class RegularCell extends Component {
         <div
           className={styles.RegularContentContainer}
           style={{
-            transition: 'all 0.1s ease-in',
-            opacity: isOver || annotation_selected ? 0.2 : null
+            transition: 'all 0.1s ease-in'
+            // opacity: isOver || annotation_selected ? 0.2 : null // apply these styles to each individual child element
           }}
         >
           {piecesList.length > 0 ? (
@@ -242,11 +243,21 @@ class RegularCell extends Component {
                         holdToDisplay={-1}
                       >
                         <div
+                          style={{
+                            opacity:
+                              isOver ||
+                              (annotation_selected &&
+                                selected_annotation_id !== p.pieceId)
+                                ? 0.2
+                                : null
+                          }}
                           className={[
                             styles.AttitudeInTableCell,
-                            this.props.currentSelectedPieceInTable !== null &&
-                            this.props.currentSelectedPieceInTable.pieceId ===
-                              piece.id
+                            (this.props.currentSelectedPieceInTable !== null &&
+                              this.props.currentSelectedPieceInTable.pieceId ===
+                                piece.id) ||
+                            (annotation_selected &&
+                              selected_annotation_id === p.pieceId)
                               ? styles.AttitudeInTableCellSelected
                               : null,
                             this.props.currentSelectedPieceInTable !== null &&
@@ -292,6 +303,7 @@ class RegularCell extends Component {
               styles.CellContentEditContainer,
               this.state.contentEdit === '' ? styles.HoverToReveal : null
             ].join(' ')}
+            style={{ opacity: isOver || annotation_selected ? 0.2 : null }}
           >
             <div
               className={styles.TextAreaContainer}

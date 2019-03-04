@@ -371,6 +371,9 @@ class Workspaces extends Component {
                               this.props.currentSelectedPieceInTable
                             }
                             annotation_selected={this.props.annotation_selected}
+                            selected_annotation_id={
+                              this.props.selected_annotation_id
+                            }
                           />
                         </WorkspacesContentContainer>
                       ) : null}

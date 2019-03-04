@@ -9,7 +9,10 @@ import fasFlagCheckered from '@fortawesome/fontawesome-free-solid/faFlagCheckere
 import fasBookmark from '@fortawesome/fontawesome-free-solid/faBookmark';
 import { APP_NAME_SHORT } from '../../../../../shared-components/src/shared/constants';
 import Logo from '../../../../../shared-components/src/components/UI/Logo/Logo';
-import { PIECE_TYPES } from '../../../../../shared-components/src/shared/types';
+import {
+  PIECE_TYPES,
+  TABLE_CELL_TYPES
+} from '../../../../../shared-components/src/shared/types';
 import { PIECE_COLOR } from '../../../../../shared-components/src/shared/theme';
 import { Highlight, Snippet } from 'siphon-tools';
 import firebase from '../../../../../shared-components/src/firebase/firebase';
@@ -23,7 +26,9 @@ class SelectTooltipButton extends Component {
 
     userId: FirestoreManager.getCurrentUserId(),
     annotation: null,
-    shouldUseScreenshot: false
+    shouldUseScreenshot: false,
+
+    createdPieceId: null
   };
 
   componentDidMount() {
@@ -60,65 +65,88 @@ class SelectTooltipButton extends Component {
 
   annotationSelectionListener = (request, sender, sendResponse) => {
     if (request.msg === 'ANNOTATION_LOCATION_SELECTED_IN_TABLE') {
-      const { tableId, cellId, ratingType } = request.payload;
-      console.log(tableId, cellId, ratingType);
+      const { tableId, cellId, cellType, ratingType } = request.payload;
+
       if (this.state.annotation === null) {
         // make sure annotation is collected
         return false;
       }
 
-      // preserve client rect
-      let rect = this.props.captureWindow
-        ? this.props.captureWindow.getBoundingClientRect()
-        : this.props.range.getBoundingClientRect();
+      if (this.state.createdPieceId === null) {
+        // preserve client rect
+        let rect = this.props.captureWindow
+          ? this.props.captureWindow.getBoundingClientRect()
+          : this.props.range.getBoundingClientRect();
 
-      FirestoreManager.createPiece(
-        this.state.annotation,
-        {
-          url: window.location.href,
-          hostname: window.location.hostname,
-          pathname: window.location.pathname,
-          pageTitle: document.title,
-          shouldUseScreenshot: this.state.shouldUseScreenshot
-        },
-        this.props.annotationType,
-        PIECE_TYPES.snippet
-      )
-        .then(pieceId => {
-          chrome.runtime.sendMessage({
-            msg: 'SHOW_SUCCESS_STATUS_BADGE',
-            success: true
-          });
-
-          // put into the table
-          FirestoreManager.addPieceToTableCellById(
-            tableId,
-            cellId,
-            pieceId,
-            ratingType
-          );
-        })
-        .catch(error => {
-          console.log(error);
-          chrome.runtime.sendMessage({
-            msg: 'SHOW_SUCCESS_STATUS_BADGE',
-            success: false
-          });
-        });
-      this.removeTooltipButton();
-
-      // take screenshot
-      setTimeout(() => {
-        chrome.runtime.sendMessage(
+        FirestoreManager.createPiece(
+          this.state.annotation,
           {
-            msg: 'SCREENSHOT_WITH_COORDINATES',
-            rect,
-            windowSize: this.props.windowSize,
-            pieceId: this.state.annotation.key
+            url: window.location.href,
+            hostname: window.location.hostname,
+            pathname: window.location.pathname,
+            pageTitle: document.title,
+            shouldUseScreenshot: this.state.shouldUseScreenshot
           },
-          response => {}
+          this.props.annotationType,
+          PIECE_TYPES.snippet
+        )
+          .then(pieceId => {
+            chrome.runtime.sendMessage({
+              msg: 'SHOW_SUCCESS_STATUS_BADGE',
+              success: true
+            });
+
+            // put into the table
+            // if (cellType === TABLE_CELL_TYPES.regularCell) {
+            FirestoreManager.addPieceToTableCellById(
+              tableId,
+              cellId,
+              pieceId,
+              ratingType
+            );
+            // } else if (cellType === TABLE_CELL_TYPES.rowHeader) {
+            //   console.log('should put as option');
+            // } else if (cellType === TABLE_CELL_TYPES.columnHeader) {
+            //   console.log('should put as criterion');
+            // }
+
+            this.setState({ createdPieceId: pieceId });
+
+            chrome.runtime.sendMessage({
+              msg: 'SELECTED_ANNOTATION_ID_UPDATED',
+              pieceId
+            });
+          })
+          .catch(error => {
+            console.log(error);
+            chrome.runtime.sendMessage({
+              msg: 'SHOW_SUCCESS_STATUS_BADGE',
+              success: false
+            });
+          });
+        // this.removeTooltipButton();
+
+        // take screenshot
+        setTimeout(() => {
+          chrome.runtime.sendMessage(
+            {
+              msg: 'SCREENSHOT_WITH_COORDINATES',
+              rect,
+              windowSize: this.props.windowSize,
+              pieceId: this.state.annotation.key
+            },
+            response => {}
+          );
+        }, 5);
+      } else {
+        // directly put into the table
+        FirestoreManager.addPieceToTableCellById(
+          tableId,
+          cellId,
+          this.state.createdPieceId,
+          ratingType
         );
-      }, 5);
+      }
     }
   };
 
