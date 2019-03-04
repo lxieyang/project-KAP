@@ -101,6 +101,7 @@ class CommentItem extends Component {
   };
 
   handleClick = event => {
+    event.stopPropagation();
     this.setState({ anchorEl: event.currentTarget });
   };
 
@@ -109,6 +110,7 @@ class CommentItem extends Component {
   };
 
   handleAction = (action, commentId, content, event) => {
+    event.stopPropagation();
     if (action === 'delete') {
       if (window.confirm(`Are you sure you want to delete "${content}"?`)) {
         FirestoreManager.deleteCommentById(this.props.pieceId, commentId);
@@ -144,7 +146,11 @@ class CommentItem extends Component {
                   placeholder={'Add a comment'}
                   value={this.state.commentItemContent}
                   onKeyDown={this.keyPress}
-                  onBlur={() => this.saveCommentItemClickedHandler(item.id)}
+                  onClick={e => e.stopPropagation()}
+                  onBlur={e => {
+                    e.stopPropagation();
+                    this.saveCommentItemClickedHandler(item.id);
+                  }}
                   onChange={e => this.handleCommentItemInputChange(e)}
                   className={classesInCSS.Textarea}
                 />

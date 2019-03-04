@@ -21,6 +21,8 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import Chat from 'mdi-material-ui/Chat';
 import Looks from 'mdi-material-ui/Looks';
 import Tooltip from '@material-ui/core/Tooltip';
+import Switch from '@material-ui/core/Switch';
+import Chip from '@material-ui/core/Chip';
 
 import Textarea from 'react-textarea-autosize';
 
@@ -181,6 +183,13 @@ class PieceItem extends Component {
     // Injected by React DnD:
     connectDragSource: PropTypes.func.isRequired,
     isDragging: PropTypes.bool.isRequired
+  };
+
+  switchShouldDisplayScreenshot = e => {
+    e.stopPropagation();
+    this.setState(prevState => {
+      return { displayingScreenshot: !prevState.displayingScreenshot };
+    });
   };
 
   componentDidMount() {
@@ -620,7 +629,35 @@ class PieceItem extends Component {
               <div className={classesInCSS.CollapseContainer}>
                 {piece.annotationType !== ANNOTATION_TYPES.Manual ? (
                   <React.Fragment>
-                    {displayingScreenshot ? (
+                    {piece.annotationType === ANNOTATION_TYPES.Snippet && (
+                      <div>
+                        <div
+                          onClick={e => e.stopPropagation()}
+                          style={{ fontSize: '13px', marginLeft: '4px' }}
+                        >
+                          <Chip
+                            style={{ height: 24 }}
+                            label={
+                              displayingScreenshot
+                                ? 'Showing image screenshot'
+                                : 'Showing HTML snapshot'
+                            }
+                          />
+
+                          {piece.shouldUseScreenshot ||
+                          screenshot === null ? null : (
+                            <Switch
+                              onClick={e => e.stopPropagation()}
+                              checked={displayingScreenshot}
+                              onChange={this.switchShouldDisplayScreenshot}
+                            />
+                          )}
+                        </div>
+                      </div>
+                    )}
+
+                    {piece.annotationType === ANNOTATION_TYPES.Snippet &&
+                    displayingScreenshot ? (
                       screenshotLoading ? (
                         <div
                           style={{
@@ -644,12 +681,13 @@ class PieceItem extends Component {
                                 alt={piece.id}
                                 src={screenshot.imageDataUrl}
                                 style={{
-                                  height: `${Math.min(
-                                    Math.floor(
-                                      screenshot.dimensions.rectHeight
-                                    ),
-                                    maxScreenshotHeight
-                                  )}px`
+                                  // height: `${Math.min(
+                                  //   Math.floor(
+                                  //     screenshot.dimensions.rectHeight
+                                  //   ),
+                                  //   maxScreenshotHeight
+                                  // )}px`
+                                  width: '100%'
                                 }}
                                 onClick={() =>
                                   this.screenshotImageClickedHandler(piece.id)

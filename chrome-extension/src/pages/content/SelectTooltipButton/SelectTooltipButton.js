@@ -28,7 +28,8 @@ class SelectTooltipButton extends Component {
     annotation: null,
     shouldUseScreenshot: false,
 
-    createdPieceId: null
+    createdPieceId: null,
+    createdPieceRect: null
   };
 
   componentDidMount() {
@@ -110,7 +111,7 @@ class SelectTooltipButton extends Component {
             //   console.log('should put as criterion');
             // }
 
-            this.setState({ createdPieceId: pieceId });
+            this.setState({ createdPieceId: pieceId, createdPieceRect: rect });
 
             chrome.runtime.sendMessage({
               msg: 'SELECTED_ANNOTATION_ID_UPDATED',
@@ -180,6 +181,19 @@ class SelectTooltipButton extends Component {
       return false;
     }
     this.removeTooltipButton();
+    if (this.state.createdPieceId !== null) {
+      setTimeout(() => {
+        chrome.runtime.sendMessage(
+          {
+            msg: 'SCREENSHOT_WITH_COORDINATES',
+            rect: this.state.createdPieceRect,
+            windowSize: this.props.windowSize,
+            pieceId: this.state.createdPieceId
+          },
+          response => {}
+        );
+      }, 5);
+    }
   }
 
   mouseEnterTooltipButton = () => {

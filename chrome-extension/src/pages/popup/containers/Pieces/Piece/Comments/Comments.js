@@ -153,6 +153,7 @@ class Comment extends Component {
                 onMouseEnter={e => {
                   e.target.focus();
                 }}
+                onClick={e => e.stopPropagation()}
                 onChange={e => this.handleInputChange(e)}
                 className={classesInCSS.Textarea}
               />
