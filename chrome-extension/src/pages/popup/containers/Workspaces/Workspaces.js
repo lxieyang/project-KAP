@@ -370,6 +370,12 @@ class Workspaces extends Component {
                             currentSelectedPieceInTable={
                               this.props.currentSelectedPieceInTable
                             }
+                            currentSelectedPieceInPieces={
+                              this.props.currentSelectedPieceInPieces
+                            }
+                            setCurrentSelectedPieceInPieces={
+                              this.props.setCurrentSelectedPieceInPieces
+                            }
                             annotation_selected={this.props.annotation_selected}
                             selected_annotation_id={
                               this.props.selected_annotation_id

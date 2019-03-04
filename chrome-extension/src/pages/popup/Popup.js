@@ -30,6 +30,7 @@ class Popup extends Component {
     currentWorkspaceId: '0',
 
     currentSelectedPieceInTable: null,
+    currentSelectedPieceInPieces: null,
 
     annotation_selected: false,
     selected_annotation_id: null
@@ -164,10 +165,29 @@ class Popup extends Component {
     }
   };
 
-  popClickedHandler = e => {
+  setCurrentSelectedPieceInPieces = ({ pieceId, pieceType }) => {
+    // console.log(pieceId, ' ', pieceType);
+    if (pieceId !== null) {
+      this.setState({
+        currentSelectedPieceInPieces: { pieceId, pieceType }
+      });
+    } else {
+      this.setState({
+        currentSelectedPieceInPieces: null
+      });
+    }
+  };
+
+  popupClickedHandler = e => {
     e.stopPropagation();
     if (this.state.currentSelectedPieceInTable !== null) {
       this.setCurrentSelectedPieceInTable({
+        pieceId: null,
+        pieceType: null
+      });
+    }
+    if (this.state.currentSelectedPieceInPieces !== null) {
+      this.setCurrentSelectedPieceInPieces({
         pieceId: null,
         pieceType: null
       });
@@ -235,7 +255,7 @@ class Popup extends Component {
     return (
       <div
         style={{ display: 'flex', flexFlow: 'column', height: '100vh' }}
-        onClick={e => this.popClickedHandler(e)}
+        onClick={e => this.popupClickedHandler(e)}
       >
         {appTitle}
         {/*<div
@@ -257,12 +277,16 @@ class Popup extends Component {
           setCurrentWorkspaceId={this.setCurrentWorkspaceId}
           setCurrentSelectedPieceInTable={this.setCurrentSelectedPieceInTable}
           currentSelectedPieceInTable={this.state.currentSelectedPieceInTable}
+          currentSelectedPieceInPieces={this.state.currentSelectedPieceInPieces}
+          setCurrentSelectedPieceInPieces={this.setCurrentSelectedPieceInPieces}
           annotation_selected={this.state.annotation_selected}
           selected_annotation_id={this.state.selected_annotation_id}
         />
         <Pieces
           currentWorkspaceId={this.state.currentWorkspaceId}
           currentSelectedPieceInTable={this.state.currentSelectedPieceInTable}
+          currentSelectedPieceInPieces={this.state.currentSelectedPieceInPieces}
+          setCurrentSelectedPieceInPieces={this.setCurrentSelectedPieceInPieces}
           selected_annotation_id={this.state.selected_annotation_id}
         />
       </div>

@@ -303,7 +303,11 @@ class Pieces extends Component {
       currentTaskId,
       activeTabValue
     } = this.state;
-    let { classes, currentSelectedPieceInTable } = this.props;
+    let {
+      classes,
+      currentSelectedPieceInTable,
+      currentSelectedPieceInPieces
+    } = this.props;
     let idOfCurrentSelectedPieceInTable =
       currentSelectedPieceInTable !== null
         ? currentSelectedPieceInTable.pieceId
@@ -404,6 +408,12 @@ class Pieces extends Component {
                         }
                         currentSelectedPieceInTable={
                           currentSelectedPieceInTable
+                        }
+                        currentSelectedPieceInPieces={
+                          currentSelectedPieceInPieces
+                        }
+                        setCurrentSelectedPieceInPieces={
+                          this.props.setCurrentSelectedPieceInPieces
                         }
                         handleDeleteButtonClicked={
                           this.handleDeleteButtonClicked

@@ -147,6 +147,12 @@ class RegularCell extends Component {
 
   ratingIconClickedHandler = (e, pieceId, pieceType) => {
     e.stopPropagation();
+
+    this.props.setCurrentSelectedPieceInPieces({
+      pieceId: null,
+      pieceType: null
+    });
+
     if (
       this.props.currentSelectedPieceInTable === null ||
       this.props.currentSelectedPieceInTable.pieceId !== pieceId
@@ -256,13 +262,19 @@ class RegularCell extends Component {
                             (this.props.currentSelectedPieceInTable !== null &&
                               this.props.currentSelectedPieceInTable.pieceId ===
                                 piece.id) ||
+                            (this.props.currentSelectedPieceInPieces !== null &&
+                              this.props.currentSelectedPieceInPieces
+                                .pieceId === piece.id) ||
                             (annotation_selected &&
                               selected_annotation_id === p.pieceId)
                               ? styles.AttitudeInTableCellSelected
                               : null,
-                            this.props.currentSelectedPieceInTable !== null &&
-                            this.props.currentSelectedPieceInTable.pieceId !==
-                              piece.id
+                            (this.props.currentSelectedPieceInTable !== null &&
+                              this.props.currentSelectedPieceInTable.pieceId !==
+                                piece.id) ||
+                            (this.props.currentSelectedPieceInPieces !== null &&
+                              this.props.currentSelectedPieceInPieces
+                                .pieceId !== piece.id)
                               ? styles.AttitudeInTableCellNotSelected
                               : null
                           ].join(' ')}
@@ -321,11 +333,14 @@ class RegularCell extends Component {
                 onChange={e => this.handleCellContentInputChange(e)}
                 className={[
                   styles.Textarea,
-                  this.props.currentSelectedPieceInTable === null
+                  this.props.currentSelectedPieceInTable === null ||
+                  this.props.currentSelectedPieceInPieces === null
                     ? styles.TextareaHover
                     : null,
-                  this.state.contentEdit !== '' &&
-                  this.props.currentSelectedPieceInTable !== null
+                  (this.state.contentEdit !== '' &&
+                    this.props.currentSelectedPieceInTable !== null) ||
+                  (this.state.contentEdit !== '' &&
+                    this.props.currentSelectedPieceInPieces !== null)
                     ? styles.TextareaShouldBeOpaque
                     : null
                 ].join(' ')}

@@ -156,6 +156,12 @@ class Table extends Component {
               setCurrentSelectedPieceInTable={
                 this.props.setCurrentSelectedPieceInTable
               }
+              currentSelectedPieceInPieces={
+                this.props.currentSelectedPieceInPieces
+              }
+              setCurrentSelectedPieceInPieces={
+                this.props.setCurrentSelectedPieceInPieces
+              }
               annotation_selected={this.props.annotation_selected}
               selected_annotation_id={this.props.selected_annotation_id}
               openScreenshot={this.props.openScreenshot}
@@ -226,6 +232,12 @@ class Table extends Component {
                       }
                       setCurrentSelectedPieceInTable={
                         this.props.setCurrentSelectedPieceInTable
+                      }
+                      currentSelectedPieceInPieces={
+                        this.props.currentSelectedPieceInPieces
+                      }
+                      setCurrentSelectedPieceInPieces={
+                        this.props.setCurrentSelectedPieceInPieces
                       }
                       annotation_selected={this.props.annotation_selected}
                       selected_annotation_id={this.props.selected_annotation_id}

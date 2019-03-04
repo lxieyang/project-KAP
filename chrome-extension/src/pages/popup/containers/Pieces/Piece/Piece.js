@@ -372,6 +372,21 @@ class Piece extends Component {
     });
   };
 
+  pieceClickedHandler = (e, pieceId, pieceType) => {
+    e.stopPropagation();
+    if (
+      this.props.currentSelectedPieceInPieces === null ||
+      this.props.currentSelectedPieceInPieces.pieceId !== pieceId
+    ) {
+      this.props.setCurrentSelectedPieceInPieces({ pieceId, pieceType });
+    } else {
+      this.props.setCurrentSelectedPieceInPieces({
+        pieceId: null,
+        pieceType: null
+      });
+    }
+  };
+
   render() {
     const { connectDragSource, connectDragPreview, isDragging } = this.props; // dnd
 
@@ -412,14 +427,19 @@ class Piece extends Component {
 
     return (
       <div
-        onClick={e => {
-          e.stopPropagation();
-        }}
+        onClick={e => this.pieceClickedHandler(e, piece.id, piece.pieceType)}
       >
         <React.Fragment>
           <Card
             className={classes.card}
-            style={{ border: isDragging ? '3px solid red' : null }}
+            style={{
+              border:
+                isDragging ||
+                (this.props.currentSelectedPieceInPieces !== null &&
+                  this.props.currentSelectedPieceInPieces.pieceId) === piece.id
+                  ? '3px solid red'
+                  : null
+            }}
           >
             <CardContent
               style={{ display: 'flex', padding: '0px', position: 'relative' }}

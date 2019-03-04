@@ -412,6 +412,11 @@ class ColumnHeaderCell extends Component {
       e.stopPropagation();
     }
 
+    this.props.setCurrentSelectedPieceInPieces({
+      pieceId: null,
+      pieceType: null
+    });
+
     if (this.props.annotation_selected) {
       return;
     }
@@ -544,14 +549,20 @@ class ColumnHeaderCell extends Component {
                   }}
                   className={[
                     styles.PieceNameContainer,
-                    this.props.currentSelectedPieceInTable !== null &&
-                    this.props.currentSelectedPieceInTable.pieceId ===
-                      pieceInCell.id
+                    (this.props.currentSelectedPieceInTable !== null &&
+                      this.props.currentSelectedPieceInTable.pieceId ===
+                        pieceInCell.id) ||
+                    (this.props.currentSelectedPieceInPieces !== null &&
+                      this.props.currentSelectedPieceInPieces.pieceId ===
+                        pieceInCell.id)
                       ? styles.PieceNameContainerSelected
                       : null,
-                    this.props.currentSelectedPieceInTable !== null &&
-                    this.props.currentSelectedPieceInTable.pieceId !==
-                      pieceInCell.id
+                    (this.props.currentSelectedPieceInTable !== null &&
+                      this.props.currentSelectedPieceInTable.pieceId !==
+                        pieceInCell.id) ||
+                    (this.props.currentSelectedPieceInPieces !== null &&
+                      this.props.currentSelectedPieceInPieces.pieceId !==
+                        pieceInCell.id)
                       ? styles.PieceNameContainerNotSelected
                       : null
                   ].join(' ')}
