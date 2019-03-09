@@ -127,6 +127,7 @@ class RegularCell extends Component {
   };
 
   removePieceFromCellClickedHandler = (e, pieceId) => {
+    e.stopPropagation();
     FirestoreManager.deletePieceInTableCellById(
       this.props.workspace.id,
       this.props.cell.id,
@@ -143,6 +144,16 @@ class RegularCell extends Component {
         pieceType: null
       });
     }
+  };
+
+  switchRatingTypeOfPiece = (e, pieceId, ratingType) => {
+    e.stopPropagation();
+    FirestoreManager.switchPieceRatingType(
+      this.props.workspace.id,
+      this.props.cell.id,
+      pieceId,
+      ratingType
+    );
   };
 
   ratingIconClickedHandler = (e, pieceId, pieceType) => {
@@ -293,6 +304,63 @@ class RegularCell extends Component {
                       <ContextMenu
                         id={`${cell.id}-${p.pieceId}-${idx}-context-menu`}
                       >
+                        {p.rating !== RATING_TYPES.positive && (
+                          <MenuItem
+                            onClick={e =>
+                              this.switchRatingTypeOfPiece(
+                                e,
+                                p.pieceId,
+                                RATING_TYPES.positive
+                              )
+                            }
+                          >
+                            Change to{' '}
+                            <div
+                              style={{ width: 20, height: 20, marginLeft: 4 }}
+                            >
+                              <ThumbV1 type={'up'} />
+                            </div>
+                          </MenuItem>
+                        )}
+                        {p.rating !== RATING_TYPES.negative && (
+                          <MenuItem
+                            onClick={e =>
+                              this.switchRatingTypeOfPiece(
+                                e,
+                                p.pieceId,
+                                RATING_TYPES.negative
+                              )
+                            }
+                          >
+                            Change to{' '}
+                            <div
+                              style={{ width: 20, height: 20, marginLeft: 4 }}
+                            >
+                              <ThumbV1 type={'down'} />
+                            </div>
+                          </MenuItem>
+                        )}
+                        {p.rating !== RATING_TYPES.info && (
+                          <MenuItem
+                            onClick={e =>
+                              this.switchRatingTypeOfPiece(
+                                e,
+                                p.pieceId,
+                                RATING_TYPES.info
+                              )
+                            }
+                          >
+                            Change to{' '}
+                            <div
+                              style={{ width: 20, height: 20, marginLeft: 4 }}
+                            >
+                              <InfoIcon />
+                            </div>
+                          </MenuItem>
+                        )}
+
+                        <MenuItem divider />
+
                         <MenuItem
                           onClick={e =>
                             this.removePieceFromCellClickedHandler(e, p.pieceId)

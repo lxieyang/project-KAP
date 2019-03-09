@@ -131,6 +131,15 @@ class RegularCell extends Component {
     );
   };
 
+  switchRatingTypeOfPiece = (e, pieceId, ratingType) => {
+    FirestoreManager.switchPieceRatingType(
+      this.props.workspace.id,
+      this.props.cell.id,
+      pieceId,
+      ratingType
+    );
+  };
+
   render() {
     const { connectDropTarget, canDrop, isOver } = this.props;
     let {
@@ -344,6 +353,63 @@ class RegularCell extends Component {
                         <ContextMenu
                           id={`${cell.id}-${p.pieceId}-${idx}-context-menu`}
                         >
+                          {p.rating !== RATING_TYPES.positive && (
+                            <MenuItem
+                              onClick={e =>
+                                this.switchRatingTypeOfPiece(
+                                  e,
+                                  p.pieceId,
+                                  RATING_TYPES.positive
+                                )
+                              }
+                            >
+                              Change to{' '}
+                              <div
+                                style={{ width: 20, height: 20, marginLeft: 4 }}
+                              >
+                                <ThumbV1 type={'up'} />
+                              </div>
+                            </MenuItem>
+                          )}
+                          {p.rating !== RATING_TYPES.negative && (
+                            <MenuItem
+                              onClick={e =>
+                                this.switchRatingTypeOfPiece(
+                                  e,
+                                  p.pieceId,
+                                  RATING_TYPES.negative
+                                )
+                              }
+                            >
+                              Change to{' '}
+                              <div
+                                style={{ width: 20, height: 20, marginLeft: 4 }}
+                              >
+                                <ThumbV1 type={'down'} />
+                              </div>
+                            </MenuItem>
+                          )}
+                          {p.rating !== RATING_TYPES.info && (
+                            <MenuItem
+                              onClick={e =>
+                                this.switchRatingTypeOfPiece(
+                                  e,
+                                  p.pieceId,
+                                  RATING_TYPES.info
+                                )
+                              }
+                            >
+                              Change to{' '}
+                              <div
+                                style={{ width: 20, height: 20, marginLeft: 4 }}
+                              >
+                                <InfoIcon />
+                              </div>
+                            </MenuItem>
+                          )}
+
+                          <MenuItem divider />
+
                           <MenuItem
                             onClick={e =>
                               this.removePieceFromCellClickedHandler(
