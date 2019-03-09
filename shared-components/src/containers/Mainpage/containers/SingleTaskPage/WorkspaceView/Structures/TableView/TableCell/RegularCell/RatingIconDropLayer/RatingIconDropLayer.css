@@ -1,0 +1,13 @@
+.RatingIconDropLayerContainer {
+  width: 100%;
+  height: 100%;
+}
+
+.RatingIconDropLayer {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  transition: opacity 0.15s ease-in;
+}
