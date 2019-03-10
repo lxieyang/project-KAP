@@ -581,6 +581,9 @@ class ColumnHeaderCell extends Component {
                   cellType={cell.type}
                   rowIndex={this.props.rowIndex}
                   columnIndex={this.props.columnIndex}
+                  switchDraggingOptionCriterionPieceStatus={
+                    this.props.switchDraggingOptionCriterionPieceStatus
+                  }
                 >
                   <div
                     style={{

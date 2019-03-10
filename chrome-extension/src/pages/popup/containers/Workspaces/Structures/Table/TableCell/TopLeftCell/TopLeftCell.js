@@ -7,6 +7,12 @@ import PlusCircle from 'mdi-material-ui/PlusCircle';
 import { withStyles } from '@material-ui/core/styles';
 import * as FirestoreManager from '../../../../../../../../../../shared-components/src/firebase/firestore_wrapper';
 
+import Delete from 'mdi-material-ui/Delete';
+import DeleteEmpty from 'mdi-material-ui/DeleteEmpty';
+
+import { DropTarget } from 'react-dnd';
+import PropTypes from 'prop-types';
+
 const materialStyles = theme => ({
   button: {
     marginTop: 0,
@@ -28,6 +34,30 @@ const ActionButton = withStyles({
   }
 })(Button);
 
+const dropTarget = {
+  canDrop(props, monitor, component) {
+    return props.isDraggingOptionCriterionPiece ? true : false;
+  },
+
+  drop(props, monitor, component) {
+    const { id, cellId } = monitor.getItem();
+
+    component.removePieceFromCell(id, cellId);
+
+    return {
+      id: props.cell.id
+    };
+  }
+};
+
+const collectDrop = (connect, monitor) => {
+  return {
+    connectDropTarget: connect.dropTarget(),
+    isOver: monitor.isOver(),
+    canDrop: monitor.canDrop()
+  };
+};
+
 class TopLeftCell extends Component {
   state = {};
 
@@ -38,10 +68,35 @@ class TopLeftCell extends Component {
     FirestoreManager.createNewColumnInTable(this.props.workspace.id, true);
   };
 
-  render() {
-    const { classes, numRows, numColumns } = this.props;
+  removePieceFromCell = (pieceId, cellId) => {
+    FirestoreManager.deletePieceInTableCellById(
+      this.props.workspace.id,
+      cellId,
+      pieceId
+    );
 
-    let addRowButton = (
+    // in case it's selected
+    if (
+      this.props.currentSelectedPieceInTable !== null &&
+      this.props.currentSelectedPieceInTable.pieceId === pieceId
+    ) {
+      this.props.setCurrentSelectedPieceInTable({
+        pieceId: null,
+        pieceType: null
+      });
+    }
+  };
+
+  render() {
+    const { connectDropTarget, canDrop, isOver } = this.props;
+    const {
+      classes,
+      numRows,
+      numColumns,
+      isDraggingOptionCriterionPiece
+    } = this.props;
+
+    let addRowButton = !isDraggingOptionCriterionPiece && (
       <div
         className={[
           styles.AddRowButtonContainer,
@@ -61,7 +116,7 @@ class TopLeftCell extends Component {
       </div>
     );
 
-    let addColumnButton = (
+    let addColumnButton = !isDraggingOptionCriterionPiece && (
       <div
         className={[
           styles.AddColumnButtonContainer,
@@ -82,8 +137,41 @@ class TopLeftCell extends Component {
       </div>
     );
 
-    return (
+    let removeFromTableContainer = isDraggingOptionCriterionPiece && (
+      <div
+        style={{
+          zIndex: 2000,
+          position: 'absolute',
+          top: 0,
+          bottom: 1,
+          left: 0,
+          right: 1,
+          padding: '1px 3px',
+          fontSize: 11,
+          fontWeight: 400,
+          borderRadius: '4px',
+          backgroundColor: 'lightgray',
+          transition: 'all 0.05s ease-in',
+          opacity: isOver && canDrop ? 1 : 0.3,
+          transform: isOver && canDrop ? 'scale(1.1)' : null
+        }}
+      >
+        <div>
+          Drop here to <strong>remove</strong>
+        </div>
+        <div>
+          {isOver ? (
+            <DeleteEmpty style={{ fontSize: 18 }} />
+          ) : (
+            <Delete style={{ fontSize: 18 }} />
+          )}
+        </div>
+      </div>
+    );
+
+    return connectDropTarget(
       <th className={styles.TopLeftCellContainer}>
+        {removeFromTableContainer}
         {addColumnButton}
         {addRowButton}
       </th>
@@ -91,4 +179,6 @@ class TopLeftCell extends Component {
   }
 }
 
-export default withStyles(materialStyles)(TopLeftCell);
+export default withStyles(materialStyles)(
+  DropTarget(['PIECE_ITEM'], dropTarget, collectDrop)(TopLeftCell)
+);

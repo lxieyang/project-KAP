@@ -51,7 +51,14 @@ class Table extends Component {
     rowToSwitchA: -1,
     rowToSwitchB: -1,
     columnToSwitchA: -1,
-    columnToSwitchB: -1
+    columnToSwitchB: -1,
+
+    // remove stuff from table support
+    isDraggingOptionCriterionPiece: false
+  };
+
+  switchDraggingOptionCriterionPieceStatus = to => {
+    this.setState({ isDraggingOptionCriterionPiece: to });
   };
 
   setRowToDelete = to => {
@@ -171,6 +178,12 @@ class Table extends Component {
               columnToSwitchA={this.state.columnToSwitchA}
               columnToSwitchB={this.state.columnToSwitchB}
               setColumnToSwitch={this.setColumnToSwitch}
+              isDraggingOptionCriterionPiece={
+                this.state.isDraggingOptionCriterionPiece
+              }
+              switchDraggingOptionCriterionPieceStatus={
+                this.switchDraggingOptionCriterionPieceStatus
+              }
               currentSelectedPieceInTable={
                 this.props.currentSelectedPieceInTable
               }
@@ -254,6 +267,12 @@ class Table extends Component {
                       columnToSwitchA={this.state.columnToSwitchA}
                       columnToSwitchB={this.state.columnToSwitchB}
                       setColumnToSwitch={this.setColumnToSwitch}
+                      isDraggingOptionCriterionPiece={
+                        this.state.isDraggingOptionCriterionPiece
+                      }
+                      switchDraggingOptionCriterionPieceStatus={
+                        this.switchDraggingOptionCriterionPieceStatus
+                      }
                       currentSelectedPieceInTable={
                         this.props.currentSelectedPieceInTable
                       }

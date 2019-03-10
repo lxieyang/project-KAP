@@ -115,7 +115,7 @@ class RatingIconDropLayer extends Component {
           top: -20,
           height: 20,
           left: -20,
-          right: -20,
+          right: this.props.columnIndex === this.props.numColumns - 1 ? 0 : -20,
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
@@ -123,7 +123,14 @@ class RatingIconDropLayer extends Component {
           fontWeight: 500
         }}
       >
-        <div>{promptText}</div>
+        <div
+          style={{
+            padding: '1px 4px',
+            backgroundColor: 'white'
+          }}
+        >
+          {promptText}
+        </div>
       </div>
     );
 

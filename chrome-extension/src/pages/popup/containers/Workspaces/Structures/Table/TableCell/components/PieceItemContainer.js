@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 
 const dragSource = {
   beginDrag(props) {
+    props.switchDraggingOptionCriterionPieceStatus(true);
     return {
       id: props.piece.id,
       cellId: props.cellId,
@@ -16,7 +17,9 @@ const dragSource = {
     return true;
   },
 
-  endDrag(props, monitor, component) {}
+  endDrag(props, monitor, component) {
+    props.switchDraggingOptionCriterionPieceStatus(false);
+  }
 };
 
 const collectDrag = (connect, monitor) => {

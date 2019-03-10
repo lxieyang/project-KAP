@@ -20,7 +20,7 @@ import Button from '@material-ui/core/Button';
 import { ContextMenu, MenuItem, ContextMenuTrigger } from 'react-contextmenu';
 
 // dnd stuff
-import { DragSource, DropTarget } from 'react-dnd';
+import { DropTarget } from 'react-dnd';
 import PropTypes from 'prop-types';
 import {
   PIECE_TYPES,
@@ -586,6 +586,9 @@ class RowHeaderCell extends Component {
                   cellType={cell.type}
                   rowIndex={this.props.rowIndex}
                   columnIndex={this.props.columnIndex}
+                  switchDraggingOptionCriterionPieceStatus={
+                    this.props.switchDraggingOptionCriterionPieceStatus
+                  }
                 >
                   <div
                     style={{
