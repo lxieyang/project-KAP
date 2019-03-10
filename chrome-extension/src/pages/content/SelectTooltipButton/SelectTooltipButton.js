@@ -281,6 +281,7 @@ class SelectTooltipButton extends Component {
         <div className={styles.TooltipButtonContainer}>
           <div
             className={styles.TooltipButton}
+            // style={{ color: `${PIECE_COLOR.snippet}` }}
             onMouseEnter={e => this.mouseEnterTooltipButton()}
             onMouseLeave={e => this.mouseLeaveTooltipButton()}
             onClick={e => this.tooltipButtonClickedHandler()}
@@ -288,7 +289,7 @@ class SelectTooltipButton extends Component {
             <div style={{ display: 'flex', alignItems: 'center' }}>
               <FontAwesomeIcon
                 icon={fasBookmark}
-                style={{ marginRight: '5px' }}
+                // style={{ marginRight: '5px', color: PIECE_COLOR.snippet }}
               />
               <div
                 style={{

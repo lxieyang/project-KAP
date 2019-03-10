@@ -1,5 +1,6 @@
 import red from '@material-ui/core/colors/red';
 import blue from '@material-ui/core/colors/blue';
+import purple from '@material-ui/core/colors/purple';
 import orange from '@material-ui/core/colors/orange';
 import yellow from '@material-ui/core/colors/yellow';
 import pink from '@material-ui/core/colors/pink';
@@ -7,7 +8,7 @@ import lime from '@material-ui/core/colors/lime';
 import lightGreen from '@material-ui/core/colors/lightGreen';
 
 export const PIECE_COLOR = {
-  snippet: red['700'],
+  snippet: purple['700'],
   option: orange['600'],
   criterion: blue['700']
 };

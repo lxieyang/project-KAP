@@ -30,6 +30,9 @@ import PropTypes from 'prop-types';
 // import CellComments from '../CellComments/CellComments';
 import { getFirstNWords } from '../../../../../../../../../../shared-components/src/shared/utilities';
 
+import RatingIcon from './components/RatingIcon';
+import RatingIconDropLayer from './RatingIconDropLayer/RatingIconDropLayer';
+
 const materialStyles = theme => ({
   iconButtons: {
     padding: '4px'
@@ -66,7 +69,11 @@ class RegularCell extends Component {
     contentEdit: this.props.cell.content,
 
     // comment popover
-    anchorEl: null
+    anchorEl: null,
+
+    // dnd support
+    isDraggingRatingIcon: false,
+    draggingRatingIconType: RATING_TYPES.noRating
   };
 
   static propTypes = {
@@ -74,6 +81,10 @@ class RegularCell extends Component {
     connectDropTarget: PropTypes.func.isRequired,
     isOver: PropTypes.bool.isRequired,
     canDrop: PropTypes.bool.isRequired
+  };
+
+  switchDraggingRatingIconStatus = (to, type) => {
+    this.setState({ isDraggingRatingIcon: to, draggingRatingIconType: type });
   };
 
   componentDidUpdate(prevProps, prevState) {
@@ -196,6 +207,55 @@ class RegularCell extends Component {
       return <td />;
     }
 
+    let droppingRatingIconContainer = this.state.isDraggingRatingIcon && (
+      <div
+        style={{
+          zIndex: 2000,
+          position: 'absolute',
+          // minWidth: 100,
+          left: 0,
+          right: 0,
+          top: -40,
+          height: 40,
+          backgroundColor: 'white',
+          color: 'black',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center'
+          // borderRadius: '4px'
+          // boxShadow: '0 8px 6px -6px lightgray'
+        }}
+      >
+        {this.state.draggingRatingIconType !== RATING_TYPES.positive && (
+          <div className={styles.HoverLayerPane}>
+            <RatingIconDropLayer
+              containerType={RATING_TYPES.positive}
+              {...this.props}
+            />
+          </div>
+        )}
+        {this.state.draggingRatingIconType !== RATING_TYPES.negative && (
+          <div className={styles.HoverLayerPane}>
+            <RatingIconDropLayer
+              containerType={RATING_TYPES.negative}
+              {...this.props}
+            />
+          </div>
+        )}
+        {this.state.draggingRatingIconType !== RATING_TYPES.info && (
+          <div className={styles.HoverLayerPane}>
+            <RatingIconDropLayer
+              containerType={RATING_TYPES.info}
+              {...this.props}
+            />
+          </div>
+        )}
+        <div className={styles.HoverLayerPane}>
+          <RatingIconDropLayer containerType={'trash'} {...this.props} />
+        </div>
+      </div>
+    );
+
     let piecesList = cell.pieces;
 
     return connectDropTarget(
@@ -209,6 +269,8 @@ class RegularCell extends Component {
               : 'transparent'
         }}
       >
+        {droppingRatingIconContainer}
+
         {/* hover to drop layer */}
         <div
           className={styles.HoverLayer}
@@ -297,7 +359,19 @@ class RegularCell extends Component {
                             )
                           }
                         >
-                          {icon}
+                          <RatingIcon
+                            editAccess={true}
+                            pieceId={p.pieceId}
+                            ratingType={p.rating}
+                            workspaceId={this.props.workspace.id}
+                            cellId={cell.id}
+                            cellType={cell.type}
+                            switchDraggingRatingIconStatus={
+                              this.switchDraggingRatingIconStatus
+                            }
+                          >
+                            {icon}
+                          </RatingIcon>
                         </div>
                       </ContextMenuTrigger>
 

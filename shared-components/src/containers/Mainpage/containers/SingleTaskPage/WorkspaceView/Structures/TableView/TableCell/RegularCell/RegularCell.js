@@ -46,11 +46,6 @@ const materialStyles = theme => ({
   }
 });
 
-//
-//
-//
-//
-//
 const dropTarget = {
   canDrop(props, monitor, component) {
     return true;
