@@ -1,5 +1,6 @@
 /* global chrome */
 import queryString from 'query-string';
+import { APP_NAME_SHORT } from '../../../../../shared-components/src/shared/constants';
 import * as FirestoreManager from '../../../../../shared-components/src/firebase/firestore_wrapper';
 import {
   getTaskLink,
@@ -61,4 +62,32 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   } else if (request.msg === 'UPDATE_CURRENT_USER_CURRENT_TASK_ID') {
     FirestoreManager.updateCurrentUserCurrentTaskId(request.taskId);
   }
+});
+
+//
+//
+//
+//
+//
+/* context menu */
+function createNewTaskUponSelection(info, tab) {
+  let taskName = info.selectionText;
+  if (taskName !== null && taskName !== '') {
+    FirestoreManager.createTaskWithName(taskName)
+      .then(docRef => {
+        FirestoreManager.updateCurrentUserCurrentTaskId(docRef.id);
+        FirestoreManager.createNewTable({ taskId: docRef.id });
+      })
+      .catch(error => {
+        console.log(error);
+        alert(error);
+      });
+  }
+}
+chrome.contextMenus.removeAll(() => {
+  chrome.contextMenus.create({
+    title: `Create a new ${APP_NAME_SHORT} task named "%s"`,
+    contexts: ['selection'],
+    onclick: createNewTaskUponSelection
+  });
 });
