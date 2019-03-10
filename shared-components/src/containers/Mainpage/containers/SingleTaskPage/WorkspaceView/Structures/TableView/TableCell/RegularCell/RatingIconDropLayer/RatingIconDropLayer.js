@@ -5,13 +5,13 @@ import ThumbV1 from '../../../../../../../../../../components/UI/Thumbs/ThumbV1/
 import InfoIcon from '../../../../../../../../../../components/UI/Thumbs/InfoIcon/InfoIcon';
 import * as FirestoreManager from '../../../../../../../../../../firebase/firestore_wrapper';
 
+import Delete from 'mdi-material-ui/Delete';
+import DeleteEmpty from 'mdi-material-ui/DeleteEmpty';
+
 // dnd stuff
 import { DropTarget } from 'react-dnd';
 import PropTypes from 'prop-types';
-import {
-  RATING_TYPES,
-  PIECE_TYPES
-} from '../../../../../../../../../../shared/types';
+import { RATING_TYPES } from '../../../../../../../../../../shared/types';
 
 const dropTarget = {
   canDrop(props, monitor, component) {
@@ -33,21 +33,14 @@ const dropTarget = {
   drop(props, monitor, component) {
     console.log(`Dropped on ${props.containerType}`);
 
-    // console.log(`Dropped on cell ${props.cell.id}`);
-    // const item = monitor.getItem();
-    // // console.log(item);
-    // const pieces = props.cell.pieces.map(p => p.pieceId);
-    // let idx = pieces.indexOf(item.id);
-    // if (idx !== -1) {
-    //   // should switch rating type
-    //   component.switchRatingTypeOfPiece(item.id);
-    // } else {
-    //   component.addPieceToThisCell(item.id);
-    // }
+    const { pieceId } = monitor.getItem();
+    const { containerType } = props;
 
-    // return {
-    //   id: props.cell.id
-    // };
+    if (containerType === 'trash') {
+      component.removePieceFromCell(pieceId);
+    } else {
+      component.switchRatingTypeOfPiece(pieceId, containerType);
+    }
   }
 };
 
@@ -71,20 +64,81 @@ class RatingIconDropLayer extends Component {
     canDrop: PropTypes.bool.isRequired
   };
 
+  switchRatingTypeOfPiece = (pieceId, ratingType) => {
+    FirestoreManager.switchPieceRatingType(
+      this.props.workspace.id,
+      this.props.cell.id,
+      pieceId,
+      ratingType
+    );
+  };
+
+  removePieceFromCell = pieceId => {
+    FirestoreManager.deletePieceInTableCellById(
+      this.props.workspace.id,
+      this.props.cell.id,
+      pieceId
+    );
+  };
+
   render() {
     const { connectDropTarget, canDrop, isOver } = this.props;
     let { containerType } = this.props;
 
+    let backdropColor = 'fff';
+    let icon = <InfoIcon />;
+    let promptText = 'Change to:';
+    switch (containerType) {
+      case RATING_TYPES.positive:
+        backdropColor = '#ABEBC6';
+        icon = <ThumbV1 type={'up'} />;
+        break;
+      case RATING_TYPES.negative:
+        backdropColor = '#F5B7B1';
+        icon = <ThumbV1 type={'down'} />;
+        break;
+      case RATING_TYPES.info:
+        backdropColor = '#FCE500';
+        icon = <InfoIcon />;
+        break;
+      case 'trash':
+        promptText = 'Remove';
+        backdropColor = '#d9d9db';
+        icon = isOver ? (
+          <DeleteEmpty style={{ fontSize: '36px' }} />
+        ) : (
+          <Delete style={{ fontSize: '36px' }} />
+        );
+        break;
+      default:
+        break;
+    }
+
     return connectDropTarget(
-      <div className={styles.RatingIconDropLayerContainer}>
+      <div
+        className={styles.RatingIconDropLayerContainer}
+        style={{
+          opacity: isOver ? 1 : 0.4,
+          transform: isOver ? 'scale(1.1)' : null
+        }}
+      >
         <div
           className={styles.RatingIconDropLayer}
           style={{
-            backgroundColor: 'yellow',
-            opacity: isOver ? 1 : 0.5
+            backgroundColor: backdropColor,
+
+            display: 'flex',
+            flexFlow: 'column',
+            justifyContent: 'center',
+            alignItems: 'center',
+            fontSize: 11,
+            fontWeight: 400
           }}
         >
-          {containerType}
+          {promptText}
+          <div style={{ width: '36px', height: '36px', marginTop: '5px' }}>
+            {icon}
+          </div>
         </div>
       </div>
     );

@@ -7,10 +7,10 @@ const dragSource = {
   beginDrag(props) {
     props.switchDraggingRatingIconStatus(true, props.ratingType);
     return {
-      id: props.pieceId,
-      cellId: props.cellId,
-      cellType: props.cellType,
-      workspaceId: props.workspaceId
+      pieceId: props.pieceId
+      // cellId: props.cellId,
+      // cellType: props.cellType,
+      // workspaceId: props.workspaceId
     };
   },
   canDrag(props, monitor) {

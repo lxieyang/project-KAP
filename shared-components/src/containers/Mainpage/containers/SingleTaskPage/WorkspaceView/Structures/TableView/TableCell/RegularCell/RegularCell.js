@@ -288,6 +288,23 @@ class RegularCell extends Component {
       </div>
     );
 
+    let hoverLayerContainer = isOver && (
+      <div
+        className={styles.HoverLayer}
+        style={{ zIndex: isOver ? 1000 : -1, opacity: isOver ? 1 : 0 }}
+      >
+        <div className={styles.HoverLayerPane}>
+          <RatingLayer ratingType={RATING_TYPES.positive} {...this.props} />
+        </div>
+        <div className={styles.HoverLayerPane}>
+          <RatingLayer ratingType={RATING_TYPES.negative} {...this.props} />
+        </div>
+        <div className={styles.HoverLayerPane}>
+          <RatingLayer ratingType={RATING_TYPES.info} {...this.props} />
+        </div>
+      </div>
+    );
+
     let droppingRatingIconContainer = this.state.isDraggingRatingIcon && (
       <div
         style={{
@@ -302,6 +319,8 @@ class RegularCell extends Component {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center'
+          // borderRadius: '4px'
+          // boxShadow: '0 8px 6px -6px lightgray'
         }}
       >
         {this.state.draggingRatingIconType !== RATING_TYPES.positive && (
@@ -356,21 +375,7 @@ class RegularCell extends Component {
       >
         {droppingRatingIconContainer}
         {commentsActionContainer}
-
-        <div
-          className={styles.HoverLayer}
-          style={{ zIndex: isOver ? 1000 : -1 }}
-        >
-          <div className={styles.HoverLayerPane}>
-            <RatingLayer ratingType={RATING_TYPES.positive} {...this.props} />
-          </div>
-          <div className={styles.HoverLayerPane}>
-            <RatingLayer ratingType={RATING_TYPES.negative} {...this.props} />
-          </div>
-          <div className={styles.HoverLayerPane}>
-            <RatingLayer ratingType={RATING_TYPES.info} {...this.props} />
-          </div>
-        </div>
+        {hoverLayerContainer}
 
         {/* regular */}
         <div

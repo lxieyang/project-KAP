@@ -123,7 +123,8 @@ class RatingLayer extends Component {
           className={styles.RatingLayer}
           style={{
             backgroundColor: backdropColor,
-            opacity: isOver ? '1' : '0'
+            opacity: isOver ? 1 : 0.1,
+            transform: isOver ? 'scale(1.1)' : null
           }}
         >
           <div style={{ width: '50px', height: '50px', marginTop: '5px' }}>
