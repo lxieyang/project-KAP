@@ -40,6 +40,8 @@ import {
 import CellComments from '../CellComments/CellComments';
 import { getFirstName } from '../../../../../../../../../shared/utilities';
 
+import PieceDropLayer from './PieceDropLayer/PieceDropLayer';
+
 const materialStyles = theme => ({
   iconButtons: {
     padding: '4px'
@@ -208,7 +210,10 @@ class RowHeaderCell extends Component {
     addingManualPiece: false,
 
     // textarea focus
-    textareaFocused: false
+    textareaFocused: false,
+
+    // dnd support
+    isDraggingPiece: false
   };
 
   static propTypes = {
@@ -216,6 +221,10 @@ class RowHeaderCell extends Component {
     connectDropTarget: PropTypes.func.isRequired,
     isOver: PropTypes.bool.isRequired,
     canDrop: PropTypes.bool.isRequired
+  };
+
+  switchDraggingPieceStatus = to => {
+    this.setState({ isDraggingPiece: to });
   };
 
   componentDidUpdate(prevProps, prevState) {
@@ -549,7 +558,7 @@ class RowHeaderCell extends Component {
       </div>
     );
 
-    let decideRowActionContainer = editAccess ? (
+    let decideRowActionContainer = editAccess && (
       <div className={styles.DecideRowIconContainer}>
         {cell.checked === true ? (
           <Tooltip
@@ -583,7 +592,23 @@ class RowHeaderCell extends Component {
           </Tooltip>
         )}
       </div>
-    ) : null;
+    );
+
+    let pieceDropLayerContainer = this.state.isDraggingPiece && (
+      <div
+        style={{
+          position: 'absolute',
+          top: 0,
+          bottom: 0,
+          left: -35,
+          width: 35
+        }}
+      >
+        <div style={{ zIndex: 'auto', height: '100%' }}>
+          <PieceDropLayer containerType={'trash'} {...this.props} />
+        </div>
+      </div>
+    );
 
     return connectDropTarget(
       <td
@@ -607,6 +632,7 @@ class RowHeaderCell extends Component {
           reorderRowPromptContainer}
         {commentsActionContainer}
         {decideRowActionContainer}
+        {pieceDropLayerContainer}
 
         {cellPieces.length > 0 ? (
           <div className={styles.RowHeaderCellContainer}>
@@ -627,6 +653,9 @@ class RowHeaderCell extends Component {
                         rowIndex={this.props.rowIndex}
                         columnIndex={this.props.columnIndex}
                         openScreenshot={this.props.openScreenshot}
+                        switchDraggingPieceStatus={
+                          this.switchDraggingPieceStatus
+                        }
                       />
                     </div>
                   </ContextMenuTrigger>

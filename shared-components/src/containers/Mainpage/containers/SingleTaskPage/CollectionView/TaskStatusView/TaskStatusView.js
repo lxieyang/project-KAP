@@ -113,7 +113,7 @@ class TaskStatusView extends Component {
   };
 
   updateTaskName = () => {
-    let taskName = this.state.taskNameEdit;
+    let taskName = this.state.taskNameEdit.trim();
     if (
       taskName !== null &&
       taskName !== '' &&

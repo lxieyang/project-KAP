@@ -38,6 +38,8 @@ import {
 import CellComments from '../CellComments/CellComments';
 import { getFirstName } from '../../../../../../../../../shared/utilities';
 
+import PieceDropLayer from './PieceDropLayer/PieceDropLayer';
+
 const materialStyles = theme => ({
   iconButtons: {
     padding: '4px'
@@ -204,7 +206,10 @@ class ColumnHeaderCell extends Component {
     addingManualPiece: false,
 
     // textarea focus
-    textareaFocused: false
+    textareaFocused: false,
+
+    // dnd support
+    isDraggingPiece: false
   };
 
   static propTypes = {
@@ -212,6 +217,10 @@ class ColumnHeaderCell extends Component {
     connectDropTarget: PropTypes.func.isRequired,
     isOver: PropTypes.bool.isRequired,
     canDrop: PropTypes.bool.isRequired
+  };
+
+  switchDraggingPieceStatus = to => {
+    this.setState({ isDraggingPiece: to });
   };
 
   componentDidUpdate(prevProps, prevState) {
@@ -383,7 +392,7 @@ class ColumnHeaderCell extends Component {
       p => pieces[p.pieceId] !== undefined && pieces[p.pieceId] !== null
     );
 
-    let deleteColumnActionContainer = editAccess ? (
+    let deleteColumnActionContainer = editAccess && (
       <div className={styles.DeleteColumnIconContainer}>
         {' '}
         <ReactHoverObserver
@@ -409,7 +418,7 @@ class ColumnHeaderCell extends Component {
           </div>
         </ReactHoverObserver>
       </div>
-    ) : null;
+    );
 
     let reorderColumnPromptContainer = (
       <div className={styles.ReorderColumnPromptContainer}>
@@ -538,6 +547,22 @@ class ColumnHeaderCell extends Component {
       </div>
     );
 
+    let pieceDropLayerContainer = this.state.isDraggingPiece && (
+      <div
+        style={{
+          position: 'absolute',
+          top: -35,
+          right: 0,
+          left: 0,
+          height: 35
+        }}
+      >
+        <div style={{ zIndex: 'auto', width: '100%' }}>
+          <PieceDropLayer containerType={'trash'} {...this.props} />
+        </div>
+      </div>
+    );
+
     return connectDropTarget(
       <th
         className={styles.ColumnHeaderCell}
@@ -560,6 +585,7 @@ class ColumnHeaderCell extends Component {
           this.props.columnToSwitchB !== -1 &&
           reorderColumnPromptContainer}
         {commentsActionContainer}
+        {pieceDropLayerContainer}
 
         {cellPieces.length > 0 ? (
           <div className={styles.ColumnHeaderCellContainer}>
@@ -585,6 +611,9 @@ class ColumnHeaderCell extends Component {
                         rowIndex={this.props.rowIndex}
                         columnIndex={this.props.columnIndex}
                         openScreenshot={this.props.openScreenshot}
+                        switchDraggingPieceStatus={
+                          this.switchDraggingPieceStatus
+                        }
                       />
                     </div>
                   </ContextMenuTrigger>

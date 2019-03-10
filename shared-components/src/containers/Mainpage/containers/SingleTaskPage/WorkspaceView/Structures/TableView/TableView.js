@@ -85,6 +85,12 @@ class TableView extends Component {
     });
   }
 
+  componentDidUpdate(prevProps) {
+    if (prevProps.workspace.name !== this.props.workspace.name) {
+      this.setState({ workspaceNameEdit: this.props.workspace.name });
+    }
+  }
+
   // also allow Enter to submit
   keyPress(e) {
     // if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
@@ -102,7 +108,7 @@ class TableView extends Component {
   };
 
   updateWorkspaceName = () => {
-    let workspaceName = this.state.workspaceNameEdit;
+    let workspaceName = this.state.workspaceNameEdit.trim();
     if (
       workspaceName !== null &&
       workspaceName !== '' &&
@@ -112,6 +118,8 @@ class TableView extends Component {
         this.props.workspace.id,
         workspaceName
       );
+    } else if (workspaceName === '') {
+      this.setState({ workspaceNameEdit: this.props.workspace.name });
     }
     this.textarea.scrollTo(0, 0);
   };

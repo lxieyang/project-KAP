@@ -120,6 +120,9 @@ const getHTML = htmls => {
 /* drag and drop */
 const dragSource = {
   beginDrag(props) {
+    if (props.switchDraggingPieceStatus) {
+      props.switchDraggingPieceStatus(true);
+    }
     return {
       id: props.piece.id,
       cellId: props.cellId,
@@ -133,6 +136,9 @@ const dragSource = {
   },
 
   endDrag(props, monitor, component) {
+    if (props.switchDraggingPieceStatus) {
+      props.switchDraggingPieceStatus(false);
+    }
     const item = monitor.getDropResult();
     if (item !== null && item.id !== null && item.id !== undefined) {
       // dropped in a table cell
