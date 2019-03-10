@@ -266,6 +266,14 @@ class RegularCell extends Component {
           backgroundColor:
             this.props.columnIndex === this.props.columnToDelete
               ? THEME_COLOR.alertBackgroundColor
+              : this.props.columnIndex === this.props.columnToSwitchA
+              ? '#aed6f1'
+              : this.props.columnIndex === this.props.columnToSwitchB
+              ? '#89D6E6'
+              : this.props.rowIndex === this.props.rowToSwitchA
+              ? '#f8c471'
+              : this.props.rowIndex === this.props.rowToSwitchB
+              ? '#E89339'
               : 'transparent'
         }}
       >

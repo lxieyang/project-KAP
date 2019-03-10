@@ -20,8 +20,6 @@ const dropTarget = {
   },
 
   drop(props, monitor, component) {
-    console.log(`Dropped on ${props.containerType}`);
-
     const { pieceId } = monitor.getItem();
     const { containerType } = props;
 

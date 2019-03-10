@@ -35,6 +35,8 @@ import {
 import { getFirstNWords } from '../../../../../../../../../../shared-components/src/shared/utilities';
 // import CellComments from '../CellComments/CellComments';
 
+import PieceItemContainer from '../components/PieceItemContainer';
+
 const materialStyles = theme => ({
   iconButtons: {
     padding: '3px'
@@ -96,6 +98,32 @@ const dropTarget = {
     // }
 
     return true;
+  },
+
+  hover(props, monitor, component) {
+    const item = monitor.getItem();
+    const dropPieceCellId = item.cellId;
+    const dropPieceCellType = item.cellType;
+    const dropPieceCellRowIndex = item.rowIndex;
+
+    const allPieces = props.pieces;
+    let cellPieces = props.cell.pieces
+      .filter(
+        p => allPieces[p.pieceId] !== undefined && allPieces[p.pieceId] !== null
+      )
+      .map(p => p.pieceId);
+
+    if (
+      cellPieces.length > 0 &&
+      dropPieceCellId !== undefined &&
+      dropPieceCellType === TABLE_CELL_TYPES.rowHeader &&
+      dropPieceCellRowIndex !== props.rowIndex &&
+      props.rowToSwitchA === -1 &&
+      props.rowToSwitchB === -1
+    ) {
+      // both are from the table, should indicate switch columns
+      props.setRowToSwitch(props.rowIndex, dropPieceCellRowIndex);
+    }
   },
 
   drop(props, monitor, component) {
@@ -185,6 +213,11 @@ class RowHeaderCell extends Component {
   componentDidUpdate(prevProps, prevState) {
     if (prevProps.cell.content !== this.props.cell.content) {
       this.setState({ contentEdit: this.props.cell.content });
+    }
+
+    if (prevProps.isOver === true && this.props.isOver === false) {
+      // didn't drop and left
+      this.props.setRowToSwitch(-1, -1);
     }
 
     let prevCell = prevProps.cell;
@@ -529,8 +562,11 @@ class RowHeaderCell extends Component {
             : (isOver && canDrop) ||
               (annotation_selected &&
                 pieceInCell !== null &&
-                selected_annotation_id === pieceInCell.id)
+                selected_annotation_id === pieceInCell.id) ||
+              this.props.rowIndex === this.props.rowToSwitchA
             ? '#f8c471'
+            : this.props.rowIndex === this.props.rowToSwitchB
+            ? '#E89339'
             : null
         }}
       >
@@ -543,67 +579,76 @@ class RowHeaderCell extends Component {
                 id={`${cell.id}-context-menu`}
                 holdToDisplay={-1}
               >
-                <div
-                  style={{
-                    opacity:
-                      annotation_selected &&
-                      selected_annotation_id !== pieceInCell.id
-                        ? '0.2'
-                        : null,
-                    cursor: annotation_selected ? 'auto' : null
-                  }}
-                  className={[
-                    styles.PieceNameContainer,
-                    (this.props.currentSelectedPieceInTable !== null &&
-                      this.props.currentSelectedPieceInTable.pieceId ===
-                        pieceInCell.id) ||
-                    (this.props.currentSelectedPieceInPieces !== null &&
-                      this.props.currentSelectedPieceInPieces.pieceId ===
-                        pieceInCell.id)
-                      ? styles.PieceNameContainerSelected
-                      : null,
-                    (this.props.currentSelectedPieceInTable !== null &&
-                      this.props.currentSelectedPieceInTable.pieceId !==
-                        pieceInCell.id) ||
-                    (this.props.currentSelectedPieceInPieces !== null &&
-                      this.props.currentSelectedPieceInPieces.pieceId !==
-                        pieceInCell.id)
-                      ? styles.PieceNameContainerNotSelected
-                      : null
-                  ].join(' ')}
-                  title={pieceInCell.name}
-                  onClick={e =>
-                    this.pieceNameContainerClickedHandler(
-                      e,
-                      pieceInCell.id,
-                      pieceInCell.pieceType
-                    )
-                  }
+                <PieceItemContainer
+                  // this is for dnd
+                  piece={pieceInCell}
+                  cellId={cell.id}
+                  cellType={cell.type}
+                  rowIndex={this.props.rowIndex}
+                  columnIndex={this.props.columnIndex}
                 >
-                  {this.props.currentSelectedPieceInTable !== null &&
-                  this.props.currentSelectedPieceInTable.pieceId ===
-                    pieceInCell.id ? (
-                    <Textarea
-                      inputRef={tag => (this.textareaForPieceName = tag)}
-                      onClick={e => e.stopPropagation()}
-                      minRows={2}
-                      maxRows={5}
-                      placeholder={''}
-                      value={this.state.pieceNameEdit}
-                      onKeyDown={e => {
-                        if (e.key === 'Enter' && !e.shiftKey) {
-                          e.target.blur();
+                  <div
+                    style={{
+                      opacity:
+                        annotation_selected &&
+                        selected_annotation_id !== pieceInCell.id
+                          ? '0.2'
+                          : null,
+                      cursor: annotation_selected ? 'auto' : null
+                    }}
+                    className={[
+                      styles.PieceNameContainer,
+                      (this.props.currentSelectedPieceInTable !== null &&
+                        this.props.currentSelectedPieceInTable.pieceId ===
+                          pieceInCell.id) ||
+                      (this.props.currentSelectedPieceInPieces !== null &&
+                        this.props.currentSelectedPieceInPieces.pieceId ===
+                          pieceInCell.id)
+                        ? styles.PieceNameContainerSelected
+                        : null,
+                      (this.props.currentSelectedPieceInTable !== null &&
+                        this.props.currentSelectedPieceInTable.pieceId !==
+                          pieceInCell.id) ||
+                      (this.props.currentSelectedPieceInPieces !== null &&
+                        this.props.currentSelectedPieceInPieces.pieceId !==
+                          pieceInCell.id)
+                        ? styles.PieceNameContainerNotSelected
+                        : null
+                    ].join(' ')}
+                    title={pieceInCell.name}
+                    onClick={e =>
+                      this.pieceNameContainerClickedHandler(
+                        e,
+                        pieceInCell.id,
+                        pieceInCell.pieceType
+                      )
+                    }
+                  >
+                    {this.props.currentSelectedPieceInTable !== null &&
+                    this.props.currentSelectedPieceInTable.pieceId ===
+                      pieceInCell.id ? (
+                      <Textarea
+                        inputRef={tag => (this.textareaForPieceName = tag)}
+                        onClick={e => e.stopPropagation()}
+                        minRows={2}
+                        maxRows={5}
+                        placeholder={''}
+                        value={this.state.pieceNameEdit}
+                        onKeyDown={e => {
+                          if (e.key === 'Enter' && !e.shiftKey) {
+                            e.target.blur();
+                          }
+                        }}
+                        onChange={e =>
+                          this.handlePieceNameInputChange(e, pieceInCell.id)
                         }
-                      }}
-                      onChange={e =>
-                        this.handlePieceNameInputChange(e, pieceInCell.id)
-                      }
-                      className={styles.Textarea}
-                    />
-                  ) : (
-                    getFirstNWords(10, pieceInCell.name)
-                  )}
-                </div>
+                        className={styles.Textarea}
+                      />
+                    ) : (
+                      getFirstNWords(10, pieceInCell.name)
+                    )}
+                  </div>
+                </PieceItemContainer>
               </ContextMenuTrigger>
               <ContextMenu id={`${cell.id}-context-menu`}>
                 <MenuItem

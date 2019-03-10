@@ -45,7 +45,13 @@ class Table extends Component {
 
     // row / col delete
     rowToDelete: -1,
-    columnToDelete: -1
+    columnToDelete: -1,
+
+    // row / col switch
+    rowToSwitchA: -1,
+    rowToSwitchB: -1,
+    columnToSwitchA: -1,
+    columnToSwitchB: -1
   };
 
   setRowToDelete = to => {
@@ -54,6 +60,15 @@ class Table extends Component {
 
   setColumnToDelete = to => {
     this.setState({ columnToDelete: to });
+  };
+
+  setRowToSwitch = (rowToSwitchA, rowToSwitchB) => {
+    this.setState({ rowToSwitchA, rowToSwitchB });
+  };
+
+  setColumnToSwitch = (columnToSwitchA, columnToSwitchB) => {
+    this.setState({ columnToSwitchA, columnToSwitchB });
+    // console.log(columnToSwitchA, columnToSwitchB);
   };
 
   componentDidMount() {
@@ -150,6 +165,12 @@ class Table extends Component {
               columnToDelete={this.state.columnToDelete}
               setRowToDelete={this.setRowToDelete}
               setColumnToDelete={this.setColumnToDelete}
+              rowToSwitchA={this.state.rowToSwitchA}
+              rowToSwitchB={this.state.rowToSwitchB}
+              setRowToSwitch={this.setRowToSwitch}
+              columnToSwitchA={this.state.columnToSwitchA}
+              columnToSwitchB={this.state.columnToSwitchB}
+              setColumnToSwitch={this.setColumnToSwitch}
               currentSelectedPieceInTable={
                 this.props.currentSelectedPieceInTable
               }
@@ -227,6 +248,12 @@ class Table extends Component {
                       columnToDelete={this.state.columnToDelete}
                       setRowToDelete={this.setRowToDelete}
                       setColumnToDelete={this.setColumnToDelete}
+                      rowToSwitchA={this.state.rowToSwitchA}
+                      rowToSwitchB={this.state.rowToSwitchB}
+                      setRowToSwitch={this.setRowToSwitch}
+                      columnToSwitchA={this.state.columnToSwitchA}
+                      columnToSwitchB={this.state.columnToSwitchB}
+                      setColumnToSwitch={this.setColumnToSwitch}
                       currentSelectedPieceInTable={
                         this.props.currentSelectedPieceInTable
                       }
