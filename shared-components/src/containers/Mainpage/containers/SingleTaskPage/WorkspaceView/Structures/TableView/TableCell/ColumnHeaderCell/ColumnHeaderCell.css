@@ -40,6 +40,22 @@
   opacity: 1;
 }
 
+.HideColumnIconContainer {
+  position: absolute;
+  top: -24px;
+  height: 24px;
+  left: 0px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  transition: all 0.1s ease-in;
+}
+
+.ColumnHeaderCell:hover .HideColumnIconContainer {
+  opacity: 1;
+}
+
 .ReorderColumnPromptContainer {
   position: absolute;
   font-weight: 500;

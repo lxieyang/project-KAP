@@ -15,6 +15,8 @@ import IconButton from '@material-ui/core/IconButton';
 import Avatar from '@material-ui/core/Avatar';
 import DeleteIcon from '@material-ui/icons/Delete';
 import Chat from 'mdi-material-ui/Chat';
+import Eye from 'mdi-material-ui/Eye';
+import EyeOff from 'mdi-material-ui/EyeOff';
 import Tooltip from '@material-ui/core/Tooltip';
 import Popover from '@material-ui/core/Popover';
 import Textarea from 'react-textarea-autosize';
@@ -370,6 +372,14 @@ class ColumnHeaderCell extends Component {
     );
   };
 
+  switchHideStatusOfThisColumn = toStatus => {
+    FirestoreManager.switchHideColumnStatusInTableByIndex(
+      this.props.workspace.id,
+      this.props.columnIndex,
+      toStatus
+    );
+  };
+
   render() {
     const { connectDropTarget, canDrop, isOver } = this.props;
     let {
@@ -386,6 +396,50 @@ class ColumnHeaderCell extends Component {
 
     if (cell === null || pieces === null) {
       return <td />;
+    }
+
+    let hideColumnActionContainer = editAccess && (
+      <div className={styles.HideColumnIconContainer}>
+        <div>
+          <Tooltip
+            title={`${cell.hide === true ? 'Show' : 'Hide'} this column`}
+            placement={'top'}
+            disableFocusListener={true}
+          >
+            <IconButton
+              className={classes.iconButtons}
+              onClick={() =>
+                this.switchHideStatusOfThisColumn(
+                  cell.hide === true ? false : true
+                )
+              }
+            >
+              {cell.hide === true ? (
+                <Eye className={classes.iconInIconButtons} />
+              ) : (
+                <EyeOff className={classes.iconInIconButtons} />
+              )}
+            </IconButton>
+          </Tooltip>
+        </div>
+      </div>
+    );
+
+    if (editAccess && cell.hide === true) {
+      return (
+        <th
+          className={styles.ColumnHeaderCell}
+          style={{
+            backgroundImage:
+              'linear-gradient(45deg, #ffffff 25%, #e0e0e0 25%, #e0e0e0 50%, #ffffff 50%, #ffffff 75%, #e0e0e0 75%, #e0e0e0 100%)',
+            backgroundSize: '11.31px 11.31px'
+          }}
+          onClick={e => this.switchHideStatusOfThisColumn(false)}
+        >
+          {hideColumnActionContainer}
+          <div style={{ width: '15px', height: '15px' }} />
+        </th>
+      );
     }
 
     let cellPieces = cell.pieces.filter(
@@ -592,6 +646,7 @@ class ColumnHeaderCell extends Component {
         {this.props.columnToSwitchA !== -1 &&
           this.props.columnToSwitchB !== -1 &&
           reorderColumnPromptContainer}
+        {hideColumnActionContainer}
         {commentsActionContainer}
         {pieceDropLayerContainer}
 

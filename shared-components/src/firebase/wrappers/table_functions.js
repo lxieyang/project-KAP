@@ -307,6 +307,46 @@ export const deleteColumnInTableByIndex = async (
   });
 };
 
+export const switchHideStatusOfTableCells = (tableId, cellIds, toStatus) => {
+  // Get a new write batch
+  let batch = db.batch();
+  cellIds.forEach(cellId => {
+    batch.update(getTableCellById(tableId, cellId), { hide: toStatus });
+  });
+
+  // Commit the batch
+  batch.commit().then(function() {
+    // console.log('cleared');
+  });
+};
+
+export const switchHideColumnStatusInTableByIndex = async (
+  tableId,
+  toHideColumnIdx,
+  toStatus
+) => {
+  let tableRows = (await getWorkspaceById(tableId).get()).data().data;
+
+  let toHideCellIds = [];
+  for (let i = 0; i < tableRows.length; i++) {
+    toHideCellIds.push(tableRows[i].data[toHideColumnIdx]);
+  }
+
+  switchHideStatusOfTableCells(tableId, toHideCellIds, toStatus);
+};
+
+export const switchHideRowStatusInTableByIndex = async (
+  tableId,
+  toHideRowIdx,
+  toStatus
+) => {
+  let tableRows = (await getWorkspaceById(tableId).get()).data().data;
+
+  let toHideCellIds = [...tableRows[toHideRowIdx].data];
+
+  switchHideStatusOfTableCells(tableId, toHideCellIds, toStatus);
+};
+
 export const switchRowsInTable = async (tableId, rowIndex1, rowIndex2) => {
   let tableRows = (await getWorkspaceById(tableId).get()).data().data;
   let row1Data = [...tableRows[rowIndex1].data];

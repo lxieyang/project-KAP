@@ -253,6 +253,22 @@ class RegularCell extends Component {
     this.handleAddRatingClose();
   };
 
+  switchHideStatusOfThisColumn = toStatus => {
+    FirestoreManager.switchHideColumnStatusInTableByIndex(
+      this.props.workspace.id,
+      this.props.columnIndex,
+      toStatus
+    );
+  };
+
+  switchHideStatusOfThisRow = toStatus => {
+    FirestoreManager.switchHideRowStatusInTableByIndex(
+      this.props.workspace.id,
+      this.props.rowIndex,
+      toStatus
+    );
+  };
+
   render() {
     const { connectDropTarget, canDrop, isOver } = this.props;
     let {
@@ -576,6 +592,24 @@ class RegularCell extends Component {
         pieceId: 'adding',
         rating: this.state.addingRatingPieceRating
       });
+    }
+
+    if (editAccess && cell.hide === true) {
+      return (
+        <td
+          style={{
+            backgroundImage:
+              'linear-gradient(45deg, #ffffff 25%, #e0e0e0 25%, #e0e0e0 50%, #ffffff 50%, #ffffff 75%, #e0e0e0 75%, #e0e0e0 100%)',
+            backgroundSize: '11.31px 11.31px'
+          }}
+          onClick={() => {
+            this.switchHideStatusOfThisColumn(false);
+            this.switchHideStatusOfThisRow(false);
+          }}
+        >
+          <div style={{ width: '15px', height: '15px' }} />
+        </td>
+      );
     }
 
     return connectDropTarget(
