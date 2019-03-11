@@ -24,10 +24,26 @@
   transition: all 0.1s ease-in;
 }
 
+.HideColumnIconContainer {
+  position: absolute;
+  top: -15px;
+  height: 15px;
+  left: 0px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  transition: all 0.1s ease-in;
+}
+
+.ColumnHeaderCell:hover .HideColumnIconContainer {
+  opacity: 1;
+}
+
 .DeleteColumnIconContainer {
   position: absolute;
   top: -15px;
-  left: 0px;
+  height: 15px;
   right: 0px;
   display: flex;
   justify-content: center;

@@ -373,6 +373,7 @@ class ColumnHeaderCell extends Component {
   };
 
   switchHideStatusOfThisColumn = toStatus => {
+    this.props.setColumnToHide(-1);
     FirestoreManager.switchHideColumnStatusInTableByIndex(
       this.props.workspace.id,
       this.props.columnIndex,
@@ -400,28 +401,39 @@ class ColumnHeaderCell extends Component {
 
     let hideColumnActionContainer = editAccess && (
       <div className={styles.HideColumnIconContainer}>
-        <div>
-          <Tooltip
-            title={`${cell.hide === true ? 'Show' : 'Hide'} this column`}
-            placement={'top'}
-            disableFocusListener={true}
-          >
-            <IconButton
-              className={classes.iconButtons}
-              onClick={() =>
-                this.switchHideStatusOfThisColumn(
-                  cell.hide === true ? false : true
-                )
-              }
+        <ReactHoverObserver
+          {...{
+            onMouseEnter: () => {
+              this.props.setColumnToHide(this.props.columnIndex);
+            },
+            onMouseLeave: () => {
+              this.props.setColumnToHide(-1);
+            }
+          }}
+        >
+          <div>
+            <Tooltip
+              title={`${cell.hide === true ? 'Show' : 'Hide'} this column`}
+              placement={'top'}
+              disableFocusListener={true}
             >
-              {cell.hide === true ? (
-                <Eye className={classes.iconInIconButtons} />
-              ) : (
-                <EyeOff className={classes.iconInIconButtons} />
-              )}
-            </IconButton>
-          </Tooltip>
-        </div>
+              <IconButton
+                className={classes.iconButtons}
+                onClick={() =>
+                  this.switchHideStatusOfThisColumn(
+                    cell.hide === true ? false : true
+                  )
+                }
+              >
+                {cell.hide === true ? (
+                  <Eye className={classes.iconInIconButtons} />
+                ) : (
+                  <EyeOff className={classes.iconInIconButtons} />
+                )}
+              </IconButton>
+            </Tooltip>
+          </div>
+        </ReactHoverObserver>
       </div>
     );
 
@@ -448,7 +460,6 @@ class ColumnHeaderCell extends Component {
 
     let deleteColumnActionContainer = editAccess && (
       <div className={styles.DeleteColumnIconContainer}>
-        {' '}
         <ReactHoverObserver
           {...{
             onMouseEnter: () => {
@@ -625,6 +636,29 @@ class ColumnHeaderCell extends Component {
       </div>
     );
 
+    let hideSupportLayer = editAccess && cell.hide !== true && (
+      <div
+        style={{
+          zIndex:
+            this.props.columnIndex === this.props.columnToHide ? 3000 : -100,
+          position: 'absolute',
+          top: 0,
+          bottom: 0,
+          left: 0,
+          right: 0,
+          opacity: 0.5,
+          backgroundImage:
+            this.props.columnIndex === this.props.columnToHide
+              ? 'linear-gradient(45deg, #ffffff 25%, #e0e0e0 25%, #e0e0e0 50%, #ffffff 50%, #ffffff 75%, #e0e0e0 75%, #e0e0e0 100%)'
+              : null,
+          backgroundSize:
+            this.props.columnIndex === this.props.columnToHide
+              ? '11.31px 11.31px'
+              : null
+        }}
+      />
+    );
+
     return connectDropTarget(
       <th
         className={styles.ColumnHeaderCell}
@@ -647,6 +681,7 @@ class ColumnHeaderCell extends Component {
           this.props.columnToSwitchB !== -1 &&
           reorderColumnPromptContainer}
         {hideColumnActionContainer}
+        {hideSupportLayer}
         {commentsActionContainer}
         {pieceDropLayerContainer}
 

@@ -42,8 +42,8 @@
 
 .DeleteRowIconContainer {
   position: absolute;
-  top: 0px;
   left: -24px;
+  width: 24px;
   bottom: 0px;
   display: flex;
   justify-content: center;

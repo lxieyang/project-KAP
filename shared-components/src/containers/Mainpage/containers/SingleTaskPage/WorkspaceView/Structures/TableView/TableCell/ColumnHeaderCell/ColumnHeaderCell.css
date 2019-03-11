@@ -27,7 +27,7 @@
 .DeleteColumnIconContainer {
   position: absolute;
   top: -24px;
-  left: 0px;
+  height: 24px;
   right: 0px;
   display: flex;
   justify-content: center;

@@ -10,6 +10,8 @@ import Spinner from '../../../../../../../../../../shared-components/src/compone
 import * as FirestoreManager from '../../../../../../../../../../shared-components/src/firebase/firestore_wrapper';
 
 import { withStyles } from '@material-ui/core/styles';
+import Eye from 'mdi-material-ui/Eye';
+import EyeOff from 'mdi-material-ui/EyeOff';
 import IconButton from '@material-ui/core/IconButton';
 import DeleteIcon from '@material-ui/icons/Delete';
 import Tooltip from '@material-ui/core/Tooltip';
@@ -484,6 +486,14 @@ class ColumnHeaderCell extends Component {
     });
   };
 
+  switchHideStatusOfThisColumn = toStatus => {
+    FirestoreManager.switchHideColumnStatusInTableByIndex(
+      this.props.workspace.id,
+      this.props.columnIndex,
+      toStatus
+    );
+  };
+
   render() {
     const { connectDropTarget, canDrop, isOver } = this.props;
 
@@ -501,6 +511,50 @@ class ColumnHeaderCell extends Component {
 
     if (cell === null || pieces === null) {
       return <td />;
+    }
+
+    let hideColumnActionContainer = (
+      <div className={styles.HideColumnIconContainer}>
+        <div>
+          <Tooltip
+            title={`${cell.hide === true ? 'Show' : 'Hide'} this column`}
+            placement={'top'}
+            disableFocusListener={true}
+          >
+            <IconButton
+              className={classes.iconButtons}
+              onClick={() =>
+                this.switchHideStatusOfThisColumn(
+                  cell.hide === true ? false : true
+                )
+              }
+            >
+              {cell.hide === true ? (
+                <Eye className={classes.iconInIconButtons} />
+              ) : (
+                <EyeOff className={classes.iconInIconButtons} />
+              )}
+            </IconButton>
+          </Tooltip>
+        </div>
+      </div>
+    );
+
+    if (cell.hide === true) {
+      return (
+        <th
+          className={styles.ColumnHeaderCell}
+          style={{
+            backgroundImage:
+              'linear-gradient(45deg, #ffffff 25%, #e0e0e0 25%, #e0e0e0 50%, #ffffff 50%, #ffffff 75%, #e0e0e0 75%, #e0e0e0 100%)',
+            backgroundSize: '11.31px 11.31px'
+          }}
+          onClick={e => this.switchHideStatusOfThisColumn(false)}
+        >
+          {hideColumnActionContainer}
+          <div style={{ width: '12px', height: '12px' }} />
+        </th>
+      );
     }
 
     let deleteColumnActionContainer = (
@@ -566,6 +620,7 @@ class ColumnHeaderCell extends Component {
         }}
       >
         {this.props.numColumns > 2 ? deleteColumnActionContainer : null}
+        {hideColumnActionContainer}
 
         <div className={styles.ColumnHeaderCellContainer}>
           {pieceInCell !== null ? (

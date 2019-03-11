@@ -11,6 +11,8 @@ import Spinner from '../../../../../../../../../../shared-components/src/compone
 import * as FirestoreManager from '../../../../../../../../../../shared-components/src/firebase/firestore_wrapper';
 
 import { withStyles } from '@material-ui/core/styles';
+import Eye from 'mdi-material-ui/Eye';
+import EyeOff from 'mdi-material-ui/EyeOff';
 import IconButton from '@material-ui/core/IconButton';
 import DeleteIcon from '@material-ui/icons/Delete';
 import Tooltip from '@material-ui/core/Tooltip';
@@ -491,6 +493,14 @@ class RowHeaderCell extends Component {
     });
   };
 
+  switchHideStatusOfThisRow = toStatus => {
+    FirestoreManager.switchHideRowStatusInTableByIndex(
+      this.props.workspace.id,
+      this.props.rowIndex,
+      toStatus
+    );
+  };
+
   render() {
     const { connectDropTarget, canDrop, isOver } = this.props;
     let {
@@ -507,6 +517,50 @@ class RowHeaderCell extends Component {
 
     if (cell === null || pieces === null) {
       return <td />;
+    }
+
+    let hideRowActionContainer = (
+      <div className={styles.HideRowIconContainer}>
+        <div>
+          <Tooltip
+            title={`${cell.hide === true ? 'Show' : 'Hide'} this row`}
+            placement={'top'}
+            disableFocusListener={true}
+          >
+            <IconButton
+              className={classes.iconButtons}
+              onClick={() =>
+                this.switchHideStatusOfThisRow(
+                  cell.hide === true ? false : true
+                )
+              }
+            >
+              {cell.hide === true ? (
+                <Eye className={classes.iconInIconButtons} />
+              ) : (
+                <EyeOff className={classes.iconInIconButtons} />
+              )}
+            </IconButton>
+          </Tooltip>
+        </div>
+      </div>
+    );
+
+    if (cell.hide === true) {
+      return (
+        <td
+          className={styles.RowHeaderCell}
+          style={{
+            backgroundImage:
+              'linear-gradient(45deg, #ffffff 25%, #e0e0e0 25%, #e0e0e0 50%, #ffffff 50%, #ffffff 75%, #e0e0e0 75%, #e0e0e0 100%)',
+            backgroundSize: '11.31px 11.31px'
+          }}
+          onClick={() => this.switchHideStatusOfThisRow(false)}
+        >
+          {hideRowActionContainer}
+          <div style={{ width: '12px', height: '12px' }} />
+        </td>
+      );
     }
 
     let deleteRowActionContainer = (
@@ -571,6 +625,7 @@ class RowHeaderCell extends Component {
         }}
       >
         {this.props.numRows > 2 ? deleteRowActionContainer : null}
+        {hideRowActionContainer}
 
         <div className={styles.RowHeaderCellContainer}>
           {pieceInCell !== null ? (

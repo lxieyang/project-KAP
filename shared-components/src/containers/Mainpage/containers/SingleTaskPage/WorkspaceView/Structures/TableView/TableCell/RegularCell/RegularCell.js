@@ -288,6 +288,24 @@ class RegularCell extends Component {
       return <td />;
     }
 
+    if (editAccess && cell.hide === true) {
+      return (
+        <td
+          style={{
+            backgroundImage:
+              'linear-gradient(45deg, #ffffff 25%, #e0e0e0 25%, #e0e0e0 50%, #ffffff 50%, #ffffff 75%, #e0e0e0 75%, #e0e0e0 100%)',
+            backgroundSize: '11.31px 11.31px'
+          }}
+          onClick={() => {
+            this.switchHideStatusOfThisColumn(false);
+            this.switchHideStatusOfThisRow(false);
+          }}
+        >
+          <div style={{ width: '15px', height: '15px' }} />
+        </td>
+      );
+    }
+
     let commentsFromOthers = comments.filter(
       c => c.authorId !== FirestoreManager.getCurrentUserId()
     );
@@ -585,6 +603,34 @@ class RegularCell extends Component {
       </div>
     );
 
+    let hideSupportLayer = editAccess && cell.hide !== true && (
+      <div
+        style={{
+          zIndex:
+            this.props.columnIndex === this.props.columnToHide ||
+            this.props.rowIndex === this.props.rowToHide
+              ? 3000
+              : -100,
+          position: 'absolute',
+          top: 0,
+          bottom: 0,
+          left: 0,
+          right: 0,
+          opacity: 0.5,
+          backgroundImage:
+            this.props.columnIndex === this.props.columnToHide ||
+            this.props.rowIndex === this.props.rowToHide
+              ? 'linear-gradient(45deg, #ffffff 25%, #e0e0e0 25%, #e0e0e0 50%, #ffffff 50%, #ffffff 75%, #e0e0e0 75%, #e0e0e0 100%)'
+              : null,
+          backgroundSize:
+            this.props.columnIndex === this.props.columnToHide ||
+            this.props.rowIndex === this.props.rowToHide
+              ? '11.31px 11.31px'
+              : null
+        }}
+      />
+    );
+
     let piecesList = [...cell.pieces];
 
     if (this.state.addingRatingPieceToCell) {
@@ -592,24 +638,6 @@ class RegularCell extends Component {
         pieceId: 'adding',
         rating: this.state.addingRatingPieceRating
       });
-    }
-
-    if (editAccess && cell.hide === true) {
-      return (
-        <td
-          style={{
-            backgroundImage:
-              'linear-gradient(45deg, #ffffff 25%, #e0e0e0 25%, #e0e0e0 50%, #ffffff 50%, #ffffff 75%, #e0e0e0 75%, #e0e0e0 100%)',
-            backgroundSize: '11.31px 11.31px'
-          }}
-          onClick={() => {
-            this.switchHideStatusOfThisColumn(false);
-            this.switchHideStatusOfThisRow(false);
-          }}
-        >
-          <div style={{ width: '15px', height: '15px' }} />
-        </td>
-      );
     }
 
     return connectDropTarget(
@@ -630,6 +658,7 @@ class RegularCell extends Component {
               : 'transparent'
         }}
       >
+        {hideSupportLayer}
         {addManualRatingPieceContainer}
         {droppingRatingIconContainer}
         {commentsActionContainer}
