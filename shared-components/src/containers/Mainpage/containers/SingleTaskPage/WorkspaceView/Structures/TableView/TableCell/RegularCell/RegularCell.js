@@ -254,6 +254,7 @@ class RegularCell extends Component {
   };
 
   switchHideStatusOfThisColumn = toStatus => {
+    this.props.setColumnToHide(-1);
     FirestoreManager.switchHideColumnStatusInTableByIndex(
       this.props.workspace.id,
       this.props.columnIndex,
@@ -262,6 +263,7 @@ class RegularCell extends Component {
   };
 
   switchHideStatusOfThisRow = toStatus => {
+    this.props.setRowToHide(-1);
     FirestoreManager.switchHideRowStatusInTableByIndex(
       this.props.workspace.id,
       this.props.rowIndex,

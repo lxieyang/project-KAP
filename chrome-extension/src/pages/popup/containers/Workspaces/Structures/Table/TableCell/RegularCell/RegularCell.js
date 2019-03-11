@@ -283,6 +283,7 @@ class RegularCell extends Component {
   };
 
   switchHideStatusOfThisColumn = toStatus => {
+    this.props.setColumnToHide(-1);
     FirestoreManager.switchHideColumnStatusInTableByIndex(
       this.props.workspace.id,
       this.props.columnIndex,
@@ -291,6 +292,7 @@ class RegularCell extends Component {
   };
 
   switchHideStatusOfThisRow = toStatus => {
+    this.props.setRowToHide(-1);
     FirestoreManager.switchHideRowStatusInTableByIndex(
       this.props.workspace.id,
       this.props.rowIndex,
@@ -504,6 +506,34 @@ class RegularCell extends Component {
       </div>
     );
 
+    let hideSupportLayer = cell.hide !== true && (
+      <div
+        style={{
+          zIndex:
+            this.props.columnIndex === this.props.columnToHide ||
+            this.props.rowIndex === this.props.rowToHide
+              ? 3000
+              : -100,
+          position: 'absolute',
+          top: 0,
+          bottom: 0,
+          left: 0,
+          right: 0,
+          opacity: 0.5,
+          backgroundImage:
+            this.props.columnIndex === this.props.columnToHide ||
+            this.props.rowIndex === this.props.rowToHide
+              ? 'linear-gradient(45deg, #ffffff 25%, #e0e0e0 25%, #e0e0e0 50%, #ffffff 50%, #ffffff 75%, #e0e0e0 75%, #e0e0e0 100%)'
+              : null,
+          backgroundSize:
+            this.props.columnIndex === this.props.columnToHide ||
+            this.props.rowIndex === this.props.rowToHide
+              ? '11.31px 11.31px'
+              : null
+        }}
+      />
+    );
+
     let piecesList = [...cell.pieces];
     if (this.state.addingRatingPieceToCell) {
       piecesList.push({
@@ -531,6 +561,7 @@ class RegularCell extends Component {
               : 'transparent'
         }}
       >
+        {hideSupportLayer}
         {addManualRatingPieceContainer}
         {droppingRatingIconContainer}
 

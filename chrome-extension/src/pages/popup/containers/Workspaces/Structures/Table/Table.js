@@ -47,6 +47,10 @@ class Table extends Component {
     rowToDelete: -1,
     columnToDelete: -1,
 
+    // row / col hide
+    rowToHide: -1,
+    columnToHide: -1,
+
     // row / col switch
     rowToSwitchA: -1,
     rowToSwitchB: -1,
@@ -67,6 +71,14 @@ class Table extends Component {
 
   setColumnToDelete = to => {
     this.setState({ columnToDelete: to });
+  };
+
+  setRowToHide = to => {
+    this.setState({ rowToHide: to });
+  };
+
+  setColumnToHide = to => {
+    this.setState({ columnToHide: to });
   };
 
   setRowToSwitch = (rowToSwitchA, rowToSwitchB) => {
@@ -172,6 +184,10 @@ class Table extends Component {
               columnToDelete={this.state.columnToDelete}
               setRowToDelete={this.setRowToDelete}
               setColumnToDelete={this.setColumnToDelete}
+              rowToHide={this.state.rowToHide}
+              columnToHide={this.state.columnToHide}
+              setRowToHide={this.setRowToHide}
+              setColumnToHide={this.setColumnToHide}
               rowToSwitchA={this.state.rowToSwitchA}
               rowToSwitchB={this.state.rowToSwitchB}
               setRowToSwitch={this.setRowToSwitch}
@@ -261,6 +277,10 @@ class Table extends Component {
                       columnToDelete={this.state.columnToDelete}
                       setRowToDelete={this.setRowToDelete}
                       setColumnToDelete={this.setColumnToDelete}
+                      rowToHide={this.state.rowToHide}
+                      columnToHide={this.state.columnToHide}
+                      setRowToHide={this.setRowToHide}
+                      setColumnToHide={this.setColumnToHide}
                       rowToSwitchA={this.state.rowToSwitchA}
                       rowToSwitchB={this.state.rowToSwitchB}
                       setRowToSwitch={this.setRowToSwitch}

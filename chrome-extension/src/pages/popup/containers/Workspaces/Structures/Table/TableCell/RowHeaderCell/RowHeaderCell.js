@@ -494,6 +494,7 @@ class RowHeaderCell extends Component {
   };
 
   switchHideStatusOfThisRow = toStatus => {
+    this.props.setRowToHide(-1);
     FirestoreManager.switchHideRowStatusInTableByIndex(
       this.props.workspace.id,
       this.props.rowIndex,
@@ -521,28 +522,39 @@ class RowHeaderCell extends Component {
 
     let hideRowActionContainer = (
       <div className={styles.HideRowIconContainer}>
-        <div>
-          <Tooltip
-            title={`${cell.hide === true ? 'Show' : 'Hide'} this row`}
-            placement={'top'}
-            disableFocusListener={true}
-          >
-            <IconButton
-              className={classes.iconButtons}
-              onClick={() =>
-                this.switchHideStatusOfThisRow(
-                  cell.hide === true ? false : true
-                )
-              }
+        <ReactHoverObserver
+          {...{
+            onMouseEnter: () => {
+              this.props.setRowToHide(this.props.rowIndex);
+            },
+            onMouseLeave: () => {
+              this.props.setRowToHide(-1);
+            }
+          }}
+        >
+          <div>
+            <Tooltip
+              title={`${cell.hide === true ? 'Show' : 'Hide'} this row`}
+              placement={'top'}
+              disableFocusListener={true}
             >
-              {cell.hide === true ? (
-                <Eye className={classes.iconInIconButtons} />
-              ) : (
-                <EyeOff className={classes.iconInIconButtons} />
-              )}
-            </IconButton>
-          </Tooltip>
-        </div>
+              <IconButton
+                className={classes.iconButtons}
+                onClick={() =>
+                  this.switchHideStatusOfThisRow(
+                    cell.hide === true ? false : true
+                  )
+                }
+              >
+                {cell.hide === true ? (
+                  <Eye className={classes.iconInIconButtons} />
+                ) : (
+                  <EyeOff className={classes.iconInIconButtons} />
+                )}
+              </IconButton>
+            </Tooltip>
+          </div>
+        </ReactHoverObserver>
       </div>
     );
 
@@ -597,6 +609,34 @@ class RowHeaderCell extends Component {
       </div>
     );
 
+    let hideSupportLayer = cell.hide !== true && (
+      <div
+        style={{
+          zIndex:
+            this.props.columnIndex === this.props.columnToHide ||
+            this.props.rowIndex === this.props.rowToHide
+              ? 3000
+              : -100,
+          position: 'absolute',
+          top: 0,
+          bottom: 0,
+          left: 0,
+          right: 0,
+          opacity: 0.5,
+          backgroundImage:
+            this.props.columnIndex === this.props.columnToHide ||
+            this.props.rowIndex === this.props.rowToHide
+              ? 'linear-gradient(45deg, #ffffff 25%, #e0e0e0 25%, #e0e0e0 50%, #ffffff 50%, #ffffff 75%, #e0e0e0 75%, #e0e0e0 100%)'
+              : null,
+          backgroundSize:
+            this.props.columnIndex === this.props.columnToHide ||
+            this.props.rowIndex === this.props.rowToHide
+              ? '11.31px 11.31px'
+              : null
+        }}
+      />
+    );
+
     let cellPieces = cell.pieces.filter(
       p => pieces[p.pieceId] !== undefined && pieces[p.pieceId] !== null
     );
@@ -626,6 +666,7 @@ class RowHeaderCell extends Component {
       >
         {this.props.numRows > 2 ? deleteRowActionContainer : null}
         {hideRowActionContainer}
+        {hideSupportLayer}
 
         <div className={styles.RowHeaderCellContainer}>
           {pieceInCell !== null ? (
