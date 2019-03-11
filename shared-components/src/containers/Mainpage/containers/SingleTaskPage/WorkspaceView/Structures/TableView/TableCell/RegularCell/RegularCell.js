@@ -1,21 +1,32 @@
 import React, { Component } from 'react';
 import { sortBy, debounce } from 'lodash';
 import styles from './RegularCell.css';
+import Spinner from '../../../../../../../../../components/UI/Spinner/Spinner';
 import ThumbV1 from '../../../../../../../../../components/UI/Thumbs/ThumbV1/ThumbV1';
 import InfoIcon from '../../../../../../../../../components/UI/Thumbs/InfoIcon/InfoIcon';
 
 import PieceItem from '../../../../../CollectionView/PiecesView/PieceItem/PieceItem';
 import RatingLayer from './RatingLayer/RatingLayer';
 import * as FirestoreManager from '../../../../../../../../../firebase/firestore_wrapper';
-import { RATING_TYPES } from '../../../../../../../../../shared/types';
-import { THEME_COLOR } from '../../../../../../../../../shared/theme';
+import {
+  RATING_TYPES,
+  ANNOTATION_TYPES,
+  PIECE_TYPES
+} from '../../../../../../../../../shared/types';
+import {
+  THEME_COLOR,
+  PIECE_COLOR
+} from '../../../../../../../../../shared/theme';
 
 import ReactTooltip from 'react-tooltip';
 import { withStyles } from '@material-ui/core/styles';
 import Chat from 'mdi-material-ui/Chat';
+import BookmarkPlus from 'mdi-material-ui/BookmarkPlus';
+import BookmarkPlusOutline from 'mdi-material-ui/BookmarkPlusOutline';
 import Tooltip from '@material-ui/core/Tooltip';
 import IconButton from '@material-ui/core/IconButton';
 import Popover from '@material-ui/core/Popover';
+import Button from '@material-ui/core/Button';
 
 import Textarea from 'react-textarea-autosize';
 import { ContextMenu, MenuItem, ContextMenuTrigger } from 'react-contextmenu';
@@ -36,6 +47,12 @@ import RatingIcon from './components/RatingIcon';
 import RatingIconDropLayer from './RatingIconDropLayer/RatingIconDropLayer';
 
 const materialStyles = theme => ({
+  button: {
+    marginTop: 2,
+    marginBottom: 2,
+    padding: '2px 6px 2px 6px',
+    fontSize: 12
+  },
   iconButtons: {
     padding: '4px'
   },
@@ -45,6 +62,16 @@ const materialStyles = theme => ({
     color: 'rgb(187, 187, 187)'
   }
 });
+
+const ActionButton = withStyles({
+  root: {
+    minWidth: '0',
+    padding: '0px 4px'
+  },
+  label: {
+    textTransform: 'capitalize'
+  }
+})(Button);
 
 const dropTarget = {
   canDrop(props, monitor, component) {
@@ -73,6 +100,13 @@ class RegularCell extends Component {
     // comment popover
     anchorEl: null,
 
+    // add rating popover
+    ratingAnchorEl: null,
+    selectedRatingToAdd: RATING_TYPES.positive,
+    ratingContentEdit: '',
+    addingRatingPieceToCell: false,
+    addingRatingPieceRating: RATING_TYPES.noRating,
+
     // dnd support
     isDraggingRatingIcon: false,
     draggingRatingIconType: RATING_TYPES.noRating
@@ -85,6 +119,10 @@ class RegularCell extends Component {
     canDrop: PropTypes.bool.isRequired
   };
 
+  switchSelectedRating = to => {
+    this.setState({ selectedRatingToAdd: to });
+  };
+
   switchDraggingRatingIconStatus = (to, type) => {
     this.setState({ isDraggingRatingIcon: to, draggingRatingIconType: type });
   };
@@ -92,6 +130,15 @@ class RegularCell extends Component {
   componentDidUpdate(prevProps, prevState) {
     if (prevProps.cell.content !== this.props.cell.content)
       this.setState({ contentEdit: this.props.cell.content });
+
+    if (prevProps.cell.pieces.length + 1 === this.props.cell.pieces.length) {
+      if (prevState.addingRatingPieceToCell === true) {
+        this.setState({
+          addingRatingPieceToCell: false,
+          addingRatingPieceRating: RATING_TYPES.noRating
+        });
+      }
+    }
   }
 
   componentDidMount() {
@@ -106,14 +153,22 @@ class RegularCell extends Component {
   }
 
   handleCommentClick = event => {
-    this.setState({
-      anchorEl: event.currentTarget
-    });
+    this.setState({ anchorEl: event.currentTarget });
   };
 
   handleCommentClose = () => {
+    this.setState({ anchorEl: null });
+  };
+
+  handleAddRatingClick = event => {
+    this.setState({ ratingAnchorEl: event.currentTarget });
+  };
+
+  handleAddRatingClose = () => {
     this.setState({
-      anchorEl: null
+      ratingAnchorEl: null,
+      ratingContentEdit: '',
+      selectedRatingToAdd: RATING_TYPES.positive
     });
   };
 
@@ -127,6 +182,10 @@ class RegularCell extends Component {
     e.persist();
     this.setState({ contentEdit: e.target.value });
     this.saveContentCallback(e);
+  };
+
+  handleRatingContentInputChange = e => {
+    this.setState({ ratingContentEdit: e.target.value });
   };
 
   saveCellContentClickedHandler = e => {
@@ -156,6 +215,45 @@ class RegularCell extends Component {
     );
   };
 
+  addPieceWithRating = () => {
+    let newPieceContent = this.state.ratingContentEdit;
+    let newPieceRatingType = this.state.selectedRatingToAdd;
+    if (newPieceContent !== '') {
+      setTimeout(() => {
+        this.setState({
+          addingRatingPieceToCell: true,
+          addingRatingPieceRating: newPieceRatingType
+        });
+        // go create piece and eventually add as rating
+        FirestoreManager.createPiece(
+          {
+            text: newPieceContent
+          },
+          {
+            taskId: this.props.taskId
+          },
+          ANNOTATION_TYPES.Manual,
+          PIECE_TYPES.snippet
+        )
+          .then(pieceId => {
+            FirestoreManager.addPieceToTableCellById(
+              this.props.workspace.id,
+              this.props.cell.id,
+              pieceId,
+              newPieceRatingType
+            );
+          })
+          .catch(e => {
+            this.setState({
+              addingRatingPieceToCell: false,
+              addingRatingPieceRating: RATING_TYPES.noRating
+            });
+          });
+      }, 5);
+    }
+    this.handleAddRatingClose();
+  };
+
   render() {
     const { connectDropTarget, canDrop, isOver } = this.props;
     let {
@@ -167,8 +265,9 @@ class RegularCell extends Component {
       comments,
       commentCount
     } = this.props;
-    const { anchorEl } = this.state;
+    const { anchorEl, ratingAnchorEl } = this.state;
     const open = Boolean(anchorEl);
+    const addRatingOpen = Boolean(ratingAnchorEl);
 
     if (cell === null || pieces === null) {
       return <td />;
@@ -194,7 +293,7 @@ class RegularCell extends Component {
       <div
         className={styles.CommentsContainer}
         style={{
-          opacity: commentCount > 0 ? 1 : null,
+          opacity: commentCount > 0 || open ? 1 : null,
           display: commentAccess !== true && commentCount === 0 ? 'none' : null
         }}
       >
@@ -254,7 +353,7 @@ class RegularCell extends Component {
                 anchorEl={anchorEl}
                 onClose={this.handleCommentClose}
                 anchorOrigin={{
-                  vertical: 'top',
+                  vertical: 'bottom',
                   horizontal: 'left'
                 }}
                 transformOrigin={{
@@ -280,6 +379,121 @@ class RegularCell extends Component {
             </div>
           </React.Fragment>
         )}
+      </div>
+    );
+
+    let addManualRatingPieceContainer = editAccess && (
+      <div
+        className={styles.HoverToReveal}
+        style={{
+          position: 'absolute',
+          top: 0,
+          right: 0,
+          opacity: addRatingOpen ? 1 : null
+        }}
+      >
+        <Tooltip title={`Add a new snippet`} placement={'top'}>
+          <IconButton
+            aria-label="Add"
+            className={classes.iconButtons}
+            onClick={e => this.handleAddRatingClick(e)}
+          >
+            <BookmarkPlus className={classes.iconInIconButtons} />
+          </IconButton>
+        </Tooltip>
+
+        <Popover
+          id={`${cell.id}-add-rating-popover`}
+          open={addRatingOpen}
+          anchorEl={ratingAnchorEl}
+          onClose={this.handleAddRatingClose}
+          anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'center'
+          }}
+          transformOrigin={{
+            vertical: 'top',
+            horizontal: 'center'
+          }}
+        >
+          <div className={styles.AddManualRatingPopoverContainer}>
+            <div className={styles.RatingEditContainer}>
+              <div className={styles.RatingsSelectionPane}>
+                <div
+                  title={'Change to positive'}
+                  className={[
+                    styles.RatingToSelectContainer,
+                    this.state.selectedRatingToAdd === RATING_TYPES.positive
+                      ? styles.SelectedRating
+                      : null
+                  ].join(' ')}
+                  onClick={() =>
+                    this.switchSelectedRating(RATING_TYPES.positive)
+                  }
+                >
+                  <ThumbV1 type={'up'} />
+                </div>
+                <div
+                  title={'Change to negative'}
+                  className={[
+                    styles.RatingToSelectContainer,
+                    this.state.selectedRatingToAdd === RATING_TYPES.negative
+                      ? styles.SelectedRating
+                      : null
+                  ].join(' ')}
+                  onClick={() =>
+                    this.switchSelectedRating(RATING_TYPES.negative)
+                  }
+                >
+                  <ThumbV1 type={'down'} />
+                </div>
+                <div
+                  title={'Change to information'}
+                  className={[
+                    styles.RatingToSelectContainer,
+                    this.state.selectedRatingToAdd === RATING_TYPES.info
+                      ? styles.SelectedRating
+                      : null
+                  ].join(' ')}
+                  onClick={() => this.switchSelectedRating(RATING_TYPES.info)}
+                >
+                  <InfoIcon />
+                </div>
+              </div>
+              <div className={styles.RatingContentPane}>
+                <Textarea
+                  autoFocus
+                  inputRef={tag => (this.ratingTextarea = tag)}
+                  minRows={3}
+                  maxRows={5}
+                  placeholder={'Snippet content...'}
+                  value={this.state.ratingContentEdit}
+                  onMouseEnter={e => {
+                    e.target.focus();
+                  }}
+                  onKeyDown={e => {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                      e.target.blur();
+                    }
+                  }}
+                  onChange={e => this.handleRatingContentInputChange(e)}
+                  className={[styles.RatingTextarea].join(' ')}
+                />
+              </div>
+            </div>
+            {this.state.ratingContentEdit !== '' && (
+              <div className={styles.SaveButtonContainer}>
+                <ActionButton
+                  color="primary"
+                  className={classes.button}
+                  onClick={() => this.addPieceWithRating()}
+                >
+                  Save
+                </ActionButton>
+              </div>
+            )}
+          </div>
+        </Popover>
       </div>
     );
 
@@ -348,7 +562,14 @@ class RegularCell extends Component {
       </div>
     );
 
-    let piecesList = cell.pieces;
+    let piecesList = [...cell.pieces];
+
+    if (this.state.addingRatingPieceToCell) {
+      piecesList.push({
+        pieceId: 'adding',
+        rating: this.state.addingRatingPieceRating
+      });
+    }
 
     return connectDropTarget(
       <td
@@ -368,6 +589,7 @@ class RegularCell extends Component {
               : 'transparent'
         }}
       >
+        {addManualRatingPieceContainer}
         {droppingRatingIconContainer}
         {commentsActionContainer}
         {hoverLayerContainer}
@@ -380,9 +602,9 @@ class RegularCell extends Component {
             opacity: isOver ? 0.3 : null
           }}
         >
-          {piecesList.length > 0 ? (
-            <div className={styles.EvidenceIconContainer}>
-              {sortBy(piecesList, ['rating']).map((p, idx) => {
+          <div className={styles.EvidenceIconContainer}>
+            {piecesList.length > 0 &&
+              sortBy(piecesList, ['rating']).map((p, idx) => {
                 if (
                   pieces[p.pieceId] !== undefined &&
                   pieces[p.pieceId] !== null
@@ -531,12 +753,20 @@ class RegularCell extends Component {
                       />
                     </React.Fragment>
                   );
+                } else if (p.pieceId === 'adding') {
+                  return (
+                    <div
+                      key={`${p.pieceId}-${idx}`}
+                      className={styles.AttitudeInTableCell}
+                    >
+                      <Spinner size={'30px'} />
+                    </div>
+                  );
                 } else {
                   return null;
                 }
               })}
-            </div>
-          ) : null}
+          </div>
 
           <div
             className={[
@@ -552,7 +782,7 @@ class RegularCell extends Component {
                 maxRows={5}
                 placeholder={
                   editAccess && piecesList.length === 0
-                    ? 'Type or drop a snippet card here as evidence'
+                    ? 'Type some notes as evidence'
                     : ''
                 }
                 value={this.state.contentEdit}
