@@ -417,7 +417,11 @@ class RowHeaderCell extends Component {
           }}
         >
           <div>
-            <Tooltip title="Delete this row" placement={'top'}>
+            <Tooltip
+              title="Delete this row"
+              placement={'top'}
+              disableFocusListener={true}
+            >
               <IconButton
                 aria-label="Delete"
                 className={classes.iconButtons}
@@ -513,7 +517,11 @@ class RowHeaderCell extends Component {
         ) : (
           <React.Fragment>
             <div style={{ position: 'relative' }}>
-              <Tooltip title={commentTooltipTitle} placement={'top'}>
+              <Tooltip
+                title={commentTooltipTitle}
+                placement={'top'}
+                disableFocusListener={true}
+              >
                 <IconButton
                   aria-label="Comment"
                   className={classes.iconButtons}
@@ -560,37 +568,26 @@ class RowHeaderCell extends Component {
 
     let decideRowActionContainer = editAccess && (
       <div className={styles.DecideRowIconContainer}>
-        {cell.checked === true ? (
-          <Tooltip
-            title={`I decide NOT to choose this option`}
-            placement={'top'}
-            style={{ color: '#f44336' }}
+        <Tooltip
+          title={`I decide${
+            cell.checked === true ? ' NOT ' : ' '
+          }to choose this option`}
+          placement={'top'}
+          style={{ color: cell.checked === true ? '#f44336' : '#8bc34a' }}
+          disableFocusListener={true}
+        >
+          <IconButton
+            color="inherit"
+            className={classes.iconButtons}
+            onClick={() => this.switchOptionCheckedStatus()}
           >
-            <IconButton
-              aria-label="Choose"
-              color="inherit"
-              className={classes.iconButtons}
-              onClick={() => this.switchOptionCheckedStatus()}
-            >
+            {cell.checked === true ? (
               <Cancel className={classes.checkmarkIconInIconButtons} />
-            </IconButton>
-          </Tooltip>
-        ) : (
-          <Tooltip
-            title={`I decide to choose this option`}
-            placement={'top'}
-            style={{ color: '#8bc34a' }}
-          >
-            <IconButton
-              aria-label="Cancel"
-              color="inherit"
-              className={classes.iconButtons}
-              onClick={() => this.switchOptionCheckedStatus()}
-            >
+            ) : (
               <CheckCircle className={classes.checkmarkIconInIconButtons} />
-            </IconButton>
-          </Tooltip>
-        )}
+            )}
+          </IconButton>
+        </Tooltip>
       </div>
     );
 

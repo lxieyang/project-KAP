@@ -406,7 +406,11 @@ class ColumnHeaderCell extends Component {
           }}
         >
           <div>
-            <Tooltip title="Delete this column" placement={'top'}>
+            <Tooltip
+              title="Delete this column"
+              placement={'top'}
+              disableFocusListener={true}
+            >
               <IconButton
                 aria-label="Delete"
                 className={classes.iconButtons}
@@ -502,7 +506,11 @@ class ColumnHeaderCell extends Component {
         ) : (
           <React.Fragment>
             <div style={{ position: 'relative' }}>
-              <Tooltip title={commentTooltipTitle} placement={'top'}>
+              <Tooltip
+                title={commentTooltipTitle}
+                placement={'top'}
+                disableFocusListener={true}
+              >
                 <IconButton
                   aria-label="Comment"
                   className={classes.iconButtons}

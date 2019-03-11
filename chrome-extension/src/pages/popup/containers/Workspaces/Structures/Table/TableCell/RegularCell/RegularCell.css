@@ -13,6 +13,79 @@
   opacity: 1;
 }
 
+.AddManualRatingPopoverContainer {
+}
+
+.AddManualRatingPopoverContainer .RatingEditContainer {
+  display: flex;
+  align-items: center;
+
+  padding: 3px 3px;
+}
+
+.AddManualRatingPopoverContainer .RatingsSelectionPane {
+  display: flex;
+  flex-flow: column;
+  align-items: center;
+  justify-content: center;
+  margin-right: 8px;
+}
+
+.AddManualRatingPopoverContainer .RatingToSelectContainer {
+  width: 20px;
+  height: 20px;
+  margin: 2px;
+  cursor: pointer;
+  opacity: 0.2;
+  transition: all 0.05s ease-in;
+  border-radius: 50%;
+  border: 1px solid transparent;
+}
+
+.AddManualRatingPopoverContainer .SelectedRating,
+.AddManualRatingPopoverContainer .RatingToSelectContainer:hover {
+  opacity: 1;
+  transform: scale(1.1);
+  box-shadow: 0 4px 10px 0 rgba(0, 0, 0, 0.2), 0 4px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+.AddManualRatingPopoverContainer .RatingContentPane {
+  width: 150px;
+  margin-right: 4px;
+}
+
+.RatingTextarea {
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  resize: none;
+  overflow: auto;
+
+  font-size: 11px;
+  font-weight: 500;
+  padding: 2px 4px;
+
+  border: 1px solid rgb(226, 226, 226);
+  border-radius: 4px;
+  color: #000;
+  background: transparent !important;
+}
+
+.RatingTextarea:focus {
+  color: #35383a;
+  background-color: #fff;
+  border: 1px solid rgb(17, 100, 224);
+  outline: none;
+}
+
+.AddManualRatingPopoverContainer .SaveButtonContainer {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 1px;
+}
+
 .HoverLayer {
   position: absolute;
   top: 0;
@@ -38,10 +111,16 @@
 }
 
 .EvidenceIconContainer {
-  /* display: flex;
+  display: flex;
   flex-flow: row;
-  justify-content: center;
-  align-items: center; */
+  flex-wrap: wrap;
+  /* justify-content: center; */
+  align-items: center;
+
+  margin-left: 1px;
+  margin-right: 1px;
+
+  min-height: 20px;
 }
 
 .AttitudeInTableCell {

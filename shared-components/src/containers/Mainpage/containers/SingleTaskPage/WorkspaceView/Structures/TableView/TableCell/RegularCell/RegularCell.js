@@ -22,7 +22,6 @@ import ReactTooltip from 'react-tooltip';
 import { withStyles } from '@material-ui/core/styles';
 import Chat from 'mdi-material-ui/Chat';
 import BookmarkPlus from 'mdi-material-ui/BookmarkPlus';
-import BookmarkPlusOutline from 'mdi-material-ui/BookmarkPlusOutline';
 import Tooltip from '@material-ui/core/Tooltip';
 import IconButton from '@material-ui/core/IconButton';
 import Popover from '@material-ui/core/Popover';
@@ -337,7 +336,11 @@ class RegularCell extends Component {
         ) : (
           <React.Fragment>
             <div style={{ position: 'relative' }}>
-              <Tooltip title={commentTooltipTitle} placement={'top'}>
+              <Tooltip
+                title={commentTooltipTitle}
+                placement={'top'}
+                disableFocusListener={true}
+              >
                 <IconButton
                   aria-label="Comment"
                   className={classes.iconButtons}
@@ -392,7 +395,11 @@ class RegularCell extends Component {
           opacity: addRatingOpen ? 1 : null
         }}
       >
-        <Tooltip title={`Add a new snippet`} placement={'top'}>
+        <Tooltip
+          title={`Add a new snippet`}
+          placement={'top'}
+          disableFocusListener={true}
+        >
           <IconButton
             aria-label="Add"
             className={classes.iconButtons}
@@ -758,6 +765,11 @@ class RegularCell extends Component {
                     <div
                       key={`${p.pieceId}-${idx}`}
                       className={styles.AttitudeInTableCell}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center'
+                      }}
                     >
                       <Spinner size={'30px'} />
                     </div>
