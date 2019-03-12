@@ -5,16 +5,24 @@ import Spinner from '../../../../../components/UI/Spinner/Spinner';
 class LogoutPage extends Component {
   state = {
     redirect: false
-  }
+  };
 
-  componentWillMount() {
+  constructor() {
+    super();
     firebase.auth().signOut();
   }
 
-  render () {
+  render() {
     return (
-      <div style={{ textAlign: "center", position: "absolute", top: "25%", left: "50%" }}>
-        <Spinner size="40px"/>
+      <div
+        style={{
+          textAlign: 'center',
+          position: 'absolute',
+          top: '25%',
+          left: '50%'
+        }}
+      >
+        <Spinner size="40px" />
       </div>
     );
   }

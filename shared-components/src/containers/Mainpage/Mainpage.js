@@ -51,7 +51,10 @@ class Mainpage extends Component {
         let redirect = this.state.loginRedirect;
         if (redirect) {
           this.setLoginRedirect(null);
-          this.props.history.push(redirect);
+          this.props.history.push({
+            pathname: redirect,
+            state: undefined
+          });
         }
       } else {
         this.setState({
