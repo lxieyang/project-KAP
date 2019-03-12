@@ -69,7 +69,12 @@ chrome.windows.onFocusChanged.addListener(windowId => {
   console.log(`switched to window ${windowId}`);
   chrome.tabs.onActivated.removeListener(activeTabListener);
   chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
-    activeTabId = tabs[0].id;
+    try {
+      activeTabId = tabs[0].id;
+    } catch (e) {
+      // console.log(e);
+    }
+
     console.log(`switch to ${activeTabId}`);
     activeTabHostname = null;
     activeTabUrl = null;
@@ -153,12 +158,12 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
       activeTabUrl = url;
 
       // check tracking status dict
-      let shouldTrack = true;
+      let shouldTrack = false;
       if (
         trackingStatusDict[hostname] !== undefined &&
-        trackingStatusDict[hostname] === false
+        trackingStatusDict[hostname] === true
       ) {
-        shouldTrack = false;
+        shouldTrack = true;
       }
 
       // send turn on/off instructions to the tabs
@@ -171,12 +176,12 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     request.from === 'browserTooltip'
   ) {
     // check tracking status dict
-    let shouldTrack = true;
+    let shouldTrack = false;
     if (
       trackingStatusDict[activeTabHostname] !== undefined &&
-      trackingStatusDict[activeTabHostname] === false
+      trackingStatusDict[activeTabHostname] === true
     ) {
-      shouldTrack = false;
+      shouldTrack = true;
     }
     // send hostname and tracking status to browserTooltip
     sendResponse({
@@ -189,12 +194,12 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
   if (request.msg === 'SHOULD_TRACK' && request.from === 'contentScript') {
     let hostname = request.hostname;
     // check tracking status dict
-    let shouldTrack = true;
+    let shouldTrack = false;
     if (
       trackingStatusDict[hostname] !== undefined &&
-      trackingStatusDict[hostname] === false
+      trackingStatusDict[hostname] === true
     ) {
-      shouldTrack = false;
+      shouldTrack = true;
     }
     // send hostname and tracking status to browserTooltip
     sendResponse({
@@ -208,7 +213,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     if (setTo === false) {
       trackingStatusDict[hostname] = false;
     } else {
-      delete trackingStatusDict[hostname];
+      trackingStatusDict[hostname] = true;
     }
     chrome.storage.sync.set({ trackingStatusDict }, function() {});
 
