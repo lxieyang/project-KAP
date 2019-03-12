@@ -23,6 +23,8 @@ class Mainpage extends Component {
 
     homepage: appRoutes.ALL_TASKS,
 
+    loginRedirect: null,
+
     loading: true,
 
     displayingTaskId: null,
@@ -45,6 +47,12 @@ class Mainpage extends Component {
           user,
           loading: false
         });
+
+        let redirect = this.state.loginRedirect;
+        if (redirect) {
+          this.setLoginRedirect(null);
+          this.props.history.push(redirect);
+        }
       } else {
         this.setState({
           authenticated: false,
@@ -82,6 +90,10 @@ class Mainpage extends Component {
     this.removeAuthListerner();
   }
 
+  setLoginRedirect = redirect => {
+    this.setState({ loginRedirect: redirect });
+  };
+
   setDisplayingTaskIdAndName = (taskId, taskName) => {
     this.setState({ displayingTaskId: taskId, displayingTaskName: taskName });
   };
@@ -116,7 +128,13 @@ class Mainpage extends Component {
             />
           )}
         />
-        <Route exact path={appRoutes.LOG_IN} component={LoginPage} />
+        <Route
+          exact
+          path={appRoutes.LOG_IN}
+          render={routeProps => (
+            <LoginPage setLoginRedirect={this.setLoginRedirect} />
+          )}
+        />
         <Redirect to={appRoutes.LOG_IN} />
       </Switch>
     );

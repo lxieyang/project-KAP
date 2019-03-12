@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 
-import Aux from '../../../../hoc/Aux/Aux';
 import Header from '../../components/Header/Header';
 import styles from './Layout.css';
 
@@ -9,7 +8,7 @@ class Layout extends Component {
 
   render() {
     return (
-      <Aux>
+      <React.Fragment>
         <Header
           authenticated={this.props.authenticated}
           thereIsTask={this.props.thereIsTask}
@@ -22,7 +21,7 @@ class Layout extends Component {
         />
 
         <main className={styles.Content}>{this.props.children}</main>
-      </Aux>
+      </React.Fragment>
     );
   }
 }

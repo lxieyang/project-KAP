@@ -86,7 +86,8 @@ class TaskStatusView extends Component {
                 this.setState({
                   author: {
                     displayName: user.displayName,
-                    photoURL: user.photoURL
+                    photoURL: user.photoURL,
+                    email: user.email
                   }
                 });
               }
@@ -167,7 +168,7 @@ class TaskStatusView extends Component {
             {author ? (
               <div className={styles.ReviewingTaskAuthorContainer}>
                 <div style={{ display: 'flex', alignItems: 'center' }}>
-                  Created by {author.displayName}
+                  Created by {author.displayName} ({author.email})
                 </div>
               </div>
             ) : null}

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
+import { withRouter } from 'react-router-dom';
 import firebase from '../../../../../firebase/firebase';
-import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth';
 import { APP_NAME_SHORT } from '../../../../../shared/constants';
 import { googleIcon } from '../../../../../shared/utilities';
 import Logo from '../../../../../components/UI/Logo/Logo';
@@ -27,17 +27,28 @@ class LoginPage extends Component {
   // The component's Local state.
   state = {
     isSignedIn: false, // Local signed-in state.
-    user: null
+    user: null,
+    redirect: null
   };
 
   // Listen to the Firebase Auth state and set the local state.
   componentDidMount() {
+    let redirect =
+      this.props.location.state !== undefined &&
+      this.props.location.state.shouldRedirectTo !== undefined
+        ? this.props.location.state.shouldRedirectTo
+        : null;
+    this.setState({ redirect });
+    this.props.setLoginRedirect(redirect);
+
     this.unregisterAuthObserver = firebase.auth().onAuthStateChanged(user => {
       this.setState({
         isSignedIn: !!user,
         user
       });
     });
+
+    // console.log(this.props.location.state);
   }
 
   // Make sure we un-register Firebase observers when the component unmounts.
@@ -109,4 +120,4 @@ class LoginPage extends Component {
   }
 }
 
-export default withStyles(materialStyles)(LoginPage);
+export default withRouter(withStyles(materialStyles)(LoginPage));

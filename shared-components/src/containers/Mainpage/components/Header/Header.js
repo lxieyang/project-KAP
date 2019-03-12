@@ -1,9 +1,6 @@
 /* global chrome */
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
-import qs from 'query-string';
-import FontAwesomeIcon from '@fortawesome/react-fontawesome';
-import fasSignOutAlt from '@fortawesome/fontawesome-free-solid/faSignOutAlt';
 import NavigationItems from './NavigationItems/NavigationItems';
 import Logo from '../../../../components/UI/Logo/Logo';
 
@@ -17,17 +14,14 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
 import Logout from 'mdi-material-ui/LogoutVariant';
 
-import styles from './Header.css';
+// import styles from './Header.css';
 import ProfileImg from '../../../../assets/images/profile-img.png';
 import { APP_NAME_SHORT } from '../../../../shared/constants';
-import { getFirstName } from '../../../../shared/utilities';
-import Popover from 'react-tiny-popover';
-import { NavLink } from 'react-router-dom';
+import {
+  getFirstName,
+  getCleanURLOfCurrentPage
+} from '../../../../shared/utilities';
 import * as appRoutes from '../../../../shared/routes';
-import axios from 'axios';
-import { database } from '../../../../firebase/index';
-import Fuse from 'fuse.js';
-import * as FirebaseStore from '../../../../firebase/store';
 
 const materialStyles = {
   toolbar: {
@@ -56,10 +50,10 @@ const materialStyles = {
   },
   userAvatar: {
     width: 22,
-    height: 22
+    height: 22,
+    marginRight: 4
   },
   username: {
-    marginLeft: 4,
     fontWeight: 300,
     fontSize: 16
   },
@@ -112,8 +106,8 @@ class Header extends Component {
     const { anchorEl } = this.state;
     const open = Boolean(anchorEl);
 
-    if (!authenticated) {
-      return <div />; // no header
+    if (!authenticated && location.pathname === appRoutes.LOG_IN) {
+      return <div />; // no header on login page
     }
 
     return (
@@ -129,6 +123,7 @@ class Header extends Component {
             className={classes.pageTitle}
           >
             <NavigationItems
+              authenticated={authenticated}
               thereIsTask={this.props.thereIsTask}
               tasksLoading={this.props.tasksLoading}
               currentTaskId={this.props.currentTaskId}
@@ -136,51 +131,74 @@ class Header extends Component {
             />
           </Typography>
 
-          <div>
-            <IconButton
-              aria-owns={open ? 'menu-appbar' : undefined}
-              aria-haspopup="true"
-              onClick={this.handleMenu}
-              className={classes.iconButton}
-              color="inherit"
-            >
-              <Avatar
-                alt="avatar"
-                src={userProfilePhotoURL ? userProfilePhotoURL : ProfileImg}
-                onError={e => {
-                  e.target.onerror = null;
-                  e.target.src = `https://ui-avatars.com/api/?name=${userName}?bold=true`;
-                }}
-                className={classes.userAvatar}
-              />
-              <div className={classes.username}>{getFirstName(userName)}</div>
-            </IconButton>
-
-            <Menu
-              id="menu-appbar"
-              anchorEl={anchorEl}
-              anchorOrigin={{
-                vertical: 'top',
-                horizontal: 'right'
-              }}
-              transformOrigin={{
-                vertical: 'top',
-                horizontal: 'right'
-              }}
-              open={open}
-              onClose={this.handleClose}
-            >
-              <MenuItem
+          {!authenticated && (
+            <div title="Log in to be able to leave comments">
+              <IconButton
+                aria-owns={open ? 'menu-appbar' : undefined}
+                aria-haspopup="true"
                 onClick={() => {
-                  this.logoutClickedHandler();
-                  this.handleClose();
+                  this.props.history.push({
+                    pathname: appRoutes.LOG_IN,
+                    state: {
+                      shouldRedirectTo: this.props.location.pathname
+                    }
+                  });
                 }}
-                className={classes.menuItem}
+                className={classes.iconButton}
+                color="inherit"
               >
-                <Logout /> &nbsp; Log out
-              </MenuItem>
-            </Menu>
-          </div>
+                <div className={classes.username}>Log in</div>
+              </IconButton>
+            </div>
+          )}
+
+          {authenticated && (
+            <div>
+              <IconButton
+                aria-owns={open ? 'menu-appbar' : undefined}
+                aria-haspopup="true"
+                onClick={this.handleMenu}
+                className={classes.iconButton}
+                color="inherit"
+              >
+                <Avatar
+                  alt="avatar"
+                  src={userProfilePhotoURL ? userProfilePhotoURL : ProfileImg}
+                  onError={e => {
+                    e.target.onerror = null;
+                    e.target.src = `https://ui-avatars.com/api/?name=${userName}?bold=true`;
+                  }}
+                  className={classes.userAvatar}
+                />
+                <div className={classes.username}>{getFirstName(userName)}</div>
+              </IconButton>
+
+              <Menu
+                id="menu-appbar"
+                anchorEl={anchorEl}
+                anchorOrigin={{
+                  vertical: 'top',
+                  horizontal: 'right'
+                }}
+                transformOrigin={{
+                  vertical: 'top',
+                  horizontal: 'right'
+                }}
+                open={open}
+                onClose={this.handleClose}
+              >
+                <MenuItem
+                  onClick={() => {
+                    this.logoutClickedHandler();
+                    this.handleClose();
+                  }}
+                  className={classes.menuItem}
+                >
+                  <Logout /> &nbsp; Log out
+                </MenuItem>
+              </Menu>
+            </div>
+          )}
         </Toolbar>
       </AppBar>
     );

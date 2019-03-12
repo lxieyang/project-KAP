@@ -15,6 +15,11 @@ const navigationItems = props => (
           : styles.InactiveNavigationItem
       ].join(' ')}
     >
+      {!props.authenticated && (
+        <div style={{ fontSize: '1.1rem', marginRight: 8, fontWeight: 500 }}>
+          Reviewing:{' '}
+        </div>
+      )}
       <NavLink
         to={`/tasks/${props.currentTaskId}`}
         exact
@@ -25,14 +30,17 @@ const navigationItems = props => (
         </div>
       </NavLink>
     </li>
-
-    <li
-      className={[styles.NavigationItem, styles.ActiveNavigationItem].join(' ')}
-    >
-      <NavLink to={appRoutes.ALL_TASKS} exact activeClassName={styles.active}>
-        <div className={styles.Label}>My Tasks</div>
-      </NavLink>
-    </li>
+    {props.authenticated && (
+      <li
+        className={[styles.NavigationItem, styles.ActiveNavigationItem].join(
+          ' '
+        )}
+      >
+        <NavLink to={appRoutes.ALL_TASKS} exact activeClassName={styles.active}>
+          <div className={styles.Label}>My Tasks</div>
+        </NavLink>
+      </li>
+    )}
   </ul>
 );
 
