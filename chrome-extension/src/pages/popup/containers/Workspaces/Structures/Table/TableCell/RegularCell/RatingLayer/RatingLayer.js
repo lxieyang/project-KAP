@@ -101,7 +101,7 @@ class RatingLayer extends Component {
     //   } rating`
     // );
     chrome.runtime.sendMessage({
-      msg: 'ANNOTATION_LOCATION_SELECTED',
+      msg: 'ANNOTATION_LOCATION_SELECTED_IN_TABLE',
       payload: {
         tableId: this.props.workspace.id,
         cellId: this.props.cell.id,

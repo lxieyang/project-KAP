@@ -4,8 +4,8 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { dragElement } from './content.utility';
 import ScreenshotModal from './components/ScreenshotModal';
-import firebase from '../../../../shared-components/src/firebase/firebase';
-import * as FirestoreManager from '../../../../shared-components/src/firebase/firestore_wrapper';
+// import firebase from '../../../../shared-components/src/firebase/firebase';
+// import * as FirestoreManager from '../../../../shared-components/src/firebase/firestore_wrapper';
 import { ANNOTATION_TYPES } from '../../../../shared-components/src/shared/types';
 import { APP_NAME_SHORT } from '../../../../shared-components/src/shared/constants';
 import Frame from './frame';
@@ -42,9 +42,116 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   }
 });
 
-// document.addEventListener('visibilitychange', function(){
+//
+//
+//
+//
+//
+/* log in / out */
+// check id token from background
+let loggedIn = false;
+let userIdToken = null;
+chrome.runtime.sendMessage({ msg: 'GET_USER_INFO' }, response => {
+  signInOutUserWithCredential(response.idToken);
+});
+// authenticate upon signin
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+  if (request.msg === 'USER_LOGIN_STATUS_CHANGED') {
+    // console.log('logged in status changed');
+    signInOutUserWithCredential(request.idToken);
+  }
+});
 
-// })
+const signInOutUserWithCredential = idToken => {
+  userIdToken = idToken;
+  if (idToken !== null) {
+    // logged in
+
+    loggedIn = true;
+
+    SiphonTools.enable();
+
+    chrome.runtime.sendMessage(
+      {
+        msg: 'SHOULD_TRACK',
+        from: 'contentScript',
+        hostname: window.location.hostname
+      },
+      response => {
+        let shouldTrack = response.shouldTrack;
+        if (shouldTrack) {
+          mountSidebar();
+        } else {
+          unmountSidebar();
+        }
+      }
+    );
+  } else {
+    loggedIn = false;
+    SiphonTools.disable();
+    unmountSidebar();
+  }
+};
+
+/* Prevent making the below cross-origin requests
+  https://www.chromestatus.com/feature/5629709824032768
+  https://www.chromium.org/Home/chromium-security/extension-content-script-fetches
+*/
+// const signInOutUserWithCredential = idToken => {
+//   if (idToken !== null) {
+//     // logged in
+//     firebase
+//       .auth()
+//       .signInAndRetrieveDataWithCredential(
+//         firebase.auth.GoogleAuthProvider.credential(idToken)
+//       )
+//       .then(result => {
+//         // console.log(
+//         //   `[CONTENT_ANNOTATION] User ${result.user.displayName} (${
+//         //     result.user.uid
+//         //   }) logged in.`
+//         // );
+
+//         loggedIn = true;
+
+//         SiphonTools.enable();
+
+//         chrome.runtime.sendMessage(
+//           {
+//             msg: 'SHOULD_TRACK',
+//             from: 'contentScript',
+//             hostname: window.location.hostname
+//           },
+//           response => {
+//             let shouldTrack = response.shouldTrack;
+//             if (shouldTrack) {
+//               mountSidebar();
+//             } else {
+//               unmountSidebar();
+//             }
+//           }
+//         );
+//       })
+//       .catch(error => {
+//         console.log(error);
+//       });
+//   } else {
+//     // logged out
+//     firebase
+//       .auth()
+//       .signOut()
+//       .then(() => {
+//         // console.log('[CONTENT_ANNOTATION] User logged out.');
+
+//         loggedIn = false;
+//         SiphonTools.disable();
+//         unmountSidebar();
+//       })
+//       .catch(error => {
+//         console.log(error);
+//       });
+//   }
+// };
 
 //
 //
@@ -123,6 +230,7 @@ function displayTooltipButtonBasedOnRectPosition(rect, props) {
 
   ReactDOM.render(
     <SelectTooltipButton
+      idToken={userIdToken}
       MathJaxUsed={MathJaxUsed}
       windowSize={{ width: window.innerWidth, height: window.innerHeight }}
       removeTooltipButton={() => {
@@ -181,78 +289,6 @@ SiphonTools.initializeSelectors([
     }
   })
 ]);
-
-//
-//
-//
-//
-//
-/* log in / out */
-// check id token from background
-let loggedIn = false;
-chrome.runtime.sendMessage({ msg: 'GET_USER_INFO' }, response => {
-  signInOutUserWithCredential(response.idToken);
-});
-// authenticate upon signin
-chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  if (request.msg === 'USER_LOGIN_STATUS_CHANGED') {
-    // console.log('logged in status changed');
-    signInOutUserWithCredential(request.idToken);
-  }
-});
-
-const signInOutUserWithCredential = idToken => {
-  if (idToken !== null) {
-    // logged in
-    firebase
-      .auth()
-      .signInAndRetrieveDataWithCredential(
-        firebase.auth.GoogleAuthProvider.credential(idToken)
-      )
-      .then(result => {
-        // console.log(
-        //   `[CONTENT_ANNOTATION] User ${result.user.displayName} (${
-        //     result.user.uid
-        //   }) logged in.`
-        // );
-
-        loggedIn = true;
-        SiphonTools.enable();
-
-        chrome.runtime.sendMessage(
-          {
-            msg: 'SHOULD_TRACK',
-            from: 'contentScript',
-            hostname: window.location.hostname
-          },
-          response => {
-            let shouldTrack = response.shouldTrack;
-            if (shouldTrack) {
-              mountSidebar();
-            }
-          }
-        );
-      })
-      .catch(error => {
-        // console.log(error);
-      });
-  } else {
-    // logged out
-    firebase
-      .auth()
-      .signOut()
-      .then(() => {
-        // console.log('[CONTENT_ANNOTATION] User logged out.');
-
-        loggedIn = false;
-        SiphonTools.disable();
-        unmountSidebar();
-      })
-      .catch(error => {
-        // console.log(error);
-      });
-  }
-};
 
 let captureWindow;
 

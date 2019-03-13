@@ -24,7 +24,7 @@ class SelectTooltipButton extends Component {
   state = {
     displayDetailedMenu: false,
 
-    userId: FirestoreManager.getCurrentUserId(),
+    // userId: null,
     annotation: null,
     shouldUseScreenshot: false,
 
@@ -34,8 +34,6 @@ class SelectTooltipButton extends Component {
 
   componentDidMount() {
     window.addEventListener('mousedown', this.mouseDown, true);
-
-    this.setState({ userId: FirestoreManager.getCurrentUserId() });
 
     setTimeout(() => {
       // check if MathJax is present
@@ -79,53 +77,78 @@ class SelectTooltipButton extends Component {
           ? this.props.captureWindow.getBoundingClientRect()
           : this.props.range.getBoundingClientRect();
 
-        FirestoreManager.createPiece(
-          this.state.annotation,
-          {
-            url: window.location.href,
-            hostname: window.location.hostname,
-            pathname: window.location.pathname,
-            pageTitle: document.title,
-            shouldUseScreenshot: this.state.shouldUseScreenshot
-          },
-          this.props.annotationType,
-          PIECE_TYPES.snippet
-        )
-          .then(pieceId => {
-            chrome.runtime.sendMessage({
-              msg: 'SHOW_SUCCESS_STATUS_BADGE',
-              success: true
-            });
+        chrome.runtime.sendMessage({
+          msg: 'CREATE_NEW_ANNOTATION_AND_PUT_IN_TABLE',
+          payload: {
+            annotation: this.state.annotation,
+            contextData: {
+              url: window.location.href,
+              hostname: window.location.hostname,
+              pathname: window.location.pathname,
+              pageTitle: document.title,
+              shouldUseScreenshot: this.state.shouldUseScreenshot
+            },
+            annotationType: this.props.annotationType,
+            type: PIECE_TYPES.snippet,
+            tableId,
+            cellId,
+            cellType,
+            ratingType
+          }
+        });
 
-            // put into the table
-            // if (cellType === TABLE_CELL_TYPES.regularCell) {
-            FirestoreManager.addPieceToTableCellById(
-              tableId,
-              cellId,
-              pieceId,
-              ratingType
-            );
-            // } else if (cellType === TABLE_CELL_TYPES.rowHeader) {
-            //   console.log('should put as option');
-            // } else if (cellType === TABLE_CELL_TYPES.columnHeader) {
-            //   console.log('should put as criterion');
-            // }
+        this.setState({
+          createdPieceId: this.state.annotation.key,
+          createdPieceRect: rect
+        });
 
-            this.setState({ createdPieceId: pieceId, createdPieceRect: rect });
+        // fix for chrome 73
+        // FirestoreManager.createPiece(
+        //   this.state.annotation,
+        //   {
+        //     url: window.location.href,
+        //     hostname: window.location.hostname,
+        //     pathname: window.location.pathname,
+        //     pageTitle: document.title,
+        //     shouldUseScreenshot: this.state.shouldUseScreenshot
+        //   },
+        //   this.props.annotationType,
+        //   PIECE_TYPES.snippet
+        // )
+        //   .then(pieceId => {
+        //     chrome.runtime.sendMessage({
+        //       msg: 'SHOW_SUCCESS_STATUS_BADGE',
+        //       success: true
+        //     });
 
-            chrome.runtime.sendMessage({
-              msg: 'SELECTED_ANNOTATION_ID_UPDATED',
-              pieceId
-            });
-          })
-          .catch(error => {
-            console.log(error);
-            chrome.runtime.sendMessage({
-              msg: 'SHOW_SUCCESS_STATUS_BADGE',
-              success: false
-            });
-          });
-        // this.removeTooltipButton();
+        //     // put into the table
+        //     // if (cellType === TABLE_CELL_TYPES.regularCell) {
+        //     FirestoreManager.addPieceToTableCellById(
+        //       tableId,
+        //       cellId,
+        //       pieceId,
+        //       ratingType
+        //     );
+        //     // } else if (cellType === TABLE_CELL_TYPES.rowHeader) {
+        //     //   console.log('should put as option');
+        //     // } else if (cellType === TABLE_CELL_TYPES.columnHeader) {
+        //     //   console.log('should put as criterion');
+        //     // }
+
+        //     this.setState({ createdPieceId: pieceId, createdPieceRect: rect });
+
+        //     chrome.runtime.sendMessage({
+        //       msg: 'SELECTED_ANNOTATION_ID_UPDATED',
+        //       pieceId
+        //     });
+        //   })
+        //   .catch(error => {
+        //     console.log(error);
+        //     chrome.runtime.sendMessage({
+        //       msg: 'SHOW_SUCCESS_STATUS_BADGE',
+        //       success: false
+        //     });
+        //   });
 
         // take screenshot
         setTimeout(() => {
@@ -140,13 +163,22 @@ class SelectTooltipButton extends Component {
           );
         }, 5);
       } else {
+        chrome.runtime.sendMessage({
+          msg: 'PUT_EXISTING_ANNOTATION_IN_TABLE',
+          payload: {
+            tableId,
+            cellId,
+            pieceId: this.state.createdPieceId,
+            ratingType
+          }
+        });
         // directly put into the table
-        FirestoreManager.addPieceToTableCellById(
-          tableId,
-          cellId,
-          this.state.createdPieceId,
-          ratingType
-        );
+        // FirestoreManager.addPieceToTableCellById(
+        //   tableId,
+        //   cellId,
+        //   this.state.createdPieceId,
+        //   ratingType
+        // );
       }
     }
   };
@@ -227,40 +259,58 @@ class SelectTooltipButton extends Component {
       ? this.props.captureWindow.getBoundingClientRect()
       : this.props.range.getBoundingClientRect();
 
-    FirestoreManager.createPiece(
-      this.state.annotation,
-      {
-        url: window.location.href,
-        hostname: window.location.hostname,
-        pathname: window.location.pathname,
-        pageTitle: document.title,
-        shouldUseScreenshot: this.state.shouldUseScreenshot
-      },
-      this.props.annotationType,
-      type
-    )
-      .then(pieceId => {
-        chrome.runtime.sendMessage({
-          msg: 'SHOW_SUCCESS_STATUS_BADGE',
-          success: true
-        });
+    chrome.runtime.sendMessage({
+      msg: 'CREATE_NEW_ANNOTATION_BY_TOOLTIP_BUTTON_CLICKED',
+      payload: {
+        annotation: this.state.annotation,
+        contextData: {
+          url: window.location.href,
+          hostname: window.location.hostname,
+          pathname: window.location.pathname,
+          pageTitle: document.title,
+          shouldUseScreenshot: this.state.shouldUseScreenshot
+        },
+        annotationType: this.props.annotationType,
+        type: type
+      }
+    });
 
-        if (type === PIECE_TYPES.option) {
-          FirestoreManager.putOptionIntoDefaultTable({ pieceId });
-        } else if (type === PIECE_TYPES.criterion) {
-          FirestoreManager.putCriterionIntoDefaultTable({ pieceId });
-        }
-      })
-      .catch(error => {
-        console.log(error);
-        chrome.runtime.sendMessage({
-          msg: 'SHOW_SUCCESS_STATUS_BADGE',
-          success: false
-        });
-      });
+    // fix for chrome 73
+    // FirestoreManager.createPiece(
+    //   this.state.annotation,
+    //   {
+    //     url: window.location.href,
+    //     hostname: window.location.hostname,
+    //     pathname: window.location.pathname,
+    //     pageTitle: document.title,
+    //     shouldUseScreenshot: this.state.shouldUseScreenshot
+    //   },
+    //   this.props.annotationType,
+    //   type
+    // )
+    //   .then(pieceId => {
+    //     chrome.runtime.sendMessage({
+    //       msg: 'SHOW_SUCCESS_STATUS_BADGE',
+    //       success: true
+    //     });
+
+    //     if (type === PIECE_TYPES.option) {
+    //       FirestoreManager.putOptionIntoDefaultTable({ pieceId });
+    //     } else if (type === PIECE_TYPES.criterion) {
+    //       FirestoreManager.putCriterionIntoDefaultTable({ pieceId });
+    //     }
+    //   })
+    //   .catch(error => {
+    //     console.log(error);
+    //     chrome.runtime.sendMessage({
+    //       msg: 'SHOW_SUCCESS_STATUS_BADGE',
+    //       success: false
+    //     });
+    //   });
+
     this.removeTooltipButton();
 
-    // take screenshot
+    // take screenshot (works fine under chrome 73)
     setTimeout(() => {
       chrome.runtime.sendMessage(
         {
