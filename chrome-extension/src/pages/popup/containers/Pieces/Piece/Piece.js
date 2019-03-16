@@ -645,12 +645,13 @@ class Piece extends Component {
                         <IconButton
                           aria-label="Trash"
                           className={classes.iconButtons}
-                          onClick={() =>
+                          onClick={e => {
+                            e.stopPropagation();
                             this.props.handleDeleteButtonClicked(
                               piece.id,
                               piece.name
-                            )
-                          }
+                            );
+                          }}
                         >
                           <DeleteIcon className={classes.iconInIconButtons} />
                         </IconButton>
@@ -665,9 +666,10 @@ class Piece extends Component {
                         <IconButton
                           aria-label="Revive"
                           className={classes.iconButtons}
-                          onClick={() =>
-                            this.props.handleReviveButtonClicked(piece.id)
-                          }
+                          onClick={e => {
+                            e.stopPropagation();
+                            this.props.handleReviveButtonClicked(piece.id);
+                          }}
                         >
                           <Looks className={classes.iconInIconButtons} />
                         </IconButton>

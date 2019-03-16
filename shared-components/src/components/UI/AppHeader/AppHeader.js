@@ -14,7 +14,16 @@ import styles from './AppHeader.css';
 
 class AppHeader extends Component {
   state = {
+    version: '2',
     popoverOpen: false
+  };
+
+  componentDidMount() {
+    this.getVersionNumber();
+  }
+
+  getVersionNumber = () => {
+    this.setState({ version: chrome.app.getDetails().version });
   };
 
   switchPopoverOpenStatus = () => {
@@ -69,7 +78,7 @@ class AppHeader extends Component {
             <Logo size={props.logoSize} hover={props.hover} /> &nbsp;
             <strong>{APP_NAME_SHORT}</strong>
             &nbsp;
-            <span className={styles.AppVersion}>v2</span>
+            <span className={styles.AppVersion}>v{this.state.version}</span>
           </div>
           <div
             style={{

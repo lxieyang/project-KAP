@@ -1,6 +1,9 @@
 /* global chrome */
 import React, { Component } from 'react';
 import { RadioGroup, Radio } from 'react-radio-group';
+
+import Divider from '@material-ui/core/Divider';
+
 import styles from './Options.css';
 import Header from './components/Header/Header';
 
@@ -11,12 +14,16 @@ class Options extends Component {
 
     loadingUserInfo: true,
 
+    version: '2',
+
     // settings
     sidebarBehavior: 'overlay',
     sidebarEscapeKeyToggle: true
   };
 
   componentDidMount() {
+    this.setState({ version: chrome.app.getDetails().version });
+
     chrome.runtime.sendMessage(
       { msg: 'GET_USER_INFO', from: 'auth' },
       response => {
@@ -110,7 +117,15 @@ class Options extends Component {
     return (
       <React.Fragment>
         <Header userName={userName} userProfilePhotoURL={userProfilePhotoURL} />
+
         <div className={styles.OptionsPageContainer}>
+          <div className={styles.OptionContainer}>
+            <div className={styles.OptionLabel}>Unakite version:</div>
+            <div className={styles.OptionOptions}>{this.state.version}</div>
+          </div>
+
+          <Divider light />
+
           <div className={styles.OptionContainer}>
             <div className={styles.OptionLabel}>Sidebar open behavior:</div>
             <div className={styles.OptionOptions}>
