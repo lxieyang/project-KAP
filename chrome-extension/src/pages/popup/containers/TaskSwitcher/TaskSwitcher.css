@@ -19,13 +19,21 @@
 }
 
 .CreateNewClassName {
-  background-color: rgb(192, 240, 192);
+  background-color: rgba(192, 240, 192, 0.5);
   font-style: italic;
   transition: all 0.1s ease-in;
 }
 
 .CreateNewClassName:hover {
   background-color: rgb(192, 240, 192) !important;
+  font-weight: 600;
+}
+
+.TaskNameClassName {
+  transition: all 0.1s ease-in;
+}
+
+.TaskNameClassName:hover {
   font-weight: 600;
 }
 

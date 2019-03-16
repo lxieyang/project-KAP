@@ -66,7 +66,7 @@ const VariousButtonsContainer = styled.div`
 const createNewTaskOption = {
   value: 'create-new-task',
   label: 'Create a new task',
-  className: styles.CreateNewClassName,
+  className: classesInCSS.CreateNewClassName,
   data: {
     isStarred: false
   }
@@ -111,6 +111,7 @@ class TaskSwitcher extends Component {
           tasks.push({
             value: doc.id,
             label: doc.data().name,
+            className: classesInCSS.TaskNameClassName,
             data: {
               ...doc.data()
             }
@@ -294,7 +295,9 @@ class TaskSwitcher extends Component {
             <VariousButtonsContainer>
               <Tooltip
                 title={`${
-                  currentTask.data.isStarred ? 'Remove from Starred' : 'Add to Starred'
+                  currentTask.data.isStarred
+                    ? 'Remove from Starred'
+                    : 'Add to Starred'
                 }`}
                 placement={'bottom'}
               >
