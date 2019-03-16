@@ -59,6 +59,9 @@ const materialStyles = theme => ({
     width: '14px',
     height: '14px',
     color: 'rgb(187, 187, 187)'
+  },
+  customWidthTooltip: {
+    maxWidth: 300
   }
 });
 
@@ -852,25 +855,31 @@ class RegularCell extends Component {
             ].join(' ')}
           >
             <div className={styles.TextAreaContainer}>
-              <Textarea
-                disabled={!editAccess}
-                inputRef={tag => (this.textarea = tag)}
-                minRows={2}
-                maxRows={5}
-                placeholder={
-                  editAccess && piecesList.length === 0
-                    ? 'Type some notes as evidence'
-                    : ''
-                }
-                value={this.state.contentEdit}
-                onKeyDown={this.keyPress}
-                onBlur={e => this.saveCellContentClickedHandler(e)}
-                onChange={e => this.handleCellContentInputChange(e)}
-                className={[
-                  styles.Textarea,
-                  editAccess ? styles.TextareaEditable : null
-                ].join(' ')}
-              />
+              <Tooltip
+                disableHoverListener={this.state.contentEdit === ''}
+                title={this.state.contentEdit}
+                classes={{ tooltip: classes.customWidthTooltip }}
+              >
+                <Textarea
+                  disabled={!editAccess}
+                  inputRef={tag => (this.textarea = tag)}
+                  minRows={2}
+                  maxRows={4}
+                  placeholder={
+                    editAccess && piecesList.length === 0
+                      ? 'Type some notes as evidence'
+                      : ''
+                  }
+                  value={this.state.contentEdit}
+                  onKeyDown={this.keyPress}
+                  onBlur={e => this.saveCellContentClickedHandler(e)}
+                  onChange={e => this.handleCellContentInputChange(e)}
+                  className={[
+                    styles.Textarea,
+                    editAccess ? styles.TextareaEditable : null
+                  ].join(' ')}
+                />
+              </Tooltip>
             </div>
           </div>
         </div>

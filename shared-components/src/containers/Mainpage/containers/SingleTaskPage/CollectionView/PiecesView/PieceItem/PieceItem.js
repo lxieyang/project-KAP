@@ -376,6 +376,8 @@ class PieceItem extends Component {
         break;
     }
 
+    console.log(this.state.viewPieceNameExpand);
+
     return connectDragPreview(
       <div>
         <React.Fragment>
@@ -465,7 +467,7 @@ class PieceItem extends Component {
                         trimRight
                         basedOn="letters"
                       />
-                    ) : this.state.viewPieceNameExpand ? (
+                    ) : this.state.viewPieceNameExpand === true ? (
                       `${piece.name}`
                     ) : (
                       <LinesEllipsis
@@ -567,7 +569,6 @@ class PieceItem extends Component {
                       </Tooltip>
                     ) : null}
                   </div>
-
                   <div style={{ display: 'flex', alignItems: 'center' }}>
                     {piece.references.url !== false ? (
                       <Tooltip

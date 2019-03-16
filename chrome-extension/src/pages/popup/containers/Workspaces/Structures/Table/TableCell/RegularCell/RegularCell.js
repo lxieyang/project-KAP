@@ -54,6 +54,9 @@ const materialStyles = theme => ({
     width: '14px',
     height: '14px',
     color: 'rgb(187, 187, 187)'
+  },
+  customWidthTooltip: {
+    maxWidth: 200
   }
 });
 
@@ -768,32 +771,38 @@ class RegularCell extends Component {
           >
             <div
               className={styles.TextAreaContainer}
-              title={this.state.contentEdit}
+              // title={this.state.contentEdit} // switched to material-ui tooltip
             >
-              <Textarea
-                inputRef={tag => (this.textarea = tag)}
-                disabled={this.props.currentSelectedPieceInTable !== null}
-                minRows={1}
-                maxRows={3}
-                placeholder={''}
-                value={this.state.contentEdit}
-                onKeyDown={this.keyPress}
-                onBlur={e => this.saveCellContentClickedHandler(e)}
-                onChange={e => this.handleCellContentInputChange(e)}
-                className={[
-                  styles.Textarea,
-                  this.props.currentSelectedPieceInTable === null ||
-                  this.props.currentSelectedPieceInPieces === null
-                    ? styles.TextareaHover
-                    : null,
-                  (this.state.contentEdit !== '' &&
-                    this.props.currentSelectedPieceInTable !== null) ||
-                  (this.state.contentEdit !== '' &&
-                    this.props.currentSelectedPieceInPieces !== null)
-                    ? styles.TextareaShouldBeOpaque
-                    : null
-                ].join(' ')}
-              />
+              <Tooltip
+                disableHoverListener={this.state.contentEdit === ''}
+                title={this.state.contentEdit}
+                classes={{ tooltip: classes.customWidthTooltip }}
+              >
+                <Textarea
+                  inputRef={tag => (this.textarea = tag)}
+                  disabled={this.props.currentSelectedPieceInTable !== null}
+                  minRows={1}
+                  maxRows={3}
+                  placeholder={''}
+                  value={this.state.contentEdit}
+                  onKeyDown={this.keyPress}
+                  onBlur={e => this.saveCellContentClickedHandler(e)}
+                  onChange={e => this.handleCellContentInputChange(e)}
+                  className={[
+                    styles.Textarea,
+                    this.props.currentSelectedPieceInTable === null ||
+                    this.props.currentSelectedPieceInPieces === null
+                      ? styles.TextareaHover
+                      : null,
+                    (this.state.contentEdit !== '' &&
+                      this.props.currentSelectedPieceInTable !== null) ||
+                    (this.state.contentEdit !== '' &&
+                      this.props.currentSelectedPieceInPieces !== null)
+                      ? styles.TextareaShouldBeOpaque
+                      : null
+                  ].join(' ')}
+                />
+              </Tooltip>
             </div>
           </div>
         </div>
