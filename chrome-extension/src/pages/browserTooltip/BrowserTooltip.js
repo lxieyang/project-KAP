@@ -126,6 +126,12 @@ class BrowserTooltip extends Component {
     }
   };
 
+  allTasksClickedHandler = () => {
+    chrome.runtime.sendMessage({
+      msg: 'Go_TO_ALL_TASKS_PAGE'
+    });
+  };
+
   render() {
     const { classes } = this.props;
     const { anchorEl, userProfilePhotoURL, userName } = this.state;
@@ -144,10 +150,25 @@ class BrowserTooltip extends Component {
             padding: '10px 18px'
           }}
         >
-          <Logo size="24px" /> &nbsp;{' '}
-          <span style={{ fontSize: '20px', fontWeight: 600, flexGrow: 1 }}>
-            {APP_NAME_SHORT}
-          </span>
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              cursor:
+                !this.state.loadingUserInfo && isLoggedIn ? 'pointer' : null
+            }}
+            onClick={() => {
+              if (!this.state.loadingUserInfo && isLoggedIn) {
+                this.allTasksClickedHandler();
+              }
+            }}
+          >
+            <Logo size="24px" /> &nbsp;{' '}
+            <span style={{ fontSize: '20px', fontWeight: 600, flexGrow: 1 }}>
+              {APP_NAME_SHORT}
+            </span>
+          </div>
+          <div style={{ flex: 1 }} />
           {!this.state.loadingUserInfo && isLoggedIn ? (
             <div>
               <IconButton
