@@ -774,7 +774,11 @@ class RegularCell extends Component {
               // title={this.state.contentEdit} // switched to material-ui tooltip
             >
               <Tooltip
-                disableHoverListener={this.state.contentEdit === ''}
+                disableHoverListener={
+                  this.state.contentEdit === '' ||
+                  this.props.currentSelectedPieceInTable !== null ||
+                  this.props.currentSelectedPieceInPieces !== null
+                }
                 title={this.state.contentEdit}
                 classes={{ tooltip: classes.customWidthTooltip }}
               >

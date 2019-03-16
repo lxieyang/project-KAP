@@ -676,7 +676,12 @@ class Piece extends Component {
                       </Tooltip>
                     ) : null}
                   </div>
-                  <div style={{ display: 'flex', alignItems: 'center' }}>
+                  <div
+                    style={{ display: 'flex', alignItems: 'center' }}
+                    onClick={e => {
+                      e.stopPropagation();
+                    }}
+                  >
                     {piece.references.url !== false ? (
                       <Tooltip
                         title={`${
@@ -687,13 +692,16 @@ class Piece extends Component {
                         <a
                           href={piece.references.url}
                           target="__blank"
-                          className={classesInCSS.SiteIcon}
+                          className={classesInCSS.SiteOrigin}
                         >
                           <img
                             src={GET_FAVICON_URL_PREFIX + piece.references.url}
                             alt={'favicon'}
                             className={classesInCSS.SiteIcon}
                           />
+                          <span className={classesInCSS.SiteIconText}>
+                            {new URL(piece.references.url).hostname}
+                          </span>
                         </a>
                       </Tooltip>
                     ) : null}

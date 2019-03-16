@@ -10,6 +10,7 @@ import fasBookmark from '@fortawesome/fontawesome-free-solid/faBookmark';
 import LinesEllipsis from 'react-lines-ellipsis';
 
 import { withStyles } from '@material-ui/core/styles';
+import Chip from '@material-ui/core/Chip';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import Collapse from '@material-ui/core/Collapse';
@@ -22,7 +23,6 @@ import Chat from 'mdi-material-ui/Chat';
 import Looks from 'mdi-material-ui/Looks';
 import Tooltip from '@material-ui/core/Tooltip';
 import Switch from '@material-ui/core/Switch';
-import Chip from '@material-ui/core/Chip';
 
 import Textarea from 'react-textarea-autosize';
 
@@ -376,8 +376,6 @@ class PieceItem extends Component {
         break;
     }
 
-    console.log(this.state.viewPieceNameExpand);
-
     return connectDragPreview(
       <div>
         <React.Fragment>
@@ -467,9 +465,7 @@ class PieceItem extends Component {
                         trimRight
                         basedOn="letters"
                       />
-                    ) : this.state.viewPieceNameExpand === true ? (
-                      `${piece.name}`
-                    ) : (
+                    ) : this.state.viewPieceNameExpand === false ? (
                       <LinesEllipsis
                         text={piece.name}
                         maxLine={3}
@@ -477,6 +473,8 @@ class PieceItem extends Component {
                         trimRight
                         basedOn="letters"
                       />
+                    ) : (
+                      `${piece.name}`
                     )}
                   </div>
                 )}
@@ -580,13 +578,16 @@ class PieceItem extends Component {
                         <a
                           href={piece.references.url}
                           target="__blank"
-                          className={classesInCSS.SiteIcon}
+                          className={classesInCSS.SiteOrigin}
                         >
                           <img
                             src={GET_FAVICON_URL_PREFIX + piece.references.url}
                             alt={'favicon'}
                             className={classesInCSS.SiteIcon}
                           />
+                          <span className={classesInCSS.SiteIconText}>
+                            {new URL(piece.references.url).hostname}
+                          </span>
                         </a>
                       </Tooltip>
                     ) : null}

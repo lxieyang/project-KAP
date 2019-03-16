@@ -110,12 +110,30 @@
   transform: scale(0.75);
 }
 
+.SiteOrigin {
+  /* width: 14px; */
+  height: 16px;
+  background: #e0e0e0;
+  display: flex;
+  /* justify-content: center; */
+  align-items: center;
+  text-decoration: none;
+  /* padding: 1px 3px; */
+  border-radius: 8px;
+  margin-bottom: 3px;
+}
+
 .SiteIcon {
-  width: 14px;
-  height: 14px;
-  /* border-radius: 3px; */
-  background: transparent;
-  /* box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.16), 0 1px 5px 0 rgba(0, 0, 0, 0.12); */
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+}
+
+.SiteIconText {
+  font-weight: 300 !important;
+  font-size: 10px;
+  padding-left: 2px;
+  padding-right: 6px;
 }
 
 .Moment {
