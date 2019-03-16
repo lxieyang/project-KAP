@@ -33,7 +33,10 @@ import {
   TABLE_CELL_TYPES
 } from '../../../../../../../shared/types';
 import { PIECE_COLOR, THEME_COLOR } from '../../../../../../../shared/theme';
-import { GET_FAVICON_URL_PREFIX } from '../../../../../../../shared/constants';
+import {
+  GET_FAVICON_URL_PREFIX,
+  APP_NAME_SHORT
+} from '../../../../../../../shared/constants';
 import Spinner from '../../../../../../../components/UI/Spinner/Spinner';
 import Comments from './Comments/Comments';
 import classesInCSS from './PieceItem.css';
@@ -590,6 +593,8 @@ class PieceItem extends Component {
                           </span>
                         </a>
                       </Tooltip>
+                    ) : piece.annotationType === ANNOTATION_TYPES.Manual ? (
+                      <span className={classesInCSS.CreatedBadge}>Created</span>
                     ) : null}
 
                     <div className={classesInCSS.Moment}>

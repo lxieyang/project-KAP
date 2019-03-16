@@ -136,6 +136,11 @@
   padding-right: 6px;
 }
 
+.CreatedBadge {
+  font-weight: 300 !important;
+  font-size: 10px;
+}
+
 .Moment {
   margin-left: 6px;
   font-size: 11px;

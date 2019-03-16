@@ -704,6 +704,8 @@ class Piece extends Component {
                           </span>
                         </a>
                       </Tooltip>
+                    ) : piece.annotationType === ANNOTATION_TYPES.Manual ? (
+                      <span className={classesInCSS.CreatedBadge}>Created</span>
                     ) : null}
 
                     <div className={classesInCSS.Moment}>
