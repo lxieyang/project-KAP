@@ -13,6 +13,7 @@ import './Modules/Settings';
 import './Modules/AnnotationSupport';
 import './Modules/ScreenshotSupport';
 import './Modules/Misc';
+import './Modules/GA';
 
 window.FirestoreManager = FirestoreManager;
 

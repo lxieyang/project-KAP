@@ -4,8 +4,6 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { dragElement } from './content.utility';
 import ScreenshotModal from './components/ScreenshotModal';
-// import firebase from '../../../../shared-components/src/firebase/firebase';
-// import * as FirestoreManager from '../../../../shared-components/src/firebase/firestore_wrapper';
 import { ANNOTATION_TYPES } from '../../../../shared-components/src/shared/types';
 import { APP_NAME_SHORT } from '../../../../shared-components/src/shared/constants';
 import Frame from './frame';

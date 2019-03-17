@@ -59,7 +59,7 @@ const toggleButtonClass = css({
   position: 'fixed',
   bottom: '40px',
   right: '30px',
-  zIndex: 20000
+  zIndex: 9999999999
 });
 
 const toggleButtonInnerClass = css({

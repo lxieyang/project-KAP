@@ -15,8 +15,6 @@ import {
 } from '../../../../../shared-components/src/shared/types';
 import { PIECE_COLOR } from '../../../../../shared-components/src/shared/theme';
 import { Highlight, Snippet } from 'siphon-tools';
-import firebase from '../../../../../shared-components/src/firebase/firebase';
-import * as FirestoreManager from '../../../../../shared-components/src/firebase/firestore_wrapper';
 import { ANNOTATION_TYPES } from '../../../../../shared-components/src/shared/types';
 import styles from './SelectTooltipButton.css';
 
