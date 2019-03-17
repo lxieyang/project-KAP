@@ -32,11 +32,78 @@ const ActionButton = withStyles({
   }
 })(Button);
 
+class TableViewName extends Component {
+  state = {
+    workspaceNameEdit: this.props.workspace.name
+  };
+
+  componentDidUpdate(prevProps, prevState) {
+    if (prevProps.workspace.name !== this.props.workspace.name) {
+      this.setState({ workspaceNameEdit: this.props.workspace.name });
+    }
+  }
+
+  handleWorkspaceNameChange = e => {
+    this.setState({ workspaceNameEdit: e.target.value });
+  };
+
+  updateWorkspaceName = () => {
+    let workspaceName = this.state.workspaceNameEdit;
+    if (
+      workspaceName !== null &&
+      workspaceName !== '' &&
+      workspaceName !== this.props.workspace.name
+    ) {
+      FirestoreManager.updateWorkspaceName(
+        this.props.workspace.id,
+        workspaceName.trim()
+      );
+      this.setState({ workspaceNameEdit: workspaceName.trim() });
+    } else if (workspaceName === '') {
+      this.setState({ workspaceNameEdit: this.props.workspace.name });
+    }
+    this.textarea.scrollTo(0, 0);
+  };
+
+  render() {
+    const { editAccess, workspaceTypeString, workspace } = this.props;
+    let { workspaceNameEdit } = this.state;
+
+    return (
+      <div
+        className={styles.TableNameContainer}
+        title={editAccess ? `Edit ${workspaceTypeString} name` : null}
+      >
+        {editAccess ? (
+          <Textarea
+            inputRef={tag => (this.textarea = tag)}
+            minRows={1}
+            maxRows={2}
+            disabled={!editAccess}
+            placeholder={'Add a name'}
+            value={workspaceNameEdit}
+            onBlur={() => this.updateWorkspaceName()}
+            onKeyDown={e => {
+              if (e.key === 'Enter' && !e.shiftKey) {
+                e.target.blur();
+              }
+            }}
+            onChange={e => this.handleWorkspaceNameChange(e)}
+            className={styles.Textarea}
+          />
+        ) : (
+          <span>{workspace.name}</span>
+        )}
+      </div>
+    );
+  }
+}
+
 class TableView extends Component {
   state = {
     workspace: this.props.workspace,
 
-    workspaceNameEdit: this.props.workspace.name,
+    // workspaceNameEdit: this.props.workspace.name,
 
     // cells
     cells: null,
@@ -82,7 +149,6 @@ class TableView extends Component {
   };
 
   componentDidMount() {
-    this.keyPress = this.keyPress.bind(this);
     this.unsubscribeWorkspace = FirestoreManager.getAllTableCellsInTableById(
       this.props.workspace.id
     ).onSnapshot(querySnapshot => {
@@ -103,38 +169,9 @@ class TableView extends Component {
     }
   }
 
-  // also allow Enter to submit
-  keyPress(e) {
-    // if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      this.textarea.blur();
-    }
-  }
-
   componentWillUnmount() {
     this.unsubscribeWorkspace();
   }
-
-  handleWorkspaceNameChange = e => {
-    this.setState({ workspaceNameEdit: e.target.value });
-  };
-
-  updateWorkspaceName = () => {
-    let workspaceName = this.state.workspaceNameEdit.trim();
-    if (
-      workspaceName !== null &&
-      workspaceName !== '' &&
-      workspaceName !== this.props.workspace.name
-    ) {
-      FirestoreManager.updateWorkspaceName(
-        this.props.workspace.id,
-        workspaceName
-      );
-    } else if (workspaceName === '') {
-      this.setState({ workspaceNameEdit: this.props.workspace.name });
-    }
-    this.textarea.scrollTo(0, 0);
-  };
 
   createNewTableColumn = (event, atEnd = true) => {
     FirestoreManager.createNewColumnInTable(this.props.workspace.id);
@@ -166,7 +203,7 @@ class TableView extends Component {
       workspaceTypeString,
       classes
     } = this.props;
-    const { cells, workspaceNameEdit } = this.state;
+    const { cells } = this.state;
     let tableRows = workspace.data;
 
     // console.log(cells);
@@ -329,27 +366,11 @@ class TableView extends Component {
       <React.Fragment>
         <div className={styles.TableViewContainer}>
           {/* Table Name */}
-          <div
-            className={styles.TableNameContainer}
-            title={editAccess ? `Edit ${workspaceTypeString} name` : null}
-          >
-            {editAccess ? (
-              <Textarea
-                inputRef={tag => (this.textarea = tag)}
-                minRows={1}
-                maxRows={2}
-                disabled={!editAccess}
-                placeholder={'Add a name'}
-                value={workspaceNameEdit}
-                onBlur={() => this.updateWorkspaceName()}
-                onKeyDown={this.keyPress}
-                onChange={e => this.handleWorkspaceNameChange(e)}
-                className={styles.Textarea}
-              />
-            ) : (
-              <span>{workspace.name}</span>
-            )}
-          </div>
+          <TableViewName
+            editAccess={editAccess}
+            workspace={workspace}
+            workspaceTypeString={workspaceTypeString}
+          />
 
           {/* Table Content */}
           <div className={styles.TableContentContainer}>
