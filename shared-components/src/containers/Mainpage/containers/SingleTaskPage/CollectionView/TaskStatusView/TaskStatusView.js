@@ -9,8 +9,10 @@ import styles from './TaskStatusView.css';
 import { withStyles } from '@material-ui/core/styles';
 import IconButton from '@material-ui/core/IconButton';
 import Star from 'mdi-material-ui/Star';
+import Chat from 'mdi-material-ui/Chat';
 import Link from 'mdi-material-ui/Link';
 import StarOutline from 'mdi-material-ui/StarOutline';
+import Collapse from '@material-ui/core/Collapse';
 import Tooltip from '@material-ui/core/Tooltip';
 
 import { ToastContainer, toast, Flip } from 'react-toastify';
@@ -45,6 +47,9 @@ class TaskStatusView extends Component {
     editAccess: false,
     commentAccess: false,
 
+    currentTaskCommentsCount: 0,
+    commentsExpanded: false,
+
     // author detail
     author: null
   };
@@ -63,6 +68,18 @@ class TaskStatusView extends Component {
   componentWillUnmount() {
     if (this.unsubscribeTaskId) this.unsubscribeTaskId();
   }
+
+  setCurrentTaskCommentsCount = count => {
+    this.setState({ currentTaskCommentsCount: count });
+  };
+
+  toggleCommentsExpandedStatus = () => {
+    this.setState(prevState => {
+      return {
+        commentsExpanded: !prevState.commentsExpanded
+      };
+    });
+  };
 
   updateTask = () => {
     let taskId = getTaskIdFromPath(this.props.history.location.pathname);
@@ -226,6 +243,41 @@ class TaskStatusView extends Component {
               className={styles.Textarea}
             />
           </div>
+
+          <div style={{ position: 'relative' }}>
+            <Tooltip
+              title={
+                this.state.currentTaskCommentsCount > 0
+                  ? this.state.commentsExpanded
+                    ? 'Hide Comments'
+                    : 'Show comments'
+                  : 'Make comments'
+              }
+              placement={'bottom'}
+            >
+              <IconButton
+                style={{
+                  backgroundColor: this.state.commentsExpanded
+                    ? 'rgb(235, 235, 235)'
+                    : null
+                }}
+                aria-label="Comment"
+                className={classes.iconButtons}
+                onClick={() => this.toggleCommentsExpandedStatus()}
+              >
+                <Chat className={classes.iconInIconButtons} />
+              </IconButton>
+            </Tooltip>
+            <span
+              style={{ color: THEME_COLOR.badgeColor }}
+              className={styles.CommentCount}
+            >
+              {this.state.currentTaskCommentsCount > 0
+                ? this.state.currentTaskCommentsCount
+                : null}
+            </span>
+          </div>
+
           {editAccess && (
             <React.Fragment>
               <Tooltip title={`Get sharable link`} placement={'bottom'}>
@@ -255,13 +307,16 @@ class TaskStatusView extends Component {
             </React.Fragment>
           )}
         </div>
-        <div className={styles.TaskCommentsContainer}>
-          <TaskComments
-            currentAuthor={FirestoreManager.getCurrentUser()}
-            taskId={this.state.task.id}
-            commentAccess={commentAccess}
-          />
-        </div>
+        <Collapse in={this.state.commentsExpanded} timeout="auto">
+          <div className={styles.TaskCommentsContainer}>
+            <TaskComments
+              currentAuthor={FirestoreManager.getCurrentUser()}
+              taskId={this.state.task.id}
+              commentAccess={commentAccess}
+              setCurrentTaskCommentsCount={this.setCurrentTaskCommentsCount}
+            />
+          </div>
+        </Collapse>
       </React.Fragment>
     );
   }

@@ -53,6 +53,7 @@ class TaskComments extends Component {
   updateTaskComments = taskId => {
     if (this.unsubscribeComments) this.unsubscribeComments();
     this.setState({ comments: [] });
+    this.props.setCurrentTaskCommentsCount(0);
     this.unsubscribeComments = FirestoreManager.getAllCommentsToTask(taskId)
       .orderBy('creationDate', 'desc')
       .onSnapshot(querySnapshot => {
@@ -64,6 +65,7 @@ class TaskComments extends Component {
           });
         });
         this.setState({ comments });
+        this.props.setCurrentTaskCommentsCount(comments.length);
       });
   };
 
