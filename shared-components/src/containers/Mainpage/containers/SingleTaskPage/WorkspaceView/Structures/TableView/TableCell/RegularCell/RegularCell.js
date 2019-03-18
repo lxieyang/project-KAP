@@ -709,7 +709,7 @@ class RegularCell extends Component {
                         <div
                           className={[styles.AttitudeInTableCell].join(' ')}
                           data-tip
-                          data-for={`${p.pieceId}`}
+                          data-for={`${cell.id}-${p.pieceId}`}
                         >
                           <RatingIcon
                             editAccess={editAccess}
@@ -804,7 +804,7 @@ class RegularCell extends Component {
                         type="light"
                         effect="solid"
                         delayHide={100}
-                        id={`${p.pieceId}`}
+                        id={`${cell.id}-${p.pieceId}`}
                         className={styles.TooltipOverAttitude}
                         getContent={() => {
                           return (

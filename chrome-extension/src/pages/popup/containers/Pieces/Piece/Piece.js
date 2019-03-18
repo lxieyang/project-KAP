@@ -696,7 +696,7 @@ class Piece extends Component {
                         >
                           <img
                             src={GET_FAVICON_URL_PREFIX + piece.references.url}
-                            alt={'favicon'}
+                            alt={''}
                             className={classesInCSS.SiteIcon}
                           />
                           <span className={classesInCSS.SiteIconText}>
