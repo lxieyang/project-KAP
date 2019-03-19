@@ -1,0 +1,61 @@
+.CommentBox {
+  padding: 0px;
+  transition: all 0.1s ease-in;
+}
+
+.CommentListContainer {
+  padding: 0px;
+}
+
+.EditCommentBox {
+  margin-top: 2px;
+  margin-bottom: 6px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.AuthorIdentifierContainer {
+  margin-left: 5px;
+}
+
+.TextAreaContainer {
+  flex-grow: 1;
+  margin: 2px 2px 2px 4px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.Textarea {
+  display: block;
+  box-sizing: border-box;
+  width: 97%;
+  resize: none;
+  overflow: auto;
+
+  font-size: 13px;
+  padding: 6px 8px;
+
+  border: 1px solid rgb(226, 226, 226);
+  border-radius: 4px;
+  color: #000;
+  background: transparent !important;
+}
+
+.Textarea:focus {
+  color: #35383a;
+  background-color: #fff !important;
+  border-color: rgb(17, 100, 224);
+  outline: none;
+}
+
+.TextareaActionBar {
+  margin-top: 6px;
+  margin-left: 12px;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+
+  opacity: 0.8;
+}

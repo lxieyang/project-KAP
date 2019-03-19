@@ -1,50 +1,3 @@
-.OptionsRequiementsContainer {
-  display: flex;
-  margin-top: 10px;
-}
-
-.GoToNewTabBtn {
-  font-weight: 600;
-  font-size: 1.5rem;
-  cursor: pointer;
-}
-
-.GoToNewTabBtn:hover {
-  text-decoration: underline;
-} 
-
-
-
-/* snackbar */
-.SnackbarLeft {
-  max-width: 300px;
-}
-
-.SnackbarRight {
-  margin-left: 40px;
-  height: 100%;
-  display: flex;
-  align-items: center;
-}
-
-.UndoButton {
-  font-size: 1.0rem;
-  font-weight: 600;
-  border-radius: 5px;
-  cursor: pointer;
-  background-color: #eee
-}
-
-.UndoButton:hover {
-  background-color: #fff;
-}
-
-.UndoButton:focus {
-  outline: none;
-}
-
-
-
 /* sign in */
 .SignInButton {
   display: flex;
@@ -57,12 +10,12 @@
   opacity: 0.8;
   background-color: #fff;
   color: inherit;
-  box-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
   transition: all 0.1s ease-in;
 }
 
 .SignInButton:hover {
-  box-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
   background-color: #efefef;
 }
 

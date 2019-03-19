@@ -1,11 +1,10 @@
 /* global chrome */
 import React from 'react';
 
-import ThumbUp from '../../../../assets/images/thumb-up-100.jpg';
-import ThumbDown from '../../../../assets/images/thumb-down-100.jpg';
-import styles from './ThumbV1.css';
+import ThumbUp from '../../../../assets/images/thumb-up-100.png';
+import ThumbDown from '../../../../assets/images/thumb-down-100.png';
 
-const thumbV1 = (props) => {
+const thumbV1 = props => {
   const { type } = props;
 
   let srcUp = ThumbUp;
@@ -15,17 +14,29 @@ const thumbV1 = (props) => {
     srcDown = chrome.extension.getURL(ThumbDown);
   }
   return (
-    
-      <img 
-        className={styles.Image}
-        src={
-          type === 'up'
-          ? srcUp
-          : srcDown
-        }
-        alt="thumb"/>
- 
+    <img
+      src={type === 'up' ? srcUp : srcDown}
+      alt="thumb"
+      style={{
+        maxWidth: '100%',
+        maxHeight: '100%',
+        width: 'auto',
+        height: 'auto',
+        borderRadius: '50%',
+        display: 'inline'
+      }}
+    />
   );
-}
+};
+
+export const thumbUpSrc =
+  window.chrome !== undefined && chrome.extension !== undefined
+    ? chrome.extension.getURL(ThumbUp)
+    : ThumbUp;
+
+export const thumbDownSrc =
+  window.chrome !== undefined && chrome.extension !== undefined
+    ? chrome.extension.getURL(ThumbDown)
+    : ThumbDown;
 
 export default thumbV1;

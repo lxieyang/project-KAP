@@ -1,0 +1,27 @@
+.TopChip {
+  background-color: gray;
+  color: #fff;
+  padding: 3px 16px;
+  border-radius: 20px;
+  margin-bottom: 6px;
+  opacity: 0.5;
+  transition: all 0.1s ease-in;
+}
+
+.TopChip:hover {
+  opacity: 1;
+}
+
+.BottomChip {
+  background-color: gray;
+  color: #fff;
+  padding: 3px 16px;
+  border-radius: 20px;
+  margin-bottom: 6px;
+  opacity: 0.5;
+  transition: all 0.1s ease-in;
+}
+
+.BottomChip:hover {
+  opacity: 1;
+}

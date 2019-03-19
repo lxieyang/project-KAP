@@ -1,13 +1,12 @@
 .AppHeader {
-  width: 100%;
-  margin-left: -25px;
-  margin-right: -25px;
   margin-bottom: 10px;
-  padding: 10px 25px 10px 25px;
+  min-height: 36px;
+  padding: 6px 10px 6px 10px;
   display: flex;
   align-items: center;
   background-color: rgba(251, 251, 251, 1);
-  box-shadow: 0 2px 6px 0 rgba(60,64,67,.15);
+  box-shadow: 0 2px 6px 0 rgba(60, 64, 67, 0.15);
+  box-sizing: border-box;
 }
 
 .isLoggedIn {
@@ -15,38 +14,25 @@
 }
 
 .isNotLoggedIn {
-  justify-content: space-around;
+  justify-content: space-between;
 }
 
 .HeaderText {
-  font-size: 1.15rem;
+  font-size: 1rem;
   display: flex;
   align-items: center;
   cursor: pointer;
 }
 
-.LetterC {
-  color: #4285f4;
+.AppVersion {
+  font-size: 0.7rem;
+  opacity: 0.5;
+  align-self: flex-start;
 }
 
-.LetterH {
-  color: #ea4335;
-}
-
-.LetterR {
-  color: #fbbc05;
-}
-
-.LetterO {
-  color: #4285f4;
-}
-
-.LetterM {
-  color: #34a853;
-}
-
-.LetterE {
-  color: #ea4335;
+.SignInOutButtonInline {
+  color: rgb(194, 40, 27);
+  cursor: pointer;
 }
 
 .HeaderIconContainer {
@@ -66,19 +52,18 @@
   opacity: 0.8;
   background-color: #fefefe;
   color: inherit;
-  box-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
   transition: all 0.1s ease-in;
 }
 
 .HeaderButton:hover {
-  box-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
   background-color: #efefef;
 }
 
 .IconInButton {
   margin-right: 6px;
 }
-
 
 /* .IconInHeader {
   margin-left: 20px;
@@ -101,37 +86,38 @@
   cursor: pointer;
   margin-left: 30px;
   margin-right: -4px;
-  font-size: 1.1rem;
-  padding: 6px 8px;
+  font-size: 0.9rem;
+  padding: 3px 5px;
   border-radius: 5px;
   transition: all 0.1s ease-in;
 }
 
 .Profile:hover {
-  box-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
   background-color: #eee;
 }
 
 .ProfileImg {
-  width: 30px;
-  height: 30px;
-  margin-right: 10px;
+  width: 18px;
+  height: 18px;
+  margin-right: 5px;
   border: 1px solid grey;
   border-radius: 50%;
-  box-shadow: 0 2px 5px 0 rgba(0,0,0,0.16), 0 2px 10px 0 rgba(0,0,0,0.12);
+  box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);
 }
 
 .LogoutPopoverContainer {
   /* background-color: black;
   color: white; */
   background-color: white;
-  font-size: 1.0rem;
+  color: #666;
+  font-weight: 100;
+  font-size: 0.9rem;
   text-decoration: none;
-  box-shadow: 0 2px 5px 0 rgba(0,0,0,0.16), 0 2px 10px 0 rgba(0,0,0,0.12);
+  box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);
 }
 
 .PopoverContentContainer {
-  
 }
 
 .PopoverContentContainer ul {
@@ -160,7 +146,6 @@
 }
 
 .IconInPopover {
-  
 }
 
 .SpinnerContainer {

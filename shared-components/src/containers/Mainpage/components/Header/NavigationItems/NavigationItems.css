@@ -29,12 +29,17 @@
   width: auto;
   opacity: 0.4;
   transition: all 0.1s ease-in-out;
-
 }
 
 .Label {
   font-weight: 600;
   margin-right: 10px;
+}
+
+.TaskName {
+  font-weight: 400;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .InactiveNavigationItem a {

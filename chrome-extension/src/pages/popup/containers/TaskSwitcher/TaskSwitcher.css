@@ -1,0 +1,62 @@
+.DropdownRoot {
+  width: 90%;
+}
+
+.DropdownControl {
+  max-width: 100%;
+  text-overflow: ellipsis;
+}
+
+.DropdownPlaceholder {
+  max-width: 95%;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.DropdownMenu {
+  max-height: 300px;
+  overflow: auto;
+}
+
+.CreateNewClassName {
+  background-color: rgba(192, 240, 192, 0.5);
+  font-style: italic;
+  transition: all 0.1s ease-in;
+}
+
+.CreateNewClassName:hover {
+  background-color: rgb(192, 240, 192) !important;
+  font-weight: 600;
+}
+
+.TaskNameClassName {
+  transition: all 0.1s ease-in;
+}
+
+.TaskNameClassName:hover {
+  font-weight: 600;
+}
+
+.CommentCount {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  box-sizing: border-box;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  font-size: 14px;
+  font-weight: 500;
+  border-radius: 50%;
+  padding: 2px;
+  opacity: 0.8;
+  transform: scale(0.75);
+}
+
+.TaskCommentsContainer {
+  max-height: 450px;
+  overflow: auto;
+}

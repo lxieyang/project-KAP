@@ -1,253 +1,418 @@
 import React, { Component } from 'react';
 
 import { withRouter } from 'react-router-dom';
-import * as appRoutes from '../../../shared/routes';
 import FontAwesomeIcon from '@fortawesome/react-fontawesome';
-import fasStar from '@fortawesome/fontawesome-free-solid/faStar';
-import farStar from '@fortawesome/fontawesome-free-regular/faStar';
-import fasTrash from '@fortawesome/fontawesome-free-solid/faTrash';
-import fasCircleNotch from '@fortawesome/fontawesome-free-solid/faCircleNotch';
 import fasListUl from '@fortawesome/fontawesome-free-solid/faListUl';
 import fasFlagCheckered from '@fortawesome/fontawesome-free-solid/faFlagCheckered';
-import fasPuzzlePiece from '@fortawesome/fontawesome-free-solid/faPuzzlePiece';
-import fasDiagnoses from '@fortawesome/fontawesome-free-solid/faDiagnoses';
-import fasCheck from '@fortawesome/fontawesome-free-solid/faCheck';
-import ReactTooltip from 'react-tooltip';
-import HorizontalDivider from '../../UI/Divider/HorizontalDivider/HorizontalDivider';
+import fasBookmark from '@fortawesome/fontawesome-free-solid/faBookmark';
 import styles from './TaskCard.css';
 import moment from 'moment';
-import { DragSource, DropTarget } from 'react-dnd';
-import PropTypes from 'prop-types';
-import * as FirebaseStore from '../../../firebase/store';
+import * as FirestoreManager from '../../../firebase/firestore_wrapper';
+import { PIECE_COLOR, THEME_COLOR } from '../../../shared/theme';
+import { PIECE_TYPES } from '../../../shared/types';
+import { getTaskLink } from '../../../shared/utilities';
 
+import { withStyles } from '@material-ui/core/styles';
+import Card from '@material-ui/core/Card';
+import CardHeader from '@material-ui/core/CardHeader';
+import CardContent from '@material-ui/core/CardContent';
+import Star from 'mdi-material-ui/Star';
+import StarOutline from 'mdi-material-ui/StarOutline';
+import Link from 'mdi-material-ui/Link';
+import PencilCircleOutline from 'mdi-material-ui/PencilCircleOutline';
+import DeleteCircleOutline from 'mdi-material-ui/DeleteCircleOutline';
+import Avatar from '@material-ui/core/Avatar';
+import IconButton from '@material-ui/core/IconButton';
+import MoreVertIcon from '@material-ui/icons/MoreVert';
+import Divider from '@material-ui/core/Divider';
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
 
-import Popover from 'react-tiny-popover';
-import fasMore from '@fortawesome/fontawesome-free-solid/faEllipsisV';
+import { ToastContainer, toast, Flip } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { CopyToClipboard } from 'react-copy-to-clipboard';
 
-/* drag and drop */
-const cardSource = {
-  beginDrag(props) {
-    // console.log("BEGINNING Dragging card [ID: " + props.id + "]");
-    return {
-      id: props.id,
-      taskName: props.taskName
-    }
+const materialStyles = theme => ({
+  card: {
+    width: 300,
+    height: 'auto',
+    margin: '20px 15px'
   },
-
-  endDrag(props, monitor, component) {
-    // console.log("END DRAGGING")
-    // const item = monitor.getDropResult();
-    // console.log(item);
-  }
-}
-
-const cardTarget = {
-  canDrop(props, monitor, component) {
-    if (monitor.getItem().id === props.id) {
-      return false;
-    }
-    return true;
+  headerButtons: {
+    transform: 'scale(0.7)'
   },
-
-  drop(props, monitor, component) {
-    // console.log("DROPPED on card [ID:" + props.id + "]");
-    const item = monitor.getItem();
-    if (props.id !== item.id) {
-      // combine two tasks
-      props.combineSourceTaskWithTargetTask(item.id, item.taskName, props.id, props.taskName);
-    }
-
-    // console.log(item);
-    return {
-      id: props.id
-    }
+  media: {
+    height: 0,
+    paddingTop: '56.25%' // 16:9
+  },
+  actions: {
+    display: 'flex'
+  },
+  expand: {
+    transform: 'rotate(0deg)',
+    marginLeft: 'auto',
+    transition: theme.transitions.create('transform', {
+      duration: theme.transitions.duration.shortest
+    })
+  },
+  expandOpen: {
+    transform: 'rotate(180deg)'
   }
-}
+});
 
-const collectDrag = (connect, monitor) => {
-  return {
-    connectDragSource: connect.dragSource(),
-    isDragging: monitor.isDragging(),
+const StyledCardHeader = withStyles({
+  root: {
+    padding: '6px 0px'
+  },
+  avatar: {
+    marginRight: 0
+  },
+  action: {
+    margin: 0
+  },
+  content: {
+    fontSize: '1rem'
+  },
+  title: {
+    fontSize: '0.95rem'
+  },
+  subheader: {
+    fontSize: '0.7rem'
   }
-}
+})(CardHeader);
 
-const collectDrop = (connect, monitor) => {
-  return {
-    connectDropTarget: connect.dropTarget(),
-    isOver: monitor.isOver(),
-    canDrop: monitor.canDrop()
+const StyledCardContent = withStyles({
+  root: {
+    padding: '6px 6px 6px 6px'
   }
-}
+})(CardContent);
 
-
-// https://www.npmjs.com/package/react-awesome-popover
-// @DropTarget('TASKCARD', cardTarget, collectDrop)
-// @DragSource('TASKCARD', cardSource, collectDrag)
 class TaskCard extends Component {
   state = {
-    isPopoverOpen: false
+    // menu
+    anchorEl: null,
+
+    optionCount: 0,
+    criterionCount: 0,
+    snippetCount: 0
+  };
+
+  componentDidMount() {
+    this.unsubscribeStatsOption = FirestoreManager.getAllPiecesInTask(
+      this.props.task.id
+    )
+      .where('pieceType', '==', PIECE_TYPES.option)
+      .onSnapshot(querySnapshot => {
+        this.setState({ optionCount: querySnapshot.docs.length });
+      });
+
+    this.unsubscribeStatsCriterion = FirestoreManager.getAllPiecesInTask(
+      this.props.task.id
+    )
+      .where('pieceType', '==', PIECE_TYPES.criterion)
+      .onSnapshot(querySnapshot => {
+        this.setState({ criterionCount: querySnapshot.docs.length });
+      });
+
+    this.unsubscribeStatsSnippet = FirestoreManager.getAllPiecesInTask(
+      this.props.task.id
+    )
+      .where('pieceType', '==', PIECE_TYPES.snippet)
+      .onSnapshot(querySnapshot => {
+        this.setState({ snippetCount: querySnapshot.docs.length });
+      });
   }
+
+  componentWillUnmount() {
+    this.unsubscribeStatsOption();
+    this.unsubscribeStatsCriterion();
+    this.unsubscribeStatsSnippet();
+  }
+
+  handleClick = event => {
+    this.setState({ anchorEl: event.currentTarget });
+  };
+
+  handleDeleteButtonClicked = (taskId, taskName) => {
+    this.props.handleDeleteButtonClicked(taskId, taskName);
+    this.handleClose();
+  };
+
+  handleEditTaskNameButtonClicked = (taskId, currentName) => {
+    this.handleClose();
+    let taskName = prompt('Change the task name to:', currentName);
+    if (taskName !== null && taskName !== '' && taskName !== currentName) {
+      FirestoreManager.updateTaskName(taskId, taskName);
+    }
+  };
+
+  handleClose = () => {
+    this.setState({ anchorEl: null });
+  };
 
   switchPopoverOpenStatus = () => {
     this.setState(prevState => {
-      return {isPopoverOpen: !prevState.isPopoverOpen}
+      return { isPopoverOpen: !prevState.isPopoverOpen };
     });
-  }
-
-  static propTypes = {
-    // Injected by React DnD:
-    connectDragSource: PropTypes.func.isRequired,
-    isDragging: PropTypes.bool.isRequired,
-    connectDropTarget: PropTypes.func.isRequired,
-    isOver: PropTypes.bool.isRequired,
-    canDrop: PropTypes.bool.isRequired
   };
 
-
-  deleteTaskWithId = (event, id) => {
-    FirebaseStore.deleteTaskWithId(id);
-    this.setState({isPopoverOpen: false});
-  }
-
-  titleClickedHandler = (event, id) => {
-    FirebaseStore.switchCurrentTask(id);
-
+  titleClickedHandler = taskId => {
     // rerouting
-    this.props.history.push(appRoutes.CURRENT_TASK);
-  }
+    this.props.history.push(`/tasks/${taskId}`);
+  };
 
-  starClicked = (event, id) => {
-    FirebaseStore.switchStarStatusOfSelectedTask(id);
-    this.setState({isPopoverOpen: false});
-  }
+  toggleTaskStarStatus = (taskId, to) => {
+    FirestoreManager.toggleTaskStarStatus(taskId, to);
+  };
 
-  render () {
-    const { connectDragSource, isDragging, connectDropTarget, canDrop, isOver } = this.props;
-    const isActive = canDrop && isOver;
+  getSharableLinkClickedHandler = (taskId, taskName) => {
+    this.handleClose();
+    toast.success(
+      <div>
+        Link for <strong>{taskName}</strong> copied to clipboard!
+      </div>,
+      {
+        position: 'top-center',
+        autoClose: 2000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: false
+      }
+    );
+  };
 
-    return connectDropTarget(connectDragSource(
-      <div
-        className={styles.TaskCard}
-        style={{
-          transform: isActive ? 'scale(1.3)' : 'scale(1.0)',
-          opacity: isDragging ? '0.3' : '1.0'
-        }}>
-        <div className={styles.Header}>
-          <div className={styles.Left}>
-            <FontAwesomeIcon 
-              icon={this.props.isStarred ? fasStar : farStar} 
-              onClick={(event) => {this.starClicked(event, this.props.id)}}
-              className={[styles.StarIcon, (
-                this.props.isStarred
-                ? styles.Starred
-                : null
-              )].join(' ')}/>
-            {
-              this.props.id === this.props.currentTaskId
-              ? <span 
-                  className={styles.CurrentTaskBadge}>
-                  Current Task
-                </span>
-              : null
-            }
+  render() {
+    const { task, currentTaskId, classes } = this.props;
+
+    const { optionCount, criterionCount, snippetCount, anchorEl } = this.state;
+    const open = Boolean(anchorEl);
+
+    return (
+      <Card className={[classes.card, styles.TaskCard].join(' ')}>
+        <StyledCardHeader
+          avatar={
+            <IconButton
+              title={`${
+                task.isStarred ? 'Remove from Starred' : 'Add to Starred'
+              }`}
+              className={classes.headerButtons}
+              onClick={() =>
+                this.toggleTaskStarStatus(task.id, !task.isStarred)
+              }
+            >
+              {task.isStarred ? (
+                <Star
+                  style={{
+                    color: THEME_COLOR.starColor
+                  }}
+                />
+              ) : (
+                <StarOutline />
+              )}
+            </IconButton>
+          }
+          action={
+            <React.Fragment>
+              <IconButton
+                className={classes.headerButtons}
+                aria-label="More"
+                aria-owns={open ? `${task.id}-menu` : undefined}
+                aria-haspopup="true"
+                onClick={this.handleClick}
+              >
+                <MoreVertIcon />
+              </IconButton>
+              <Menu
+                id={`${task.id}-menu`}
+                anchorEl={anchorEl}
+                open={open}
+                onClose={this.handleClose}
+                PaperProps={{
+                  style: {
+                    maxHeight: 200,
+                    width: 'auto',
+                    fontSize: 12
+                  }
+                }}
+              >
+                <MenuItem
+                  onClick={() =>
+                    this.handleEditTaskNameButtonClicked(task.id, task.name)
+                  }
+                  style={{ fontSize: 12, padding: '2px 6px' }}
+                  className={styles.MenuItem}
+                >
+                  <PencilCircleOutline
+                    className={styles.MenuItemIcon}
+                    style={{ width: '16px', height: '16px' }}
+                  />{' '}
+                  Edit Name
+                </MenuItem>
+                <CopyToClipboard text={getTaskLink(task.id)}>
+                  <MenuItem
+                    onClick={() =>
+                      this.getSharableLinkClickedHandler(task.id, task.name)
+                    }
+                    style={{ fontSize: 12, padding: '2px 6px' }}
+                    className={styles.MenuItem}
+                  >
+                    <Link
+                      className={styles.MenuItemIcon}
+                      style={{ width: '16px', height: '16px' }}
+                    />{' '}
+                    Get Sharable Link
+                  </MenuItem>
+                </CopyToClipboard>
+                <MenuItem
+                  onClick={() =>
+                    this.handleDeleteButtonClicked(task.id, task.name)
+                  }
+                  style={{ fontSize: 12, padding: '2px 6px' }}
+                  className={styles.MenuItem}
+                >
+                  <DeleteCircleOutline
+                    className={styles.MenuItemIcon}
+                    style={{ width: '16px', height: '16px' }}
+                  />{' '}
+                  Delete
+                </MenuItem>
+              </Menu>
+              <ToastContainer
+                style={{ fontSize: '16px' }}
+                position="top-center"
+                transition={Flip}
+                autoClose={2000}
+                hideProgressBar
+                newestOnTop
+                closeOnClick
+                rtl={false}
+                pauseOnVisibilityChange
+                pauseOnHover
+              />
+            </React.Fragment>
+          }
+          title={
+            <div
+              className={styles.TaskName}
+              title={'Go to this task'}
+              onClick={() => this.titleClickedHandler(task.id)}
+            >
+              {task.name}
+            </div>
+          }
+          subheader={
+            task.updateDate
+              ? `Updated: ${moment(task.updateDate.toDate()).fromNow()}`
+              : ' '
+          }
+        />
+
+        {optionCount > 0 || criterionCount > 0 || snippetCount > 0 ? (
+          <Divider />
+        ) : null}
+
+        <StyledCardContent style={{ paddingBottom: '6px' }}>
+          <div className={styles.Footer}>
+            {snippetCount ? (
+              <div className={styles.MetaInfo}>
+                <Avatar
+                  aria-label="type"
+                  style={{
+                    backgroundColor: PIECE_COLOR.snippet,
+                    width: '18px',
+                    height: '18px',
+                    color: 'white'
+                  }}
+                  className={styles.Avatar}
+                  onClick={this.handleTypeAvatarClick}
+                >
+                  <FontAwesomeIcon
+                    icon={fasBookmark}
+                    className={styles.IconInsideAvatar}
+                  />
+                </Avatar>
+                {snippetCount} snippets
+              </div>
+            ) : null}
+
+            {optionCount ? (
+              <div className={styles.MetaInfo}>
+                <Avatar
+                  aria-label="type"
+                  style={{
+                    backgroundColor: PIECE_COLOR.option,
+                    width: '18px',
+                    height: '18px',
+                    color: 'white'
+                  }}
+                  className={styles.Avatar}
+                  onClick={this.handleTypeAvatarClick}
+                >
+                  <FontAwesomeIcon
+                    icon={fasListUl}
+                    className={styles.IconInsideAvatar}
+                  />
+                </Avatar>
+                {optionCount} options
+              </div>
+            ) : null}
+
+            {criterionCount ? (
+              <div className={styles.MetaInfo}>
+                <Avatar
+                  aria-label="type"
+                  style={{
+                    backgroundColor: PIECE_COLOR.criterion,
+                    width: '18px',
+                    height: '18px',
+                    color: 'white'
+                  }}
+                  className={styles.Avatar}
+                  onClick={this.handleTypeAvatarClick}
+                >
+                  <FontAwesomeIcon
+                    icon={fasFlagCheckered}
+                    className={styles.IconInsideAvatar}
+                  />
+                </Avatar>
+                {criterionCount} criteria
+              </div>
+            ) : null}
           </div>
-          <div className={styles.Right}>
-            <span className={styles.Time}>
-              {moment(new Date(this.props.time)).fromNow()}
-            </span>
-            <Popover
-              isOpen={this.state.isPopoverOpen}
-              position={'bottom'} // preferred position
-              onClickOutside={() => this.switchPopoverOpenStatus()}
-              containerClassName={styles.PopoverContainer}
-              content={(
-                <div className={styles.PopoverContentContainer}>
-                  <ul>
-                    <li onClick={(event) => this.starClicked(event, this.props.id)}>
-                      <div className={styles.IconBoxInPopover}>
-                        <FontAwesomeIcon icon={fasStar} className={styles.IconInPopover}/>
-                      </div>
-                      <div>{this.props.isStarred === true ? 'Remove' : 'Add'} Star</div>
-                    </li>
+        </StyledCardContent>
 
-                    <li 
-                      onClick={(event) => this.props.deleteTaskHandler(this.props.id, this.props.taskName)}
-                      className={styles.DeleteLi}>
-                      <div className={styles.IconBoxInPopover}>
-                        <FontAwesomeIcon icon={fasTrash} className={styles.IconInPopover}/>
-                      </div>
-                      <div>Delete</div>
-                    </li>
-                  </ul>
-                </div>
+        {/*
+        <div className={styles.TaskOngoingStatusContainer}>
+          {this.props.taskOngoing ? (
+            <div
+              title={'In progress...'}
+              className={[styles.TaskOngoingBadge, styles.TaskOngoingTrue].join(
+                ' '
               )}
             >
-              <span 
-                className={styles.MoreIconContainer}
-                style={{opacity: this.state.isPopoverOpen ? '0.7' : null}}
-                onClick={() => this.switchPopoverOpenStatus()}>
-                <FontAwesomeIcon icon={fasMore}/>
-              </span>
-              
-            </Popover>
-
-
-            
-          </div>
+              <FontAwesomeIcon icon={fasCircleNotch} />
+            </div>
+          ) : (
+            <div
+              title={`Completed!${
+                this.props.completionTimestamp !== null
+                  ? ` (${moment(this.props.completionTimestamp).fromNow()})`
+                  : null
+              }`}
+              className={[
+                styles.TaskOngoingBadge,
+                styles.TaskOngoingFalse
+              ].join(' ')}
+            >
+              <FontAwesomeIcon icon={fasCheck} />
+            </div>
+          )}
         </div>
-
-        <div
-          title={'Go to this task'}
-          className={styles.TaskName}
-          onClick={(event) => this.titleClickedHandler(event, this.props.id)}>
-          {this.props.taskName}
-        </div>
-
-        <div
-          className={styles.TaskOngoingStatusContainer}>
-          {
-            this.props.taskOngoing 
-            ? <div 
-                title={'In progress...'}
-                className={[styles.TaskOngoingBadge, styles.TaskOngoingTrue].join(' ')}>
-                <FontAwesomeIcon icon={fasCircleNotch}/>
-              </div> 
-            : <div 
-                title={`Completed!${this.props.completionTimestamp !== null ? ` (${moment(this.props.completionTimestamp).fromNow()})` : null}`}
-                className={[styles.TaskOngoingBadge, styles.TaskOngoingFalse].join(' ')}>
-                <FontAwesomeIcon icon={fasCheck}/> 
-              </div>
-          }
-        </div>
-
-        <HorizontalDivider margin="5px" />
-
-        <div className={styles.Footer}>
-          <div className={styles.MetaInfo}>
-            <FontAwesomeIcon icon={fasListUl} className={styles.Icon}/>
-            {this.props.numOptions} options
-          </div>
-          <div className={styles.MetaInfo}>
-            <FontAwesomeIcon icon={fasFlagCheckered} className={styles.Icon}/>
-            {this.props.numRequirements} requirements
-          </div>
-          <div className={styles.MetaInfo}>
-            <FontAwesomeIcon icon={fasPuzzlePiece} className={styles.Icon}/>
-            {this.props.numPieces} snippets
-          </div>
-        </div>
-
-      </div>
-    ,{dropEffect: 'copy'}));
+        */}
+      </Card>
+    );
   }
-
-
 }
 
-export default withRouter(DropTarget('TASKCARD', cardTarget, collectDrop)(
-  DragSource('TASKCARD', cardSource, collectDrag)(
-    TaskCard
-  )
-));
-
-// export default withRouter(TaskCard);
+export default withRouter(withStyles(materialStyles)(TaskCard));

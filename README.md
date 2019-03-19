@@ -14,9 +14,8 @@
 1. Clone the repository by running `git clone git@github.com:lxieyang/project-KAP.git`.
 2. Download `secrets.user.js` from the `#kap-dev` channel in the Kittur Lab Slack Team. Place the file under `/shared-components/src`. Make sure the name of the file is exactly `secrets.user.js`, as downloaded files from Slack may see changes of names sometimes.
 3. Switch to the correct branch you are working on. For example, run `git checkout newchapter` to switch to the `newchapter` branch.
-4. Change directory into `chrome-extension`, run `npm install`.
-5. Change directory into `shared-components`, run `npm install`.
-6. Change directory into `web-hosted`, run `npm install`.
+4. Under the directories `chrome-extension`, `shared-components`, and `table-showoff`, run commands
+`rm -rf node_modules` followed by `rm package-lock.json` and `npm install`
 
 ### To load the Chrome Extension:
 

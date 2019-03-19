@@ -1,0 +1,199 @@
+.Avatar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+
+  /* margin-top: 8px;
+  margin-left: 5px; */
+}
+
+.IconInsideAvatar {
+  font-size: 15px;
+}
+
+.PieceContentBox {
+  display: flex;
+  align-items: flex-start;
+  margin-top: 3px;
+  margin-left: 1px;
+  padding: 2px 6px;
+  /* padding-right: 6px; */
+  font-size: 14px;
+  color: #000;
+  font-weight: 400;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  cursor: text;
+  white-space: pre-wrap;
+}
+
+.PieceContentBox:hover {
+  border-color: rgb(226, 226, 226);
+}
+
+.PieceNameEditContainer {
+  display: flex;
+  align-items: center;
+  margin-top: 4px;
+}
+
+.TextAreaContainer {
+  flex: 1;
+  margin-left: 5px;
+}
+
+.Textarea {
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  resize: none;
+  overflow: auto;
+
+  font-size: 13px;
+  padding: 2px 4px;
+
+  border: 1px solid rgb(226, 226, 226);
+  border-radius: 4px;
+  color: #000;
+  background: transparent !important;
+}
+
+.Textarea:focus {
+  color: #35383a;
+  background-color: #fff;
+  border-color: rgb(17, 100, 224);
+  outline: none;
+}
+
+.TextareaActionSection {
+  padding-left: 5px;
+}
+
+.InfoActionBar {
+  width: 100%;
+  box-sizing: border-box;
+  padding-left: 8px;
+  padding-right: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: all 0.1s ease-in;
+}
+
+.CommentCount {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  box-sizing: border-box;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  font-size: 13px;
+  font-weight: 500;
+  border-radius: 50%;
+  padding: 2px;
+  opacity: 0.8;
+  transform: scale(0.75);
+}
+
+.SiteOrigin {
+  /* width: 14px; */
+  height: 16px;
+  background: #e0e0e0;
+  display: flex;
+  /* justify-content: center; */
+  align-items: center;
+  text-decoration: none;
+  /* padding: 1px 3px; */
+  border-radius: 8px;
+  margin-bottom: 3px;
+}
+
+.SiteIcon {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+}
+
+.SiteIconText {
+  font-weight: 300 !important;
+  font-size: 10px;
+  padding-left: 2px;
+  padding-right: 6px;
+}
+
+.CreatedBadge {
+  font-weight: 300 !important;
+  font-size: 10px;
+}
+
+.Moment {
+  margin-left: 6px;
+  font-size: 11px;
+  color: rgb(155, 155, 155);
+  font-weight: 300;
+}
+
+.CollapseContainer {
+  padding: 0px;
+}
+
+.OriginalContentContainer {
+  max-width: 100%;
+  padding: 2px 8px;
+  max-height: 400px;
+  overflow: auto;
+  /* opacity: 0.8; */
+  font-size: 1rem;
+  /* background: rgb(228, 228, 228); */
+  transition: all 0.1s ease-in;
+}
+
+.HTMLPreview {
+  font-size: 0.9rem;
+}
+
+.HTMLPreview:focus {
+  outline: none;
+}
+
+.OriginalScreenshotContainer {
+  max-width: 100%;
+  padding: 2px 8px;
+  overflow: auto;
+}
+
+.TextareaForPieceContentContainer {
+  margin: 0px 10px 15px 10px;
+}
+
+.TextareaForPieceContent {
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  resize: none;
+  overflow: auto;
+
+  font-size: 13px;
+  padding: 4px 6px;
+
+  border: 1px solid transparent;
+  border-radius: 4px;
+  color: #000;
+  background: transparent !important;
+}
+
+.TextareaForPieceContent:hover {
+  border: 1px solid rgb(226, 226, 226);
+}
+
+.TextareaForPieceContent:focus {
+  color: #35383a;
+  background-color: #fff;
+  border-color: rgb(17, 100, 224);
+  outline: none;
+}

@@ -1,4 +1,8 @@
 .Content {
-  margin-top: 72px;
+  position: absolute;
+  top: 40px;
+  left: 0px;
+  right: 0px;
+  bottom: 0px;
   overflow: auto;
 }
