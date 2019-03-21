@@ -136,11 +136,11 @@ class Options extends Component {
               >
                 <label>
                   <Radio value="overlay" />
-                  Overlay on the webpage
+                  Overlay on a webpage
                 </label>
                 <label>
                   <Radio value="shrinkbody" />
-                  Shrink the body of the webpage
+                  Shrink the body of a webpage
                 </label>
               </RadioGroup>
             </div>
@@ -148,8 +148,8 @@ class Options extends Component {
 
           <div className={styles.OptionContainer}>
             <div className={styles.OptionLabel}>
-              Use <u>Ctrl + `</u> (also <u>Ctrl + Esc</u> on macOS) to toggle
-              sidebar:
+              Use the keyboard shortcut <u>Ctrl + `</u> (also <u>Ctrl + Esc</u>{' '}
+              on macOS) to toggle the sidebar:
             </div>
             <div className={styles.OptionOptions}>
               <RadioGroup
