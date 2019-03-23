@@ -121,7 +121,15 @@ class Options extends Component {
         <div className={styles.OptionsPageContainer}>
           <div className={styles.OptionContainer}>
             <div className={styles.OptionLabel}>Unakite version:</div>
-            <div className={styles.OptionOptions}>{this.state.version}</div>
+            <a
+              href="https://unakite.info/docs/get-started/overview"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <div className={styles.OptionOptions}>
+                {this.state.version} (Documentation)
+              </div>
+            </a>
           </div>
 
           <Divider light />

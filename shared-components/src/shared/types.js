@@ -28,3 +28,8 @@ export const RATING_TYPES = {
   negative: 2,
   info: 3
 };
+
+export const TIMESTAMP_TYPES = {
+  annotation: 1,
+  inSidebar: 2
+};

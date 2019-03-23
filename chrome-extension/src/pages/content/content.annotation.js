@@ -1,8 +1,7 @@
 /* global chrome */
-import $ from 'jquery';
+// import $ from 'jquery';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { dragElement } from './content.utility';
 import ScreenshotModal from './components/ScreenshotModal';
 import { ANNOTATION_TYPES } from '../../../../shared-components/src/shared/types';
 import { APP_NAME_SHORT } from '../../../../shared-components/src/shared/constants';
@@ -10,12 +9,12 @@ import Frame from './frame';
 import SelectTooltipButton from './SelectTooltipButton/SelectTooltipButton';
 import SiphonTools from 'siphon-tools';
 import {
-  Highlight,
   HighlightSelector,
-  Snippet,
-  SnippetSelector,
-  Store
+  SnippetSelector
+  // Store
 } from 'siphon-tools';
+
+// import './components/TabTracking'; // consider removing this piece of code later
 
 //
 //
@@ -266,15 +265,27 @@ function displayTooltipButtonBasedOnRectPosition(rect, props) {
 // store.init();
 
 // init selectors
+let snippetSelectorTimer = {
+  startTimestamp: 0,
+  endTimestamp: 0
+};
+
+let highlightSelectorTimer = {
+  startTimestamp: 0,
+  endTimestamp: 0
+};
+
 SiphonTools.initializeSelectors([
   HighlightSelector({
     onTrigger: (range, e) => {
       let rect = range.getBoundingClientRect();
       displayTooltipButtonBasedOnRectPosition(rect, {
         annotationType: ANNOTATION_TYPES.Highlight,
-        range
+        range,
+        timer: highlightSelectorTimer
       });
-    }
+    },
+    timer: highlightSelectorTimer
   }),
   SnippetSelector({
     onTrigger: (cptrWindow, e) => {
@@ -282,9 +293,11 @@ SiphonTools.initializeSelectors([
       let rect = cptrWindow.getBoundingClientRect();
       displayTooltipButtonBasedOnRectPosition(rect, {
         annotationType: ANNOTATION_TYPES.Snippet,
-        captureWindow
+        captureWindow,
+        timer: snippetSelectorTimer
       });
-    }
+    },
+    timer: snippetSelectorTimer
   })
 ]);
 

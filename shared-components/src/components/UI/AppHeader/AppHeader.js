@@ -2,7 +2,7 @@
 import React, { Component } from 'react';
 import FontAwesomeIcon from '@fortawesome/react-fontawesome';
 import fasCog from '@fortawesome/fontawesome-free-solid/faCog';
-import fasExternalLinkSquareAlt from '@fortawesome/fontawesome-free-solid/faExternalLinkSquareAlt';
+import fasBook from '@fortawesome/fontawesome-free-solid/faBookOpen';
 import fasSignOutAlt from '@fortawesome/fontawesome-free-solid/faSignOutAlt';
 import Popover from 'react-tiny-popover';
 import ProfileImg from '../../../assets/images/profile-img.png';
@@ -59,6 +59,13 @@ class AppHeader extends Component {
     });
   };
 
+  openDocsPageClickedHandler = () => {
+    this.switchPopoverOpenStatus();
+    chrome.runtime.sendMessage({
+      msg: 'Go_TO_DOCS_PAGE'
+    });
+  };
+
   render() {
     const props = this.props;
     return (
@@ -110,6 +117,16 @@ class AppHeader extends Component {
                   ) : (
                     <div className={styles.PopoverContentContainer}>
                       <ul>
+                        <li onClick={e => this.openDocsPageClickedHandler()}>
+                          <div className={styles.IconBoxInPopover}>
+                            <FontAwesomeIcon
+                              icon={fasBook}
+                              className={styles.IconInPopover}
+                            />
+                          </div>
+                          <div>Docs</div>
+                        </li>
+
                         <li
                           onClick={e => this.openSettingsPageClickedHandler()}
                         >

@@ -47,6 +47,15 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         // Tab opened.
       }
     );
+  } else if (request.msg === 'Go_TO_DOCS_PAGE') {
+    chrome.tabs.create(
+      {
+        url: chrome.extension.getURL('https://unakite.info')
+      },
+      tab => {
+        // Tab opened.
+      }
+    );
   } else if (request.msg === 'Go_TO_ALL_TASKS_PAGE') {
     chrome.storage.local.get(['user'], result => {
       let user = result.user;

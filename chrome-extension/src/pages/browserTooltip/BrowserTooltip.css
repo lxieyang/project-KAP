@@ -1,3 +1,21 @@
 .BrowserTooltipContainer {
   padding: 6px 8px;
 }
+
+.DocsButton {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  opacity: 0.3;
+  font-size: 1rem;
+  transition: all 0.1s ease-in;
+}
+
+.DocsButton:hover {
+  opacity: 0.6;
+}
+
+.DocsButtonIcon {
+  margin-right: 4px;
+  height: 24px;
+}
