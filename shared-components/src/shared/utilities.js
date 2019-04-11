@@ -1,4 +1,22 @@
 import $ from 'jquery';
+import * as FirestoreManager from '../firebase/firestore_wrapper';
+
+let superUserIds = [
+  'GyIbFsUnhGevd33nIp7M7wB5Z7l2',
+  'zZU6Vsy4DEfCiMIiJufhjTntpK23'
+];
+
+let anonymizeKeywords = ['oberlin.edu'];
+
+export const getAnonymizationInfo = () => {
+  FirestoreManager.getAnonymizationInfo()
+    .get()
+    .then(snapshot => {
+      let data = snapshot.data();
+      superUserIds = data.superUserIds;
+      anonymizeKeywords = data.anonymizeKeywords;
+    });
+};
 
 const isProduction = process.env.NODE_ENV === 'production' ? true : false;
 
@@ -110,6 +128,33 @@ export const getAllTasksLink = () => {
   return isProduction
     ? `https://unakite-v2.firebaseapp.com/alltasks`
     : `http://localhost:3001/alltasks`;
+};
+
+export const shouldAnonymize = (creatorEmail, creatorId, currentUserId) => {
+  // for Oberlin experiment
+  let shouldAnonymize = false;
+  if (superUserIds.indexOf(currentUserId) !== -1) {
+    shouldAnonymize = false;
+  } else if (
+    creatorEmail !== undefined &&
+    creatorEmail !== null &&
+    currentUserId !== creatorId
+  ) {
+    for (let i = 0; i < anonymizeKeywords.length; i++) {
+      if (creatorEmail.includes(anonymizeKeywords[i])) {
+        shouldAnonymize = true;
+        break;
+      }
+    }
+  }
+
+  // console.log(creatorEmail, creatorId, currentUserId, shouldAnonymize);
+
+  return shouldAnonymize;
+};
+
+export const getDefaultUserAvatar = name => {
+  return `https://ui-avatars.com/api/?name=${name}?bold=true`;
 };
 
 export const googleIcon =

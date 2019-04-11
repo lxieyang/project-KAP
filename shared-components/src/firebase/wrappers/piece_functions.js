@@ -213,6 +213,7 @@ export const addCommentToAPieceById = (pieceId, newCommentContent) => {
       updateDate: firebase.firestore.FieldValue.serverTimestamp(),
       authorId: getCurrentUserId(),
       authorName: getCurrentUser().displayName,
+      authorEmail: getCurrentUser().email,
       authorAvatarURL: getCurrentUser().photoURL
     })
     .then(() => {

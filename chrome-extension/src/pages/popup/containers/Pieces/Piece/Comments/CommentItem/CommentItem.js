@@ -1,7 +1,10 @@
 import React, { Component } from 'react';
 
 import * as FirestoreManager from '../../../../../../../../../shared-components/src/firebase/firestore_wrapper';
-import { getFirstName } from '../../../../../../../../../shared-components/src/shared/utilities';
+import {
+  getFirstName,
+  getDefaultUserAvatar
+} from '../../../../../../../../../shared-components/src/shared/utilities';
 
 import { withStyles } from '@material-ui/core/styles';
 import Avatar from '@material-ui/core/Avatar';
@@ -160,7 +163,9 @@ class CommentItem extends Component {
             <React.Fragment>
               <div>
                 <Avatar
-                  title={item.authorName}
+                  title={
+                    item.anonymize === false ? item.authorName : item.authorId
+                  }
                   aria-label="avatar"
                   style={{
                     width: expanded ? '24px' : '16px',
@@ -169,12 +174,18 @@ class CommentItem extends Component {
                   className={classesInCSS.Avatar}
                 >
                   <img
-                    src={item.authorAvatarURL}
+                    src={
+                      item.anonymize === false
+                        ? item.authorAvatarURL
+                        : getDefaultUserAvatar(item.authorId)
+                    }
                     onError={e => {
                       e.target.onerror = null;
-                      e.target.src = `https://ui-avatars.com/api/?name=${
-                        item.authorName
-                      }?bold=true`;
+                      e.target.src = getDefaultUserAvatar(
+                        item.anonymize === false
+                          ? item.authorName
+                          : item.authorId
+                      );
                     }}
                     alt={item.authorId}
                     style={{ width: '100%', height: '100%' }}
@@ -200,9 +211,16 @@ class CommentItem extends Component {
                   <div className={classesInCSS.CommentContentExpanded}>
                     <div className={classesInCSS.CommentInfoBar}>
                       <span className={classesInCSS.CommentAuthor}>
-                        {getFirstName(item.authorName)}
+                        {item.anonymize === false &&
+                          getFirstName(item.authorName)}
+                        {item.anonymize === true && item.authorId}
                       </span>
-                      <span className={classesInCSS.CommentMoment}>
+                      <span
+                        style={{
+                          display: item.anonymize === true ? 'block' : null
+                        }}
+                        className={classesInCSS.CommentMoment}
+                      >
                         {item.updateDate
                           ? 'Updated ' +
                             moment(item.updateDate.toDate()).fromNow()

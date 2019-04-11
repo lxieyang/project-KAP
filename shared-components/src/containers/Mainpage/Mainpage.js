@@ -15,7 +15,10 @@ import { DragDropContext } from 'react-dnd';
 import firebase from '../../firebase/firebase';
 import * as FirestoreManager from '../../firebase/firestore_wrapper';
 import { APP_NAME_SHORT } from '../../shared/constants';
-import { getCleanURLOfCurrentPage } from '../../shared/utilities';
+import {
+  getCleanURLOfCurrentPage,
+  getAnonymizationInfo
+} from '../../shared/utilities';
 
 class Mainpage extends Component {
   state = {
@@ -36,6 +39,8 @@ class Mainpage extends Component {
   componentDidMount() {
     window.isInKAP = true;
     document.title = APP_NAME_SHORT;
+
+    getAnonymizationInfo();
 
     this.removeAuthListerner = firebase.auth().onAuthStateChanged(user => {
       if (user !== null) {

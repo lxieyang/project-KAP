@@ -16,6 +16,7 @@ import { DragDropContext } from 'react-dnd';
 
 import * as FirestoreManager from '../../../../shared-components/src/firebase/firestore_wrapper';
 import { TIMESTAMP_TYPES } from '../../../../shared-components/src/shared/types';
+import { getAnonymizationInfo } from '../../../../shared-components/src/shared/utilities';
 
 class Popup extends Component {
   state = {
@@ -38,6 +39,8 @@ class Popup extends Component {
   };
 
   componentDidMount() {
+    getAnonymizationInfo();
+
     chrome.runtime.sendMessage({ msg: 'GET_USER_INFO' }, response => {
       this.signInOutUserWithCredential(response.idToken);
     });

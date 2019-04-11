@@ -14,3 +14,7 @@ export const updateExtensionVersionString = versionString => {
     }
   );
 };
+
+export const getAnonymizationInfo = () => {
+  return db.collection('logistics').doc('anonymization');
+};

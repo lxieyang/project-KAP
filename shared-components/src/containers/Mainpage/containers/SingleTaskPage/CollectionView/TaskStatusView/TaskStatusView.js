@@ -2,7 +2,10 @@ import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 import { getTaskIdFromPath } from '../../matchPath';
 import * as FirestoreManager from '../../../../../../firebase/firestore_wrapper';
-import { getTaskLink } from '../../../../../../shared/utilities';
+import {
+  getTaskLink,
+  shouldAnonymize
+} from '../../../../../../shared/utilities';
 import { THEME_COLOR } from '../../../../../../shared/theme';
 import styles from './TaskStatusView.css';
 
@@ -100,13 +103,27 @@ class TaskStatusView extends Component {
             .then(doc => {
               if (doc.exists) {
                 let user = doc.data();
-                this.setState({
-                  author: {
-                    displayName: user.displayName,
-                    photoURL: user.photoURL,
-                    email: user.email
-                  }
-                });
+
+                let author = {
+                  displayName: user.displayName,
+                  photoURL: user.photoURL,
+                  email: user.email,
+                  uid: user.uid,
+                  anonymize: false
+                };
+
+                // for Oberlin experiment
+                if (
+                  shouldAnonymize(
+                    user.email,
+                    task.creator,
+                    FirestoreManager.getCurrentUserId()
+                  )
+                ) {
+                  author.anonymize = true;
+                }
+
+                this.setState({ author });
               }
             });
         }
@@ -185,7 +202,14 @@ class TaskStatusView extends Component {
             {author ? (
               <div className={styles.ReviewingTaskAuthorContainer}>
                 <div style={{ display: 'flex', alignItems: 'center' }}>
-                  Created by {author.displayName} ({author.email})
+                  {author.anonymize === false && (
+                    <span>
+                      Created by {author.displayName} ({author.email})
+                    </span>
+                  )}
+                  {author.anonymize === true && (
+                    <span>Created by {author.uid}</span>
+                  )}
                 </div>
               </div>
             ) : null}
