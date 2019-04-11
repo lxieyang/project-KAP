@@ -7,6 +7,7 @@ import Button from '@material-ui/core/Button';
 import Textarea from 'react-textarea-autosize';
 
 import * as FirestoreManager from '../../../../../../../shared-components/src/firebase/firestore_wrapper';
+import { shouldAnonymize } from '../../../../../../../shared-components/src/shared/utilities';
 import CommentItem from './TaskCommentItem/TaskCommentItem';
 import classesInCSS from './TaskComments.css';
 
@@ -59,10 +60,23 @@ class TaskComments extends Component {
       .onSnapshot(querySnapshot => {
         let comments = [];
         querySnapshot.forEach(snapshot => {
-          comments.push({
+          let comment = {
             id: snapshot.id,
-            ...snapshot.data()
-          });
+            ...snapshot.data(),
+            anonymize: false
+          };
+
+          if (
+            shouldAnonymize(
+              comment.authorEmail,
+              comment.authorId,
+              FirestoreManager.getCurrentUserId()
+            )
+          ) {
+            comment.anonymize = true;
+          }
+
+          comments.push(comment);
         });
         this.setState({ comments });
         this.props.setCurrentTaskCommentsCount(comments.length);
@@ -150,7 +164,7 @@ class TaskComments extends Component {
                     e.target.onerror = null;
                     e.target.src = `https://ui-avatars.com/api/?name=${
                       currentAuthor.displayName
-                    }?bold=true`;
+                      }?bold=true`;
                   }}
                   alt={currentAuthor.displayName}
                   style={{ width: '100%', height: '100%' }}

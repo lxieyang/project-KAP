@@ -189,6 +189,7 @@ class TaskStatusView extends Component {
       return null;
     }
 
+    /*
     if (!editAccess) {
       return (
         <React.Fragment>
@@ -217,16 +218,23 @@ class TaskStatusView extends Component {
         </React.Fragment>
       );
     }
+    */
 
     return (
-      <React.Fragment>
-        <div className={styles.TaskStatusViewContainer}>
+      <div>
+        <div
+          style={{
+            backgroundColor: !editAccess
+              ? THEME_COLOR.reviewingTaskBackgroundColor
+              : null
+          }}
+          className={styles.TaskStatusViewContainer}>
           <div className={styles.VariousButtonsContainer}>
             {editAccess && (
               <Tooltip
                 title={`${
                   task.isStarred ? 'Remove from Starred' : 'Add to Starred'
-                }`}
+                  }`}
                 placement={'bottom'}
               >
                 <IconButton
@@ -244,8 +252,8 @@ class TaskStatusView extends Component {
                       }}
                     />
                   ) : (
-                    <StarOutline className={classes.iconInIconButtons} />
-                  )}
+                      <StarOutline className={classes.iconInIconButtons} />
+                    )}
                 </IconButton>
               </Tooltip>
             )}
@@ -266,6 +274,23 @@ class TaskStatusView extends Component {
               onChange={e => this.handleTaskNameChange(e)}
               className={styles.Textarea}
             />
+            {author && author.uid !== FirestoreManager.getCurrentUserId() ? (
+              <div
+                className={styles.ReviewingTaskAuthorContainer}
+                style={{ marginLeft: 8 }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', marginBottom: 4 }}>
+                  {author.anonymize === false && (
+                    <span>
+                      Created by {author.displayName} ({author.email})
+                    </span>
+                  )}
+                  {author.anonymize === true && (
+                    <span>Created by {author.uid}</span>
+                  )}
+                </div>
+              </div>
+            ) : null}
           </div>
 
           <div style={{ position: 'relative' }}>
@@ -341,7 +366,7 @@ class TaskStatusView extends Component {
             />
           </div>
         </Collapse>
-      </React.Fragment>
+      </div>
     );
   }
 }
