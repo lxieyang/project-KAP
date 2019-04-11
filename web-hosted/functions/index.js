@@ -1,5 +1,8 @@
 const functions = require("firebase-functions");
 const admin = require("firebase-admin");
+const cors = require("cors")({
+  origin: true
+});
 admin.initializeApp();
 
 let db = admin.firestore();
@@ -78,6 +81,26 @@ exports.cleanTableByRemovingTrashedPieces = functions.firestore
 // // Create and Deploy Your First Cloud Functions
 // // https://firebase.google.com/docs/functions/write-firebase-functions
 //
-// exports.helloWorld = functions.https.onRequest((request, response) => {
-//  response.send("Hello from Firebase!");
-// });
+exports.getUnakiteChromeStoreVersionString = functions.https.onRequest(
+  (request, response) => {
+    // Enable CORS using the `cors` express middleware.
+    return cors(request, response, () => {
+      db.collection("chrome_extension")
+        .doc("unakite")
+        .get()
+        .then(snapshot => {
+          let versionString = snapshot.data().chromeWebStoreVersion;
+          return response.send({
+            success: true,
+            chromeWebStoreVersion: versionString
+          });
+        })
+        .catch(error => {
+          return response.send({
+            success: false,
+            error
+          });
+        });
+    });
+  }
+);

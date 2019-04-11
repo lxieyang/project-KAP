@@ -1,5 +1,3 @@
-import firebase from '../firebase';
-
 import { db, getCurrentUser, getCurrentUserId } from '../firestore_wrapper';
 
 export const updateUserProfile = () => {

@@ -67,9 +67,21 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 /* selectTooltip support */
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.msg === 'CREATE_NEW_ANNOTATION_BY_TOOLTIP_BUTTON_CLICKED') {
-    const { annotation, contextData, annotationType, type } = request.payload;
+    const {
+      annotation,
+      contextData,
+      annotationType,
+      type,
+      timer
+    } = request.payload;
 
-    FirestoreManager.createPiece(annotation, contextData, annotationType, type)
+    FirestoreManager.createPiece(
+      annotation,
+      contextData,
+      annotationType,
+      type,
+      timer
+    )
       .then(pieceId => {
         // chrome.runtime.sendMessage({
         //   msg: 'SHOW_SUCCESS_STATUS_BADGE',
@@ -97,13 +109,20 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       contextData,
       annotationType,
       type,
+      timer,
       tableId,
       cellId,
       cellType,
       ratingType
     } = request.payload;
 
-    FirestoreManager.createPiece(annotation, contextData, annotationType, type)
+    FirestoreManager.createPiece(
+      annotation,
+      contextData,
+      annotationType,
+      type,
+      timer
+    )
       .then(pieceId => {
         // chrome.runtime.sendMessage({
         //   msg: 'SHOW_SUCCESS_STATUS_BADGE',

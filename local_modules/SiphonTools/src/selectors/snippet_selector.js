@@ -30,6 +30,7 @@ const defaultTrigger = function(e) {
 
 export default function SnippetSelector({
   onTrigger,
+  timer,
   trigger = defaultTrigger
 }) {
   return {
@@ -37,6 +38,7 @@ export default function SnippetSelector({
       return e.mouseDown && trigger(e);
     },
     onSelectionStart: function(e) {
+      timer.startTimestamp = new Date().getTime();
       document.body.style.cursor = "crosshair";
       document.body.appendChild(captureWindow);
       styleSheet.insertRule(
@@ -61,6 +63,7 @@ export default function SnippetSelector({
           : `${mousePosition.pageX}px`;
     },
     onSelectionEnd: function(e) {
+      timer.endTimestamp = new Date().getTime();
       document.body.style.cursor = "auto";
       let selection = document.getSelection();
       if (!e.mouseDown) {

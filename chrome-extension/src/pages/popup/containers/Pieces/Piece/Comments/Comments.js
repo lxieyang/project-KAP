@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import CommentItem from './CommentItem/CommentItem';
 
 import * as FirestoreManager from '../../../../../../../../shared-components/src/firebase/firestore_wrapper';
+import { shouldAnonymize } from '../../../../../../../../shared-components/src/shared/utilities';
 
 import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
@@ -19,25 +20,6 @@ const styles = theme => ({
     fontSize: 12
   }
 });
-
-// const fakeComments = [
-//   {
-//     authorId: 'author-01',
-//     authorName: 'Barack Obama',
-//     updateDate: new Date(),
-//     authorAvatarURL:
-//       'https://radioviceonline.com/wp-content/uploads/2012/05/square-obama-halo.png',
-//     content: `This is a good deal, grab it before it\'s gone.`
-//   },
-//   {
-//     authorId: 'author-02',
-//     authorName: 'George Bush',
-//     updateDate: new Date(),
-//     authorAvatarURL:
-//       'https://www.abc.net.au/radionational/image/7174982-1x1-700x700.jpg',
-//     content: `This is a NOT good deal, DO NOT grab it.`
-//   }
-// ];
 
 const ActionButton = withStyles({
   root: {
@@ -65,10 +47,23 @@ class Comment extends Component {
       .onSnapshot(querySnapshot => {
         let comments = [];
         querySnapshot.forEach(snapshot => {
-          comments.push({
+          let comment = {
             id: snapshot.id,
-            ...snapshot.data()
-          });
+            ...snapshot.data(),
+            anonymize: false
+          };
+
+          if (
+            shouldAnonymize(
+              comment.authorEmail,
+              comment.authorId,
+              FirestoreManager.getCurrentUserId()
+            )
+          ) {
+            comment.anonymize = true;
+          }
+
+          comments.push(comment);
         });
         this.setState({ comments });
       });

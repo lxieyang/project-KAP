@@ -1,5 +1,9 @@
 import firebase from '../firebase';
-import { ANNOTATION_TYPES, PIECE_TYPES } from '../../shared/types';
+import {
+  ANNOTATION_TYPES,
+  PIECE_TYPES,
+  TIMESTAMP_TYPES
+} from '../../shared/types';
 import { encode, decode } from '../utilities/firebase_encode_decode.js';
 import {
   db,
@@ -7,7 +11,8 @@ import {
   getCurrentUserCurrentTaskId,
   updateTaskUpdateTime,
   updateCurrentTaskUpdateTime,
-  getCurrentUser
+  getCurrentUser,
+  addActionTimestamps
 } from '../firestore_wrapper';
 const xssFilter = require('xssfilter');
 const xss = new xssFilter({
@@ -208,6 +213,7 @@ export const addCommentToAPieceById = (pieceId, newCommentContent) => {
       updateDate: firebase.firestore.FieldValue.serverTimestamp(),
       authorId: getCurrentUserId(),
       authorName: getCurrentUser().displayName,
+      authorEmail: getCurrentUser().email,
       authorAvatarURL: getCurrentUser().photoURL
     })
     .then(() => {
@@ -251,7 +257,8 @@ export const createPiece = async (
   data,
   { url, hostname, pathname, pageTitle, taskId, shouldUseScreenshot },
   annotationType,
-  pieceType
+  pieceType,
+  timer = null
 ) => {
   let currentUserId = getCurrentUserId();
   let currentTaskId = (await getCurrentUserCurrentTaskId().get()).data().id;
@@ -314,6 +321,13 @@ export const createPiece = async (
   updateTaskUpdateTime(piece.references.task);
 
   return ref.set(piece).then(() => {
+    if (timer !== null) {
+      addActionTimestamps(piece.references.task, {
+        ...timer,
+        timestampType: TIMESTAMP_TYPES.annotation,
+        annotationType
+      });
+    }
     return ref.id;
   });
 };

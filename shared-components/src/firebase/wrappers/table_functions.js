@@ -119,6 +119,7 @@ export const addCommentToATableCellById = (
       creationDate: firebase.firestore.FieldValue.serverTimestamp(),
       updateDate: firebase.firestore.FieldValue.serverTimestamp(),
       authorId: getCurrentUserId(),
+      authorEmail: getCurrentUser().email,
       authorName: getCurrentUser().displayName,
       authorAvatarURL: getCurrentUser().photoURL
     })

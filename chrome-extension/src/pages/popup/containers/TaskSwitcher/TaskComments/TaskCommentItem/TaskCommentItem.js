@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 
 import * as FirestoreManager from '../../../../../../../../shared-components/src/firebase/firestore_wrapper';
-import { getFirstName } from '../../../../../../../../shared-components/src/shared/utilities';
+import { getFirstName, getDefaultUserAvatar } from '../../../../../../../../shared-components/src/shared/utilities';
 
 import { withStyles } from '@material-ui/core/styles';
 import Avatar from '@material-ui/core/Avatar';
@@ -161,125 +161,140 @@ class CommentItem extends Component {
               </div>
             </div>
           ) : (
-            <React.Fragment>
-              <div>
-                <Avatar
-                  title={item.authorName}
-                  aria-label="avatar"
-                  style={{
-                    width: expanded ? '24px' : '16px',
-                    height: expanded ? '24px' : '16px'
-                  }}
-                  className={classesInCSS.Avatar}
-                >
-                  <img
-                    src={item.authorAvatarURL}
-                    onError={e => {
-                      e.target.onerror = null;
-                      e.target.src = `https://ui-avatars.com/api/?name=${
-                        item.authorName
-                      }?bold=true`;
+              <React.Fragment>
+                <div>
+                  <Avatar
+                    title={
+                      item.anonymize === false ? item.authorName : item.authorId
+                    }
+                    aria-label="avatar"
+                    style={{
+                      width: expanded ? '24px' : '16px',
+                      height: expanded ? '24px' : '16px'
                     }}
-                    alt={item.authorName}
-                    style={{ width: '100%', height: '100%' }}
-                  />
-                </Avatar>
-              </div>
-              <div
-                style={{
-                  flex: '1'
-                }}
-              >
-                {!expanded ? (
-                  <div className={classesInCSS.CommentContentCompact}>
-                    <LinesEllipsis
-                      text={item.content ? item.content : ''}
-                      maxLine={1}
-                      ellipsis="..."
-                      trimRight
-                      basedOn="words"
-                    />
-                  </div>
-                ) : (
-                  <div className={classesInCSS.CommentContentExpanded}>
-                    <div className={classesInCSS.CommentInfoBar}>
-                      <span className={classesInCSS.CommentAuthor}>
-                        {getFirstName(item.authorName)}
-                      </span>
-                      <span className={classesInCSS.CommentMoment}>
-                        {item.updateDate
-                          ? 'Updated ' +
-                            moment(item.updateDate.toDate()).fromNow()
-                          : null}
-                      </span>
-                    </div>
-                    <div className={classesInCSS.CommentContent}>
-                      {item.content}
-                    </div>
-                  </div>
-                )}
-              </div>
-              <div
-                style={{
-                  flexBasis: '28px',
-                  marginLeft: 'auto',
-                  order: '3',
-                  paddingTop: '0px'
-                }}
-              >
-                {item.authorId === FirestoreManager.getCurrentUserId() ? (
-                  <React.Fragment>
-                    <Menu
-                      id={`${item.id}-long-menu`}
-                      anchorEl={anchorEl}
-                      open={open}
-                      onClose={this.handleClose}
-                      style={{ padding: '2px' }}
-                      PaperProps={{
-                        style: {
-                          maxHeight: 24 * 4.5,
-                          width: 70
-                        }
+                    className={classesInCSS.Avatar}
+                  >
+                    <img
+                      src={
+                        item.anonymize === false
+                          ? item.authorAvatarURL
+                          : getDefaultUserAvatar(item.authorId)
+                      }
+                      onError={e => {
+                        e.target.onerror = null;
+                        e.target.src = getDefaultUserAvatar(
+                          item.anonymize === false
+                            ? item.authorName
+                            : item.authorId
+                        );
                       }}
-                    >
-                      {options.map(option => (
-                        <MenuItem
-                          key={option.text}
-                          selected={false}
-                          onClick={e =>
-                            this.handleAction(
-                              option.action,
-                              item.id,
-                              item.content,
-                              e
-                            )
+                      alt={item.authorName}
+                      style={{ width: '100%', height: '100%' }}
+                    />
+                  </Avatar>
+                </div>
+                <div
+                  style={{
+                    flex: '1'
+                  }}
+                >
+                  {!expanded ? (
+                    <div className={classesInCSS.CommentContentCompact}>
+                      <LinesEllipsis
+                        text={item.content ? item.content : ''}
+                        maxLine={1}
+                        ellipsis="..."
+                        trimRight
+                        basedOn="words"
+                      />
+                    </div>
+                  ) : (
+                      <div className={classesInCSS.CommentContentExpanded}>
+                        <div className={classesInCSS.CommentInfoBar}>
+                          <span className={classesInCSS.CommentAuthor}>
+                            {item.anonymize === false &&
+                              getFirstName(item.authorName)}
+                            {item.anonymize === true && item.authorId}
+                          </span>
+                          <span
+                            style={{
+                              display: item.anonymize === true ? 'block' : null
+                            }}
+                            className={classesInCSS.CommentMoment}
+                          >
+                            {item.updateDate
+                              ? 'Updated ' +
+                              moment(item.updateDate.toDate()).fromNow()
+                              : null}
+                          </span>
+                        </div>
+                        <div className={classesInCSS.CommentContent}>
+                          {item.content}
+                        </div>
+                      </div>
+                    )}
+                </div>
+                <div
+                  style={{
+                    flexBasis: '28px',
+                    marginLeft: 'auto',
+                    order: '3',
+                    paddingTop: '0px'
+                  }}
+                >
+                  {item.authorId === FirestoreManager.getCurrentUserId() ? (
+                    <React.Fragment>
+                      <Menu
+                        id={`${item.id}-long-menu`}
+                        anchorEl={anchorEl}
+                        open={open}
+                        onClose={this.handleClose}
+                        style={{ padding: '2px' }}
+                        PaperProps={{
+                          style: {
+                            maxHeight: 24 * 4.5,
+                            width: 70
                           }
-                          style={{
-                            padding: '4px 4px',
-                            fontSize: '12px',
-                            display: 'flex',
-                            alignItems: 'center',
-                            opacity: '0.8'
-                          }}
-                        >
-                          {option.icon} &nbsp; {option.text}
-                        </MenuItem>
-                      ))}
-                    </Menu>
-                    <IconButton
-                      aria-label="More"
-                      aria-owns={open ? 'long-menu' : undefined}
-                      aria-haspopup="true"
-                      style={{ padding: '6px' }}
-                      onClick={this.handleClick}
-                    >
-                      <MoreVertIcon style={{ width: '16px', height: '16px' }} />
-                    </IconButton>
-                  </React.Fragment>
-                ) : null}
-              </div>
-            </React.Fragment>
-          )}
+                        }}
+                      >
+                        {options.map(option => (
+                          <MenuItem
+                            key={option.text}
+                            selected={false}
+                            onClick={e =>
+                              this.handleAction(
+                                option.action,
+                                item.id,
+                                item.content,
+                                e
+                              )
+                            }
+                            style={{
+                              padding: '4px 4px',
+                              fontSize: '12px',
+                              display: 'flex',
+                              alignItems: 'center',
+                              opacity: '0.8'
+                            }}
+                          >
+                            {option.icon} &nbsp; {option.text}
+                          </MenuItem>
+                        ))}
+                      </Menu>
+                      <IconButton
+                        aria-label="More"
+                        aria-owns={open ? 'long-menu' : undefined}
+                        aria-haspopup="true"
+                        style={{ padding: '6px' }}
+                        onClick={this.handleClick}
+                      >
+                        <MoreVertIcon style={{ width: '16px', height: '16px' }} />
+                      </IconButton>
+                    </React.Fragment>
+                  ) : null}
+                </div>
+              </React.Fragment>
+            )}
         </div>
       </React.Fragment>
     );

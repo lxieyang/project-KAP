@@ -12,6 +12,29 @@ import {
 //
 //
 //
+/* chrome web store version sync */
+let nodeEnv = process.env.NODE_ENV;
+let extensionVersion = chrome.app.getDetails().version;
+
+if (nodeEnv === 'production') {
+  FirestoreManager.getExtensionInfo()
+    .get()
+    .then(snapshot => {
+      if (snapshot.exists) {
+        if (snapshot.data().chromeWebStoreVersion !== extensionVersion) {
+          FirestoreManager.updateExtensionVersionString(extensionVersion);
+        }
+      } else {
+        FirestoreManager.updateExtensionVersionString(extensionVersion);
+      }
+    });
+}
+
+//
+//
+//
+//
+//
 /* open pages & task switcher support */
 // let isProduction = process.env.NODE_ENV === 'production' ? true : false;
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
@@ -19,6 +42,15 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     chrome.tabs.create(
       {
         url: chrome.extension.getURL('options.html')
+      },
+      tab => {
+        // Tab opened.
+      }
+    );
+  } else if (request.msg === 'Go_TO_DOCS_PAGE') {
+    chrome.tabs.create(
+      {
+        url: chrome.extension.getURL('https://unakite.info')
       },
       tab => {
         // Tab opened.

@@ -13,6 +13,7 @@ import ViewGrid from 'mdi-material-ui/ViewGrid';
 import Switch from '@material-ui/core/Switch';
 import IconButton from '@material-ui/core/IconButton';
 import Star from 'mdi-material-ui/Star';
+import BookOpen from 'mdi-material-ui/BookOpenVariant';
 import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
@@ -37,6 +38,7 @@ const FooterButton = styled.div`
   align-items: center;
   cursor: pointer;
   opacity: 0.3;
+  font-size: 0.9rem;
   transition: all 0.1s ease-in;
 
   &:hover {
@@ -125,6 +127,12 @@ class LoggedIn extends Component {
   settingsClickedHandler = () => {
     chrome.runtime.sendMessage({
       msg: 'OPEN_SETTINGS_PAGE'
+    });
+  };
+
+  openDocsPageClickedHandler = () => {
+    chrome.runtime.sendMessage({
+      msg: 'Go_TO_DOCS_PAGE'
     });
   };
 
@@ -322,6 +330,12 @@ class LoggedIn extends Component {
               <ViewGrid />
             </FooterButtonIcon>
             All Tasks
+          </FooterButton>
+          <FooterButton onClick={() => this.openDocsPageClickedHandler()}>
+            <FooterButtonIcon>
+              <BookOpen />
+            </FooterButtonIcon>
+            Docs
           </FooterButton>
         </div>
       </React.Fragment>

@@ -75,25 +75,41 @@ class SelectTooltipButton extends Component {
           ? this.props.captureWindow.getBoundingClientRect()
           : this.props.range.getBoundingClientRect();
 
+        let saveAnnotationTimestamp = new Date().getTime();
+
+        let payload = {
+          annotation: this.state.annotation,
+          contextData: {
+            url: window.location.href,
+            hostname: window.location.hostname,
+            pathname: window.location.pathname,
+            pageTitle: document.title,
+            shouldUseScreenshot: this.state.shouldUseScreenshot
+          },
+          annotationType: this.props.annotationType,
+          type: PIECE_TYPES.snippet,
+          timer: {
+            startAnnotationTimestamp: this.props.timer.startTimestamp,
+            finishAnnotationTimestamp: this.props.timer.endTimestamp,
+            saveAnnotationTimestamp: saveAnnotationTimestamp,
+            annotationDuration:
+              this.props.timer.endTimestamp - this.props.timer.startTimestamp,
+            totalDuration:
+              saveAnnotationTimestamp - this.props.timer.startTimestamp
+          },
+          tableId,
+          cellId,
+          cellType,
+          ratingType
+        };
+
         chrome.runtime.sendMessage({
           msg: 'CREATE_NEW_ANNOTATION_AND_PUT_IN_TABLE',
-          payload: {
-            annotation: this.state.annotation,
-            contextData: {
-              url: window.location.href,
-              hostname: window.location.hostname,
-              pathname: window.location.pathname,
-              pageTitle: document.title,
-              shouldUseScreenshot: this.state.shouldUseScreenshot
-            },
-            annotationType: this.props.annotationType,
-            type: PIECE_TYPES.snippet,
-            tableId,
-            cellId,
-            cellType,
-            ratingType
-          }
+          payload
         });
+
+        // console.log(payload.timer.annotationDuration);
+        // console.log(payload.timer.totalDuration);
 
         this.setState({
           createdPieceId: this.state.annotation.key,
@@ -257,21 +273,35 @@ class SelectTooltipButton extends Component {
       ? this.props.captureWindow.getBoundingClientRect()
       : this.props.range.getBoundingClientRect();
 
+    let saveAnnotationTimestamp = new Date().getTime();
+    let payload = {
+      annotation: this.state.annotation,
+      contextData: {
+        url: window.location.href,
+        hostname: window.location.hostname,
+        pathname: window.location.pathname,
+        pageTitle: document.title,
+        shouldUseScreenshot: this.state.shouldUseScreenshot
+      },
+      annotationType: this.props.annotationType,
+      type: type,
+      timer: {
+        startAnnotationTimestamp: this.props.timer.startTimestamp,
+        finishAnnotationTimestamp: this.props.timer.endTimestamp,
+        saveAnnotationTimestamp: saveAnnotationTimestamp,
+        annotationDuration:
+          this.props.timer.endTimestamp - this.props.timer.startTimestamp,
+        totalDuration: saveAnnotationTimestamp - this.props.timer.startTimestamp
+      }
+    };
+
     chrome.runtime.sendMessage({
       msg: 'CREATE_NEW_ANNOTATION_BY_TOOLTIP_BUTTON_CLICKED',
-      payload: {
-        annotation: this.state.annotation,
-        contextData: {
-          url: window.location.href,
-          hostname: window.location.hostname,
-          pathname: window.location.pathname,
-          pageTitle: document.title,
-          shouldUseScreenshot: this.state.shouldUseScreenshot
-        },
-        annotationType: this.props.annotationType,
-        type: type
-      }
+      payload
     });
+
+    // console.log(payload.timer.annotationDuration);
+    // console.log(payload.timer.totalDuration);
 
     // fix for chrome 73
     // FirestoreManager.createPiece(

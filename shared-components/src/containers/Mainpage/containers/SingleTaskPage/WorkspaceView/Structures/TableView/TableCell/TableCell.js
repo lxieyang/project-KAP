@@ -5,6 +5,7 @@ import TopLeftCell from './TopLeftCell/TopLeftCell';
 import RowHeaderCell from './RowHeaderCell/RowHeaderCell';
 import ColumnHeaderCell from './ColumnHeaderCell/ColumnHeaderCell';
 import { TABLE_CELL_TYPES } from '../../../../../../../../shared/types';
+import { shouldAnonymize } from '../../../../../../../../shared/utilities';
 import * as FirestoreManager from '../../../../../../../../firebase/firestore_wrapper';
 
 class TableCell extends Component {
@@ -27,10 +28,23 @@ class TableCell extends Component {
         .onSnapshot(querySnapshot => {
           let comments = [];
           querySnapshot.forEach(snapshot => {
-            comments.push({
+            let comment = {
               id: snapshot.id,
-              ...snapshot.data()
-            });
+              ...snapshot.data(),
+              anonymize: false
+            };
+
+            if (
+              shouldAnonymize(
+                comment.authorEmail,
+                comment.authorId,
+                FirestoreManager.getCurrentUserId()
+              )
+            ) {
+              comment.anonymize = true;
+            }
+
+            comments.push(comment);
           });
           this.setState({ comments, commentCount: comments.length });
         });
@@ -46,10 +60,23 @@ class TableCell extends Component {
       .onSnapshot(querySnapshot => {
         let comments = [];
         querySnapshot.forEach(snapshot => {
-          comments.push({
+          let comment = {
             id: snapshot.id,
-            ...snapshot.data()
-          });
+            ...snapshot.data(),
+            anonymize: false
+          };
+
+          if (
+            shouldAnonymize(
+              comment.authorEmail,
+              comment.authorId,
+              FirestoreManager.getCurrentUserId()
+            )
+          ) {
+            comment.anonymize = true;
+          }
+
+          comments.push(comment);
         });
         this.setState({ comments, commentCount: comments.length });
       });

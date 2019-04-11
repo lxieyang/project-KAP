@@ -2,7 +2,10 @@ import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 import { getTaskIdFromPath } from '../../matchPath';
 import * as FirestoreManager from '../../../../../../firebase/firestore_wrapper';
-import { getTaskLink } from '../../../../../../shared/utilities';
+import {
+  getTaskLink,
+  shouldAnonymize
+} from '../../../../../../shared/utilities';
 import { THEME_COLOR } from '../../../../../../shared/theme';
 import styles from './TaskStatusView.css';
 
@@ -100,13 +103,27 @@ class TaskStatusView extends Component {
             .then(doc => {
               if (doc.exists) {
                 let user = doc.data();
-                this.setState({
-                  author: {
-                    displayName: user.displayName,
-                    photoURL: user.photoURL,
-                    email: user.email
-                  }
-                });
+
+                let author = {
+                  displayName: user.displayName,
+                  photoURL: user.photoURL,
+                  email: user.email,
+                  uid: user.uid,
+                  anonymize: false
+                };
+
+                // for Oberlin experiment
+                if (
+                  shouldAnonymize(
+                    user.email,
+                    task.creator,
+                    FirestoreManager.getCurrentUserId()
+                  )
+                ) {
+                  author.anonymize = true;
+                }
+
+                this.setState({ author });
               }
             });
         }
@@ -172,6 +189,7 @@ class TaskStatusView extends Component {
       return null;
     }
 
+    /*
     if (!editAccess) {
       return (
         <React.Fragment>
@@ -185,7 +203,14 @@ class TaskStatusView extends Component {
             {author ? (
               <div className={styles.ReviewingTaskAuthorContainer}>
                 <div style={{ display: 'flex', alignItems: 'center' }}>
-                  Created by {author.displayName} ({author.email})
+                  {author.anonymize === false && (
+                    <span>
+                      Created by {author.displayName} ({author.email})
+                    </span>
+                  )}
+                  {author.anonymize === true && (
+                    <span>Created by {author.uid}</span>
+                  )}
                 </div>
               </div>
             ) : null}
@@ -193,16 +218,23 @@ class TaskStatusView extends Component {
         </React.Fragment>
       );
     }
+    */
 
     return (
-      <React.Fragment>
-        <div className={styles.TaskStatusViewContainer}>
+      <div>
+        <div
+          style={{
+            backgroundColor: !editAccess
+              ? THEME_COLOR.reviewingTaskBackgroundColor
+              : null
+          }}
+          className={styles.TaskStatusViewContainer}>
           <div className={styles.VariousButtonsContainer}>
             {editAccess && (
               <Tooltip
                 title={`${
                   task.isStarred ? 'Remove from Starred' : 'Add to Starred'
-                }`}
+                  }`}
                 placement={'bottom'}
               >
                 <IconButton
@@ -220,8 +252,8 @@ class TaskStatusView extends Component {
                       }}
                     />
                   ) : (
-                    <StarOutline className={classes.iconInIconButtons} />
-                  )}
+                      <StarOutline className={classes.iconInIconButtons} />
+                    )}
                 </IconButton>
               </Tooltip>
             )}
@@ -242,6 +274,23 @@ class TaskStatusView extends Component {
               onChange={e => this.handleTaskNameChange(e)}
               className={styles.Textarea}
             />
+            {author && author.uid !== FirestoreManager.getCurrentUserId() ? (
+              <div
+                className={styles.ReviewingTaskAuthorContainer}
+                style={{ marginLeft: 8 }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', marginBottom: 4 }}>
+                  {author.anonymize === false && (
+                    <span>
+                      Created by {author.displayName} ({author.email})
+                    </span>
+                  )}
+                  {author.anonymize === true && (
+                    <span>Created by {author.uid}</span>
+                  )}
+                </div>
+              </div>
+            ) : null}
           </div>
 
           <div style={{ position: 'relative' }}>
@@ -317,7 +366,7 @@ class TaskStatusView extends Component {
             />
           </div>
         </Collapse>
-      </React.Fragment>
+      </div>
     );
   }
 }

@@ -17,6 +17,7 @@ import Menu from '@material-ui/core/Menu';
 import Logout from 'mdi-material-ui/LogoutVariant';
 import IconButton from '@material-ui/core/IconButton';
 import Divider from '@material-ui/core/Divider';
+import BookOpen from 'mdi-material-ui/BookOpenVariant';
 
 const materialStyles = {
   toolbar: {
@@ -132,6 +133,12 @@ class BrowserTooltip extends Component {
     });
   };
 
+  openDocsPageClickedHandler = () => {
+    chrome.runtime.sendMessage({
+      msg: 'Go_TO_DOCS_PAGE'
+    });
+  };
+
   render() {
     const { classes } = this.props;
     const { anchorEl, userProfilePhotoURL, userName } = this.state;
@@ -169,6 +176,7 @@ class BrowserTooltip extends Component {
             </span>
           </div>
           <div style={{ flex: 1 }} />
+
           {!this.state.loadingUserInfo && isLoggedIn ? (
             <div>
               <IconButton
@@ -215,7 +223,17 @@ class BrowserTooltip extends Component {
                 </MenuItem>
               </Menu>
             </div>
-          ) : null}
+          ) : (
+            <div
+              className={styles.DocsButton}
+              onClick={() => this.openDocsPageClickedHandler()}
+            >
+              <div className={styles.DocsButtonIcon}>
+                <BookOpen />
+              </div>
+              <div>Docs</div>
+            </div>
+          )}
         </div>
         <Divider light />
       </React.Fragment>

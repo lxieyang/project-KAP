@@ -15,6 +15,8 @@ import HTML5Backend from 'react-dnd-html5-backend';
 import { DragDropContext } from 'react-dnd';
 
 import * as FirestoreManager from '../../../../shared-components/src/firebase/firestore_wrapper';
+import { TIMESTAMP_TYPES } from '../../../../shared-components/src/shared/types';
+import { getAnonymizationInfo } from '../../../../shared-components/src/shared/utilities';
 
 class Popup extends Component {
   state = {
@@ -37,6 +39,8 @@ class Popup extends Component {
   };
 
   componentDidMount() {
+    getAnonymizationInfo();
+
     chrome.runtime.sendMessage({ msg: 'GET_USER_INFO' }, response => {
       this.signInOutUserWithCredential(response.idToken);
     });
@@ -256,6 +260,24 @@ class Popup extends Component {
       <div
         style={{ display: 'flex', flexFlow: 'column', height: '100vh' }}
         onClick={e => this.popupClickedHandler(e)}
+        // for tracking time in sidebar
+        onMouseEnter={() => {
+          // console.log('enter');
+          this.lastVisitTimestamp = new Date().getTime();
+        }}
+        onMouseLeave={() => {
+          // console.log('leave');
+          let now = new Date().getTime();
+          let duration = now - this.lastVisitTimestamp;
+          if (duration > 2000 && this.state.currentTaskId !== null) {
+            FirestoreManager.addActionTimestamps(this.state.currentTaskId, {
+              timestampType: TIMESTAMP_TYPES.inSidebar,
+              duration: duration,
+              startTimestamp: this.lastVisitTimestamp,
+              endTimestamp: now
+            });
+          }
+        }}
       >
         {appTitle}
         {/*<div

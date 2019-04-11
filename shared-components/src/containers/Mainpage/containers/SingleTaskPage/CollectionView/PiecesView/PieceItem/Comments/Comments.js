@@ -9,6 +9,7 @@ import * as FirestoreManager from '../../../../../../../../firebase/firestore_wr
 import CommentItem from './CommentItem/CommentItem';
 import classesInCSS from './Comments.css';
 import { TABLE_CELL_TYPES } from '../../../../../../../../shared/types';
+import { shouldAnonymize } from '../../../../../../../../shared/utilities';
 
 const styles = theme => ({
   button: {
@@ -48,10 +49,17 @@ class Comments extends Component {
       .onSnapshot(querySnapshot => {
         let comments = [];
         querySnapshot.forEach(snapshot => {
-          comments.push({
+          let comment = {
             id: snapshot.id,
-            ...snapshot.data()
-          });
+            ...snapshot.data(),
+            anonymize: false
+          };
+
+          if(shouldAnonymize(comment.authorEmail, comment.authorId, FirestoreManager.getCurrentUserId())) {
+            comment.anonymize = true
+          }
+
+          comments.push(comment);
         });
         this.setState({ comments });
       });

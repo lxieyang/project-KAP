@@ -7,6 +7,7 @@ import Button from '@material-ui/core/Button';
 import Textarea from 'react-textarea-autosize';
 
 import * as FirestoreManager from '../../../../../../../firebase/firestore_wrapper';
+import { shouldAnonymize } from '../../../../../../../shared/utilities';
 import CommentItem from './TaskCommentItem/TaskCommentItem';
 import classesInCSS from './TaskComments.css';
 
@@ -59,10 +60,23 @@ class TaskComments extends Component {
       .onSnapshot(querySnapshot => {
         let comments = [];
         querySnapshot.forEach(snapshot => {
-          comments.push({
+          let comment = {
             id: snapshot.id,
-            ...snapshot.data()
-          });
+            ...snapshot.data(),
+            anonymize: false
+          };
+
+          if (
+            shouldAnonymize(
+              comment.authorEmail,
+              comment.authorId,
+              FirestoreManager.getCurrentUserId()
+            )
+          ) {
+            comment.anonymize = true;
+          }
+
+          comments.push(comment);
         });
         this.setState({ comments });
         this.props.setCurrentTaskCommentsCount(comments.length);
