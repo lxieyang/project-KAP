@@ -1,6 +1,6 @@
 {
   "name": "project-kap",
-  "version": "2.1.8",
+  "version": "2.1.9",
   "description": "Help developers organize and structure information related to programming decisions.",
   "license": "MIT",
   "repository": {
@@ -26,6 +26,8 @@
     "chrome-sidebar": "^0.1.2",
     "chrome-tab-identifier": "0.0.1",
     "classnames": "^2.2.6",
+    "crypto-js": "^3.1.9-1",
+    "cryptr": "^4.0.2",
     "fg-loadcss": "^2.1.0",
     "firebase": "^5.8.6",
     "fixed-data-table-2": "^0.8.16",
@@ -82,6 +84,7 @@
     "semantic-ui-css": "^2.4.1",
     "semantic-ui-react": "^0.78.3",
     "siphon-tools": "file:../local_modules/SiphonTools",
+    "string-hash": "^1.1.3",
     "styled-components": "^3.4.10",
     "url-loader": "^1.1.2",
     "w3-css": "^4.1.0",

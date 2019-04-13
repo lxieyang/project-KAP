@@ -1,5 +1,12 @@
 import $ from 'jquery';
 import * as FirestoreManager from '../firebase/firestore_wrapper';
+import stringHash from 'string-hash';
+import { cryptrSecretKey, cryptrInitializationVector } from '../secrets.user';
+// import Cryptr from 'cryptr';
+import CryptoJS from 'crypto-js';
+import { cuteAnimalNames } from './constants';
+
+// const cryptr = new Cryptr(cryptrSecretKey);
 
 let superUserIds = [
   'GyIbFsUnhGevd33nIp7M7wB5Z7l2',
@@ -151,6 +158,35 @@ export const shouldAnonymize = (creatorEmail, creatorId, currentUserId) => {
   // console.log(creatorEmail, creatorId, currentUserId, shouldAnonymize);
 
   return shouldAnonymize;
+};
+
+export const getEncryptedAuthorId = authorId => {
+  // return cryptr.encrypt(authorId);
+  let params = {
+    iv: CryptoJS.enc.Hex.parse(cryptrInitializationVector),
+    mode: CryptoJS.mode.ECB,
+    padding: CryptoJS.pad.NoPadding
+  };
+
+  return CryptoJS.AES.encrypt(
+    authorId,
+    CryptoJS.enc.Hex.parse(cryptrSecretKey),
+    params
+  );
+};
+
+export const getDecryptedAuthorId = authorId => {
+  // return cryptr.decrypt(authorId);
+  return CryptoJS.AES.decrypt(authorId, cryptrSecretKey).toString(
+    CryptoJS.enc.Utf8
+  );
+};
+
+export const getAnonymousAnimalName = authorId => {
+  let hashInt = stringHash(authorId);
+  let name = cuteAnimalNames[hashInt % cuteAnimalNames.length];
+  let animalName = 'Anonymous ' + name.charAt(0).toUpperCase() + name.slice(1);
+  return animalName;
 };
 
 export const getDefaultUserAvatar = name => {

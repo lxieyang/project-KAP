@@ -262,7 +262,6 @@ class Popup extends Component {
         onClick={e => this.popupClickedHandler(e)}
         // for tracking time in sidebar
         onMouseEnter={() => {
-          // console.log('enter');
           this.lastVisitTimestamp = new Date().getTime();
         }}
         onMouseLeave={() => {
@@ -280,17 +279,7 @@ class Popup extends Component {
         }}
       >
         {appTitle}
-        {/*<div
-          style={{
-            width: '100%',
-            height: '100px',
-            display: 'flex',
-            justifyContent: 'space-around',
-            alignItems: 'center'
-          }}
-        >
-          Successfully logged into {APP_NAME_SHORT}.
-        </div>*/}
+
         <TaskSwitcher
           setCurrentTaskId={this.setCurrentTaskId}
           idToken={this.state.idToken}

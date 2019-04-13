@@ -146,9 +146,6 @@ class Table extends Component {
     const { cells } = this.state;
     let tableRows = workspace.data;
 
-    // console.log(cells);
-    // console.log(tableRows);
-
     if (cells === null) {
       return (
         <div

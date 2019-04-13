@@ -4,7 +4,10 @@ import { getTaskIdFromPath } from '../../matchPath';
 import * as FirestoreManager from '../../../../../../firebase/firestore_wrapper';
 import {
   getTaskLink,
-  shouldAnonymize
+  shouldAnonymize,
+  getAnonymousAnimalName,
+  getEncryptedAuthorId,
+  getDecryptedAuthorId
 } from '../../../../../../shared/utilities';
 import { THEME_COLOR } from '../../../../../../shared/theme';
 import styles from './TaskStatusView.css';
@@ -228,13 +231,14 @@ class TaskStatusView extends Component {
               ? THEME_COLOR.reviewingTaskBackgroundColor
               : null
           }}
-          className={styles.TaskStatusViewContainer}>
+          className={styles.TaskStatusViewContainer}
+        >
           <div className={styles.VariousButtonsContainer}>
             {editAccess && (
               <Tooltip
                 title={`${
                   task.isStarred ? 'Remove from Starred' : 'Add to Starred'
-                  }`}
+                }`}
                 placement={'bottom'}
               >
                 <IconButton
@@ -252,8 +256,8 @@ class TaskStatusView extends Component {
                       }}
                     />
                   ) : (
-                      <StarOutline className={classes.iconInIconButtons} />
-                    )}
+                    <StarOutline className={classes.iconInIconButtons} />
+                  )}
                 </IconButton>
               </Tooltip>
             )}
@@ -279,14 +283,23 @@ class TaskStatusView extends Component {
                 className={styles.ReviewingTaskAuthorContainer}
                 style={{ marginLeft: 8 }}
               >
-                <div style={{ display: 'flex', alignItems: 'center', marginBottom: 4 }}>
+                <div
+                  style={{
+                    // display: 'flex',
+                    // alignItems: 'center',
+                    marginBottom: 4
+                  }}
+                >
                   {author.anonymize === false && (
                     <span>
                       Created by {author.displayName} ({author.email})
                     </span>
                   )}
                   {author.anonymize === true && (
-                    <span>Created by {author.uid}</span>
+                    <React.Fragment>
+                      <div>Created by {getAnonymousAnimalName(author.uid)}</div>
+                      <div>({getEncryptedAuthorId(author.uid).toString()})</div>
+                    </React.Fragment>
                   )}
                 </div>
               </div>

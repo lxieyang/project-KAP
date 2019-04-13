@@ -3,7 +3,10 @@ import React, { Component } from 'react';
 import * as FirestoreManager from '../../../../../../../../../shared-components/src/firebase/firestore_wrapper';
 import {
   getFirstName,
-  getDefaultUserAvatar
+  getDefaultUserAvatar,
+  getEncryptedAuthorId,
+  getDecryptedAuthorId,
+  getAnonymousAnimalName
 } from '../../../../../../../../../shared-components/src/shared/utilities';
 
 import { withStyles } from '@material-ui/core/styles';
@@ -164,7 +167,9 @@ class CommentItem extends Component {
               <div>
                 <Avatar
                   title={
-                    item.anonymize === false ? item.authorName : item.authorId
+                    item.anonymize === false
+                      ? item.authorId
+                      : getEncryptedAuthorId(item.authorId)
                   }
                   aria-label="avatar"
                   style={{
@@ -177,17 +182,23 @@ class CommentItem extends Component {
                     src={
                       item.anonymize === false
                         ? item.authorAvatarURL
-                        : getDefaultUserAvatar(item.authorId)
+                        : getDefaultUserAvatar(
+                            getAnonymousAnimalName(item.authorId)
+                          )
                     }
                     onError={e => {
                       e.target.onerror = null;
                       e.target.src = getDefaultUserAvatar(
                         item.anonymize === false
                           ? item.authorName
-                          : item.authorId
+                          : getAnonymousAnimalName(item.authorId)
                       );
                     }}
-                    alt={item.authorId}
+                    alt={
+                      item.anonymize === false
+                        ? item.authorId
+                        : getEncryptedAuthorId(item.authorId)
+                    }
                     style={{ width: '100%', height: '100%' }}
                   />
                 </Avatar>
@@ -213,7 +224,8 @@ class CommentItem extends Component {
                       <span className={classesInCSS.CommentAuthor}>
                         {item.anonymize === false &&
                           getFirstName(item.authorName)}
-                        {item.anonymize === true && item.authorId}
+                        {item.anonymize === true &&
+                          getAnonymousAnimalName(item.authorId)}
                       </span>
                       <span
                         style={{
