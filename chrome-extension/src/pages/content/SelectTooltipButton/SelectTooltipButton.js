@@ -43,10 +43,32 @@ class SelectTooltipButton extends Component {
       let annotation;
       if (this.props.annotationType === ANNOTATION_TYPES.Highlight) {
         annotation = new Highlight(this.props.range);
+
+        // tracking
+        chrome.runtime.sendMessage({
+          msg: 'ANNOTATION_HIGHTLIGHTED',
+          payload: {
+            url: window.location.href,
+            text: annotation.text,
+            html: annotation.html
+          }
+        });
       } else if (this.props.annotationType === ANNOTATION_TYPES.Snippet) {
         annotation = new Snippet(
           this.props.captureWindow.getBoundingClientRect()
         );
+
+        // tracking
+        chrome.runtime.sendMessage({
+          msg: 'ANNOTATION_SNAPSHOTTED',
+          payload: {
+            url: window.location.href,
+            text: annotation.text,
+            html: annotation.html,
+            rect: this.props.captureWindow.getBoundingClientRect(),
+            windowSize: this.props.windowSize
+          }
+        });
       }
       // console.log(annotation);
       this.setState({ annotation });

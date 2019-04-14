@@ -157,6 +157,7 @@ class TaskSwitcher extends Component {
       } else if (taskName !== '') {
         FirestoreManager.createTaskWithName(taskName)
           .then(docRef => {
+            FirestoreManager.Task__CreateTask(docRef.id);
             FirestoreManager.updateCurrentUserCurrentTaskId(docRef.id);
             FirestoreManager.createNewTable({ taskId: docRef.id });
           })
@@ -181,6 +182,7 @@ class TaskSwitcher extends Component {
     if (taskName !== null && taskName !== '') {
       FirestoreManager.createTaskWithName(taskName)
         .then(docRef => {
+          FirestoreManager.Task__CreateTask(docRef.id);
           FirestoreManager.updateCurrentUserCurrentTaskId(docRef.id);
           FirestoreManager.createNewTable({ taskId: docRef.id });
         })
@@ -192,7 +194,7 @@ class TaskSwitcher extends Component {
   };
 
   updateTaskName = (taskId, currentName) => {
-    let taskName = prompt('Change the task name to:', currentName);
+    let taskName = prompt('Change the task name to:', currentName).trim();
     if (taskName !== null && taskName !== '' && taskName !== currentName) {
       FirestoreManager.updateTaskName(taskId, taskName);
     }

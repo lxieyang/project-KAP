@@ -14,6 +14,7 @@ import {
   getCurrentUser,
   addActionTimestamps
 } from '../firestore_wrapper';
+import * as FirestoreManager from '../firestore_wrapper';
 const xssFilter = require('xssfilter');
 const xss = new xssFilter({
   matchStyleTag: false

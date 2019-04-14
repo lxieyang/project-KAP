@@ -26,3 +26,4 @@ export * from './wrappers/table_functions';
 export * from './wrappers/workspace_functions';
 export * from './wrappers/timer_functions';
 export * from './wrappers/misc_functions';
+export * from './wrappers/instrument_v1_functions';

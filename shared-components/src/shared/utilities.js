@@ -2,11 +2,8 @@ import $ from 'jquery';
 import * as FirestoreManager from '../firebase/firestore_wrapper';
 import stringHash from 'string-hash';
 import { cryptrSecretKey, cryptrInitializationVector } from '../secrets.user';
-// import Cryptr from 'cryptr';
 import CryptoJS from 'crypto-js';
 import { cuteAnimalNames } from './constants';
-
-// const cryptr = new Cryptr(cryptrSecretKey);
 
 let superUserIds = [
   'GyIbFsUnhGevd33nIp7M7wB5Z7l2',

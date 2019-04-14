@@ -1,4 +1,6 @@
 /* global chrome */
+import imageClipper from '../image-clipper.js';
+import { getImageDimensions } from '../captureScreenshot';
 import * as FirestoreManager from '../../../../../shared-components/src/firebase/firestore_wrapper';
 import { PIECE_TYPES } from '../../../../../shared-components/src/shared/types';
 
@@ -165,5 +167,50 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       pieceId,
       ratingType
     );
+  }
+});
+
+//
+//
+//
+//
+//
+/* annotation tracking support */
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+  if (request.msg === 'ANNOTATION_HIGHTLIGHTED') {
+    let { url, text, html } = request.payload;
+    FirestoreManager.Piece__HightlightContent(text, url, html);
+  } else if (request.msg === 'ANNOTATION_SNAPSHOTTED') {
+    let { url, text, html, rect, windowSize } = request.payload;
+    chrome.tabs.captureVisibleTab(screenshotUrl => {
+      getImageDimensions(screenshotUrl).then(imageDimensions => {
+        let scale = imageDimensions.w / windowSize.width;
+        let x = Math.floor(rect.x * scale);
+        let y = Math.floor(rect.y * scale);
+        let width = Math.floor(rect.width * scale);
+        let height = Math.floor(rect.height * scale);
+        imageClipper(screenshotUrl, function() {
+          this.crop(x, y, width, height).toDataURL(dataUrl => {
+            getImageDimensions(dataUrl).then(croppedImageDimensions => {
+              let dimensions = {
+                trueWidth: croppedImageDimensions.w,
+                trueHeight: croppedImageDimensions.h,
+                rectWidth: rect.width,
+                rectHeight: rect.height,
+                rectX: rect.x,
+                rectY: rect.y
+              };
+              FirestoreManager.Piece__SnapshotContent(
+                text,
+                url,
+                html,
+                dataUrl,
+                dimensions
+              );
+            });
+          });
+        });
+      });
+    });
   }
 });

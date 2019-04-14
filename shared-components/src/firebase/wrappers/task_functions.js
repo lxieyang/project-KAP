@@ -5,10 +5,15 @@ import {
   getCurrentUserId,
   getCurrentUserCurrentTaskId
 } from '../firestore_wrapper';
+import * as FirestoreManager from '../firestore_wrapper';
 const uuid = require('uuid/v4');
 
 export const getTaskById = taskId => {
   return db.collection('tasks').doc(taskId);
+};
+
+export const getTaskInstrumentV1DataById = taskId => {
+  return getTaskById(taskId).collection('instrumentV1Data');
 };
 
 export const getAllCommentsToTask = taskId => {
@@ -35,14 +40,15 @@ export const updateCurrentUserCurrentTaskId = taskId => {
 };
 
 export const updateTaskName = (taskId, newTaskName) => {
-  db.collection('tasks')
-    .doc(taskId)
-    .update({
-      name: newTaskName
-    })
-    .then(() => {
-      updateTaskUpdateTime(taskId);
-    });
+  FirestoreManager.Task__EditTaskName(taskId, newTaskName).then(() => {
+    getTaskById(taskId)
+      .update({
+        name: newTaskName
+      })
+      .then(stuff => {
+        updateTaskUpdateTime(taskId);
+      });
+  });
 };
 
 //
@@ -61,7 +67,12 @@ export const addCommentToATaskById = (taskId, newCommentContent) => {
       authorName: getCurrentUser().displayName,
       authorAvatarURL: getCurrentUser().photoURL
     })
-    .then(() => {
+    .then(docRef => {
+      FirestoreManager.Task__AddCommentToTask(
+        taskId,
+        docRef.id,
+        newCommentContent
+      );
       getTaskById(taskId).update({
         updateDate: firebase.firestore.FieldValue.serverTimestamp()
       });
@@ -69,11 +80,16 @@ export const addCommentToATaskById = (taskId, newCommentContent) => {
     });
 };
 
-export const updateCommentToATaskById = (
+export const updateCommentToATaskById = async (
   taskId,
   commentId,
   newCommentContent
 ) => {
+  await FirestoreManager.Task__EditCommentToTask(
+    taskId,
+    commentId,
+    newCommentContent
+  );
   getTaskById(taskId)
     .collection('comments')
     .doc(commentId)
@@ -91,7 +107,8 @@ export const updateCommentToATaskById = (
     });
 };
 
-export const deleteCommentToATaskById = (taskId, commentId) => {
+export const deleteCommentToATaskById = async (taskId, commentId) => {
+  await FirestoreManager.Task__DeleteCommentToTask(taskId, commentId);
   return getTaskById(taskId)
     .collection('comments')
     .doc(commentId)
@@ -102,8 +119,8 @@ export const deleteCommentToATaskById = (taskId, commentId) => {
 };
 
 export const toggleTaskStarStatus = (taskId, to) => {
-  db.collection('tasks')
-    .doc(taskId)
+  FirestoreManager.Task__ToggleTaskStarStatus(taskId, to);
+  getTaskById(taskId)
     .update({
       isStarred: to
     })
@@ -113,12 +130,12 @@ export const toggleTaskStarStatus = (taskId, to) => {
 };
 
 export const deleteTaskById = taskId => {
-  db.collection('tasks')
-    .doc(taskId)
+  getTaskById(taskId)
     .update({
       trashed: true
     })
     .then(() => {
+      FirestoreManager.Task__DeleteTask(taskId);
       // automatically switch to the last task that got updated
       getCurrentUserCreatedTasks()
         .orderBy('updateDate', 'desc')
@@ -137,8 +154,7 @@ export const deleteTaskById = taskId => {
 };
 
 export const reviveTaskById = taskId => {
-  db.collection('tasks')
-    .doc(taskId)
+  getTaskById(taskId)
     .update({
       trashed: false
     })
@@ -148,12 +164,9 @@ export const reviveTaskById = taskId => {
 };
 
 export const updateTaskUpdateTime = taskId => {
-  return db
-    .collection('tasks')
-    .doc(taskId)
-    .update({
-      updateDate: firebase.firestore.FieldValue.serverTimestamp()
-    });
+  return getTaskById(taskId).update({
+    updateDate: firebase.firestore.FieldValue.serverTimestamp()
+  });
 };
 
 export const updateCurrentTaskUpdateTime = async () => {

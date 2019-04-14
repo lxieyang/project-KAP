@@ -114,6 +114,7 @@ class AllTasksPage extends Component {
       FirestoreManager.createTaskWithName(taskName)
         .then(docRef => {
           let taskId = docRef.id;
+          FirestoreManager.Task__CreateTask(taskId);
           FirestoreManager.updateCurrentUserCurrentTaskId(taskId);
           FirestoreManager.createNewTable({ taskId });
           this.props.history.push(`/tasks/${taskId}`);

@@ -107,6 +107,7 @@ function createNewTaskUponSelection(info, tab) {
   if (taskName !== null && taskName !== '') {
     FirestoreManager.createTaskWithName(taskName)
       .then(docRef => {
+        FirestoreManager.Task__CreateTask(docRef.id);
         FirestoreManager.updateCurrentUserCurrentTaskId(docRef.id);
         FirestoreManager.createNewTable({ taskId: docRef.id });
       })

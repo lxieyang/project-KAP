@@ -140,7 +140,7 @@ class TaskCard extends Component {
 
   handleEditTaskNameButtonClicked = (taskId, currentName) => {
     this.handleClose();
-    let taskName = prompt('Change the task name to:', currentName);
+    let taskName = prompt('Change the task name to:', currentName).trim();
     if (taskName !== null && taskName !== '' && taskName !== currentName) {
       FirestoreManager.updateTaskName(taskId, taskName);
     }

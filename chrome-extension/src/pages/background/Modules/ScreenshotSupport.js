@@ -1,9 +1,6 @@
 /* global chrome */
 import imageClipper from '../image-clipper.js';
-import {
-  getImageDimensions,
-  makeScreenshotWithCoordinates
-} from '../captureScreenshot';
+import { getImageDimensions } from '../captureScreenshot';
 import * as FirestoreManager from '../../../../../shared-components/src/firebase/firestore_wrapper';
 
 //
@@ -16,7 +13,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
   if (request.msg === 'SCREENSHOT_WITH_COORDINATES') {
     let rect = request.rect;
     let windowSize = request.windowSize;
-    chrome.tabs.captureVisibleTab(function(screenshotUrl) {
+    chrome.tabs.captureVisibleTab(screenshotUrl => {
       getImageDimensions(screenshotUrl).then(imageDimensions => {
         let scale = imageDimensions.w / windowSize.width;
         let x = Math.floor(rect.x * scale);
