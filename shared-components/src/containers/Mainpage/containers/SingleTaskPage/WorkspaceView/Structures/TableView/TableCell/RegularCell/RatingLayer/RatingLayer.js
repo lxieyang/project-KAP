@@ -77,6 +77,13 @@ class RatingLayer extends Component {
       this.props.ratingType
     );
 
+    FirestoreManager.Table__AddEvidencePiece(
+      this.props.workspace.id,
+      this.props.cell.id,
+      pieceId,
+      this.props.ratingType
+    );
+
     // change type to snippet
     this.changePieceType(pieceId);
   };

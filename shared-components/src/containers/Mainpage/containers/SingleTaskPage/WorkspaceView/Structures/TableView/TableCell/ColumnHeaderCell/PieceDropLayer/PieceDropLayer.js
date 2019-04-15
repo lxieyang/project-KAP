@@ -57,7 +57,13 @@ class PieceDropLayer extends Component {
     canDrop: PropTypes.bool.isRequired
   };
 
-  removePieceFromCell = pieceId => {
+  removePieceFromCell = async pieceId => {
+    await FirestoreManager.Table_RemoveCriterion(
+      this.props.workspace.id,
+      this.props.cell.id,
+      pieceId
+    );
+
     FirestoreManager.deletePieceInTableCellById(
       this.props.workspace.id,
       this.props.cell.id,

@@ -56,11 +56,19 @@ class RatingIconDropLayer extends Component {
       this.props.workspace.id,
       this.props.cell.id,
       pieceId,
-      ratingType
+      ratingType,
+      this.props.pieceRating
     );
   };
 
-  removePieceFromCell = pieceId => {
+  removePieceFromCell = async pieceId => {
+    await FirestoreManager.Table_RemoveEvidencePiece(
+      this.props.workspace.id,
+      this.props.cell.id,
+      pieceId,
+      this.props.pieceRating
+    );
+
     FirestoreManager.deletePieceInTableCellById(
       this.props.workspace.id,
       this.props.cell.id,

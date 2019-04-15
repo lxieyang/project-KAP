@@ -335,6 +335,14 @@ class ColumnHeaderCell extends Component {
           ANNOTATION_TYPES.Manual,
           PIECE_TYPES.criterion
         ).then(pieceId => {
+          FirestoreManager.Piece__CreateManualPiece(pieceId);
+
+          FirestoreManager.Table__CreateManualPieceAsCriterion(
+            this.props.workspace.id,
+            this.props.cell.id,
+            pieceId
+          );
+
           this.resetPieceInThisCell(pieceId, true);
         });
       }, 50);
@@ -362,6 +370,12 @@ class ColumnHeaderCell extends Component {
 
   addPieceToThisCell = pieceId => {
     FirestoreManager.addPieceToTableCellById(
+      this.props.workspace.id,
+      this.props.cell.id,
+      pieceId
+    );
+
+    FirestoreManager.Table__AddCriterion(
       this.props.workspace.id,
       this.props.cell.id,
       pieceId
@@ -423,7 +437,13 @@ class ColumnHeaderCell extends Component {
     FirestoreManager.switchPieceType(pieceId, null, to);
   };
 
-  removePieceFromCellClickedHandler = (e, pieceId) => {
+  removePieceFromCellClickedHandler = async (e, pieceId) => {
+    await FirestoreManager.Table_RemoveCriterion(
+      this.props.workspace.id,
+      this.props.cell.id,
+      pieceId
+    );
+
     FirestoreManager.deletePieceInTableCellById(
       this.props.workspace.id,
       this.props.cell.id,
@@ -673,6 +693,7 @@ class ColumnHeaderCell extends Component {
                 <PieceItemContainer
                   // this is for dnd
                   piece={pieceInCell}
+                  pieceType={PIECE_TYPES.criterion}
                   cellId={cell.id}
                   cellType={cell.type}
                   rowIndex={this.props.rowIndex}

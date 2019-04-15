@@ -200,7 +200,14 @@ class RegularCell extends Component {
     );
   };
 
-  removePieceFromCellClickedHandler = (e, pieceId) => {
+  removePieceFromCellClickedHandler = async (e, pieceId, pieceRating) => {
+    await FirestoreManager.Table_RemoveEvidencePiece(
+      this.props.workspace.id,
+      this.props.cell.id,
+      pieceId,
+      pieceRating
+    );
+
     FirestoreManager.deletePieceInTableCellById(
       this.props.workspace.id,
       this.props.cell.id,
@@ -208,12 +215,13 @@ class RegularCell extends Component {
     );
   };
 
-  switchRatingTypeOfPiece = (e, pieceId, ratingType) => {
+  switchRatingTypeOfPiece = (e, pieceId, toRatingType, fromRatingType) => {
     FirestoreManager.switchPieceRatingType(
       this.props.workspace.id,
       this.props.cell.id,
       pieceId,
-      ratingType
+      toRatingType,
+      fromRatingType
     );
   };
 
@@ -238,7 +246,16 @@ class RegularCell extends Component {
           PIECE_TYPES.snippet
         )
           .then(pieceId => {
+            FirestoreManager.Piece__CreateManualPiece(pieceId);
+
             FirestoreManager.addPieceToTableCellById(
+              this.props.workspace.id,
+              this.props.cell.id,
+              pieceId,
+              newPieceRatingType
+            );
+
+            FirestoreManager.Table__CreateManualPieceAsEvidence(
               this.props.workspace.id,
               this.props.cell.id,
               pieceId,
@@ -582,6 +599,7 @@ class RegularCell extends Component {
           <div className={styles.HoverLayerPane}>
             <RatingIconDropLayer
               containerType={RATING_TYPES.positive}
+              pieceRating={this.state.draggingRatingIconType}
               {...this.props}
             />
           </div>
@@ -590,6 +608,7 @@ class RegularCell extends Component {
           <div className={styles.HoverLayerPane}>
             <RatingIconDropLayer
               containerType={RATING_TYPES.negative}
+              pieceRating={this.state.draggingRatingIconType}
               {...this.props}
             />
           </div>
@@ -598,12 +617,17 @@ class RegularCell extends Component {
           <div className={styles.HoverLayerPane}>
             <RatingIconDropLayer
               containerType={RATING_TYPES.info}
+              pieceRating={this.state.draggingRatingIconType}
               {...this.props}
             />
           </div>
         )}
         <div className={styles.HoverLayerPane}>
-          <RatingIconDropLayer containerType={'trash'} {...this.props} />
+          <RatingIconDropLayer
+            containerType={'trash'}
+            pieceRating={this.state.draggingRatingIconType}
+            {...this.props}
+          />
         </div>
       </div>
     );
@@ -736,7 +760,8 @@ class RegularCell extends Component {
                                 this.switchRatingTypeOfPiece(
                                   e,
                                   p.pieceId,
-                                  RATING_TYPES.positive
+                                  RATING_TYPES.positive,
+                                  p.rating
                                 )
                               }
                             >
@@ -754,7 +779,8 @@ class RegularCell extends Component {
                                 this.switchRatingTypeOfPiece(
                                   e,
                                   p.pieceId,
-                                  RATING_TYPES.negative
+                                  RATING_TYPES.negative,
+                                  p.rating
                                 )
                               }
                             >
@@ -772,7 +798,8 @@ class RegularCell extends Component {
                                 this.switchRatingTypeOfPiece(
                                   e,
                                   p.pieceId,
-                                  RATING_TYPES.info
+                                  RATING_TYPES.info,
+                                  p.rating
                                 )
                               }
                             >
@@ -791,7 +818,8 @@ class RegularCell extends Component {
                             onClick={e =>
                               this.removePieceFromCellClickedHandler(
                                 e,
-                                p.pieceId
+                                p.pieceId,
+                                p.rating
                               )
                             }
                           >

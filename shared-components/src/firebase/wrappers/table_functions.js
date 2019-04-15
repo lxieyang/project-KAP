@@ -13,6 +13,7 @@ import {
   getCurrentUser,
   getWorkspaceById
 } from '../firestore_wrapper';
+import * as FirestoreManager from '../firestore_wrapper';
 import moment from 'moment';
 
 export const putOptionIntoDefaultTable = async ({ taskId, pieceId }) => {
@@ -185,6 +186,17 @@ export const addPieceToTableCellById = async (
     pieceId: pieceId,
     rating: rating
   });
+
+  // if (rating !== RATING_TYPES.noRating) {
+  //   // track add manual evidence
+  //   FirestoreManager.Table__CreateManualPieceAsEvidence(
+  //     tableId,
+  //     cellId,
+  //     pieceId,
+  //     rating
+  //   );
+  // }
+
   return updatePiecesTableCellById(tableId, cellId, pieces);
 };
 
@@ -192,7 +204,8 @@ export const switchPieceRatingType = async (
   tableId,
   cellId,
   pieceId,
-  rating = RATING_TYPES.noRating
+  rating = RATING_TYPES.noRating,
+  fromRating = null
 ) => {
   let pieces = (await getTableCellById(tableId, cellId).get()).data().pieces;
   for (let i = 0; i < pieces.length; i++) {
@@ -201,6 +214,16 @@ export const switchPieceRatingType = async (
       break;
     }
   }
+  if (fromRating !== null) {
+    FirestoreManager.Table_SwitchRatingType(
+      tableId,
+      cellId,
+      pieceId,
+      rating,
+      fromRating
+    );
+  }
+
   return updatePiecesTableCellById(tableId, cellId, pieces);
 };
 

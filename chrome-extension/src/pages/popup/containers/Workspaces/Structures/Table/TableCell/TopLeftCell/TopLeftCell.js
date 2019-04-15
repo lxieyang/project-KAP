@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import styles from './TopLeftCell.css';
 import { PIECE_COLOR } from '../../../../../../../../../../shared-components/src/shared/theme';
+import { PIECE_TYPES } from '../../../../../../../../../../shared-components/src/shared/types';
 
 import Button from '@material-ui/core/Button';
 import PlusCircle from 'mdi-material-ui/PlusCircle';
@@ -40,9 +41,9 @@ const dropTarget = {
   },
 
   drop(props, monitor, component) {
-    const { id, cellId } = monitor.getItem();
+    const { id, pieceType, cellId } = monitor.getItem();
 
-    component.removePieceFromCell(id, cellId);
+    component.removePieceFromCell(id, pieceType, cellId);
 
     return {
       id: props.cell.id
@@ -68,7 +69,21 @@ class TopLeftCell extends Component {
     FirestoreManager.createNewColumnInTable(this.props.workspace.id, true);
   };
 
-  removePieceFromCell = (pieceId, cellId) => {
+  removePieceFromCell = async (pieceId, pieceType, cellId) => {
+    if (pieceType === PIECE_TYPES.option) {
+      await FirestoreManager.Table_RemoveOption(
+        this.props.workspace.id,
+        cellId,
+        pieceId
+      );
+    } else if (pieceType === PIECE_TYPES.criterion) {
+      await FirestoreManager.Table_RemoveCriterion(
+        this.props.workspace.id,
+        cellId,
+        pieceId
+      );
+    }
+
     FirestoreManager.deletePieceInTableCellById(
       this.props.workspace.id,
       cellId,

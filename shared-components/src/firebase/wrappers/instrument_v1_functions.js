@@ -8,7 +8,9 @@ import {
   getPieceById,
   getAllTrashedPiecesInTask,
   getScreenshotById,
-  getTaskInstrumentV1DataById
+  getTaskInstrumentV1DataById,
+  getWorkspaceById,
+  getTableCellById
 } from '../firestore_wrapper';
 import eventTypes from './instrument_v1_event_types';
 const xssFilter = require('xssfilter');
@@ -243,6 +245,23 @@ export const Piece__CreateSnapshotPiece = async (
   getTaskInstrumentV1DataById(currentTaskId).add(record);
 };
 
+export const Piece__CreateManualPiece = async pieceId => {
+  let pieceData = (await getPieceById(pieceId).get()).data();
+  let taskId = pieceData.references.task;
+  let taskData = (await getTaskById(taskId).get()).data();
+  let record = {
+    eventType: eventTypes.PIECE__CREATE_MANUAL_PIECE,
+    timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+    eventAuthorId: getCurrentUserId(),
+    // event specific
+    taskName: taskData.name,
+    taskId: taskId,
+    pieceId: pieceId,
+    name: pieceData.name
+  };
+  getTaskInstrumentV1DataById(taskId).add(record);
+};
+
 export const Piece__DeletePiece = async pieceId => {
   let pieceData = (await getPieceById(pieceId).get()).data();
   let taskId = pieceData.references.task;
@@ -458,6 +477,427 @@ export const Piece__DeleteCommentToPiece = async (pieceId, commentId) => {
  * Table Tracking
  *
  */
+
+export const getCorrespondingRowHeaderAndColumnHeader = async (
+  tableId,
+  tableData,
+  cellId
+) => {
+  let targetRow = 0;
+  let targetCol = 0;
+  let targetRowHeader = null;
+  let targetColHeader = null;
+  for (let row = 0; row < tableData.length; row++) {
+    for (let col = 0; col < tableData[0].data.length; col++) {
+      if (tableData[row].data[col] === cellId) {
+        targetRow = row;
+        targetCol = col;
+        targetRowHeader = tableData[row].data[0];
+        targetColHeader = tableData[0].data[col];
+        break;
+      }
+    }
+  }
+  let correspondingRowHeaderCellData = (await getTableCellById(
+    tableId,
+    targetRowHeader
+  ).get()).data();
+  let correspondingRowHeaderPieceData =
+    correspondingRowHeaderCellData.pieces.length > 0
+      ? (await getPieceById(
+          correspondingRowHeaderCellData.pieces[0].pieceId
+        ).get()).data()
+      : null;
+  let correspondingColHeaderCellData = (await getTableCellById(
+    tableId,
+    targetColHeader
+  ).get()).data();
+  let correspondingColHeaderPieceData =
+    correspondingColHeaderCellData.pieces.length > 0
+      ? (await getPieceById(
+          correspondingColHeaderCellData.pieces[0].pieceId
+        ).get()).data()
+      : null;
+
+  return {
+    targetRow,
+    targetCol,
+    targetRowHeader,
+    targetColHeader,
+    correspondingRowHeaderCellData,
+    correspondingRowHeaderPieceData,
+    correspondingColHeaderCellData,
+    correspondingColHeaderPieceData
+  };
+};
+
+export const Table__CreateManualPieceAsEvidence = async (
+  tableId,
+  cellId,
+  pieceId,
+  rating
+) => {
+  let tableData = (await getWorkspaceById(tableId).get()).data();
+  let {
+    targetRow,
+    targetCol,
+    targetRowHeader,
+    targetColHeader,
+    correspondingRowHeaderCellData,
+    correspondingRowHeaderPieceData,
+    correspondingColHeaderCellData,
+    correspondingColHeaderPieceData
+  } = await getCorrespondingRowHeaderAndColumnHeader(
+    tableId,
+    tableData.data,
+    cellId
+  );
+
+  let taskId = tableData.references.task;
+  let pieceData = (await getPieceById(pieceId).get()).data();
+  let taskData = (await getTaskById(taskId).get()).data();
+  let record = {
+    eventType: eventTypes.TABLE__CREATE_NAMUAL_PIECE_AS_EVIDENCE,
+    timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+    eventAuthorId: getCurrentUserId(),
+    // event specific
+    taskName: taskData.name,
+    taskId: taskId,
+    tableId: tableId,
+    tableName: tableData.name,
+    pieceId: pieceId,
+    name: pieceData.name,
+    rating: rating,
+    correspondingRowHeaderPieceId:
+      correspondingRowHeaderCellData.pieces.length > 0
+        ? correspondingRowHeaderCellData.pieces[0].pieceId
+        : null,
+    correspondingRowHeaderPieceName:
+      correspondingRowHeaderPieceData !== null
+        ? correspondingRowHeaderPieceData.name
+        : null,
+    correspondingColHeaderPieceId:
+      correspondingColHeaderCellData.pieces.length > 0
+        ? correspondingColHeaderCellData.pieces[0].pieceId
+        : null,
+    correspondingColHeaderPieceName:
+      correspondingColHeaderPieceData !== null
+        ? correspondingColHeaderPieceData.name
+        : null
+  };
+
+  return getTaskInstrumentV1DataById(taskId).add(record);
+};
+
+export const Table__CreateManualPieceAsOption = async (
+  tableId,
+  cellId,
+  pieceId
+) => {
+  let tableData = (await getWorkspaceById(tableId).get()).data();
+  let taskId = tableData.references.task;
+  let pieceData = (await getPieceById(pieceId).get()).data();
+  let taskData = (await getTaskById(taskId).get()).data();
+  let record = {
+    eventType: eventTypes.TABLE__CREATE_NAMUAL_PIECE_AS_OPTION,
+    timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+    eventAuthorId: getCurrentUserId(),
+    // event specific
+    taskName: taskData.name,
+    taskId: taskId,
+    tableId: tableId,
+    tableName: tableData.name,
+    cellId,
+    pieceId: pieceId,
+    name: pieceData.name
+  };
+  return getTaskInstrumentV1DataById(taskId).add(record);
+};
+
+export const Table__CreateManualPieceAsCriterion = async (
+  tableId,
+  cellId,
+  pieceId
+) => {
+  let tableData = (await getWorkspaceById(tableId).get()).data();
+  let taskId = tableData.references.task;
+  let pieceData = (await getPieceById(pieceId).get()).data();
+  let taskData = (await getTaskById(taskId).get()).data();
+  let record = {
+    eventType: eventTypes.TABLE__CREATE_NAMUAL_PIECE_AS_CRITERION,
+    timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+    eventAuthorId: getCurrentUserId(),
+    // event specific
+    taskName: taskData.name,
+    taskId: taskId,
+    tableId: tableId,
+    tableName: tableData.name,
+    cellId,
+    pieceId: pieceId,
+    name: pieceData.name
+  };
+  return getTaskInstrumentV1DataById(taskId).add(record);
+};
+
+export const Table__AddEvidencePiece = async (
+  tableId,
+  cellId,
+  pieceId,
+  rating
+) => {
+  let tableData = (await getWorkspaceById(tableId).get()).data();
+  let {
+    targetRow,
+    targetCol,
+    targetRowHeader,
+    targetColHeader,
+    correspondingRowHeaderCellData,
+    correspondingRowHeaderPieceData,
+    correspondingColHeaderCellData,
+    correspondingColHeaderPieceData
+  } = await getCorrespondingRowHeaderAndColumnHeader(
+    tableId,
+    tableData.data,
+    cellId
+  );
+
+  let taskId = tableData.references.task;
+  let pieceData = (await getPieceById(pieceId).get()).data();
+  let taskData = (await getTaskById(taskId).get()).data();
+  let record = {
+    eventType: eventTypes.TABLE_ADD_EVIDENCE_PIECE,
+    timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+    eventAuthorId: getCurrentUserId(),
+    // event specific
+    taskName: taskData.name,
+    taskId: taskId,
+    tableId: tableId,
+    tableName: tableData.name,
+    pieceId: pieceId,
+    name: pieceData.name,
+    rating: rating,
+    correspondingRowHeaderPieceId:
+      correspondingRowHeaderCellData.pieces.length > 0
+        ? correspondingRowHeaderCellData.pieces[0].pieceId
+        : null,
+    correspondingRowHeaderPieceName:
+      correspondingRowHeaderPieceData !== null
+        ? correspondingRowHeaderPieceData.name
+        : null,
+    correspondingColHeaderPieceId:
+      correspondingColHeaderCellData.pieces.length > 0
+        ? correspondingColHeaderCellData.pieces[0].pieceId
+        : null,
+    correspondingColHeaderPieceName:
+      correspondingColHeaderPieceData !== null
+        ? correspondingColHeaderPieceData.name
+        : null
+  };
+
+  return getTaskInstrumentV1DataById(taskId).add(record);
+};
+
+export const Table__AddOption = async (tableId, cellId, pieceId) => {
+  let tableData = (await getWorkspaceById(tableId).get()).data();
+  let taskId = tableData.references.task;
+  let pieceData = (await getPieceById(pieceId).get()).data();
+  let taskData = (await getTaskById(taskId).get()).data();
+  let record = {
+    eventType: eventTypes.TABLE_ADD_OPTION,
+    timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+    eventAuthorId: getCurrentUserId(),
+    // event specific.TAB.TABLE_ADD_OPTION
+    taskName: taskData.name,
+    taskId: taskId,
+    tableId: tableId,
+    tableName: tableData.name,
+    cellId,
+    pieceId: pieceId,
+    name: pieceData.name
+  };
+  return getTaskInstrumentV1DataById(taskId).add(record);
+};
+
+export const Table__AddCriterion = async (tableId, cellId, pieceId) => {
+  let tableData = (await getWorkspaceById(tableId).get()).data();
+  let taskId = tableData.references.task;
+  let pieceData = (await getPieceById(pieceId).get()).data();
+  let taskData = (await getTaskById(taskId).get()).data();
+  let record = {
+    eventType: eventTypes.TABLE_ADD_CRITERION,
+    timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+    eventAuthorId: getCurrentUserId(),
+    // event specific
+    taskName: taskData.name,
+    taskId: taskId,
+    tableId: tableId,
+    tableName: tableData.name,
+    cellId,
+    pieceId: pieceId,
+    name: pieceData.name
+  };
+  return getTaskInstrumentV1DataById(taskId).add(record);
+};
+
+export const Table_RemoveEvidencePiece = async (
+  tableId,
+  cellId,
+  pieceId,
+  rating
+) => {
+  let tableData = (await getWorkspaceById(tableId).get()).data();
+  let {
+    targetRow,
+    targetCol,
+    targetRowHeader,
+    targetColHeader,
+    correspondingRowHeaderCellData,
+    correspondingRowHeaderPieceData,
+    correspondingColHeaderCellData,
+    correspondingColHeaderPieceData
+  } = await getCorrespondingRowHeaderAndColumnHeader(
+    tableId,
+    tableData.data,
+    cellId
+  );
+
+  let taskId = tableData.references.task;
+  let pieceData = (await getPieceById(pieceId).get()).data();
+  let taskData = (await getTaskById(taskId).get()).data();
+  let record = {
+    eventType: eventTypes.TABLE_REMOVE_EVIDENCE_PIECE,
+    timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+    eventAuthorId: getCurrentUserId(),
+    // event specific
+    taskName: taskData.name,
+    taskId: taskId,
+    tableId: tableId,
+    tableName: tableData.name,
+    pieceId: pieceId,
+    name: pieceData.name,
+    rating: rating,
+    correspondingRowHeaderPieceId:
+      correspondingRowHeaderCellData.pieces.length > 0
+        ? correspondingRowHeaderCellData.pieces[0].pieceId
+        : null,
+    correspondingRowHeaderPieceName:
+      correspondingRowHeaderPieceData !== null
+        ? correspondingRowHeaderPieceData.name
+        : null,
+    correspondingColHeaderPieceId:
+      correspondingColHeaderCellData.pieces.length > 0
+        ? correspondingColHeaderCellData.pieces[0].pieceId
+        : null,
+    correspondingColHeaderPieceName:
+      correspondingColHeaderPieceData !== null
+        ? correspondingColHeaderPieceData.name
+        : null
+  };
+
+  return getTaskInstrumentV1DataById(taskId).add(record);
+};
+
+export const Table_RemoveOption = async (tableId, cellId, pieceId) => {
+  let tableData = (await getWorkspaceById(tableId).get()).data();
+  let taskId = tableData.references.task;
+  let pieceData = (await getPieceById(pieceId).get()).data();
+  let taskData = (await getTaskById(taskId).get()).data();
+  let record = {
+    eventType: eventTypes.TABLE_REMOVE_OPTION,
+    timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+    eventAuthorId: getCurrentUserId(),
+    // event specific
+    taskName: taskData.name,
+    taskId: taskId,
+    tableId: tableId,
+    tableName: tableData.name,
+    cellId,
+    pieceId: pieceId,
+    name: pieceData.name
+  };
+  return getTaskInstrumentV1DataById(taskId).add(record);
+};
+
+export const Table_RemoveCriterion = async (tableId, cellId, pieceId) => {
+  let tableData = (await getWorkspaceById(tableId).get()).data();
+  let taskId = tableData.references.task;
+  let pieceData = (await getPieceById(pieceId).get()).data();
+  let taskData = (await getTaskById(taskId).get()).data();
+  let record = {
+    eventType: eventTypes.TABLE_REMOVE_CRITERION,
+    timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+    eventAuthorId: getCurrentUserId(),
+    // event specific
+    taskName: taskData.name,
+    taskId: taskId,
+    tableId: tableId,
+    tableName: tableData.name,
+    cellId,
+    pieceId: pieceId,
+    name: pieceData.name
+  };
+  return getTaskInstrumentV1DataById(taskId).add(record);
+};
+
+export const Table_SwitchRatingType = async (
+  tableId,
+  cellId,
+  pieceId,
+  toRating,
+  fromRating
+) => {
+  let tableData = (await getWorkspaceById(tableId).get()).data();
+  let {
+    targetRow,
+    targetCol,
+    targetRowHeader,
+    targetColHeader,
+    correspondingRowHeaderCellData,
+    correspondingRowHeaderPieceData,
+    correspondingColHeaderCellData,
+    correspondingColHeaderPieceData
+  } = await getCorrespondingRowHeaderAndColumnHeader(
+    tableId,
+    tableData.data,
+    cellId
+  );
+
+  let taskId = tableData.references.task;
+  let pieceData = (await getPieceById(pieceId).get()).data();
+  let taskData = (await getTaskById(taskId).get()).data();
+  let record = {
+    eventType: eventTypes.TABLE_REMOVE_EVIDENCE_PIECE,
+    timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+    eventAuthorId: getCurrentUserId(),
+    // event specific
+    taskName: taskData.name,
+    taskId: taskId,
+    tableId: tableId,
+    tableName: tableData.name,
+    pieceId: pieceId,
+    name: pieceData.name,
+    fromRating,
+    toRating,
+    correspondingRowHeaderPieceId:
+      correspondingRowHeaderCellData.pieces.length > 0
+        ? correspondingRowHeaderCellData.pieces[0].pieceId
+        : null,
+    correspondingRowHeaderPieceName:
+      correspondingRowHeaderPieceData !== null
+        ? correspondingRowHeaderPieceData.name
+        : null,
+    correspondingColHeaderPieceId:
+      correspondingColHeaderCellData.pieces.length > 0
+        ? correspondingColHeaderCellData.pieces[0].pieceId
+        : null,
+    correspondingColHeaderPieceName:
+      correspondingColHeaderPieceData !== null
+        ? correspondingColHeaderPieceData.name
+        : null
+  };
+
+  return getTaskInstrumentV1DataById(taskId).add(record);
+};
 
 /**
  *

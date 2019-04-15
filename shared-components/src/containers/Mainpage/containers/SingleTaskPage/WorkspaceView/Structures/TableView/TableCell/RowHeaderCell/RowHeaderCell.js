@@ -297,6 +297,14 @@ class RowHeaderCell extends Component {
           ANNOTATION_TYPES.Manual,
           PIECE_TYPES.option
         ).then(pieceId => {
+          FirestoreManager.Piece__CreateManualPiece(pieceId);
+
+          FirestoreManager.Table__CreateManualPieceAsOption(
+            this.props.workspace.id,
+            this.props.cell.id,
+            pieceId
+          );
+
           this.resetPieceInThisCell(pieceId, true);
         });
       }, 50);
@@ -324,6 +332,12 @@ class RowHeaderCell extends Component {
 
   addPieceToThisCell = pieceId => {
     FirestoreManager.addPieceToTableCellById(
+      this.props.workspace.id,
+      this.props.cell.id,
+      pieceId
+    );
+
+    FirestoreManager.Table__AddOption(
       this.props.workspace.id,
       this.props.cell.id,
       pieceId
@@ -368,7 +382,13 @@ class RowHeaderCell extends Component {
     FirestoreManager.switchPieceType(pieceId, null, to);
   };
 
-  removePieceFromCellClickedHandler = (e, pieceId) => {
+  removePieceFromCellClickedHandler = async (e, pieceId) => {
+    await FirestoreManager.Table_RemoveOption(
+      this.props.workspace.id,
+      this.props.cell.id,
+      pieceId
+    );
+
     FirestoreManager.deletePieceInTableCellById(
       this.props.workspace.id,
       this.props.cell.id,

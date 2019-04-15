@@ -7,6 +7,7 @@ const dragSource = {
     props.switchDraggingOptionCriterionPieceStatus(true);
     return {
       id: props.piece.id,
+      pieceType: props.pieceType,
       cellId: props.cellId,
       cellType: props.cellType,
       rowIndex: props.rowIndex,
