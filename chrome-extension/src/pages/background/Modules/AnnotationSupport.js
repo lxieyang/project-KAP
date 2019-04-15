@@ -212,5 +212,41 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         });
       });
     });
+  } else if (request.msg === 'ANNOTATION_HIGHTLIGHTED_SAVED') {
+    let { pieceId, url, text, html } = request.payload;
+    FirestoreManager.Piece__CreateHighlightPiece(pieceId, text, url, html);
+  } else if (request.msg === 'ANNOTATION_SNAPSHOTTED_SAVED') {
+    let { pieceId, url, text, html, rect, windowSize } = request.payload;
+    chrome.tabs.captureVisibleTab(screenshotUrl => {
+      getImageDimensions(screenshotUrl).then(imageDimensions => {
+        let scale = imageDimensions.w / windowSize.width;
+        let x = Math.floor(rect.x * scale);
+        let y = Math.floor(rect.y * scale);
+        let width = Math.floor(rect.width * scale);
+        let height = Math.floor(rect.height * scale);
+        imageClipper(screenshotUrl, function() {
+          this.crop(x, y, width, height).toDataURL(dataUrl => {
+            getImageDimensions(dataUrl).then(croppedImageDimensions => {
+              let dimensions = {
+                trueWidth: croppedImageDimensions.w,
+                trueHeight: croppedImageDimensions.h,
+                rectWidth: rect.width,
+                rectHeight: rect.height,
+                rectX: rect.x,
+                rectY: rect.y
+              };
+              FirestoreManager.Piece__CreateSnapshotPiece(
+                pieceId,
+                text,
+                url,
+                html,
+                dataUrl,
+                dimensions
+              );
+            });
+          });
+        });
+      });
+    });
   }
 });

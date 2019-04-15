@@ -79,6 +79,8 @@ export const deletePieceById = pieceId => {
       updateDate: firebase.firestore.FieldValue.serverTimestamp()
     })
     .then(() => {
+      FirestoreManager.Piece__DeletePiece(pieceId);
+
       getScreenshotById(pieceId)
         .update({
           trashed: true
@@ -90,7 +92,9 @@ export const deletePieceById = pieceId => {
     });
 };
 
-export const deletePieceForeverById = pieceId => {
+export const deletePieceForeverById = async pieceId => {
+  await FirestoreManager.Piece__DeletePieceForever(pieceId);
+
   getPieceById(pieceId)
     .delete()
     .then(() => {
@@ -111,6 +115,8 @@ export const clearTrashedPiecesForeverByTaskId = async taskId => {
     batch.delete(getScreenshotById(snapshot.id));
   });
 
+  await FirestoreManager.Piece__EmptyTrashCan(taskId);
+
   // Commit the batch
   batch.commit().then(function() {
     // console.log('cleared');
@@ -124,6 +130,8 @@ export const revivePieceById = pieceId => {
       updateDate: firebase.firestore.FieldValue.serverTimestamp()
     })
     .then(() => {
+      FirestoreManager.Piece__RevivePiece(pieceId);
+
       getScreenshotById(pieceId)
         .update({
           trashed: false
@@ -175,7 +183,9 @@ export const switchPieceType = (pieceId, originalType, newType) => {
 //
 //
 /* piece name */
-export const updatePieceName = (pieceId, newName) => {
+export const updatePieceName = async (pieceId, newName) => {
+  await FirestoreManager.Piece__EditPieceName(pieceId, newName);
+
   getPieceById(pieceId)
     .update({
       name: newName,
@@ -190,7 +200,9 @@ export const updatePieceName = (pieceId, newName) => {
 //
 //
 /* piece text */
-export const updatePieceText = (pieceId, newText) => {
+export const updatePieceText = async (pieceId, newText) => {
+  await FirestoreManager.Piece__EditPieceText(pieceId, newText);
+
   getPieceById(pieceId)
     .update({
       text: newText,
@@ -217,7 +229,13 @@ export const addCommentToAPieceById = (pieceId, newCommentContent) => {
       authorEmail: getCurrentUser().email,
       authorAvatarURL: getCurrentUser().photoURL
     })
-    .then(() => {
+    .then(docRef => {
+      FirestoreManager.Piece__AddCommentToPiece(
+        pieceId,
+        docRef.id,
+        newCommentContent
+      );
+
       getPieceById(pieceId).update({
         updateDate: firebase.firestore.FieldValue.serverTimestamp()
       });
@@ -225,7 +243,17 @@ export const addCommentToAPieceById = (pieceId, newCommentContent) => {
     });
 };
 
-export const updateCommentById = (pieceId, commentId, newCommentContent) => {
+export const updateCommentById = async (
+  pieceId,
+  commentId,
+  newCommentContent
+) => {
+  await FirestoreManager.Piece__EditCommentToPiece(
+    pieceId,
+    commentId,
+    newCommentContent
+  );
+
   getPieceById(pieceId)
     .collection('comments')
     .doc(commentId)
@@ -243,7 +271,9 @@ export const updateCommentById = (pieceId, commentId, newCommentContent) => {
     });
 };
 
-export const deleteCommentById = (pieceId, commentId) => {
+export const deleteCommentById = async (pieceId, commentId) => {
+  await FirestoreManager.Piece__DeleteCommentToPiece(pieceId, commentId);
+
   return getPieceById(pieceId)
     .collection('comments')
     .doc(commentId)

@@ -322,6 +322,32 @@ class SelectTooltipButton extends Component {
       payload
     });
 
+    if (this.props.annotationType === ANNOTATION_TYPES.Highlight) {
+      // tracking
+      chrome.runtime.sendMessage({
+        msg: 'ANNOTATION_HIGHTLIGHTED_SAVED',
+        payload: {
+          pieceId: this.state.annotation.key,
+          url: window.location.href,
+          text: this.state.annotation.text,
+          html: this.state.annotation.html
+        }
+      });
+    } else if (this.props.annotationType === ANNOTATION_TYPES.Snippet) {
+      // tracking
+      chrome.runtime.sendMessage({
+        msg: 'ANNOTATION_SNAPSHOTTED_SAVED',
+        payload: {
+          pieceId: this.state.annotation.key,
+          url: window.location.href,
+          text: this.state.annotation.text,
+          html: this.state.annotation.html,
+          rect: this.props.captureWindow.getBoundingClientRect(),
+          windowSize: this.props.windowSize
+        }
+      });
+    }
+
     // console.log(payload.timer.annotationDuration);
     // console.log(payload.timer.totalDuration);
 

@@ -73,6 +73,7 @@ export const addCommentToATaskById = (taskId, newCommentContent) => {
         docRef.id,
         newCommentContent
       );
+
       getTaskById(taskId).update({
         updateDate: firebase.firestore.FieldValue.serverTimestamp()
       });
@@ -90,6 +91,7 @@ export const updateCommentToATaskById = async (
     commentId,
     newCommentContent
   );
+
   getTaskById(taskId)
     .collection('comments')
     .doc(commentId)
@@ -109,6 +111,7 @@ export const updateCommentToATaskById = async (
 
 export const deleteCommentToATaskById = async (taskId, commentId) => {
   await FirestoreManager.Task__DeleteCommentToTask(taskId, commentId);
+
   return getTaskById(taskId)
     .collection('comments')
     .doc(commentId)
@@ -120,6 +123,7 @@ export const deleteCommentToATaskById = async (taskId, commentId) => {
 
 export const toggleTaskStarStatus = (taskId, to) => {
   FirestoreManager.Task__ToggleTaskStarStatus(taskId, to);
+
   getTaskById(taskId)
     .update({
       isStarred: to
@@ -136,6 +140,7 @@ export const deleteTaskById = taskId => {
     })
     .then(() => {
       FirestoreManager.Task__DeleteTask(taskId);
+
       // automatically switch to the last task that got updated
       getCurrentUserCreatedTasks()
         .orderBy('updateDate', 'desc')
