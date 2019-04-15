@@ -16,8 +16,16 @@ class SingleTaskPage extends Component {
     currentWorkspaceId: '0',
 
     taskLoading: true,
-    taskExists: false
+    taskExists: false,
+    task: null
   };
+
+  constructor(props) {
+    super(props);
+
+    window.addEventListener('focus', this.onFocus, false);
+    window.addEventListener('blur', this.onBlur, false);
+  }
 
   componentDidMount() {
     let taskId = getTaskIdFromPath(this.props.history.location.pathname);
@@ -26,9 +34,17 @@ class SingleTaskPage extends Component {
       snapshot => {
         if (snapshot.exists) {
           let task = { id: snapshot.id, ...snapshot.data() };
+          if (
+            this.state.taskLoading &&
+            task.creator === FirestoreManager.getCurrentUserId()
+          ) {
+            // console.log('focus');
+            FirestoreManager.ContextSwitch__FocusOnWebapp(task.id);
+          }
           this.setState({
             taskLoading: false,
-            taskExists: task.trashed ? false : true
+            taskExists: task.trashed ? false : true,
+            task
           });
           if (!task.trashed) {
             this.props.setDisplayingTaskIdAndName(task.id, task.name);
@@ -40,12 +56,35 @@ class SingleTaskPage extends Component {
     );
   }
 
+  onFocus = () => {
+    if (
+      this.state.task &&
+      this.state.task.creator === FirestoreManager.getCurrentUserId()
+    ) {
+      // console.log('focus');
+      FirestoreManager.ContextSwitch__FocusOnWebapp(this.state.task.id);
+    }
+  };
+
+  onBlur = () => {
+    if (
+      this.state.task &&
+      this.state.task.creator === FirestoreManager.getCurrentUserId()
+    ) {
+      // console.log('blur');
+      FirestoreManager.ContextSwitch__BlurOnWebapp(this.state.task.id);
+    }
+  };
+
   setCurrentWorkspaceId = workspaceId => {
     this.setState({ currentWorkspaceId: workspaceId });
   };
 
   componentWillUnmount() {
     this.unsubscribeTaskId();
+
+    window.removeEventListener('focus', this.onFocus);
+    window.removeEventListener('blur', this.onBlur);
   }
 
   render() {

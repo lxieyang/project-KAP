@@ -458,3 +458,69 @@ export const Piece__DeleteCommentToPiece = async (pieceId, commentId) => {
  * Table Tracking
  *
  */
+
+/**
+ *
+ * Misc Tracking
+ *
+ */
+
+export const ContextSwitch__MouseEnterSidebar = async url => {
+  try {
+    let currentTaskId = (await getCurrentUserCurrentTaskId().get()).data().id;
+    let taskData = (await getTaskById(currentTaskId).get()).data();
+    let record = {
+      eventType: eventTypes.CONTEXT_SWITCH___MOUSE_ENTER_SIDEBAR,
+      timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+      eventAuthorId: getCurrentUserId(),
+      // event specific
+      taskName: taskData.name,
+      taskId: currentTaskId,
+      url: url
+    };
+    getTaskInstrumentV1DataById(currentTaskId).add(record);
+  } catch (e) {}
+};
+
+export const ContextSwitch__MouseLeaveSidebar = async url => {
+  try {
+    let currentTaskId = (await getCurrentUserCurrentTaskId().get()).data().id;
+    let taskData = (await getTaskById(currentTaskId).get()).data();
+    let record = {
+      eventType: eventTypes.CONTEXT_SWITCH___MOUSE_LEAVE_SIDEBAR,
+      timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+      eventAuthorId: getCurrentUserId(),
+      // event specific
+      taskName: taskData.name,
+      taskId: currentTaskId,
+      url: url
+    };
+    getTaskInstrumentV1DataById(currentTaskId).add(record);
+  } catch (e) {}
+};
+
+export const ContextSwitch__FocusOnWebapp = async taskId => {
+  let taskData = (await getTaskById(taskId).get()).data();
+  let record = {
+    eventType: eventTypes.CONTEXT_SWITCH_FOCUS_ON_WEBAPP,
+    timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+    eventAuthorId: getCurrentUserId(),
+    // event specific
+    taskName: taskData.name,
+    taskId: taskId
+  };
+  getTaskInstrumentV1DataById(taskId).add(record);
+};
+
+export const ContextSwitch__BlurOnWebapp = async taskId => {
+  let taskData = (await getTaskById(taskId).get()).data();
+  let record = {
+    eventType: eventTypes.CONTEXT_SWITCH_BLUR_ON_WEBAPP,
+    timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+    eventAuthorId: getCurrentUserId(),
+    // event specific
+    taskName: taskData.name,
+    taskId: taskId
+  };
+  getTaskInstrumentV1DataById(taskId).add(record);
+};

@@ -262,20 +262,33 @@ class Popup extends Component {
         onClick={e => this.popupClickedHandler(e)}
         // for tracking time in sidebar
         onMouseEnter={() => {
-          this.lastVisitTimestamp = new Date().getTime();
+          // this.lastVisitTimestamp = new Date().getTime();
+          // FirestoreManager.ContextSwitch__MouseEnterSidebar(
+          //   window.location.href
+          // );
+          chrome.runtime.sendMessage({
+            msg: 'CONTEXT_SWITCH__MOUSE_ENTER_SIDEBAR'
+          });
         }}
         onMouseLeave={() => {
           // console.log('leave');
-          let now = new Date().getTime();
-          let duration = now - this.lastVisitTimestamp;
-          if (duration > 2000 && this.state.currentTaskId !== null) {
-            FirestoreManager.addActionTimestamps(this.state.currentTaskId, {
-              timestampType: TIMESTAMP_TYPES.inSidebar,
-              duration: duration,
-              startTimestamp: this.lastVisitTimestamp,
-              endTimestamp: now
-            });
-          }
+          // let now = new Date().getTime();
+          // let duration = now - this.lastVisitTimestamp;
+          // if (duration > 2000 && this.state.currentTaskId !== null) {
+          //   FirestoreManager.addActionTimestamps(this.state.currentTaskId, {
+          //     timestampType: TIMESTAMP_TYPES.inSidebar,
+          //     duration: duration,
+          //     startTimestamp: this.lastVisitTimestamp,
+          //     endTimestamp: now
+          //   });
+          // }
+          // FirestoreManager.ContextSwitch__MouseLeaveSidebar(
+          //   window.location.href
+          // );
+
+          chrome.runtime.sendMessage({
+            msg: 'CONTEXT_SWITCH__MOUSE_LEAVE_SIDEBAR'
+          });
         }}
       >
         {appTitle}

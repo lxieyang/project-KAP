@@ -101,6 +101,20 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 //
 //
 //
+// context switch support
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+  if (request.msg === 'CONTEXT_SWITCH__MOUSE_ENTER_SIDEBAR') {
+    FirestoreManager.ContextSwitch__MouseEnterSidebar(sender.tab.url);
+  } else if (request.msg === 'CONTEXT_SWITCH__MOUSE_LEAVE_SIDEBAR') {
+    FirestoreManager.ContextSwitch__MouseLeaveSidebar(sender.tab.url);
+  }
+});
+
+//
+//
+//
+//
+//
 /* context menu */
 function createNewTaskUponSelection(info, tab) {
   let taskName = info.selectionText;
