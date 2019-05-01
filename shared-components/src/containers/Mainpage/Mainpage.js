@@ -6,6 +6,7 @@ import Spinner from '../../components/UI/Spinner/Spinner';
 import Layout from './containers/Layout/Layout';
 import AllTasksPage from './containers/AllTasksPage/AllTasksPage';
 import SingleTaskPage from './containers/SingleTaskPage/SingleTaskPage';
+import SingleTaskStatusPage from './containers/SingleTaskStatusPage/SingleTaskStatusPage';
 import LoginPage from './containers/Auth/LoginPage/LoginPage';
 import LogoutPage from './containers/Auth/LogoutPage/LogoutPage';
 import * as appRoutes from '../../shared/routes';
@@ -127,9 +128,21 @@ class Mainpage extends Component {
     let routes = (
       <Switch>
         <Route
+          exact
           path={appRoutes.TASK_WITH_ID}
           render={routeProps => (
             <SingleTaskPage
+              {...routeProps}
+              userId={this.state.user ? this.state.user.uid : null}
+              setDisplayingTaskIdAndName={this.setDisplayingTaskIdAndName}
+            />
+          )}
+        />
+        <Route
+          exact
+          path={appRoutes.TASK_WITH_ID_STATUS}
+          render={routeProps => (
+            <SingleTaskStatusPage
               {...routeProps}
               userId={this.state.user ? this.state.user.uid : null}
               setDisplayingTaskIdAndName={this.setDisplayingTaskIdAndName}
@@ -152,9 +165,21 @@ class Mainpage extends Component {
         <Switch>
           <Route exact path={appRoutes.LOG_OUT} component={LogoutPage} />
           <Route
+            exact
             path={appRoutes.TASK_WITH_ID}
             render={routeProps => (
               <SingleTaskPage
+                {...routeProps}
+                userId={this.state.user ? this.state.user.uid : null}
+                setDisplayingTaskIdAndName={this.setDisplayingTaskIdAndName}
+              />
+            )}
+          />
+          <Route
+            exact
+            path={appRoutes.TASK_WITH_ID_STATUS}
+            render={routeProps => (
+              <SingleTaskStatusPage
                 {...routeProps}
                 userId={this.state.user ? this.state.user.uid : null}
                 setDisplayingTaskIdAndName={this.setDisplayingTaskIdAndName}

@@ -866,7 +866,7 @@ export const Table_SwitchRatingType = async (
   let pieceData = (await getPieceById(pieceId).get()).data();
   let taskData = (await getTaskById(taskId).get()).data();
   let record = {
-    eventType: eventTypes.TABLE_REMOVE_EVIDENCE_PIECE,
+    eventType: eventTypes.TABLE_EVIDENCE_SWITCH_RATING_TYPE,
     timestamp: firebase.firestore.FieldValue.serverTimestamp(),
     eventAuthorId: getCurrentUserId(),
     // event specific
