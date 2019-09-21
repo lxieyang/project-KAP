@@ -1,5 +1,6 @@
 /* global chrome */
 import queryString from 'query-string';
+import './Modules/AuthHandler';
 import { APP_NAME_SHORT } from '../../../../shared-components/src/shared/constants';
 import firebase from '../../../../shared-components/src/firebase/firebase';
 import * as FirestoreManager from '../../../../shared-components/src/firebase/firestore_wrapper';
@@ -246,24 +247,24 @@ const updateTasks = () => {
   );
 };
 
-const alertAllTabs = idToken => {
-  chrome.tabs.query({}, function(tabs) {
+const alertAllTabs = oauthIdToken => {
+  chrome.tabs.query({}, tabs => {
     for (var i = 0; i < tabs.length; ++i) {
       chrome.tabs.sendMessage(tabs[i].id, {
         msg: `USER_LOGIN_STATUS_CHANGED`,
-        idToken
+        oauthIdToken
       });
     }
   });
 };
 
-const signInOutUserWithCredential = idToken => {
-  if (idToken !== null && idToken !== undefined) {
+const signInOutUserWithCredential = oauthIdToken => {
+  if (oauthIdToken !== null && oauthIdToken !== undefined) {
     // logged in
     firebase
       .auth()
       .signInAndRetrieveDataWithCredential(
-        firebase.auth.GoogleAuthProvider.credential(idToken)
+        firebase.auth.GoogleAuthProvider.credential(oauthIdToken)
       )
       .then(result => {
         console.log(`[BACKGROUND] User ${result.user.displayName} logged in.`);
@@ -275,7 +276,7 @@ const signInOutUserWithCredential = idToken => {
         chrome.storage.local.set(
           {
             user: {
-              idToken: idToken,
+              oauthIdToken: oauthIdToken,
               displayName: result.user.displayName,
               photoURL: result.user.photoURL
             }
@@ -290,7 +291,7 @@ const signInOutUserWithCredential = idToken => {
               title: ''
             });
 
-            alertAllTabs(idToken);
+            alertAllTabs(oauthIdToken);
           }
         );
       })
@@ -305,36 +306,27 @@ const signInOutUserWithCredential = idToken => {
       .then(() => {
         console.log('[BACKGROUND] User logged out.');
 
-        chrome.storage.local.set(
-          {
-            user: null
-          },
-          function() {
-            console.log('user info update in chrome.storage.local');
-            // update loggedIn status
-            loggedIn = false;
+        chrome.storage.local.set({ user: null }, function() {
+          console.log('user info update in chrome.storage.local');
+          // update loggedIn status
+          loggedIn = false;
 
-            // set icon
-            chrome.browserAction.setIcon({
-              path: 'icon-128.png'
-            });
+          // set icon
+          chrome.browserAction.setIcon({ path: 'icon-128.png' });
 
-            // set title
-            chrome.browserAction.setTitle({
-              title: `${APP_NAME_SHORT} not logged in.`
-            });
+          // set title
+          chrome.browserAction.setTitle({
+            title: `${APP_NAME_SHORT} not logged in.`
+          });
 
-            // clear badge
-            chrome.browserAction.setBadgeBackgroundColor({
-              color: [255, 255, 255, 0]
-            });
-            chrome.browserAction.setBadgeText({
-              text: ''
-            });
+          // clear badge
+          chrome.browserAction.setBadgeBackgroundColor({
+            color: [255, 255, 255, 0]
+          });
+          chrome.browserAction.setBadgeText({ text: '' });
 
-            alertAllTabs(idToken);
-          }
-        );
+          alertAllTabs(oauthIdToken);
+        });
       })
       .catch(error => {
         console.log(error);
@@ -343,16 +335,16 @@ const signInOutUserWithCredential = idToken => {
 };
 
 /* Logging in/out on all tabs*/
-const updateLogInStatus = idToken => {
-  signInOutUserWithCredential(idToken);
+const updateLogInStatus = oauthIdToken => {
+  signInOutUserWithCredential(oauthIdToken);
 };
 
 // handle login/out request
 let lastActiveTabId = -1;
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
   if (request.msg === 'USER_LOGGED_IN') {
-    localStorage.setItem('idToken', request.credential.idToken);
-    updateLogInStatus(request.credential.idToken);
+    localStorage.setItem('oauthIdToken', request.credential.oauthIdToken);
+    updateLogInStatus(request.credential.oauthIdToken);
 
     // auth page
     if (request.from === 'auth_page') {
@@ -364,7 +356,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
   }
 
   if (request.msg === 'USER_LOGGED_OUT') {
-    localStorage.removeItem('idToken');
+    localStorage.removeItem('oauthIdToken');
     updateLogInStatus(null);
 
     // auth page
@@ -377,9 +369,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
   }
 
   if (request.msg === 'GET_USER_INFO') {
-    sendResponse({
-      idToken: localStorage.getItem('idToken')
-    });
+    sendResponse({ oauthIdToken: localStorage.getItem('oauthIdToken') });
   }
 
   if (request.msg === 'GO_TO_AUTH_PAGE') {
@@ -396,5 +386,5 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 });
 
 setTimeout(() => {
-  signInOutUserWithCredential(localStorage.getItem('idToken'));
+  signInOutUserWithCredential(localStorage.getItem('oauthIdToken'));
 }, 3000);

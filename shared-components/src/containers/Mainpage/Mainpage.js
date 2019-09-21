@@ -70,13 +70,13 @@ class Mainpage extends Component {
     this.signInUserWithCredential(idToken);
   }
 
-  signInUserWithCredential = idToken => {
-    if (idToken !== null && idToken !== undefined) {
+  signInUserWithCredential = oauthIdToken => {
+    if (oauthIdToken !== null && oauthIdToken !== undefined) {
       // logged in
       firebase
         .auth()
         .signInAndRetrieveDataWithCredential(
-          firebase.auth.GoogleAuthProvider.credential(idToken)
+          firebase.auth.GoogleAuthProvider.credential(oauthIdToken)
         )
         .then(result => {
           // let user = result.user;

@@ -39,13 +39,13 @@ class Popup extends Component {
 
   componentDidMount() {
     chrome.runtime.sendMessage({ msg: 'GET_USER_INFO' }, response => {
-      this.signInOutUserWithCredential(response.idToken);
+      this.signInOutUserWithCredential(response.oauthIdToken);
     });
 
     // authenticate upon signin
     chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       if (request.msg === 'USER_LOGIN_STATUS_CHANGED') {
-        this.signInOutUserWithCredential(request.idToken);
+        this.signInOutUserWithCredential(request.oauthIdToken);
       }
     });
 
@@ -70,14 +70,14 @@ class Popup extends Component {
     }
   };
 
-  signInOutUserWithCredential = idToken => {
-    this.setState({ idToken });
-    if (idToken !== null) {
+  signInOutUserWithCredential = oauthIdToken => {
+    this.setState({ oauthIdToken });
+    if (oauthIdToken !== null) {
       // logged in
       firebase
         .auth()
         .signInAndRetrieveDataWithCredential(
-          firebase.auth.GoogleAuthProvider.credential(idToken)
+          firebase.auth.GoogleAuthProvider.credential(oauthIdToken)
         )
         .then(result => {
           let user = result.user;

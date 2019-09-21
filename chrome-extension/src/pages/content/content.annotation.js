@@ -49,19 +49,19 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 let loggedIn = false;
 let userIdToken = null;
 chrome.runtime.sendMessage({ msg: 'GET_USER_INFO' }, response => {
-  signInOutUserWithCredential(response.idToken);
+  signInOutUserWithCredential(response.oauthIdToken);
 });
 // authenticate upon signin
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.msg === 'USER_LOGIN_STATUS_CHANGED') {
     // console.log('logged in status changed');
-    signInOutUserWithCredential(request.idToken);
+    signInOutUserWithCredential(request.oauthIdToken);
   }
 });
 
-const signInOutUserWithCredential = idToken => {
-  userIdToken = idToken;
-  if (idToken !== null) {
+const signInOutUserWithCredential = oauthIdToken => {
+  userIdToken = oauthIdToken;
+  if (oauthIdToken !== null) {
     // logged in
 
     loggedIn = true;
@@ -89,66 +89,6 @@ const signInOutUserWithCredential = idToken => {
     unmountSidebar();
   }
 };
-
-/* Prevent making the below cross-origin requests
-  https://www.chromestatus.com/feature/5629709824032768
-  https://www.chromium.org/Home/chromium-security/extension-content-script-fetches
-*/
-// const signInOutUserWithCredential = idToken => {
-//   if (idToken !== null) {
-//     // logged in
-//     firebase
-//       .auth()
-//       .signInAndRetrieveDataWithCredential(
-//         firebase.auth.GoogleAuthProvider.credential(idToken)
-//       )
-//       .then(result => {
-//         // console.log(
-//         //   `[CONTENT_ANNOTATION] User ${result.user.displayName} (${
-//         //     result.user.uid
-//         //   }) logged in.`
-//         // );
-
-//         loggedIn = true;
-
-//         SiphonTools.enable();
-
-//         chrome.runtime.sendMessage(
-//           {
-//             msg: 'SHOULD_TRACK',
-//             from: 'contentScript',
-//             hostname: window.location.hostname
-//           },
-//           response => {
-//             let shouldTrack = response.shouldTrack;
-//             if (shouldTrack) {
-//               mountSidebar();
-//             } else {
-//               unmountSidebar();
-//             }
-//           }
-//         );
-//       })
-//       .catch(error => {
-//         console.log(error);
-//       });
-//   } else {
-//     // logged out
-//     firebase
-//       .auth()
-//       .signOut()
-//       .then(() => {
-//         // console.log('[CONTENT_ANNOTATION] User logged out.');
-
-//         loggedIn = false;
-//         SiphonTools.disable();
-//         unmountSidebar();
-//       })
-//       .catch(error => {
-//         console.log(error);
-//       });
-//   }
-// };
 
 //
 //
