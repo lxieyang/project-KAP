@@ -11,11 +11,26 @@
   "commands": {
     "_execute_browser_action": {
       "suggested_key": {
-        "windows": "Ctrl+Shift+K",
-        "mac": "Command+Shift+K",
-        "chromeos": "Ctrl+Shift+K",
-        "linux": "Ctrl+Shift+K"
+        "windows": "Ctrl+Shift+Y",
+        "mac": "Command+Shift+Y",
+        "chromeos": "Ctrl+Shift+U",
+        "linux": "Ctrl+Shift+J"
       }
+    },
+    "toggle-sidebar": {
+      "suggested_key": {
+        "default": "Ctrl+E",
+        "mac": "Command+E"
+      },
+      "description": "Toggle sidebar (default)"
+    },
+
+    "toggle-sidebar-2": {
+      "suggested_key": {
+        "default": "Ctrl+K",
+        "mac": "Command+K"
+      },
+      "description": "Toggle sidebar (Backup)"
     }
   },
   "options_page": "options.html",

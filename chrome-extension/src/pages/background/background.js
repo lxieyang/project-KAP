@@ -1,6 +1,7 @@
 /* global chrome */
 import queryString from 'query-string';
-import './Modules/AuthHandler';
+import './Modules/Handlers/AuthHandler';
+import './Modules/Handlers/SidebarHandler';
 import { APP_NAME_SHORT } from '../../../../shared-components/src/shared/constants';
 import firebase from '../../../../shared-components/src/firebase/firebase';
 import * as FirestoreManager from '../../../../shared-components/src/firebase/firestore_wrapper';
@@ -15,6 +16,9 @@ import './Modules/AnnotationSupport';
 import './Modules/ScreenshotSupport';
 import './Modules/Misc';
 import './Modules/GA';
+
+
+
 
 window.FirestoreManager = FirestoreManager;
 
