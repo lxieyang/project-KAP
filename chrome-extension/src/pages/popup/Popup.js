@@ -22,7 +22,7 @@ class Popup extends Component {
     userId: null,
     userName: null,
     userProfilePhotoURL: null,
-    idToken: null,
+    oauthAccessToken: null,
 
     currentTaskId: null,
 
@@ -39,13 +39,13 @@ class Popup extends Component {
 
   componentDidMount() {
     chrome.runtime.sendMessage({ msg: 'GET_USER_INFO' }, response => {
-      this.signInOutUserWithCredential(response.oauthIdToken);
+      this.signInOutUserWithCredential(response.oauthAccessToken);
     });
 
     // authenticate upon signin
     chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       if (request.msg === 'USER_LOGIN_STATUS_CHANGED') {
-        this.signInOutUserWithCredential(request.oauthIdToken);
+        this.signInOutUserWithCredential(request.oauthAccessToken);
       }
     });
 
@@ -70,14 +70,14 @@ class Popup extends Component {
     }
   };
 
-  signInOutUserWithCredential = oauthIdToken => {
-    this.setState({ oauthIdToken });
-    if (oauthIdToken !== null) {
+  signInOutUserWithCredential = oauthAccessToken => {
+    this.setState({ oauthAccessToken });
+    if (oauthAccessToken !== null) {
       // logged in
       firebase
         .auth()
         .signInAndRetrieveDataWithCredential(
-          firebase.auth.GoogleAuthProvider.credential(oauthIdToken)
+          firebase.auth.GoogleAuthProvider.credential(null, oauthAccessToken)
         )
         .then(result => {
           let user = result.user;
@@ -256,8 +256,7 @@ class Popup extends Component {
     return (
       <div
         style={{ display: 'flex', flexFlow: 'column', height: '100vh' }}
-        onClick={e => this.popupClickedHandler(e)}
-        // for tracking time in sidebar
+        onClick={e => this.popupClickedHandler(e)} // for tracking time in sidebar
         onMouseEnter={() => {
           // console.log('enter');
           this.lastVisitTimestamp = new Date().getTime();
@@ -290,7 +289,7 @@ class Popup extends Component {
         </div>*/}
         <TaskSwitcher
           setCurrentTaskId={this.setCurrentTaskId}
-          idToken={this.state.idToken}
+          oauthAccessToken={this.state.oauthAccessToken}
         />
         <Workspaces
           setCurrentWorkspaceId={this.setCurrentWorkspaceId}

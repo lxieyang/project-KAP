@@ -449,7 +449,7 @@ class PieceItem extends Component {
                     style={{
                       wordBreak:
                         this.props.cellType === TABLE_CELL_TYPES.columnHeader
-                          ? 'break-all'
+                          ? 'break-word'
                           : null
                     }}
                     onClick={() => {

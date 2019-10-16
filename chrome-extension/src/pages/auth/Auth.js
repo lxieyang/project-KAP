@@ -41,20 +41,20 @@ class Auth extends Component {
     chrome.runtime.sendMessage(
       { msg: 'GET_USER_INFO', from: 'auth' },
       response => {
-        this.retrieveLoginInfo(response.oauthIdToken);
+        this.retrieveLoginInfo(response.oauthAccessToken);
       }
     );
 
     // authenticate upon signin
     chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       if (request.msg === 'USER_LOGIN_STATUS_CHANGED') {
-        this.retrieveLoginInfo(request.oauthIdToken);
+        this.retrieveLoginInfo(request.oauthAccessToken);
       }
     });
   }
 
-  retrieveLoginInfo = oauthIdToken => {
-    if (oauthIdToken === null || oauthIdToken === undefined) {
+  retrieveLoginInfo = oauthAccessToken => {
+    if (oauthAccessToken === null || oauthAccessToken === undefined) {
       // not logged in
       this.setState({
         loadingUserInfo: false,
@@ -67,8 +67,8 @@ class Auth extends Component {
         let user = result.user;
         this.setState({
           loadingUserInfo: false,
-          userName: user.displayName,
-          userProfilePhotoURL: user.photoURL
+          userName: user.displayName || 'invalid',
+          userProfilePhotoURL: user.photoURL || 'invalid'
         });
       });
     }

@@ -27,7 +27,7 @@
     "chrome-tab-identifier": "0.0.1",
     "classnames": "^2.2.6",
     "fg-loadcss": "^2.1.0",
-    "firebase": "^6.6.2",
+    "firebase": "^7.2.0",
     "fixed-data-table-2": "^0.8.16",
     "font-awesome": "^4.7.0",
     "get-website-favicon": "0.0.7",

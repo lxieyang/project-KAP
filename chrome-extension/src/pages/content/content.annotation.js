@@ -47,21 +47,21 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 /* log in / out */
 // check id token from background
 let loggedIn = false;
-let userIdToken = null;
+let userOauthAccessToken = null;
 chrome.runtime.sendMessage({ msg: 'GET_USER_INFO' }, response => {
-  signInOutUserWithCredential(response.oauthIdToken);
+  signInOutUserWithCredential(response.oauthAccessToken);
 });
 // authenticate upon signin
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.msg === 'USER_LOGIN_STATUS_CHANGED') {
     // console.log('logged in status changed');
-    signInOutUserWithCredential(request.oauthIdToken);
+    signInOutUserWithCredential(request.oauthAccessToken);
   }
 });
 
-const signInOutUserWithCredential = oauthIdToken => {
-  userIdToken = oauthIdToken;
-  if (oauthIdToken !== null) {
+const signInOutUserWithCredential = oauthAccessToken => {
+  userOauthAccessToken = oauthAccessToken;
+  if (oauthAccessToken !== null) {
     // logged in
 
     loggedIn = true;
@@ -102,6 +102,7 @@ let link = document.createElement('link');
 link.href = 'https://use.fontawesome.com/releases/v5.0.8/css/all.css';
 link.type = 'text/css';
 link.rel = 'stylesheet';
+link.SameSite = 'None';
 document.head.appendChild(link);
 
 //
@@ -167,7 +168,7 @@ function displayTooltipButtonBasedOnRectPosition(rect, props) {
 
   ReactDOM.render(
     <SelectTooltipButton
-      idToken={userIdToken}
+      oauthAccessToken={userOauthAccessToken}
       MathJaxUsed={MathJaxUsed}
       windowSize={{ width: window.innerWidth, height: window.innerHeight }}
       removeTooltipButton={() => {
@@ -346,5 +347,11 @@ window.addEventListener('keydown', event => {
     if (shouldUseEscapeKeyToToggleSidebar) {
       Frame.toggle();
     }
+  }
+});
+
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+  if (request.from === 'background' && request.msg === 'TOGGLE_SIDEBAR') {
+    Frame.toggle();
   }
 });

@@ -27,14 +27,14 @@ class Options extends Component {
     chrome.runtime.sendMessage(
       { msg: 'GET_USER_INFO', from: 'auth' },
       response => {
-        this.retrieveLoginInfo(response.oauthIdToken);
+        this.retrieveLoginInfo(response.oauthAccessToken);
       }
     );
 
     // authenticate upon signin
     chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       if (request.msg === 'USER_LOGIN_STATUS_CHANGED') {
-        this.retrieveLoginInfo(request.oauthIdToken);
+        this.retrieveLoginInfo(request.oauthAccessToken);
       }
     });
 
@@ -57,8 +57,8 @@ class Options extends Component {
     );
   }
 
-  retrieveLoginInfo = oauthIdToken => {
-    if (oauthIdToken === null || oauthIdToken === undefined) {
+  retrieveLoginInfo = oauthAccessToken => {
+    if (oauthAccessToken === null || oauthAccessToken === undefined) {
       // not logged in
 
       this.setState({

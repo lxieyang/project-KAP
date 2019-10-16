@@ -62,7 +62,9 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       if (user) {
         let url =
           getAllTasksLink() +
-          `?${queryString.stringify({ idToken: user.idToken })}`;
+          `?${queryString.stringify({
+            oauthAccessToken: user.oauthAccessToken
+          })}`;
         chrome.tabs.create(
           {
             url
@@ -77,10 +79,13 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     let taskId = request.taskId;
     chrome.storage.local.get(['user'], result => {
       let user = result.user;
+      console.log(user);
       if (user) {
         let url =
           getTaskLink(taskId) +
-          `?${queryString.stringify({ idToken: user.idToken })}`;
+          `?${queryString.stringify({
+            oauthAccessToken: user.oauthAccessToken
+          })}`;
         chrome.tabs.create(
           {
             url

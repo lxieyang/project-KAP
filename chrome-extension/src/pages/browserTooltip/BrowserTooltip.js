@@ -86,7 +86,7 @@ class BrowserTooltip extends Component {
     chrome.runtime.sendMessage(
       { msg: 'GET_USER_INFO', from: 'browserTooltip' },
       response => {
-        this.retrieveLoginInfo(response.oauthIdToken);
+        this.retrieveLoginInfo(response.oauthAccessToken);
       }
     );
 
@@ -106,8 +106,8 @@ class BrowserTooltip extends Component {
     );
   }
 
-  retrieveLoginInfo = oauthIdToken => {
-    if (oauthIdToken === null || oauthIdToken === undefined) {
+  retrieveLoginInfo = oauthAccessToken => {
+    if (oauthAccessToken === null || oauthAccessToken === undefined) {
       // not logged in
       this.setState({
         loadingUserInfo: false,

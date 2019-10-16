@@ -59,7 +59,8 @@ const toggleButtonClass = css({
   position: 'fixed',
   bottom: '40px',
   right: '30px',
-  zIndex: 9999999999
+  zIndex: 9999999999,
+  userSelect: 'none'
 });
 
 const toggleButtonInnerClass = css({
