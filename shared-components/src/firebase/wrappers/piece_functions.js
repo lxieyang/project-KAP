@@ -11,8 +11,7 @@ import {
   getCurrentUserCurrentTaskId,
   updateTaskUpdateTime,
   updateCurrentTaskUpdateTime,
-  getCurrentUser,
-  addActionTimestamps
+  getCurrentUser
 } from '../firestore_wrapper';
 const xssFilter = require('xssfilter');
 const xss = new xssFilter({
@@ -320,13 +319,6 @@ export const createPiece = async (
   updateTaskUpdateTime(piece.references.task);
 
   return ref.set(piece).then(() => {
-    if (timer !== null) {
-      addActionTimestamps(piece.references.task, {
-        ...timer,
-        timestampType: TIMESTAMP_TYPES.annotation,
-        annotationType
-      });
-    }
     return ref.id;
   });
 };

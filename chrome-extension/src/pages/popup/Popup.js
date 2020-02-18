@@ -266,37 +266,9 @@ class Popup extends Component {
       <div
         style={{ display: 'flex', flexFlow: 'column', height: '100vh' }}
         onClick={e => this.popupClickedHandler(e)}
-        onMouseEnter={() => {
-          // for tracking time in sidebar
-          // console.log('enter');
-          this.lastVisitTimestamp = new Date().getTime();
-        }}
-        onMouseLeave={() => {
-          // console.log('leave');
-          let now = new Date().getTime();
-          let duration = now - this.lastVisitTimestamp;
-          if (duration > 2000 && this.state.currentTaskId !== null) {
-            FirestoreManager.addActionTimestamps(this.state.currentTaskId, {
-              timestampType: TIMESTAMP_TYPES.inSidebar,
-              duration: duration,
-              startTimestamp: this.lastVisitTimestamp,
-              endTimestamp: now
-            });
-          }
-        }}
       >
         {appTitle}
-        {/*<div
-          style={{
-            width: '100%',
-            height: '100px',
-            display: 'flex',
-            justifyContent: 'space-around',
-            alignItems: 'center'
-          }}
-        >
-          Successfully logged into {APP_NAME_SHORT}.
-        </div>*/}
+
         <TaskSwitcher
           setCurrentTaskId={this.setCurrentTaskId}
           idToken={this.state.idToken}
