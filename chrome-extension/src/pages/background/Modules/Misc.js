@@ -1,5 +1,6 @@
 /* global chrome */
 import queryString from 'query-string';
+import { currentUserIdToken } from '../background';
 import { APP_NAME_SHORT } from '../../../../../shared-components/src/shared/constants';
 import * as FirestoreManager from '../../../../../shared-components/src/firebase/firestore_wrapper';
 import {
@@ -63,7 +64,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         let url =
           getAllTasksLink() +
           `?${queryString.stringify({
-            oauthAccessToken: user.oauthAccessToken
+            idToken: currentUserIdToken
           })}`;
         chrome.tabs.create(
           {
@@ -79,12 +80,11 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     let taskId = request.taskId;
     chrome.storage.local.get(['user'], result => {
       let user = result.user;
-      console.log(user);
       if (user) {
         let url =
           getTaskLink(taskId) +
           `?${queryString.stringify({
-            oauthAccessToken: user.oauthAccessToken
+            idToken: currentUserIdToken
           })}`;
         chrome.tabs.create(
           {

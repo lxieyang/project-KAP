@@ -65,19 +65,18 @@ class Mainpage extends Component {
       }
     });
 
-    // log in if oauthAccessToken is provided by the link
-    let oauthAccessToken = queryString.parse(window.location.search)
-      .oauthAccessToken;
-    this.signInUserWithCredential(oauthAccessToken);
+    // log in if idToken is provided by the link
+    let idToken = queryString.parse(window.location.search).idToken;
+    this.signInUserWithCredential(idToken);
   }
 
-  signInUserWithCredential = oauthAccessToken => {
-    if (oauthAccessToken !== null && oauthAccessToken !== undefined) {
+  signInUserWithCredential = idToken => {
+    if (idToken !== null && idToken !== undefined) {
       // logged in
       firebase
         .auth()
         .signInAndRetrieveDataWithCredential(
-          firebase.auth.GoogleAuthProvider.credential(null, oauthAccessToken)
+          firebase.auth.GoogleAuthProvider.credential(idToken)
         )
         .then(result => {
           // let user = result.user;

@@ -41,20 +41,20 @@ class Auth extends Component {
     chrome.runtime.sendMessage(
       { msg: 'GET_USER_INFO', from: 'auth' },
       response => {
-        this.retrieveLoginInfo(response.oauthAccessToken);
+        this.retrieveLoginInfo(response.idToken);
       }
     );
 
     // authenticate upon signin
     chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       if (request.msg === 'USER_LOGIN_STATUS_CHANGED') {
-        this.retrieveLoginInfo(request.oauthAccessToken);
+        this.retrieveLoginInfo(request.idToken);
       }
     });
   }
 
-  retrieveLoginInfo = oauthAccessToken => {
-    if (oauthAccessToken === null || oauthAccessToken === undefined) {
+  retrieveLoginInfo = idToken => {
+    if (idToken === null || idToken === undefined) {
       // not logged in
       this.setState({
         loadingUserInfo: false,
@@ -67,23 +67,25 @@ class Auth extends Component {
         let user = result.user;
         this.setState({
           loadingUserInfo: false,
-          userName: user.displayName || 'invalid',
-          userProfilePhotoURL: user.photoURL || 'invalid'
+          userName: user.displayName,
+          userProfilePhotoURL: user.photoURL
         });
       });
     }
   };
 
   logInClickedHandler = () => {
-    // this.setState({ loadingUserInfo: true });
+    this.setState({ loadingUserInfo: true });
     let provider = new firebase.auth.GoogleAuthProvider();
     firebase
       .auth()
       .signInWithPopup(provider)
       .then(function(result) {
+        console.log(result);
         chrome.runtime.sendMessage({
           msg: 'USER_LOGGED_IN',
           from: 'auth_page',
+          idToken: result.credential.idToken,
           credential: result.credential,
           user: result.user
         });
@@ -92,6 +94,11 @@ class Auth extends Component {
         console.log(error);
         this.setState({ loadingUserInfo: false });
       });
+
+    // chrome.runtime.sendMessage({
+    //   msg: 'LOG_IN_BUTTON_CLICKED',
+    //   from: 'auth_page'
+    // });
   };
 
   logOutClickedHandler = () => {

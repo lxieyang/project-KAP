@@ -47,21 +47,21 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 /* log in / out */
 // check id token from background
 let loggedIn = false;
-let userOauthAccessToken = null;
+let userIdToken = null;
 chrome.runtime.sendMessage({ msg: 'GET_USER_INFO' }, response => {
-  signInOutUserWithCredential(response.oauthAccessToken);
+  signInOutUserWithCredential(response.idToken);
 });
 // authenticate upon signin
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.msg === 'USER_LOGIN_STATUS_CHANGED') {
     // console.log('logged in status changed');
-    signInOutUserWithCredential(request.oauthAccessToken);
+    signInOutUserWithCredential(request.idToken);
   }
 });
 
-const signInOutUserWithCredential = oauthAccessToken => {
-  userOauthAccessToken = oauthAccessToken;
-  if (oauthAccessToken !== null) {
+const signInOutUserWithCredential = idToken => {
+  userIdToken = idToken;
+  if (idToken !== null) {
     // logged in
 
     loggedIn = true;
@@ -168,7 +168,7 @@ function displayTooltipButtonBasedOnRectPosition(rect, props) {
 
   ReactDOM.render(
     <SelectTooltipButton
-      oauthAccessToken={userOauthAccessToken}
+      idToken={userIdToken}
       MathJaxUsed={MathJaxUsed}
       windowSize={{ width: window.innerWidth, height: window.innerHeight }}
       removeTooltipButton={() => {

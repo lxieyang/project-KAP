@@ -22,7 +22,7 @@ class Popup extends Component {
     userId: null,
     userName: null,
     userProfilePhotoURL: null,
-    oauthAccessToken: null,
+    idToken: null,
 
     currentTaskId: null,
 
@@ -39,13 +39,14 @@ class Popup extends Component {
 
   componentDidMount() {
     chrome.runtime.sendMessage({ msg: 'GET_USER_INFO' }, response => {
-      this.signInOutUserWithCredential(response.oauthAccessToken);
+      console.log(response.idToken);
+      this.signInOutUserWithCredential(response.idToken);
     });
 
     // authenticate upon signin
     chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       if (request.msg === 'USER_LOGIN_STATUS_CHANGED') {
-        this.signInOutUserWithCredential(request.oauthAccessToken);
+        this.signInOutUserWithCredential(request.idToken);
       }
     });
 
@@ -70,17 +71,24 @@ class Popup extends Component {
     }
   };
 
-  signInOutUserWithCredential = oauthAccessToken => {
-    this.setState({ oauthAccessToken });
-    if (oauthAccessToken !== null) {
+  signInOutUserWithCredential = idToken => {
+    this.setState({ idToken });
+    console.log(idToken);
+    if (idToken !== null) {
       // logged in
       firebase
         .auth()
-        .signInAndRetrieveDataWithCredential(
-          firebase.auth.GoogleAuthProvider.credential(null, oauthAccessToken)
+        .signInWithCredential(
+          firebase.auth.GoogleAuthProvider.credential(idToken)
         )
+        // .signInAndRetrieveDataWithCredential(
+        //   firebase.auth.GoogleAuthProvider.credential(idToken)
+        // )
         .then(result => {
-          let user = result.user;
+          console.log('logged in');
+          console.log(result);
+          // let user = result.user;
+          const { user } = result;
           this.setState({
             userId: user.uid,
             userName: user.displayName,
@@ -121,6 +129,7 @@ class Popup extends Component {
       .then(function(result) {
         chrome.runtime.sendMessage({
           msg: 'USER_LOGGED_IN',
+          idToken: result.credential.idToken,
           credential: result.credential,
           user: result.user
         });
@@ -256,8 +265,9 @@ class Popup extends Component {
     return (
       <div
         style={{ display: 'flex', flexFlow: 'column', height: '100vh' }}
-        onClick={e => this.popupClickedHandler(e)} // for tracking time in sidebar
+        onClick={e => this.popupClickedHandler(e)}
         onMouseEnter={() => {
+          // for tracking time in sidebar
           // console.log('enter');
           this.lastVisitTimestamp = new Date().getTime();
         }}
@@ -289,7 +299,7 @@ class Popup extends Component {
         </div>*/}
         <TaskSwitcher
           setCurrentTaskId={this.setCurrentTaskId}
-          oauthAccessToken={this.state.oauthAccessToken}
+          idToken={this.state.idToken}
         />
         <Workspaces
           setCurrentWorkspaceId={this.setCurrentWorkspaceId}
