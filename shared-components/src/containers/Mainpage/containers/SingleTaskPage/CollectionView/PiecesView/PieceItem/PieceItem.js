@@ -720,32 +720,33 @@ class PieceItem extends Component {
               <div className={classesInCSS.CollapseContainer}>
                 {piece.annotationType !== ANNOTATION_TYPES.Manual ? (
                   <React.Fragment>
-                    {piece.annotationType === ANNOTATION_TYPES.Snippet && (
-                      <div>
-                        <div
-                          onClick={e => e.stopPropagation()}
-                          style={{ fontSize: '13px', marginLeft: '4px' }}
-                        >
-                          <Chip
-                            style={{ height: 24 }}
-                            label={
-                              displayingScreenshot
-                                ? 'Showing image screenshot'
-                                : 'Showing HTML snapshot'
-                            }
-                          />
-
-                          {piece.shouldUseScreenshot ||
-                          screenshot === null ? null : (
-                            <Switch
-                              onClick={e => e.stopPropagation()}
-                              checked={displayingScreenshot}
-                              onChange={this.switchShouldDisplayScreenshot}
+                    {!this.props.isDemoTask &&
+                      piece.annotationType === ANNOTATION_TYPES.Snippet && (
+                        <div>
+                          <div
+                            onClick={e => e.stopPropagation()}
+                            style={{ fontSize: '13px', marginLeft: '4px' }}
+                          >
+                            <Chip
+                              style={{ height: 24 }}
+                              label={
+                                displayingScreenshot
+                                  ? 'Showing image screenshot'
+                                  : 'Showing HTML snapshot'
+                              }
                             />
-                          )}
+
+                            {piece.shouldUseScreenshot ||
+                            screenshot === null ? null : (
+                              <Switch
+                                onClick={e => e.stopPropagation()}
+                                checked={displayingScreenshot}
+                                onChange={this.switchShouldDisplayScreenshot}
+                              />
+                            )}
+                          </div>
                         </div>
-                      </div>
-                    )}
+                      )}
 
                     {piece.annotationType === ANNOTATION_TYPES.Snippet &&
                     displayingScreenshot ? (

@@ -728,25 +728,17 @@ class RegularCell extends Component {
                       <React.Fragment key={`${p.pieceId}-${idx}`}>
                         <div
                           className={styles.AttitudeInTableContainerVariantI}
+                          data-tip
+                          data-for={`${cell.id}-${p.pieceId}`}
                         >
-                          <div
-                            className={styles.AttitudeIconVariantI}
-                            data-tip
-                            data-for={`${cell.id}-${p.pieceId}`}
-                          >
+                          <div className={styles.AttitudeIconVariantI}>
                             {icon}
                           </div>
                           <div style={{ flex: 1, marginLeft: 3 }}>
                             <div style={{ fontSize: 13 }}>
                               {getFirstNWords(5, piece.name)}
                             </div>
-                            <div
-                              style={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                flexWrap: 'wrap'
-                              }}
-                            >
+                            <div className={styles.TagsContainer}>
                               {piece.references.url !== false && (
                                 <Tooltip
                                   title={`${

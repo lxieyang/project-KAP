@@ -1,0 +1,51 @@
+.SourceDomainsViewContainer {
+}
+
+.InfoBar {
+  display: flex;
+  justify-content: flex-end;
+  font-size: 12px;
+}
+
+.InfoItem {
+  margin: 0px 3px;
+  cursor: pointer;
+  transition: all 0.1s ease-in;
+  border-radius: 10px;
+  padding: 1px 6px;
+}
+
+.InfoItem:hover {
+  background-color: lightgray;
+}
+
+.PopoverContainer {
+  opacity: 1;
+  background-color: white;
+  border-radius: 5px;
+  border: 1px solid gray;
+  padding: 0px 8px;
+}
+
+.SourceDomainItemContainer {
+  padding: 10px;
+  width: 100%;
+  box-sizing: border-box;
+
+  transition: all 0.1s ease-in;
+}
+
+.SourceDomainItemContainer:hover {
+  background-color: lightgray;
+}
+
+.DomainNameContainer {
+  display: flex;
+  align-items: center;
+}
+
+.DomainIcon {
+  width: 20px;
+  height: 20px;
+  margin-right: 4px;
+}

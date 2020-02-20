@@ -150,9 +150,18 @@
   border: 2px solid transparent;
 }
 
-.AttitudeIconVariantI:hover {
+.AttitudeInTableContainerVariantI:hover .AttitudeIconVariantI {
   transform: scale(1.1);
   box-shadow: 0 4px 10px 0 rgba(0, 0, 0, 0.2), 0 4px 20px 0 rgba(0, 0, 0, 0.19);
+}
+.AttitudeInTableContainerVariantI:hover .TagsContainer {
+  opacity: 0;
+}
+
+.TagsContainer {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
 }
 
 .TagSpan {
