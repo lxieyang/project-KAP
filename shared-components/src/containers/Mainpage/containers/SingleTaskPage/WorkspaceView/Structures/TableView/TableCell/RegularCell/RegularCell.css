@@ -140,6 +140,21 @@
   display: flex;
 }
 
+.AttitudeIconVariantI {
+  display: inline-block;
+  margin-right: 5px;
+  width: 40px;
+  height: 40px;
+  transition: all 0.15s ease-in;
+  border-radius: 50%;
+  border: 2px solid transparent;
+}
+
+.AttitudeIconVariantI:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 10px 0 rgba(0, 0, 0, 0.2), 0 4px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
 .TagSpan {
   display: inline-flex;
   align-items: center;
@@ -147,6 +162,7 @@
   padding: 2px 4px;
   font-size: 11px;
   margin: 2px 2px;
+  border: 1px solid lightgray;
 }
 
 .AttitudeInTableCell {

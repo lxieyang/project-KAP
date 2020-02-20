@@ -728,14 +728,11 @@ class RegularCell extends Component {
                       <React.Fragment key={`${p.pieceId}-${idx}`}>
                         <div
                           className={styles.AttitudeInTableContainerVariantI}
-                          data-tip
-                          data-for={`${cell.id}-${p.pieceId}`}
                         >
                           <div
-                            style={{
-                              width: 40,
-                              height: 40
-                            }}
+                            className={styles.AttitudeIconVariantI}
+                            data-tip
+                            data-for={`${cell.id}-${p.pieceId}`}
                           >
                             {icon}
                           </div>
