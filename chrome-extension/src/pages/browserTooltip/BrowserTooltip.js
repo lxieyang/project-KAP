@@ -56,6 +56,7 @@ const materialStyles = {
 
 class BrowserTooltip extends Component {
   state = {
+    accessToken: null,
     userName: null,
     userProfilePhotoURL: null,
 
@@ -83,6 +84,10 @@ class BrowserTooltip extends Component {
   };
 
   componentDidMount() {
+    // chrome.identity.getAuthToken({ interactive: true }, token => {
+    //   this.signInOutUserWithCredential(token);
+    // });
+
     chrome.runtime.sendMessage(
       { msg: 'GET_USER_INFO', from: 'browserTooltip' },
       response => {
@@ -105,6 +110,52 @@ class BrowserTooltip extends Component {
       }
     );
   }
+
+  // signInOutUserWithCredential = accessToken => {
+  //   this.setState({ accessToken });
+  //   if (accessToken !== null) {
+  //     // logged in
+  //     firebase
+  //       .auth()
+  //       .signInAndRetrieveDataWithCredential(
+  //         firebase.auth.GoogleAuthProvider.credential(null, accessToken)
+  //       )
+  //       // .signInAndRetrieveDataWithCredential(
+  //       //   firebase.auth.GoogleAuthProvider.credential(accessToken)
+  //       // )
+  //       .then(result => {
+  //         console.log('logged in');
+  //         // let user = result.user;
+  //         const { user } = result;
+  //         this.setState({
+  //           userName: user.displayName,
+  //           userProfilePhotoURL: user.photoURL,
+  //           loadingUserInfo: false
+  //         });
+  //       })
+  //       .catch(error => {
+  //         console.log(error);
+  //         console.log(error.message);
+  //         this.setState({ loadingUserInfo: false });
+  //       });
+  //   } else {
+  //     // logged out
+  //     firebase
+  //       .auth()
+  //       .signOut()
+  //       .then(() => {
+  //         this.setState({
+  //           userName: null,
+  //           userProfilePhotoURL: null,
+  //           loadingUserInfo: false
+  //         });
+  //       })
+  //       .catch(error => {
+  //         console.log(error);
+  //         this.setState({ loadingUserInfo: false });
+  //       });
+  //   }
+  // };
 
   retrieveLoginInfo = idToken => {
     if (idToken === null || idToken === undefined) {
@@ -198,7 +249,7 @@ class BrowserTooltip extends Component {
                 <div className={classes.username}>{getFirstName(userName)}</div>
               </IconButton>
 
-              <Menu
+              {/* <Menu
                 id="menu-appbar"
                 anchorEl={anchorEl}
                 anchorOrigin={{
@@ -221,7 +272,7 @@ class BrowserTooltip extends Component {
                 >
                   <Logout /> &nbsp; Log out
                 </MenuItem>
-              </Menu>
+              </Menu> */}
             </div>
           ) : (
             <div

@@ -6,7 +6,7 @@ var autoprefixer = require('autoprefixer'),
   path = require('path'),
   fileSystem = require('fs'),
   env = require('./utils/env'),
-  CleanWebpackPlugin = require('clean-webpack-plugin'),
+  { CleanWebpackPlugin } = require('clean-webpack-plugin'),
   CopyWebpackPlugin = require('copy-webpack-plugin'),
   HtmlWebpackPlugin = require('html-webpack-plugin'),
   WriteFilePlugin = require('write-file-webpack-plugin');
@@ -34,6 +34,14 @@ if (fileSystem.existsSync(secretsPath)) {
 }
 
 var options = {
+  devServer: {
+    contentBase: path.join(__dirname, 'build'),
+    https: true,
+    host: 'localhost',
+    port: env.PORT,
+    disableHostCheck: true
+  },
+  mode: process.env.NODE_ENV || 'development',
   entry: {
     popup: path.join(__dirname, 'src', 'pages', 'popup', 'index.js'),
     auth: path.join(__dirname, 'src', 'pages', 'auth', 'index.js'),
@@ -170,15 +178,23 @@ var options = {
       .concat(['.jsx', '.js', '.css', '.json'])
   },
   plugins: [
+    new webpack.ProgressPlugin(),
     // clean the build folder
-    new CleanWebpackPlugin(['build']),
-    // expose and write the allowed env vars on the compiled bundle
-    new webpack.DefinePlugin({
-      'process.env.NODE_ENV': JSON.stringify(env.NODE_ENV)
+    new CleanWebpackPlugin({
+      verbose: true
+      // cleanStaleWebpackAssets: false,
     }),
+    // // expose and write the allowed env vars on the compiled bundle
+    // new webpack.DefinePlugin({
+    //   'process.env.NODE_ENV': JSON.stringify(env.NODE_ENV)
+    // }),
+    // expose and write the allowed env vars on the compiled bundle
+    new webpack.EnvironmentPlugin(['NODE_ENV']),
     new CopyWebpackPlugin([
       {
         from: 'src/manifest.json',
+        to: path.join(__dirname, 'build'),
+        force: true,
         transform: function(content, path) {
           // generates the manifest file using the package.json informations
           return Buffer.from(
@@ -203,7 +219,9 @@ var options = {
     ]),
     new CopyWebpackPlugin([
       {
-        from: 'src/pages/content/content.styles.css'
+        from: 'src/pages/content/content.styles.css',
+        to: path.join(__dirname, 'build'),
+        force: true
       }
     ]),
     new CopyWebpackPlugin([

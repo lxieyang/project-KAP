@@ -115,7 +115,7 @@ class Header extends Component {
               <div className={classes.username}>{getFirstName(userName)}</div>
             </IconButton>
 
-            <Menu
+            {/* <Menu
               id="menu-appbar"
               anchorEl={anchorEl}
               anchorOrigin={{
@@ -138,7 +138,7 @@ class Header extends Component {
               >
                 <Logout /> &nbsp; Log out
               </MenuItem>
-            </Menu>
+            </Menu> */}
           </div>
         </Toolbar>
       </AppBar>

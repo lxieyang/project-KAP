@@ -139,15 +139,17 @@ class AppHeader extends Component {
                           <div>Settings</div>
                         </li>
 
-                        <li onClick={e => this.props.logoutClickedHandler()}>
-                          <div className={styles.IconBoxInPopover}>
-                            <FontAwesomeIcon
-                              icon={fasSignOutAlt}
-                              className={styles.IconInPopover}
-                            />
-                          </div>
-                          <div>Log out</div>
-                        </li>
+                        {props.displayLogoutButton && (
+                          <li onClick={e => this.props.logoutClickedHandler()}>
+                            <div className={styles.IconBoxInPopover}>
+                              <FontAwesomeIcon
+                                icon={fasSignOutAlt}
+                                className={styles.IconInPopover}
+                              />
+                            </div>
+                            <div>Log out</div>
+                          </li>
+                        )}
                       </ul>
                     </div>
                   )

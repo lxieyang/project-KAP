@@ -1,6 +1,6 @@
 /* global chrome */
 import queryString from 'query-string';
-import { currentUserIdToken } from '../background';
+import { currentUseraccessToken } from '../background';
 import { APP_NAME_SHORT } from '../../../../../shared-components/src/shared/constants';
 import * as FirestoreManager from '../../../../../shared-components/src/firebase/firestore_wrapper';
 import {
@@ -51,7 +51,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   } else if (request.msg === 'Go_TO_DOCS_PAGE') {
     chrome.tabs.create(
       {
-        url: chrome.extension.getURL('https://unakite.info')
+        url: 'https://unakite.info'
       },
       tab => {
         // Tab opened.
@@ -61,39 +61,40 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     chrome.storage.local.get(['user'], result => {
       let user = result.user;
       if (user) {
-        let url =
-          getAllTasksLink() +
-          `?${queryString.stringify({
-            idToken: currentUserIdToken
-          })}`;
-        chrome.tabs.create(
-          {
-            url
-          },
-          tab => {
-            // Tab opened.
-          }
-        );
+        chrome.identity.getAuthToken({ interactive: false }, token => {
+          let url =
+            getAllTasksLink() +
+            `?${queryString.stringify({
+              accessToken: token
+            })}`;
+          chrome.tabs.create(
+            {
+              url
+            },
+            tab => {
+              // Tab opened.
+            }
+          );
+        });
       }
     });
   } else if (request.msg === 'Go_TO_SINGLE_TASK_PAGE') {
     let taskId = request.taskId;
     chrome.storage.local.get(['user'], result => {
       let user = result.user;
+
       if (user) {
-        let url =
-          getTaskLink(taskId) +
-          `?${queryString.stringify({
-            idToken: currentUserIdToken
-          })}`;
-        chrome.tabs.create(
-          {
-            url
-          },
-          tab => {
+        chrome.identity.getAuthToken({ interactive: false }, token => {
+          let url =
+            getTaskLink(taskId) +
+            `?${queryString.stringify({
+              accessToken: token
+            })}`;
+
+          chrome.tabs.create({ url }, tab => {
             // Tab opened.
-          }
-        );
+          });
+        });
       }
     });
   } else if (request.msg === 'UPDATE_CURRENT_USER_CURRENT_TASK_ID') {

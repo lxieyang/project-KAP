@@ -66,17 +66,18 @@ class Mainpage extends Component {
     });
 
     // log in if idToken is provided by the link
-    let idToken = queryString.parse(window.location.search).idToken;
-    this.signInUserWithCredential(idToken);
+    let accessToken = queryString.parse(window.location.search).accessToken;
+    this.signInUserWithCredential(accessToken);
   }
 
-  signInUserWithCredential = idToken => {
-    if (idToken !== null && idToken !== undefined) {
+  signInUserWithCredential = accessToken => {
+    console.log(accessToken);
+    if (accessToken !== null && accessToken !== undefined) {
       // logged in
       firebase
         .auth()
         .signInAndRetrieveDataWithCredential(
-          firebase.auth.GoogleAuthProvider.credential(idToken)
+          firebase.auth.GoogleAuthProvider.credential(null, accessToken)
         )
         .then(result => {
           // let user = result.user;

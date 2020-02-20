@@ -1,5 +1,6 @@
 /* global chrome */
 import React, { Component } from 'react';
+import firebase from '../../../../shared-components/src/firebase/firebase';
 import { RadioGroup, Radio } from 'react-radio-group';
 
 import Divider from '@material-ui/core/Divider';
@@ -9,6 +10,7 @@ import Header from './components/Header/Header';
 
 class Options extends Component {
   state = {
+    accessToken: null,
     userName: null,
     userProfilePhotoURL: null,
 
@@ -24,19 +26,23 @@ class Options extends Component {
   componentDidMount() {
     this.setState({ version: chrome.app.getDetails().version });
 
-    chrome.runtime.sendMessage(
-      { msg: 'GET_USER_INFO', from: 'auth' },
-      response => {
-        this.retrieveLoginInfo(response.idToken);
-      }
-    );
-
-    // authenticate upon signin
-    chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-      if (request.msg === 'USER_LOGIN_STATUS_CHANGED') {
-        this.retrieveLoginInfo(request.idToken);
-      }
+    chrome.identity.getAuthToken({ interactive: true }, token => {
+      this.signInOutUserWithCredential(token);
     });
+
+    // chrome.runtime.sendMessage(
+    //   { msg: 'GET_USER_INFO', from: 'auth' },
+    //   response => {
+    //     this.retrieveLoginInfo(response.idToken);
+    //   }
+    // );
+
+    // // authenticate upon signin
+    // chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+    //   if (request.msg === 'USER_LOGIN_STATUS_CHANGED') {
+    //     this.retrieveLoginInfo(request.idToken);
+    //   }
+    // });
 
     chrome.runtime.sendMessage({ msg: 'SHOULD_SHRINK_BODY' }, response => {
       let shouldShrinkBody = response.SHOULD_SHRINK_BODY;
@@ -57,32 +63,78 @@ class Options extends Component {
     );
   }
 
-  retrieveLoginInfo = idToken => {
-    if (idToken === null || idToken === undefined) {
-      // not logged in
-
-      this.setState({
-        loadingUserInfo: false,
-        userName: null,
-        userProfilePhotoURL: null
-      });
-
-      // should redirect to auth page to log in
-      setTimeout(() => {
-        window.location.replace(chrome.extension.getURL('auth.html'));
-      }, 2000);
-    } else {
+  signInOutUserWithCredential = accessToken => {
+    this.setState({ accessToken });
+    if (accessToken !== null) {
       // logged in
-      chrome.storage.local.get(['user'], result => {
-        let user = result.user;
-        this.setState({
-          loadingUserInfo: false,
-          userName: user.displayName,
-          userProfilePhotoURL: user.photoURL
+      firebase
+        .auth()
+        .signInAndRetrieveDataWithCredential(
+          firebase.auth.GoogleAuthProvider.credential(null, accessToken)
+        )
+        // .signInAndRetrieveDataWithCredential(
+        //   firebase.auth.GoogleAuthProvider.credential(accessToken)
+        // )
+        .then(result => {
+          console.log('logged in');
+          // let user = result.user;
+          const { user } = result;
+          this.setState({
+            userName: user.displayName,
+            userProfilePhotoURL: user.photoURL,
+            loadingUserInfo: false
+          });
+        })
+        .catch(error => {
+          console.log(error);
+          console.log(error.message);
+          this.setState({ loadingUserInfo: false });
         });
-      });
+    } else {
+      // logged out
+      firebase
+        .auth()
+        .signOut()
+        .then(() => {
+          this.setState({
+            userName: null,
+            userProfilePhotoURL: null,
+            loadingUserInfo: false
+          });
+        })
+        .catch(error => {
+          console.log(error);
+          this.setState({ loadingUserInfo: false });
+        });
     }
   };
+
+  // retrieveLoginInfo = idToken => {
+  //   if (idToken === null || idToken === undefined) {
+  //     // not logged in
+
+  //     this.setState({
+  //       loadingUserInfo: false,
+  //       userName: null,
+  //       userProfilePhotoURL: null
+  //     });
+
+  //     // should redirect to auth page to log in
+  //     setTimeout(() => {
+  //       window.location.replace(chrome.extension.getURL('auth.html'));
+  //     }, 2000);
+  //   } else {
+  //     // logged in
+  //     chrome.storage.local.get(['user'], result => {
+  //       let user = result.user;
+  //       this.setState({
+  //         loadingUserInfo: false,
+  //         userName: user.displayName,
+  //         userProfilePhotoURL: user.photoURL
+  //       });
+  //     });
+  //   }
+  // };
 
   handleSidebarBehaviorChange = value => {
     this.setState({ sidebarBehavior: value });

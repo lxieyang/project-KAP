@@ -18,43 +18,20 @@ import './Modules/Misc';
 import './Modules/GA';
 
 window.FirestoreManager = FirestoreManager;
+window.firebase = firebase;
+
+// chrome.identity.onSignInChanged.addListener((account, signedIn) => {
+//   console.log(account);
+//   console.log(signedIn);
+// });
 
 /* global variables */
 let loggedIn = false;
-export let currentUserIdToken = null;
+export let currentUseraccessToken = null;
 
-// firebase.auth().onIdTokenChanged(user => {
-//   console.log('ID TOKEN CHANGED/REFRESHED');
-//   console.log(user);
-//   if (user) {
-//     user.getIdToken().then(idToken => {
-//       currentUserIdToken = idToken;
-//       console.log(currentUserIdToken);
-//     });
-
-//     chrome.storage.local.set(
-//       {
-//         user: {
-//           displayName: user.displayName,
-//           photoURL: user.photoURL
-//         }
-//       },
-//       function() {
-//         console.log('user info update in chrome.storage.local');
-//       }
-//     );
-//   } else {
-//     currentUserIdToken = null;
-//     chrome.storage.local.set(
-//       {
-//         user: null
-//       },
-//       function() {
-//         console.log('user info update in chrome.storage.local');
-//       }
-//     );
-//   }
-// });
+chrome.identity.getAuthToken({ interactive: true }, function(token) {
+  signInOutUserWithCredential(token);
+});
 
 //
 //
@@ -293,17 +270,20 @@ const alertAllTabs = idToken => {
   });
 };
 
-const signInOutUserWithCredential = idToken => {
-  if (idToken !== null && idToken !== undefined) {
+const signInOutUserWithCredential = accessToken => {
+  if (accessToken !== null && accessToken !== undefined) {
     // logged in
     firebase
       .auth()
       .signInAndRetrieveDataWithCredential(
-        firebase.auth.GoogleAuthProvider.credential(idToken)
+        firebase.auth.GoogleAuthProvider.credential(null, accessToken)
       )
       .then(result => {
         console.log(`[BACKGROUND] User ${result.user.displayName} logged in.`);
-        currentUserIdToken = result.credential.idToken;
+        console.log(result);
+
+        currentUseraccessToken = result.credential.accessToken;
+        console.log(currentUseraccessToken);
 
         FirestoreManager.updateUserProfile();
 
@@ -326,7 +306,7 @@ const signInOutUserWithCredential = idToken => {
               title: ''
             });
 
-            alertAllTabs(idToken);
+            alertAllTabs(currentUseraccessToken);
           }
         );
       })
@@ -345,7 +325,7 @@ const signInOutUserWithCredential = idToken => {
           console.log('user info update in chrome.storage.local');
           // update loggedIn status
           loggedIn = false;
-          currentUserIdToken = null;
+          currentUseraccessToken = null;
 
           // set icon
           chrome.browserAction.setIcon({ path: 'icon-128.png' });
@@ -361,7 +341,7 @@ const signInOutUserWithCredential = idToken => {
           });
           chrome.browserAction.setBadgeText({ text: '' });
 
-          alertAllTabs(idToken);
+          alertAllTabs(accessToken);
         });
       })
       .catch(error => {
@@ -371,16 +351,20 @@ const signInOutUserWithCredential = idToken => {
 };
 
 /* Logging in/out on all tabs*/
-const updateLogInStatus = idToken => {
-  signInOutUserWithCredential(idToken);
+const updateLogInStatus = accessToken => {
+  signInOutUserWithCredential(accessToken);
 };
 
 // handle login/out request
 let lastActiveTabId = -1;
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
   if (request.msg === 'USER_LOGGED_IN') {
-    let idToken = request.idToken;
-    updateLogInStatus(idToken);
+    // let idToken = request.idToken;
+    // localStorage.setItem('idToken', request.idToken);
+    // console.log(idToken);
+    // console.log(firebase.auth.GoogleAuthProvider.credential(idToken));
+    // console.log(request.credential);
+    // updateLogInStatus(idToken);
 
     // auth page
     if (request.from === 'auth_page') {
@@ -392,7 +376,8 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
   }
 
   if (request.msg === 'USER_LOGGED_OUT') {
-    updateLogInStatus(null);
+    // localStorage.removeItem('idToken');
+    // updateLogInStatus(null);
 
     // auth page
     if (request.from === 'auth_page') {
@@ -404,8 +389,9 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
   }
 
   if (request.msg === 'GET_USER_INFO') {
+    // currentUseraccessToken = localStorage.getItem('accessToken');
     sendResponse({
-      idToken: currentUserIdToken
+      idToken: currentUseraccessToken
     });
   }
 
@@ -424,23 +410,10 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 
 setTimeout(() => {
   console.log('CURRENT USER:', firebase.auth().currentUser.displayName);
-}, 1000);
-
-// setInterval(() => {
-//   firebase
-//     .auth()
-//     .currentUser.getIdToken()
-//     .then(str => console.log(str));
-// }, 1000);
-
-// let provider = new firebase.auth.GoogleAuthProvider();
-// firebase
-//   .auth()
-//   .signInWithPopup(provider)
-//   .then(function(result) {
-//     console.log(result);
-//   })
-//   .catch(function(error) {
-//     console.log(error);
-//     this.setState({ loadingUserInfo: false });
-//   });
+  // firebase
+  //   .auth()
+  //   .currentUser.getIdToken()
+  //   .then(idToken => {
+  //     console.log(idToken);
+  //   });
+}, 3000);

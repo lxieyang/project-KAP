@@ -31,6 +31,7 @@ const materialStyles = {
 
 class Auth extends Component {
   state = {
+    accessToken: null,
     userName: null,
     userProfilePhotoURL: null,
 
@@ -38,76 +39,126 @@ class Auth extends Component {
   };
 
   componentDidMount() {
-    chrome.runtime.sendMessage(
-      { msg: 'GET_USER_INFO', from: 'auth' },
-      response => {
-        this.retrieveLoginInfo(response.idToken);
-      }
-    );
-
-    // authenticate upon signin
-    chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-      if (request.msg === 'USER_LOGIN_STATUS_CHANGED') {
-        this.retrieveLoginInfo(request.idToken);
-      }
+    chrome.identity.getAuthToken({ interactive: true }, token => {
+      this.signInOutUserWithCredential(token);
     });
+
+    // chrome.runtime.sendMessage(
+    //   { msg: 'GET_USER_INFO', from: 'auth' },
+    //   response => {
+    //     this.retrieveLoginInfo(response.idToken);
+    //   }
+    // );
+
+    // // authenticate upon signin
+    // chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+    //   if (request.msg === 'USER_LOGIN_STATUS_CHANGED') {
+    //     this.retrieveLoginInfo(request.idToken);
+    //   }
+    // });
   }
 
-  retrieveLoginInfo = idToken => {
-    if (idToken === null || idToken === undefined) {
-      // not logged in
-      this.setState({
-        loadingUserInfo: false,
-        userName: null,
-        userProfilePhotoURL: null
-      });
-    } else {
+  signInOutUserWithCredential = accessToken => {
+    this.setState({ accessToken });
+    if (accessToken !== null) {
       // logged in
-      chrome.storage.local.get(['user'], result => {
-        let user = result.user;
-        this.setState({
-          loadingUserInfo: false,
-          userName: user.displayName,
-          userProfilePhotoURL: user.photoURL
+      firebase
+        .auth()
+        .signInAndRetrieveDataWithCredential(
+          firebase.auth.GoogleAuthProvider.credential(null, accessToken)
+        )
+        // .signInAndRetrieveDataWithCredential(
+        //   firebase.auth.GoogleAuthProvider.credential(accessToken)
+        // )
+        .then(result => {
+          console.log('logged in');
+          // let user = result.user;
+          const { user } = result;
+          this.setState({
+            userName: user.displayName,
+            userProfilePhotoURL: user.photoURL,
+            loadingUserInfo: false
+          });
+        })
+        .catch(error => {
+          console.log(error);
+          console.log(error.message);
+          this.setState({ loadingUserInfo: false });
         });
-      });
+    } else {
+      // logged out
+      firebase
+        .auth()
+        .signOut()
+        .then(() => {
+          this.setState({
+            userName: null,
+            userProfilePhotoURL: null,
+            loadingUserInfo: false
+          });
+        })
+        .catch(error => {
+          console.log(error);
+          this.setState({ loadingUserInfo: false });
+        });
     }
   };
 
-  logInClickedHandler = () => {
-    this.setState({ loadingUserInfo: true });
-    let provider = new firebase.auth.GoogleAuthProvider();
-    firebase
-      .auth()
-      .signInWithPopup(provider)
-      .then(function(result) {
-        console.log(result);
-        chrome.runtime.sendMessage({
-          msg: 'USER_LOGGED_IN',
-          from: 'auth_page',
-          idToken: result.credential.idToken,
-          credential: result.credential,
-          user: result.user
-        });
-      })
-      .catch(function(error) {
-        console.log(error);
-        this.setState({ loadingUserInfo: false });
-      });
+  // retrieveLoginInfo = idToken => {
+  //   if (idToken === null || idToken === undefined) {
+  //     // not logged in
+  //     this.setState({
+  //       loadingUserInfo: false,
+  //       userName: null,
+  //       userProfilePhotoURL: null
+  //     });
+  //   } else {
+  //     // logged in
+  //     chrome.storage.local.get(['user'], result => {
+  //       let user = result.user;
+  //       this.setState({
+  //         loadingUserInfo: false,
+  //         userName: user.displayName,
+  //         userProfilePhotoURL: user.photoURL
+  //       });
+  //     });
+  //   }
+  // };
 
-    // chrome.runtime.sendMessage({
-    //   msg: 'LOG_IN_BUTTON_CLICKED',
-    //   from: 'auth_page'
-    // });
-  };
+  // logInClickedHandler = () => {
+  //   this.setState({ loadingUserInfo: true });
+  //   let provider = new firebase.auth.GoogleAuthProvider();
+  //   firebase
+  //     .auth()
+  //     .signInWithPopup(provider)
+  //     .then(function(result) {
+  //       console.log(result);
+  //       chrome.runtime.sendMessage({
+  //         msg: 'USER_LOGGED_IN',
+  //         from: 'auth_page',
+  //         idToken: result.credential.idToken,
+  //         credential: result.credential,
+  //         user: result.user
+  //       });
+  //     })
+  //     .catch(function(error) {
+  //       console.log(error);
+  //       this.setState({ loadingUserInfo: false });
+  //     });
 
-  logOutClickedHandler = () => {
-    // this.setState({ loadingUserInfo: true });
-    chrome.runtime.sendMessage({
-      msg: 'USER_LOGGED_OUT',
-      from: 'auth_page'
-    });
-  };
+  //   // chrome.runtime.sendMessage({
+  //   //   msg: 'LOG_IN_BUTTON_CLICKED',
+  //   //   from: 'auth_page'
+  //   // });
+  // };
+
+  // logOutClickedHandler = () => {
+  //   // this.setState({ loadingUserInfo: true });
+  //   chrome.runtime.sendMessage({
+  //     msg: 'USER_LOGGED_OUT',
+  //     from: 'auth_page'
+  //   });
+  // };
 
   render() {
     const { classes } = this.props;
@@ -218,7 +269,7 @@ class Auth extends Component {
                   <span>{this.state.userName}</span>.
                 </Typography>
               </CardContent>
-              <CardContent>
+              {/* <CardContent>
                 <Chip
                   avatar={
                     <Avatar>
@@ -228,7 +279,7 @@ class Auth extends Component {
                   label={`Log out ${APP_NAME_SHORT}`}
                   onClick={() => this.logOutClickedHandler()}
                 />
-              </CardContent>
+              </CardContent> */}
             </Card>
           </div>
         </React.Fragment>

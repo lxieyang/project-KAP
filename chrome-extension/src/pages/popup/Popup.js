@@ -22,7 +22,7 @@ class Popup extends Component {
     userId: null,
     userName: null,
     userProfilePhotoURL: null,
-    idToken: null,
+    accessToken: null,
 
     currentTaskId: null,
 
@@ -38,17 +38,21 @@ class Popup extends Component {
   };
 
   componentDidMount() {
-    chrome.runtime.sendMessage({ msg: 'GET_USER_INFO' }, response => {
-      console.log(response.idToken);
-      this.signInOutUserWithCredential(response.idToken);
+    chrome.identity.getAuthToken({ interactive: true }, token => {
+      this.signInOutUserWithCredential(token);
     });
 
-    // authenticate upon signin
-    chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-      if (request.msg === 'USER_LOGIN_STATUS_CHANGED') {
-        this.signInOutUserWithCredential(request.idToken);
-      }
-    });
+    // chrome.runtime.sendMessage({ msg: 'GET_USER_INFO' }, response => {
+    //   // console.log(response.accessToken);
+    //   this.signInOutUserWithCredential(response.accessToken);
+    // });
+
+    // // authenticate upon signin
+    // chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+    //   if (request.msg === 'USER_LOGIN_STATUS_CHANGED') {
+    //     this.signInOutUserWithCredential(request.accessToken);
+    //   }
+    // });
 
     // authenticate upon signin
     chrome.runtime.onMessage.addListener(this.annotationSelectionListener);
@@ -71,22 +75,20 @@ class Popup extends Component {
     }
   };
 
-  signInOutUserWithCredential = idToken => {
-    this.setState({ idToken });
-    console.log(idToken);
-    if (idToken !== null) {
+  signInOutUserWithCredential = accessToken => {
+    this.setState({ accessToken });
+    if (accessToken !== null) {
       // logged in
       firebase
         .auth()
-        .signInWithCredential(
-          firebase.auth.GoogleAuthProvider.credential(idToken)
+        .signInAndRetrieveDataWithCredential(
+          firebase.auth.GoogleAuthProvider.credential(null, accessToken)
         )
         // .signInAndRetrieveDataWithCredential(
-        //   firebase.auth.GoogleAuthProvider.credential(idToken)
+        //   firebase.auth.GoogleAuthProvider.credential(accessToken)
         // )
         .then(result => {
           console.log('logged in');
-          console.log(result);
           // let user = result.user;
           const { user } = result;
           this.setState({
@@ -98,6 +100,7 @@ class Popup extends Component {
         })
         .catch(error => {
           console.log(error);
+          console.log(error.message);
           this.setState({ loadingUserInfo: false });
         });
     } else {
@@ -129,7 +132,7 @@ class Popup extends Component {
       .then(function(result) {
         chrome.runtime.sendMessage({
           msg: 'USER_LOGGED_IN',
-          idToken: result.credential.idToken,
+          accessToken: result.credential.accessToken,
           credential: result.credential,
           user: result.user
         });
@@ -236,6 +239,7 @@ class Popup extends Component {
         loadingUserInfo={this.state.loadingUserInfo}
         isSigningOut={this.state.isSigningOut}
         logInClickedHandler={this.logInClickedHandler}
+        displayLogoutButton={false}
         logoutClickedHandler={this.logoutClickedHandler}
         openInNewTabClickedHandler={this.openInNewTabClickedHandler}
         openSettingsPageClickedHandler={this.openSettingsPageClickedHandler}
@@ -271,7 +275,7 @@ class Popup extends Component {
 
         <TaskSwitcher
           setCurrentTaskId={this.setCurrentTaskId}
-          idToken={this.state.idToken}
+          accessToken={this.state.accessToken}
         />
         <Workspaces
           setCurrentWorkspaceId={this.setCurrentWorkspaceId}
