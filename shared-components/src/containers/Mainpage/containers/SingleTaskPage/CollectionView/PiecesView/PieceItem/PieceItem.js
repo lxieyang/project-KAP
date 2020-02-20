@@ -347,7 +347,14 @@ class PieceItem extends Component {
   render() {
     const { connectDragSource, connectDragPreview, isDragging } = this.props; // dnd
 
-    let { piece, classes, isHovering, editAccess, commentAccess } = this.props;
+    let {
+      piece,
+      classes,
+      isHovering,
+      editAccess,
+      commentAccess,
+      attitudeIcon
+    } = this.props;
     const {
       maxScreenshotHeight,
       screenshot,
@@ -415,11 +422,7 @@ class PieceItem extends Component {
                 </div>
               )}
 
-              <div
-                style={{
-                  flex: '1'
-                }}
-              >
+              <div style={{ flex: '1' }}>
                 {this.state.editingPieceName ? (
                   <div className={classesInCSS.PieceNameEditContainer}>
                     <div className={classesInCSS.TextAreaContainer}>
@@ -487,6 +490,73 @@ class PieceItem extends Component {
                     opacity: this.state.expanded || isHovering ? '1' : '0.5'
                   }}
                 >
+                  {this.props.isDemoTask && (
+                    <React.Fragment>
+                      <div>
+                        {piece.references.url !== false && (
+                          <Tooltip
+                            title={`${
+                              piece.references.pageTitle
+                            }  ---  Click to open`}
+                            placement={'top'}
+                          >
+                            <span
+                              className={classesInCSS.TagSpan}
+                              style={{ backgroundColor: 'rgb(230, 230, 230)' }}
+                            >
+                              <div
+                                style={{
+                                  display: 'flex',
+                                  alignItems: 'center'
+                                }}
+                              >
+                                From:
+                                <a
+                                  href={piece.references.url}
+                                  target="__blank"
+                                  style={{
+                                    display: 'flex',
+                                    alignItems: 'center'
+                                  }}
+                                >
+                                  <img
+                                    src={
+                                      GET_FAVICON_URL_PREFIX +
+                                      piece.references.url
+                                    }
+                                    alt={''}
+                                  />
+                                  <span>
+                                    {new URL(piece.references.url).hostname}
+                                  </span>
+                                </a>
+                              </div>
+                            </span>
+                          </Tooltip>
+                        )}
+                        <span
+                          className={classesInCSS.TagSpan}
+                          style={{
+                            backgroundColor: `rgba(17, 240, 76, ${this.props
+                              .fakePopularityNumber / 100})`
+                          }}
+                        >
+                          {this.props.fakePopularityNumber} up votes
+                        </span>
+                        <span
+                          className={classesInCSS.TagSpan}
+                          style={{
+                            backgroundColor: this.props.isRecent
+                              ? 'rgb(194, 245, 66)'
+                              : 'rgb(221, 222, 213)'
+                          }}
+                        >
+                          {this.props.fakeDate.toLocaleDateString()}
+                        </span>
+                      </div>
+                    </React.Fragment>
+                  )}
+
                   <div
                     style={{
                       fontSize: '12px',
@@ -571,37 +641,45 @@ class PieceItem extends Component {
                     ) : null}
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center' }}>
-                    {piece.references.url !== false ? (
-                      <Tooltip
-                        title={`${
-                          piece.references.pageTitle
-                        }  ---  Click to open`}
-                        placement={'top'}
-                      >
-                        <a
-                          href={piece.references.url}
-                          target="__blank"
-                          className={classesInCSS.SiteOrigin}
-                        >
-                          <img
-                            src={GET_FAVICON_URL_PREFIX + piece.references.url}
-                            alt={''}
-                            className={classesInCSS.SiteIcon}
-                          />
-                          <span className={classesInCSS.SiteIconText}>
-                            {new URL(piece.references.url).hostname}
+                    {!this.props.isDemoTask && (
+                      <React.Fragment>
+                        {piece.references.url !== false ? (
+                          <Tooltip
+                            title={`${
+                              piece.references.pageTitle
+                            }  ---  Click to open`}
+                            placement={'top'}
+                          >
+                            <a
+                              href={piece.references.url}
+                              target="__blank"
+                              className={classesInCSS.SiteOrigin}
+                            >
+                              <img
+                                src={
+                                  GET_FAVICON_URL_PREFIX + piece.references.url
+                                }
+                                alt={''}
+                                className={classesInCSS.SiteIcon}
+                              />
+                              <span className={classesInCSS.SiteIconText}>
+                                {new URL(piece.references.url).hostname}
+                              </span>
+                            </a>
+                          </Tooltip>
+                        ) : piece.annotationType === ANNOTATION_TYPES.Manual ? (
+                          <span className={classesInCSS.CreatedBadge}>
+                            Created
                           </span>
-                        </a>
-                      </Tooltip>
-                    ) : piece.annotationType === ANNOTATION_TYPES.Manual ? (
-                      <span className={classesInCSS.CreatedBadge}>Created</span>
-                    ) : null}
+                        ) : null}
 
-                    <div className={classesInCSS.Moment}>
-                      {piece.creationDate
-                        ? moment(piece.creationDate.toDate()).fromNow()
-                        : null}
-                    </div>
+                        <div className={classesInCSS.Moment}>
+                          {piece.creationDate
+                            ? moment(piece.creationDate.toDate()).fromNow()
+                            : null}
+                        </div>
+                      </React.Fragment>
+                    )}
                   </div>
                 </div>
               </div>

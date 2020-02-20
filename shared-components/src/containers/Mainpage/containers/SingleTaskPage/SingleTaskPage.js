@@ -11,16 +11,25 @@ import './ContextMenu.css';
 import CollectionView from './CollectionView/CollectionView';
 import WorkspaceView from './WorkspaceView/WorkspaceView';
 
+import TaskContext from '../../../../shared/task-context';
+
 class SingleTaskPage extends Component {
   state = {
     currentWorkspaceId: '0',
 
     taskLoading: true,
-    taskExists: false
+    taskExists: false,
+
+    taskId: null,
+    isDemoTask: false
   };
 
   componentDidMount() {
     let taskId = getTaskIdFromPath(this.props.history.location.pathname);
+    this.setState({
+      taskId,
+      isDemoTask: taskId === 'fnbS9l31Y6rMBj0CrsQA'
+    });
 
     this.unsubscribeTaskId = FirestoreManager.getTaskById(taskId).onSnapshot(
       snapshot => {
@@ -72,28 +81,34 @@ class SingleTaskPage extends Component {
 
     return (
       <React.Fragment>
-        <div className={styles.SingleTaskPageContainer}>
-          <SplitPane
-            split="vertical"
-            minSize={200}
-            defaultSize={348}
-            maxSize={800}
-            pane2Style={{ width: '100%' }}
-          >
-            <div className={styles.LeftPane}>
-              <CollectionView
-                userId={this.props.userId}
-                currentWorkspaceId={this.state.currentWorkspaceId}
-              />
-            </div>
-            <div className={styles.RightPane}>
-              <WorkspaceView
-                userId={this.props.userId}
-                setCurrentWorkspaceId={this.setCurrentWorkspaceId}
-              />
-            </div>
-          </SplitPane>
-          {/*
+        <TaskContext.Provider
+          value={{
+            currentTaskId: this.state.taskId,
+            isDemoTask: this.state.isDemoTask
+          }}
+        >
+          <div className={styles.SingleTaskPageContainer}>
+            <SplitPane
+              split="vertical"
+              minSize={200}
+              defaultSize={348}
+              maxSize={800}
+              pane2Style={{ width: '100%' }}
+            >
+              <div className={styles.LeftPane}>
+                <CollectionView
+                  userId={this.props.userId}
+                  currentWorkspaceId={this.state.currentWorkspaceId}
+                />
+              </div>
+              <div className={styles.RightPane}>
+                <WorkspaceView
+                  userId={this.props.userId}
+                  setCurrentWorkspaceId={this.setCurrentWorkspaceId}
+                />
+              </div>
+            </SplitPane>
+            {/*
           <div className={styles.LeftPane}>
             <CollectionView />
           </div>
@@ -101,7 +116,8 @@ class SingleTaskPage extends Component {
             <WorkspaceView />
           </div>
       */}
-        </div>
+          </div>
+        </TaskContext.Provider>
       </React.Fragment>
     );
   }

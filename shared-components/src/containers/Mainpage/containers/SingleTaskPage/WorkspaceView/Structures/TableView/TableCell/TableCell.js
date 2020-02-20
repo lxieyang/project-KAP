@@ -7,6 +7,8 @@ import ColumnHeaderCell from './ColumnHeaderCell/ColumnHeaderCell';
 import { TABLE_CELL_TYPES } from '../../../../../../../../shared/types';
 import * as FirestoreManager from '../../../../../../../../firebase/firestore_wrapper';
 
+import TaskContext from '../../../../../../../../shared/task-context';
+
 class TableCell extends Component {
   state = {
     // comments
@@ -15,6 +17,8 @@ class TableCell extends Component {
     // comment count
     commentCount: 0
   };
+
+  static contextType = TaskContext;
 
   componentDidUpdate(prevProps, prevState) {
     if (prevProps.cell.id !== this.props.cell.id) {
@@ -93,6 +97,7 @@ class TableCell extends Component {
             {...this.props}
             comments={comments}
             commentCount={commentCount}
+            isDemoTask={this.context.isDemoTask}
           />
         );
         break;

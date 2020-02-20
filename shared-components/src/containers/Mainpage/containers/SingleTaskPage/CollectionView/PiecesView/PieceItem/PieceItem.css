@@ -207,3 +207,11 @@
   border-color: rgb(17, 100, 224);
   outline: none;
 }
+
+.TagSpan {
+  display: inline-block;
+  border-radius: 9px;
+  padding: 2px 4px;
+  font-size: 14px;
+  margin: 5px 2px;
+}

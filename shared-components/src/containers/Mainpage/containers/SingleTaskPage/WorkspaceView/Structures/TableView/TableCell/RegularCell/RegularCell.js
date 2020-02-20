@@ -18,6 +18,8 @@ import {
   PIECE_COLOR
 } from '../../../../../../../../../shared/theme';
 
+import { GET_FAVICON_URL_PREFIX } from '../../../../../../../../../shared/constants';
+
 import ReactTooltip from 'react-tooltip';
 import { withStyles } from '@material-ui/core/styles';
 import Chat from 'mdi-material-ui/Chat';
@@ -40,10 +42,19 @@ import {
 import PropTypes from 'prop-types';
 
 import CellComments from '../CellComments/CellComments';
-import { getFirstName } from '../../../../../../../../../shared/utilities';
+import {
+  getFirstName,
+  getFirstNWords
+} from '../../../../../../../../../shared/utilities';
 
 import RatingIcon from './components/RatingIcon';
 import RatingIconDropLayer from './RatingIconDropLayer/RatingIconDropLayer';
+
+function getRandomDate(from, to) {
+  from = from.getTime();
+  to = to.getTime();
+  return new Date(from + Math.random() * (to - from));
+}
 
 const materialStyles = theme => ({
   button: {
@@ -677,141 +688,127 @@ class RegularCell extends Component {
             opacity: isOver ? 0.3 : null
           }}
         >
-          <div className={styles.EvidenceIconContainer}>
-            {piecesList.length > 0 &&
-              sortBy(piecesList, ['rating']).map((p, idx) => {
-                if (
-                  pieces[p.pieceId] !== undefined &&
-                  pieces[p.pieceId] !== null
-                ) {
-                  let icon = <InfoIcon />;
-                  switch (p.rating) {
-                    case RATING_TYPES.positive:
-                      icon = <ThumbV1 type={'up'} />;
-                      break;
-                    case RATING_TYPES.negative:
-                      icon = <ThumbV1 type={'down'} />;
-                      break;
-                    case RATING_TYPES.info:
-                      icon = <InfoIcon />;
-                      break;
-                    default:
-                      break;
-                  }
+          {this.props.isDemoTask && (
+            <div className={styles.EvidenceIconContainerVariantI}>
+              {piecesList.length > 0 &&
+                sortBy(piecesList, ['rating']).map((p, idx) => {
+                  if (
+                    pieces[p.pieceId] !== undefined &&
+                    pieces[p.pieceId] !== null
+                  ) {
+                    let icon = <InfoIcon />;
+                    switch (p.rating) {
+                      case RATING_TYPES.positive:
+                        icon = <ThumbV1 type={'up'} />;
+                        break;
+                      case RATING_TYPES.negative:
+                        icon = <ThumbV1 type={'down'} />;
+                        break;
+                      case RATING_TYPES.info:
+                        icon = <InfoIcon />;
+                        break;
+                      default:
+                        break;
+                    }
 
-                  return (
-                    <React.Fragment key={`${p.pieceId}-${idx}`}>
-                      <ContextMenuTrigger
-                        renderTag={'span'}
-                        id={`${cell.id}-${p.pieceId}-${idx}-context-menu`}
-                        holdToDisplay={-1}
-                      >
+                    const piece = pieces[p.pieceId];
+                    const fakePopularityNumber = Math.floor(
+                      Math.random() * 100
+                    );
+
+                    const fakeDate = getRandomDate(
+                      new Date(2019, 1, 1),
+                      new Date(2020, 4, 1)
+                    );
+
+                    const isRecent =
+                      (new Date(2020, 4, 1) - fakeDate) / (1000 * 86400) < 100;
+
+                    return (
+                      <React.Fragment key={`${p.pieceId}-${idx}`}>
                         <div
-                          className={[styles.AttitudeInTableCell].join(' ')}
+                          className={styles.AttitudeInTableContainerVariantI}
                           data-tip
                           data-for={`${cell.id}-${p.pieceId}`}
                         >
-                          <RatingIcon
-                            editAccess={editAccess}
-                            pieceId={p.pieceId}
-                            ratingType={p.rating}
-                            workspaceId={this.props.workspace.id}
-                            cellId={cell.id}
-                            cellType={cell.type}
-                            switchDraggingRatingIconStatus={
-                              this.switchDraggingRatingIconStatus
-                            }
+                          <div
+                            style={{
+                              width: 40,
+                              height: 40
+                            }}
                           >
                             {icon}
-                          </RatingIcon>
+                          </div>
+                          <div style={{ flex: 1, marginLeft: 3 }}>
+                            <div style={{ fontSize: 13 }}>
+                              {getFirstNWords(5, piece.name)}
+                            </div>
+                            <div
+                              style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                flexWrap: 'wrap'
+                              }}
+                            >
+                              {piece.references.url !== false && (
+                                <Tooltip
+                                  title={`${
+                                    new URL(piece.references.url).hostname // }  ---  Click to open`} //   piece.references.pageTitle // title={`${
+                                  }   ---  Click to open`}
+                                  placement={'top'}
+                                >
+                                  <a
+                                    href={piece.references.url}
+                                    target="__blank"
+                                    className={styles.TagSpan}
+                                    style={{
+                                      backgroundColor: 'rgb(230, 230, 230)'
+                                    }}
+                                  >
+                                    <img
+                                      src={
+                                        GET_FAVICON_URL_PREFIX +
+                                        piece.references.url
+                                      }
+                                      alt={''}
+                                    />
+                                    {/* <span style={{ fontSize: 11 }}>
+                                    {new URL(piece.references.url).hostname}
+                                  </span> */}
+                                  </a>
+                                </Tooltip>
+                              )}
+                              <span
+                                className={styles.TagSpan}
+                                style={{
+                                  backgroundColor: `rgba(17, 240, 76, ${fakePopularityNumber /
+                                    100})`
+                                }}
+                              >
+                                {fakePopularityNumber} up votes
+                              </span>
+                              <span
+                                className={styles.TagSpan}
+                                style={{
+                                  backgroundColor: isRecent
+                                    ? 'rgb(194, 245, 66)'
+                                    : 'rgb(221, 222, 213)'
+                                }}
+                              >
+                                {fakeDate.toLocaleDateString()}
+                              </span>
+                            </div>
+                          </div>
                         </div>
-                      </ContextMenuTrigger>
-                      {editAccess ? (
-                        <ContextMenu
-                          id={`${cell.id}-${p.pieceId}-${idx}-context-menu`}
-                        >
-                          {p.rating !== RATING_TYPES.positive && (
-                            <MenuItem
-                              onClick={e =>
-                                this.switchRatingTypeOfPiece(
-                                  e,
-                                  p.pieceId,
-                                  RATING_TYPES.positive
-                                )
-                              }
-                            >
-                              Change to{' '}
-                              <div
-                                style={{ width: 20, height: 20, marginLeft: 4 }}
-                              >
-                                <ThumbV1 type={'up'} />
-                              </div>
-                            </MenuItem>
-                          )}
-                          {p.rating !== RATING_TYPES.negative && (
-                            <MenuItem
-                              onClick={e =>
-                                this.switchRatingTypeOfPiece(
-                                  e,
-                                  p.pieceId,
-                                  RATING_TYPES.negative
-                                )
-                              }
-                            >
-                              Change to{' '}
-                              <div
-                                style={{ width: 20, height: 20, marginLeft: 4 }}
-                              >
-                                <ThumbV1 type={'down'} />
-                              </div>
-                            </MenuItem>
-                          )}
-                          {p.rating !== RATING_TYPES.info && (
-                            <MenuItem
-                              onClick={e =>
-                                this.switchRatingTypeOfPiece(
-                                  e,
-                                  p.pieceId,
-                                  RATING_TYPES.info
-                                )
-                              }
-                            >
-                              Change to{' '}
-                              <div
-                                style={{ width: 20, height: 20, marginLeft: 4 }}
-                              >
-                                <InfoIcon />
-                              </div>
-                            </MenuItem>
-                          )}
-
-                          <MenuItem divider />
-
-                          <MenuItem
-                            onClick={e =>
-                              this.removePieceFromCellClickedHandler(
-                                e,
-                                p.pieceId
-                              )
-                            }
-                          >
-                            Remove from table
-                          </MenuItem>
-                        </ContextMenu>
-                      ) : null}
-                      <ReactTooltip
-                        place="bottom"
-                        type="light"
-                        effect="solid"
-                        delayHide={100}
-                        id={`${cell.id}-${p.pieceId}`}
-                        className={styles.TooltipOverAttitude}
-                        getContent={() => {
-                          return (
-                            <ContextMenuTrigger
-                              id={`${cell.id}-${p.pieceId}-${idx}-context-menu`}
-                              holdToDisplay={-1}
-                            >
+                        <ReactTooltip
+                          place="bottom"
+                          type="light"
+                          effect="solid"
+                          delayHide={100}
+                          id={`${cell.id}-${p.pieceId}`}
+                          className={styles.TooltipOverAttitude}
+                          getContent={() => {
+                            return (
                               <PieceItem
                                 piece={pieces[p.pieceId]}
                                 editAccess={editAccess}
@@ -821,67 +818,248 @@ class RegularCell extends Component {
                                 rowIndex={this.props.rowIndex}
                                 columnIndex={this.props.columnIndex}
                                 openScreenshot={this.props.openScreenshot}
+                                isDemoTask={this.props.isDemoTask}
+                                attitudeIcon={icon}
+                                fakePopularityNumber={fakePopularityNumber}
+                                fakeDate={fakeDate}
+                                isRecent={isRecent}
                               />
-                            </ContextMenuTrigger>
-                          );
-                        }}
-                      />
-                    </React.Fragment>
-                  );
-                } else if (p.pieceId === 'adding') {
-                  return (
-                    <div
-                      key={`${p.pieceId}-${idx}`}
-                      className={styles.AttitudeInTableCell}
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center'
-                      }}
-                    >
-                      <Spinner size={'30px'} />
-                    </div>
-                  );
-                } else {
-                  return null;
-                }
-              })}
-          </div>
-
-          <div
-            className={[
-              styles.CellContentEditContainer,
-              this.state.contentEdit === '' ? styles.HoverToReveal : null
-            ].join(' ')}
-          >
-            <div className={styles.TextAreaContainer}>
-              <Tooltip
-                disableHoverListener={this.state.contentEdit === ''}
-                title={this.state.contentEdit}
-                classes={{ tooltip: classes.customWidthTooltip }}
-              >
-                <Textarea
-                  disabled={!editAccess}
-                  inputRef={tag => (this.textarea = tag)}
-                  minRows={2}
-                  maxRows={4}
-                  placeholder={
-                    editAccess && piecesList.length === 0
-                      ? 'Type some notes as evidence'
-                      : ''
+                            );
+                          }}
+                        />
+                        {idx !== piecesList.length - 1 && <hr />}
+                      </React.Fragment>
+                    );
+                  } else {
+                    return null;
                   }
-                  value={this.state.contentEdit}
-                  onKeyDown={this.keyPress}
-                  onBlur={e => this.saveCellContentClickedHandler(e)}
-                  onChange={e => this.handleCellContentInputChange(e)}
-                  className={[
-                    styles.Textarea,
-                    editAccess ? styles.TextareaEditable : null
-                  ].join(' ')}
-                />
-              </Tooltip>
+                })}
             </div>
-          </div>
+          )}
+
+          {!this.props.isDemoTask && (
+            <div className={styles.EvidenceIconContainer}>
+              {piecesList.length > 0 &&
+                sortBy(piecesList, ['rating']).map((p, idx) => {
+                  if (
+                    pieces[p.pieceId] !== undefined &&
+                    pieces[p.pieceId] !== null
+                  ) {
+                    let icon = <InfoIcon />;
+                    switch (p.rating) {
+                      case RATING_TYPES.positive:
+                        icon = <ThumbV1 type={'up'} />;
+                        break;
+                      case RATING_TYPES.negative:
+                        icon = <ThumbV1 type={'down'} />;
+                        break;
+                      case RATING_TYPES.info:
+                        icon = <InfoIcon />;
+                        break;
+                      default:
+                        break;
+                    }
+
+                    return (
+                      <React.Fragment key={`${p.pieceId}-${idx}`}>
+                        <ContextMenuTrigger
+                          renderTag={'span'}
+                          id={`${cell.id}-${p.pieceId}-${idx}-context-menu`}
+                          holdToDisplay={-1}
+                        >
+                          <div
+                            className={[styles.AttitudeInTableCell].join(' ')}
+                            data-tip
+                            data-for={`${cell.id}-${p.pieceId}`}
+                          >
+                            <RatingIcon
+                              editAccess={editAccess}
+                              pieceId={p.pieceId}
+                              ratingType={p.rating}
+                              workspaceId={this.props.workspace.id}
+                              cellId={cell.id}
+                              cellType={cell.type}
+                              switchDraggingRatingIconStatus={
+                                this.switchDraggingRatingIconStatus
+                              }
+                            >
+                              {icon}
+                            </RatingIcon>
+                          </div>
+                        </ContextMenuTrigger>
+                        {editAccess ? (
+                          <ContextMenu
+                            id={`${cell.id}-${p.pieceId}-${idx}-context-menu`}
+                          >
+                            {p.rating !== RATING_TYPES.positive && (
+                              <MenuItem
+                                onClick={e =>
+                                  this.switchRatingTypeOfPiece(
+                                    e,
+                                    p.pieceId,
+                                    RATING_TYPES.positive
+                                  )
+                                }
+                              >
+                                Change to{' '}
+                                <div
+                                  style={{
+                                    width: 20,
+                                    height: 20,
+                                    marginLeft: 4
+                                  }}
+                                >
+                                  <ThumbV1 type={'up'} />
+                                </div>
+                              </MenuItem>
+                            )}
+                            {p.rating !== RATING_TYPES.negative && (
+                              <MenuItem
+                                onClick={e =>
+                                  this.switchRatingTypeOfPiece(
+                                    e,
+                                    p.pieceId,
+                                    RATING_TYPES.negative
+                                  )
+                                }
+                              >
+                                Change to{' '}
+                                <div
+                                  style={{
+                                    width: 20,
+                                    height: 20,
+                                    marginLeft: 4
+                                  }}
+                                >
+                                  <ThumbV1 type={'down'} />
+                                </div>
+                              </MenuItem>
+                            )}
+                            {p.rating !== RATING_TYPES.info && (
+                              <MenuItem
+                                onClick={e =>
+                                  this.switchRatingTypeOfPiece(
+                                    e,
+                                    p.pieceId,
+                                    RATING_TYPES.info
+                                  )
+                                }
+                              >
+                                Change to{' '}
+                                <div
+                                  style={{
+                                    width: 20,
+                                    height: 20,
+                                    marginLeft: 4
+                                  }}
+                                >
+                                  <InfoIcon />
+                                </div>
+                              </MenuItem>
+                            )}
+
+                            <MenuItem divider />
+
+                            <MenuItem
+                              onClick={e =>
+                                this.removePieceFromCellClickedHandler(
+                                  e,
+                                  p.pieceId
+                                )
+                              }
+                            >
+                              Remove from table
+                            </MenuItem>
+                          </ContextMenu>
+                        ) : null}
+                        <ReactTooltip
+                          place="bottom"
+                          type="light"
+                          effect="solid"
+                          delayHide={100}
+                          id={`${cell.id}-${p.pieceId}`}
+                          className={styles.TooltipOverAttitude}
+                          getContent={() => {
+                            return (
+                              <ContextMenuTrigger
+                                id={`${cell.id}-${
+                                  p.pieceId
+                                }-${idx}-context-menu`}
+                                holdToDisplay={-1}
+                              >
+                                <PieceItem
+                                  piece={pieces[p.pieceId]}
+                                  editAccess={editAccess}
+                                  commentAccess={commentAccess}
+                                  cellId={cell.id}
+                                  cellType={cell.type}
+                                  rowIndex={this.props.rowIndex}
+                                  columnIndex={this.props.columnIndex}
+                                  openScreenshot={this.props.openScreenshot}
+                                />
+                              </ContextMenuTrigger>
+                            );
+                          }}
+                        />
+                      </React.Fragment>
+                    );
+                  } else if (p.pieceId === 'adding') {
+                    return (
+                      <div
+                        key={`${p.pieceId}-${idx}`}
+                        className={styles.AttitudeInTableCell}
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center'
+                        }}
+                      >
+                        <Spinner size={'30px'} />
+                      </div>
+                    );
+                  } else {
+                    return null;
+                  }
+                })}
+            </div>
+          )}
+
+          {!this.props.isDemoTask && (
+            <div
+              className={[
+                styles.CellContentEditContainer,
+                this.state.contentEdit === '' ? styles.HoverToReveal : null
+              ].join(' ')}
+            >
+              <div className={styles.TextAreaContainer}>
+                <Tooltip
+                  disableHoverListener={this.state.contentEdit === ''}
+                  title={this.state.contentEdit}
+                  classes={{ tooltip: classes.customWidthTooltip }}
+                >
+                  <Textarea
+                    disabled={!editAccess}
+                    inputRef={tag => (this.textarea = tag)}
+                    minRows={2}
+                    maxRows={4}
+                    placeholder={
+                      editAccess && piecesList.length === 0
+                        ? 'Type some notes as evidence'
+                        : ''
+                    }
+                    value={this.state.contentEdit}
+                    onKeyDown={this.keyPress}
+                    onBlur={e => this.saveCellContentClickedHandler(e)}
+                    onChange={e => this.handleCellContentInputChange(e)}
+                    className={[
+                      styles.Textarea,
+                      editAccess ? styles.TextareaEditable : null
+                    ].join(' ')}
+                  />
+                </Tooltip>
+              </div>
+            </div>
+          )}
         </div>
       </td>
     );

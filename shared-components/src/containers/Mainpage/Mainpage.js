@@ -65,13 +65,12 @@ class Mainpage extends Component {
       }
     });
 
-    // log in if idToken is provided by the link
+    // log in if accessToken is provided by the link
     let accessToken = queryString.parse(window.location.search).accessToken;
     this.signInUserWithCredential(accessToken);
   }
 
   signInUserWithCredential = accessToken => {
-    console.log(accessToken);
     if (accessToken !== null && accessToken !== undefined) {
       // logged in
       firebase
