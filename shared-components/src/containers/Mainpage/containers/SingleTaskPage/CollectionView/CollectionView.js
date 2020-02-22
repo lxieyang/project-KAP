@@ -53,7 +53,7 @@ class CollectionView extends Component {
   static contextType = TaskContext;
 
   state = {
-    tabValue: 1
+    tabValue: 0
   };
 
   handleChange = (event, newValue) => {

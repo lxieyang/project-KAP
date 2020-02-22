@@ -14,6 +14,8 @@ import {
   // Store
 } from 'siphon-tools';
 
+import './modeuls/search_query';
+
 // import './components/TabTracking'; // consider removing this piece of code later
 
 //

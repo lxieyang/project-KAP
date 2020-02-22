@@ -2,6 +2,7 @@
 import queryString from 'query-string';
 import './Modules/Handlers/AuthHandler';
 import './Modules/Handlers/SidebarHandler';
+import './Modules/Handlers/SearchQueryHandler';
 import { APP_NAME_SHORT } from '../../../../shared-components/src/shared/constants';
 import firebase from '../../../../shared-components/src/firebase/firebase';
 import * as FirestoreManager from '../../../../shared-components/src/firebase/firestore_wrapper';
