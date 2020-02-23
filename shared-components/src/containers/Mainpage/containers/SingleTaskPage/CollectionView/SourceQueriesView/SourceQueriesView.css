@@ -1,4 +1,4 @@
-.SourceDomainsViewContainer {
+.SourceQueriesViewContainer {
 }
 
 .InfoBar {
@@ -27,7 +27,7 @@
   padding: 0px 8px;
 }
 
-.SourceDomainItemContainer {
+.ItemContainer {
   padding: 10px;
   width: 100%;
   box-sizing: border-box;
@@ -35,17 +35,29 @@
   transition: all 0.1s ease-in;
 }
 
-.SourceDomainItemContainer:hover {
-  background-color: lightgray;
+.ItemContainer:hover {
+  background-color: rgb(233, 233, 233);
 }
 
-.DomainNameContainer {
+.NameContainer {
   display: flex;
   align-items: center;
 }
 
-.DomainIcon {
-  width: 20px;
-  height: 20px;
+.ItemIcon {
+  flex-shrink: 0;
+  width: 12px;
+  height: 12px;
   margin-right: 4px;
+}
+
+.QueryContent {
+  font-weight: 500;
+}
+
+.TimeContainer {
+  flex-shrink: 0;
+  margin-left: 4px;
+  font-size: 10px;
+  color: gray;
 }

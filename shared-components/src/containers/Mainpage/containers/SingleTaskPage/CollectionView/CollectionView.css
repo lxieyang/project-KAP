@@ -1,0 +1,10 @@
+.TabLabelContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.TabLabelIcon {
+  font-size: 12px;
+  margin-right: 4px;
+}

@@ -21,8 +21,15 @@ export const getAllTrashedSearchQueriesInTask = taskId => {
     .where('trashed', '==', true);
 };
 
-export const getSearchQueryById = searchQueryId => {
-  return db.collection(DB_COLLECTIONS.SEARCH_QUERIES).doc(searchQueryId);
+export const getSearchQueryById = queryId => {
+  return db.collection(DB_COLLECTIONS.SEARCH_QUERIES).doc(queryId);
+};
+
+export const removeSearchQueryById = queryId => {
+  return db
+    .collection(DB_COLLECTIONS.SEARCH_QUERIES)
+    .doc(queryId)
+    .delete();
 };
 
 export const getTaskCurrentSearchQueryId = taskId => {
@@ -97,7 +104,14 @@ export const getSearchQueryTrashedVisitedPages = queryId => {
     .where('trashed', '==', true);
 };
 
-export const getSearchQueryVisitedPageById = (queryId, pageId) => {
+export const getVisitedPagesInTask = taskId => {
+  return db
+    .collection(DB_COLLECTIONS.WEBPAGES)
+    .where('references.task', '==', taskId)
+    .where('trashed', '==', false);
+};
+
+export const getSearchQueryVisitedPageById = pageId => {
   return db.collection(DB_COLLECTIONS.WEBPAGES).doc(pageId);
 };
 
@@ -109,7 +123,7 @@ export const addPageToSearchQuery = async data => {
   console.log(queryId);
 
   let currentUserId = getCurrentUserId();
-
+  let currentTaskId = (await getCurrentUserCurrentTaskId().get()).data().id;
   data.key = data.key || db.collection(DB_COLLECTIONS.WEBPAGES).doc().id;
   let ref = db.collection(DB_COLLECTIONS.WEBPAGES).doc(data.key);
 
@@ -141,7 +155,7 @@ export const addPageToSearchQuery = async data => {
     updateDate: firebase.firestore.FieldValue.serverTimestamp(),
     url: url,
     title: title,
-    references: { searchQuery: queryId }
+    references: { searchQuery: queryId, task: currentTaskId }
   };
 
   return ref.set(newPage).then(() => {

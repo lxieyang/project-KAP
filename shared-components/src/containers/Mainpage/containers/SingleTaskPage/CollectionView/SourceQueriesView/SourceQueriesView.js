@@ -4,6 +4,9 @@ import styles from './SourceQueriesView.css';
 import Divider from '@material-ui/core/Divider';
 import Popover from 'react-tiny-popover';
 import moment from 'moment';
+import { sortBy } from 'lodash';
+
+import { AiOutlineSearch } from 'react-icons/ai';
 
 function getRandomDate(from, to) {
   from = from.getTime();
@@ -14,36 +17,36 @@ function getRandomDate(from, to) {
 const fromDate = new Date(2020, 2, 19);
 const toDate = new Date(2020, 2, 20);
 
-const queries = [
-  {
-    query: 'how to store information in a chrome extension',
-    timestamp: getRandomDate(fromDate, toDate)
-  },
-  {
-    query: 'chrome storage API v.s. localStorage',
-    timestamp: getRandomDate(fromDate, toDate)
-  },
-  {
-    query: 'chrome storage API syncing',
-    timestamp: getRandomDate(fromDate, toDate)
-  },
-  {
-    query: 'firebase',
-    timestamp: getRandomDate(fromDate, toDate)
-  },
-  {
-    query: 'firebase offline access',
-    timestamp: getRandomDate(fromDate, toDate)
-  },
-  {
-    query: 'localStorage scope',
-    timestamp: getRandomDate(fromDate, toDate)
-  },
-  {
-    query: 'storage limit of chrome storage api',
-    timestamp: getRandomDate(fromDate, toDate)
-  }
-];
+// const queries = [
+//   {
+//     query: 'how to store information in a chrome extension',
+//     timestamp: getRandomDate(fromDate, toDate)
+//   },
+//   {
+//     query: 'chrome storage API v.s. localStorage',
+//     timestamp: getRandomDate(fromDate, toDate)
+//   },
+//   {
+//     query: 'chrome storage API syncing',
+//     timestamp: getRandomDate(fromDate, toDate)
+//   },
+//   {
+//     query: 'firebase',
+//     timestamp: getRandomDate(fromDate, toDate)
+//   },
+//   {
+//     query: 'firebase offline access',
+//     timestamp: getRandomDate(fromDate, toDate)
+//   },
+//   {
+//     query: 'localStorage scope',
+//     timestamp: getRandomDate(fromDate, toDate)
+//   },
+//   {
+//     query: 'storage limit of chrome storage api',
+//     timestamp: getRandomDate(fromDate, toDate)
+//   }
+// ];
 
 class SourceQueriesView extends Component {
   state = {
@@ -62,8 +65,24 @@ class SourceQueriesView extends Component {
   };
 
   render() {
+    let { queries, pages } = this.props;
+
+    queries = queries.map(q => {
+      const queryId = q.id;
+      const visitedPages = sortBy(
+        pages.filter(p => p.references.searchQuery === queryId),
+        ['creationDate']
+      );
+      return {
+        ...q,
+        visitedPages
+      };
+    });
+
+    queries = sortBy(queries, ['creationDate']);
+
     return (
-      <div className={styles.SourceDomainsViewContainer}>
+      <div className={styles.SourceQueriesViewContainer}>
         <div className={styles.InfoBar}>
           <Popover
             isOpen={this.state.isSortByPopoverOpen}
@@ -133,15 +152,15 @@ class SourceQueriesView extends Component {
         {queries.map((item, idx) => {
           return (
             <React.Fragment key={idx}>
-              <div className={styles.SourceDomainItemContainer}>
-                <div className={styles.DomainNameContainer}>
-                  <div>
-                    &#x1F50D;
-                    {item.query}
+              <div className={styles.ItemContainer}>
+                <div className={styles.NameContainer}>
+                  <AiOutlineSearch className={styles.ItemIcon} />
+                  <div className={styles.QueryContent}>
+                    {item.query} {item.visitedPages.length}
                   </div>
                   <div style={{ flex: 1 }} />
-                  <div style={{ marginLeft: 4, fontSize: 10, color: 'gray' }}>
-                    {moment(item.timestamp.getTime()).format('lll')}
+                  <div className={styles.TimeContainer}>
+                    {moment(item.creationDate).format('MMM D h:ma')}
                   </div>
                 </div>
               </div>

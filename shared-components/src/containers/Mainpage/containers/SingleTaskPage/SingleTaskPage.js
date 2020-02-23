@@ -28,7 +28,7 @@ class SingleTaskPage extends Component {
     let taskId = getTaskIdFromPath(this.props.history.location.pathname);
     this.setState({
       taskId,
-      isDemoTask: taskId === 'fnbS9l31Y6rMBj0CrsQA'
+      isDemoTask: taskId === 'z2Xs6eFIvi7sw1fCl1a6' // taskId === 'fnbS9l31Y6rMBj0CrsQA'
     });
 
     this.unsubscribeTaskId = FirestoreManager.getTaskById(taskId).onSnapshot(

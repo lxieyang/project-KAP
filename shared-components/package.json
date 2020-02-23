@@ -52,6 +52,7 @@
     "react-firebaseui": "^3.0.4",
     "react-fontawesome": "^1.6.1",
     "react-hover-observer": "^2.1.1",
+    "react-icons": "^3.9.0",
     "react-input-autosize": "^2.2.1",
     "react-lines-ellipsis": "^0.14.0",
     "react-markdown": "^4.0.3",
