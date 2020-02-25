@@ -78,6 +78,7 @@ class CollectionView extends Component {
           updateDate: snapshot.data().updateDate.toDate()
         });
       });
+      console.log(queries);
       this.setState({ searchQueries: queries });
     });
 

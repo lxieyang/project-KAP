@@ -79,8 +79,11 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
       }
     } else {
       if (
-        allTabs[tab.openerTabId].query === null &&
-        getSearchQueryFromURL(changeInfo.url) === null
+        (allTabs[tab.openerTabId].query === null &&
+          getSearchQueryFromURL(changeInfo.url) === null) ||
+        (allTabs[tab.openerTabId].query !== null &&
+          allTabs[tabId].query === null &&
+          getSearchQueryFromURL(changeInfo.url) === null)
       ) {
         // should track
         keepTrackOfWebpage(
