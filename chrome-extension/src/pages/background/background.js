@@ -3,6 +3,7 @@ import queryString from 'query-string';
 import './Modules/Handlers/AuthHandler';
 import './Modules/Handlers/SidebarHandler';
 import './Modules/Handlers/SearchQueryHandler';
+import './Modules/Handlers/TrackingPagesHandler';
 import { APP_NAME_SHORT } from '../../../../shared-components/src/shared/constants';
 import firebase from '../../../../shared-components/src/firebase/firebase';
 import * as FirestoreManager from '../../../../shared-components/src/firebase/firestore_wrapper';
@@ -281,10 +282,10 @@ const signInOutUserWithCredential = accessToken => {
       )
       .then(result => {
         console.log(`[BACKGROUND] User ${result.user.displayName} logged in.`);
-        console.log(result);
+        // console.log(result);
 
         currentUseraccessToken = result.credential.accessToken;
-        console.log(currentUseraccessToken);
+        // console.log(currentUseraccessToken);
 
         FirestoreManager.updateUserProfile();
 
@@ -298,7 +299,7 @@ const signInOutUserWithCredential = accessToken => {
             }
           },
           function() {
-            console.log('user info update in chrome.storage.local');
+            // console.log('user info update in chrome.storage.local');
             // update loggedIn status
             loggedIn = true;
 

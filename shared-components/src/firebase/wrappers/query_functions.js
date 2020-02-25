@@ -146,7 +146,7 @@ export const addPageToSearchQuery = async data => {
     }
   }
 
-  // new query
+  // new page
 
   let newPage = {
     creator: currentUserId,
@@ -155,7 +155,7 @@ export const addPageToSearchQuery = async data => {
     updateDate: firebase.firestore.FieldValue.serverTimestamp(),
     url: url,
     title: title,
-    references: { searchQuery: queryId, task: currentTaskId }
+    references: { searchQuery: queryId, parent: false, task: currentTaskId }
   };
 
   return ref.set(newPage).then(() => {

@@ -19,7 +19,7 @@ firebase.auth().onAuthStateChanged(user => {
       ).onSnapshot(snapshot => {
         if (snapshot.exists) {
           currentSearchQueryId = snapshot.data().id;
-          console.log('Current Search query id:', currentSearchQueryId);
+          // console.log('Current Search query id:', currentSearchQueryId);
         }
       });
 
@@ -34,7 +34,7 @@ firebase.auth().onAuthStateChanged(user => {
           queries.push({ id: snapshot.id, ...snapshot.data() });
         });
         searchQueriesInCurrentTask = queries;
-        console.log(searchQueriesInCurrentTask);
+        // console.log(searchQueriesInCurrentTask);
       });
     });
   }

@@ -209,7 +209,9 @@ var options = {
     ]),
     new CopyWebpackPlugin([
       {
-        from: '../shared-components/src/assets/images'
+        from: '../shared-components/src/assets/images',
+        to: path.join(__dirname, 'build'),
+        force: true
       }
     ]),
     new CopyWebpackPlugin([
