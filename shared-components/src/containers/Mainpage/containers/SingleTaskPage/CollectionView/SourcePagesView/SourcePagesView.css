@@ -1,4 +1,4 @@
-.SourceDomainsViewContainer {
+.SourcePagesViewContainer {
 }
 
 .InfoBar {
@@ -44,8 +44,13 @@
   align-items: center;
 }
 
-.DomainIcon {
+.ItemIcon {
+  flex-shrink: 0;
   width: 20px;
   height: 20px;
-  margin-right: 4px;
+  margin-right: 6px;
+}
+
+.TitleContent {
+  font-weight: 500;
 }

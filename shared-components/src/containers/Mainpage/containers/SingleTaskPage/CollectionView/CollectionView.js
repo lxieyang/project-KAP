@@ -91,7 +91,8 @@ class CollectionView extends Component {
           id: snapshot.id,
           ...snapshot.data(),
           creationDate: snapshot.data().creationDate.toDate(),
-          updateDate: snapshot.data().updateDate.toDate()
+          updateDate: snapshot.data().updateDate.toDate(),
+          domain: new URL(snapshot.data().url).hostname
         });
       });
       this.setState({ visitedPages: pages });
@@ -164,7 +165,10 @@ class CollectionView extends Component {
             <SourceDomainsView />
           </TabPanel>
           <TabPanel value={tabValue} index={1}>
-            <SourcePagesView />
+            <SourcePagesView
+              queries={this.state.searchQueries}
+              pages={this.state.visitedPages}
+            />
           </TabPanel>
           <TabPanel value={tabValue} index={2}>
             <SourceQueriesView
