@@ -4,7 +4,10 @@ import {
   PIECE_TYPES,
   TIMESTAMP_TYPES
 } from '../../shared/types';
-import { encode, decode } from '../utilities/firebase_encode_decode.js';
+import {
+  encode,
+  decode
+} from '../utilities/firebase_encode_decode.js';
 import {
   db,
   getCurrentUserId,
@@ -110,7 +113,7 @@ export const clearTrashedPiecesForeverByTaskId = async taskId => {
   });
 
   // Commit the batch
-  batch.commit().then(function() {
+  batch.commit().then(function () {
     // console.log('cleared');
   });
 };
@@ -139,8 +142,9 @@ export const revivePieceById = pieceId => {
 /* screenshot */
 export const addScreenshotToPieceById = async (
   pieceId,
-  imageDataUrl,
-  { dimensions }
+  imageDataUrl, {
+    dimensions
+  }
 ) => {
   updateCurrentTaskUpdateTime();
   return getScreenshotById(pieceId).set({
@@ -252,8 +256,15 @@ export const deleteCommentById = (pieceId, commentId) => {
 
 /* create a piece */
 export const createPiece = async (
-  data,
-  { url, hostname, pathname, pageTitle, taskId, shouldUseScreenshot },
+  data, {
+    url,
+    hostname,
+    pathname,
+    pageTitle,
+    taskId,
+    shouldUseScreenshot,
+    answerMetaInfo
+  },
   annotationType,
   pieceType,
   timer = null
@@ -270,6 +281,7 @@ export const createPiece = async (
     annotationType: annotationType,
     pieceType: pieceType || PIECE_TYPES.snippet,
     shouldUseScreenshot: shouldUseScreenshot ? shouldUseScreenshot : false,
+    answerMetaInfo,
     creationDate: firebase.firestore.FieldValue.serverTimestamp(),
     updateDate: firebase.firestore.FieldValue.serverTimestamp(),
     references: {

@@ -22,6 +22,7 @@ const sendSearchQueryToBackground = query => {
 };
 
 const queryResultClickedHandler = (url, title) => {
+  console.log('search result clicked');
   chrome.runtime.sendMessage({
     msg: 'SEARCH_RESULT_CLICKED',
     payload: {
@@ -40,7 +41,7 @@ if (hostname.trim() === 'www.google.com' && pathname.trim() === '/search') {
     sendSearchQueryToBackground(query);
   }
 
-  $('.g .r a').on('click', function() {
+  $('.g .rc a').on('click', function() {
     queryResultClickedHandler(
       this.href,
       $(this)

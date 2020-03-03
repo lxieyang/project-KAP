@@ -1,4 +1,5 @@
 /* global chrome */
+import $ from 'jquery';
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import ReactTooltip from 'react-tooltip';
@@ -18,6 +19,48 @@ import { Highlight, Snippet } from 'siphon-tools';
 import { ANNOTATION_TYPES } from '../../../../../shared-components/src/shared/types';
 import styles from './SelectTooltipButton.css';
 
+const getAnswerInfoOnStackOverflow = (
+  anchorNode = window.getSelection().focusNode
+) => {
+  if (window.location.href.indexOf('stackoverflow.com/questions') !== -1) {
+    let answerPost = $(anchorNode).parents('.answer');
+    answerPost = answerPost ? answerPost[0] : null;
+    if (answerPost) {
+      let answerMetaInfo = {
+        answerVoteCount: null,
+        answerLink: null,
+        answerCreatedTime: null,
+        answerEditedTime: null
+      };
+      answerMetaInfo.answerVoteCount = $(answerPost).find(
+        '.js-vote-count'
+      )[0].textContent;
+
+      answerMetaInfo.answerLink = $(answerPost).find('div.post-menu a')[0].href;
+
+      const editTime = $(answerPost).find(
+        '.post-signature .user-action-time a span.relativetime'
+      )[0];
+      if (editTime) {
+        answerMetaInfo.answerEditedTime = editTime.title;
+      }
+
+      const createdTime = $(answerPost)
+        .find('.post-signature .user-action-time')
+        .children('span.relativetime');
+      if (createdTime.length > 0) {
+        answerMetaInfo.answerCreatedTime = createdTime[0].title;
+      }
+
+      return answerMetaInfo;
+    } else {
+      return null;
+    }
+  } else {
+    return null;
+  }
+};
+
 class SelectTooltipButton extends Component {
   state = {
     displayDetailedMenu: false,
@@ -27,7 +70,9 @@ class SelectTooltipButton extends Component {
     shouldUseScreenshot: false,
 
     createdPieceId: null,
-    createdPieceRect: null
+    createdPieceRect: null,
+
+    answerMetaInfo: null
   };
 
   componentDidMount() {
@@ -41,15 +86,17 @@ class SelectTooltipButton extends Component {
 
       // extract annotation
       let annotation;
+      let answerMetaInfo = null;
       if (this.props.annotationType === ANNOTATION_TYPES.Highlight) {
         annotation = new Highlight(this.props.range);
+        answerMetaInfo = getAnswerInfoOnStackOverflow();
       } else if (this.props.annotationType === ANNOTATION_TYPES.Snippet) {
         annotation = new Snippet(
           this.props.captureWindow.getBoundingClientRect()
         );
+        answerMetaInfo = getAnswerInfoOnStackOverflow(annotation.anchor);
       }
-      // console.log(annotation);
-      this.setState({ annotation });
+      this.setState({ annotation, answerMetaInfo });
     }, 5);
 
     // support for selecting annotation
@@ -84,7 +131,8 @@ class SelectTooltipButton extends Component {
             hostname: window.location.hostname,
             pathname: window.location.pathname,
             pageTitle: document.title,
-            shouldUseScreenshot: this.state.shouldUseScreenshot
+            shouldUseScreenshot: this.state.shouldUseScreenshot,
+            answerMetaInfo: this.state.answerMetaInfo
           },
           annotationType: this.props.annotationType,
           type: PIECE_TYPES.snippet,
@@ -115,54 +163,6 @@ class SelectTooltipButton extends Component {
           createdPieceId: this.state.annotation.key,
           createdPieceRect: rect
         });
-
-        // fix for chrome 73
-        // FirestoreManager.createPiece(
-        //   this.state.annotation,
-        //   {
-        //     url: window.location.href,
-        //     hostname: window.location.hostname,
-        //     pathname: window.location.pathname,
-        //     pageTitle: document.title,
-        //     shouldUseScreenshot: this.state.shouldUseScreenshot
-        //   },
-        //   this.props.annotationType,
-        //   PIECE_TYPES.snippet
-        // )
-        //   .then(pieceId => {
-        //     chrome.runtime.sendMessage({
-        //       msg: 'SHOW_SUCCESS_STATUS_BADGE',
-        //       success: true
-        //     });
-
-        //     // put into the table
-        //     // if (cellType === TABLE_CELL_TYPES.regularCell) {
-        //     FirestoreManager.addPieceToTableCellById(
-        //       tableId,
-        //       cellId,
-        //       pieceId,
-        //       ratingType
-        //     );
-        //     // } else if (cellType === TABLE_CELL_TYPES.rowHeader) {
-        //     //   console.log('should put as option');
-        //     // } else if (cellType === TABLE_CELL_TYPES.columnHeader) {
-        //     //   console.log('should put as criterion');
-        //     // }
-
-        //     this.setState({ createdPieceId: pieceId, createdPieceRect: rect });
-
-        //     chrome.runtime.sendMessage({
-        //       msg: 'SELECTED_ANNOTATION_ID_UPDATED',
-        //       pieceId
-        //     });
-        //   })
-        //   .catch(error => {
-        //     console.log(error);
-        //     chrome.runtime.sendMessage({
-        //       msg: 'SHOW_SUCCESS_STATUS_BADGE',
-        //       success: false
-        //     });
-        //   });
 
         // take screenshot
         setTimeout(() => {
@@ -281,7 +281,8 @@ class SelectTooltipButton extends Component {
         hostname: window.location.hostname,
         pathname: window.location.pathname,
         pageTitle: document.title,
-        shouldUseScreenshot: this.state.shouldUseScreenshot
+        shouldUseScreenshot: this.state.shouldUseScreenshot,
+        answerMetaInfo: this.state.answerMetaInfo
       },
       annotationType: this.props.annotationType,
       type: type,
@@ -302,39 +303,6 @@ class SelectTooltipButton extends Component {
 
     // console.log(payload.timer.annotationDuration);
     // console.log(payload.timer.totalDuration);
-
-    // fix for chrome 73
-    // FirestoreManager.createPiece(
-    //   this.state.annotation,
-    //   {
-    //     url: window.location.href,
-    //     hostname: window.location.hostname,
-    //     pathname: window.location.pathname,
-    //     pageTitle: document.title,
-    //     shouldUseScreenshot: this.state.shouldUseScreenshot
-    //   },
-    //   this.props.annotationType,
-    //   type
-    // )
-    //   .then(pieceId => {
-    //     chrome.runtime.sendMessage({
-    //       msg: 'SHOW_SUCCESS_STATUS_BADGE',
-    //       success: true
-    //     });
-
-    //     if (type === PIECE_TYPES.option) {
-    //       FirestoreManager.putOptionIntoDefaultTable({ pieceId });
-    //     } else if (type === PIECE_TYPES.criterion) {
-    //       FirestoreManager.putCriterionIntoDefaultTable({ pieceId });
-    //     }
-    //   })
-    //   .catch(error => {
-    //     console.log(error);
-    //     chrome.runtime.sendMessage({
-    //       msg: 'SHOW_SUCCESS_STATUS_BADGE',
-    //       success: false
-    //     });
-    //   });
 
     this.removeTooltipButton();
 

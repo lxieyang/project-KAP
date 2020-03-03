@@ -78,6 +78,7 @@ class TableCell extends Component {
             {...this.props}
             comments={comments}
             commentCount={commentCount}
+            selectedUrls={this.context.selectedUrls}
           />
         );
         break;
@@ -87,6 +88,7 @@ class TableCell extends Component {
             {...this.props}
             comments={comments}
             commentCount={commentCount}
+            selectedUrls={this.context.selectedUrls}
           />
         );
         break;
@@ -98,6 +100,7 @@ class TableCell extends Component {
             comments={comments}
             commentCount={commentCount}
             isDemoTask={this.context.isDemoTask}
+            selectedUrls={this.context.selectedUrls}
           />
         );
         break;

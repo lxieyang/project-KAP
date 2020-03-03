@@ -181,8 +181,8 @@ var options = {
     new webpack.ProgressPlugin(),
     // clean the build folder
     new CleanWebpackPlugin({
-      verbose: true
-      // cleanStaleWebpackAssets: false,
+      verbose: true,
+      cleanStaleWebpackAssets: false
     }),
     // // expose and write the allowed env vars on the compiled bundle
     // new webpack.DefinePlugin({
@@ -193,7 +193,7 @@ var options = {
     new CopyWebpackPlugin([
       {
         from: 'src/manifest.json',
-        to: path.join(__dirname, 'build'),
+        to: path.join(__dirname, 'build', 'manifest.json'),
         force: true,
         transform: function(content, path) {
           // generates the manifest file using the package.json informations
@@ -222,13 +222,15 @@ var options = {
     new CopyWebpackPlugin([
       {
         from: 'src/pages/content/content.styles.css',
-        to: path.join(__dirname, 'build'),
+        to: path.join(__dirname, 'build', 'content.styles.css'),
         force: true
       }
     ]),
     new CopyWebpackPlugin([
       {
-        from: 'src/pages/content/injects/inject.js'
+        from: 'src/pages/content/injects/inject.js',
+        to: path.join(__dirname, 'build', 'inject.js'),
+        force: true
       }
     ]),
     new HtmlWebpackPlugin({

@@ -1,20 +1,21 @@
 import React, { Component } from 'react';
+import { reverse, sortBy } from 'lodash';
 import styles from './SourceDomainsView.css';
 
 import Divider from '@material-ui/core/Divider';
 import Popover from 'react-tiny-popover';
 
-const domains = [
-  {
-    domain: 'stackoverflow.com'
-  },
-  {
-    domain: 'www.chromium.org'
-  },
-  {
-    domain: 'medium.com'
-  }
-];
+// const domains = [
+//   {
+//     domain: 'stackoverflow.com'
+//   },
+//   {
+//     domain: 'www.chromium.org'
+//   },
+//   {
+//     domain: 'medium.com'
+//   }
+// ];
 
 class SourceDomainsView extends Component {
   state = {
@@ -33,6 +34,27 @@ class SourceDomainsView extends Component {
   };
 
   render() {
+    const { pages } = this.props;
+
+    let domains = [];
+    pages.forEach(p => {
+      if (domains.filter(d => d.domain === p.domain).length === 0) {
+        domains.push({ domain: p.domain, pages: [p.url], numberOfPages: 1 });
+      } else {
+        domains = domains.map(d => {
+          if (d.domain === p.domain) {
+            d.pages.push(p.url);
+            d.numberOfPages = d.pages.length;
+          }
+          return d;
+        });
+      }
+    });
+
+    domains = reverse(sortBy(domains, ['numberOfPages']));
+
+    // console.log(domains);
+
     return (
       <div className={styles.SourceDomainsViewContainer}>
         <div className={styles.InfoBar}>

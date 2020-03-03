@@ -30,6 +30,47 @@ export const updatePageTitleViaUrl = async (url, title) => {
   }
 };
 
+export const updatePageFaviconUrlViaUrl = async (url, faviconUrl) => {
+  let currentTaskId = (await getCurrentUserCurrentTaskId().get()).data().id;
+
+  const parentQuerySnapshot = await getPageInTaskByUrl(
+    currentTaskId,
+    url
+  ).get();
+  if (!parentQuerySnapshot.empty) {
+    parentQuerySnapshot.docs[0].ref.update({ faviconUrl });
+  }
+};
+
+export const updatePageUpdateTimestampViaUrl = async url => {
+  let currentTaskId = (await getCurrentUserCurrentTaskId().get()).data().id;
+
+  const parentQuerySnapshot = await getPageInTaskByUrl(
+    currentTaskId,
+    url
+  ).get();
+  if (!parentQuerySnapshot.empty) {
+    parentQuerySnapshot.docs[0].ref.update({
+      updateDate: firebase.firestore.FieldValue.serverTimestamp(),
+      leaveDate: null
+    });
+  }
+};
+
+export const updatePageLeaveTimestampViaUrl = async url => {
+  let currentTaskId = (await getCurrentUserCurrentTaskId().get()).data().id;
+
+  const parentQuerySnapshot = await getPageInTaskByUrl(
+    currentTaskId,
+    url
+  ).get();
+  if (!parentQuerySnapshot.empty) {
+    parentQuerySnapshot.docs[0].ref.update({
+      leaveDate: firebase.firestore.FieldValue.serverTimestamp()
+    });
+  }
+};
+
 export const addPageToTask = async data => {
   const { url, title, parentUrl } = data;
 
@@ -50,6 +91,7 @@ export const addPageToTask = async data => {
     const p = existingPages[i];
     if (p.url === data.url) {
       console.log('Existing page:', p.url);
+      updatePageUpdateTimestampViaUrl(p.url);
       return p.id;
     }
   }
@@ -71,6 +113,7 @@ export const addPageToTask = async data => {
     trashed: false,
     creationDate: firebase.firestore.FieldValue.serverTimestamp(),
     updateDate: firebase.firestore.FieldValue.serverTimestamp(),
+    leaveDate: null,
     url: url,
     title: title,
     references: { searchQuery: false, parent: parent, task: currentTaskId }

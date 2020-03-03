@@ -22,6 +22,7 @@ import SourcePagesView from './SourcePagesView/SourcePagesView';
 import SourceQueriesView from './SourceQueriesView/SourceQueriesView';
 
 import * as FirestoreManager from '../../../../../firebase/firestore_wrapper';
+import moment from 'moment';
 
 const StyledTab = withStyles({
   root: {
@@ -47,10 +48,10 @@ function TabPanel(props) {
       role="tabpanel"
       hidden={value !== index}
       id={`full-width-tabpanel-${index}`}
-      aria-labelledby={`full-width-tab-${index}`}
       {...other}
+      style={{ height: '100%' }}
     >
-      {value === index && <div>{children}</div>}
+      {value === index && <React.Fragment>{children}</React.Fragment>}
     </Typography>
   );
 }
@@ -59,10 +60,11 @@ class CollectionView extends Component {
   static contextType = TaskContext;
 
   state = {
-    tabValue: 2,
+    tabValue: 1,
 
     searchQueries: [],
-    visitedPages: []
+    visitedPages: [],
+    pieces: []
   };
 
   componentDidMount() {
@@ -87,21 +89,61 @@ class CollectionView extends Component {
     ).onSnapshot(querySnapshot => {
       let pages = [];
       querySnapshot.forEach(snapshot => {
+        const data = snapshot.data();
+        const creationDate = data.creationDate.toDate().getTime();
+        const updateDate = data.updateDate.toDate().getTime();
+        const leaveDate = data.leaveDate
+          ? data.leaveDate.toDate().getTime()
+          : null;
+
+        let duration = null;
+        if (leaveDate !== null) {
+          duration = leaveDate - updateDate;
+          // duration = moment.duration(leaveDate - updateDate);
+          // duration = moment.duration(70 * 60 * 1000 + 4000);
+          // console.log(moment(duration._data).format('mm:ss'));
+          // console.log(
+          //   parseInt(duration.asMinutes(), 10) + 'm ' + duration.seconds() + 's'
+          // );
+        }
+
         pages.push({
           id: snapshot.id,
           ...snapshot.data(),
-          creationDate: snapshot.data().creationDate.toDate(),
-          updateDate: snapshot.data().updateDate.toDate(),
+          creationDate,
+          updateDate,
+          leaveDate,
+          duration,
           domain: new URL(snapshot.data().url).hostname
         });
       });
       this.setState({ visitedPages: pages });
     });
+
+    this.unsubscribePieces = FirestoreManager.getAllPiecesInTask(
+      this.context.currentTaskId
+    )
+      .orderBy('creationDate', 'desc')
+      .onSnapshot(querySnapshot => {
+        let pieces = [];
+        querySnapshot.forEach(doc => {
+          pieces.push({ id: doc.id, ...doc.data() });
+        });
+        this.setState({ pieces });
+      });
   }
 
   componentWillUnmount() {
     if (this.unsubSearchQueries) {
       this.unsubSearchQueries();
+    }
+
+    if (this.unsubVisitedPages) {
+      this.unsubVisitedPages();
+    }
+
+    if (this.unsubscribePieces) {
+      this.unsubscribePieces();
     }
   }
 
@@ -159,21 +201,25 @@ class CollectionView extends Component {
         <SwipeableViews
           index={tabValue}
           onChangeIndex={this.handleChange}
+          style={{ height: '100%' }}
+          containerStyle={{ height: '100%' }}
           disableLazyLoading
         >
           <TabPanel value={tabValue} index={0}>
-            <SourceDomainsView />
+            <SourceDomainsView pages={this.state.visitedPages} />
           </TabPanel>
           <TabPanel value={tabValue} index={1}>
             <SourcePagesView
               queries={this.state.searchQueries}
               pages={this.state.visitedPages}
+              pieces={this.state.pieces}
             />
           </TabPanel>
           <TabPanel value={tabValue} index={2}>
             <SourceQueriesView
               queries={this.state.searchQueries}
               pages={this.state.visitedPages}
+              pieces={this.state.pieces}
             />
           </TabPanel>
           <TabPanel value={tabValue} index={3}>

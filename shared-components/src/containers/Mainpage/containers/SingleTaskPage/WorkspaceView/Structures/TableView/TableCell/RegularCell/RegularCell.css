@@ -140,6 +140,14 @@
   display: flex;
 }
 
+.AttitudeInTableContainerVariantI.Normal {
+  opacity: 1;
+}
+
+.AttitudeInTableContainerVariantI.Fade {
+  opacity: 0.2;
+}
+
 .AttitudeIconVariantI {
   display: inline-block;
   margin-right: 5px;

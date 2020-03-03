@@ -736,7 +736,18 @@ class RowHeaderCell extends Component {
                     id={`${cell.id}-context-menu`}
                     holdToDisplay={-1}
                   >
-                    <div style={{ width: '260px', minHeight: '65px' }}>
+                    <div
+                      className={[
+                        styles.RowHeaderPiecesContainer,
+                        this.props.selectedUrls.length === 0
+                          ? styles.Normal
+                          : this.props.selectedUrls.indexOf(
+                              pieces[p.pieceId].references.url
+                            ) !== -1
+                          ? styles.Normal
+                          : styles.Fade
+                      ].join(' ')}
+                    >
                       <PieceItem
                         piece={pieces[p.pieceId]}
                         editAccess={editAccess}

@@ -1,4 +1,7 @@
 .SourcePagesViewContainer {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 .InfoBar {
@@ -27,7 +30,12 @@
   padding: 0px 8px;
 }
 
-.SourceDomainItemContainer {
+.ListContainer {
+  flex: 1;
+  overflow: scroll;
+}
+
+.ItemContainer {
   padding: 10px;
   width: 100%;
   box-sizing: border-box;
@@ -35,11 +43,15 @@
   transition: all 0.1s ease-in;
 }
 
-.SourceDomainItemContainer:hover {
-  background-color: lightgray;
+.ItemContainer:hover {
+  background-color: rgb(233, 233, 233);
 }
 
-.DomainNameContainer {
+.ItemContainer.Selected {
+  background-color: rgb(216, 216, 216);
+}
+
+.NameContainer {
   display: flex;
   align-items: center;
 }
@@ -52,5 +64,33 @@
 }
 
 .TitleContent {
+  flex: 1;
+  font-weight: 400;
+}
+
+.TitleContent a {
+  text-decoration: none;
+  color: inherit;
+}
+
+.TitleContent a:hover {
+  text-decoration: underline;
+  color: inherit;
+}
+
+.MetaData {
+  flex-shrink: 0;
+  margin-left: 4px;
+  font-size: 10px;
+  color: gray;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.RelatedContentContainer {
+  margin-left: 26px;
+  margin-right: 20px;
+  font-size: 16px;
   font-weight: 500;
 }

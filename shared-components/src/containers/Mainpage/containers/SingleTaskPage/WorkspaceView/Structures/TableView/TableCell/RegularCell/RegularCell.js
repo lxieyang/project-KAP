@@ -727,7 +727,16 @@ class RegularCell extends Component {
                     return (
                       <React.Fragment key={`${p.pieceId}-${idx}`}>
                         <div
-                          className={styles.AttitudeInTableContainerVariantI}
+                          className={[
+                            styles.AttitudeInTableContainerVariantI,
+                            this.props.selectedUrls.length === 0
+                              ? styles.Normal
+                              : this.props.selectedUrls.indexOf(
+                                  piece.references.url
+                                ) !== -1
+                              ? styles.Normal
+                              : styles.Fade
+                          ].join(' ')}
                           data-tip
                           data-for={`${cell.id}-${p.pieceId}`}
                         >

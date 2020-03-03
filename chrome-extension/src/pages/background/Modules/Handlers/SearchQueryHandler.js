@@ -1,3 +1,4 @@
+import { getPureUrlWithoutHash } from '../../../../../../shared-components/src/shared/utilities';
 import firebase from '../../../../../../shared-components/src/firebase/firebase';
 import * as FirestoreManager from '../../../../../../shared-components/src/firebase/firestore_wrapper';
 
@@ -49,10 +50,14 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
   }
 
   if (request.msg === 'SEARCH_RESULT_CLICKED') {
-    // console.log(request.payload);
-    // console.log(currentSearchQueryId);
+    console.log(request.payload);
+    console.log(currentSearchQueryId);
 
     const { query, url, title } = request.payload;
-    FirestoreManager.addPageToSearchQuery({ query, url, title });
+    FirestoreManager.addPageToSearchQuery({
+      query,
+      url: getPureUrlWithoutHash(url),
+      title
+    });
   }
 });

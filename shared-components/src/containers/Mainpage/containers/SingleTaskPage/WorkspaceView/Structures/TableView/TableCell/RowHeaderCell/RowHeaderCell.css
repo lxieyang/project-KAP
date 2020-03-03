@@ -24,6 +24,19 @@
   /* border-left: none !important; */
 }
 
+.RowHeaderPiecesContainer {
+  width: 260px;
+  min-height: 65px;
+}
+
+.RowHeaderPiecesContainer.Normal {
+  opacity: 1;
+}
+
+.RowHeaderPiecesContainer.Fade {
+  opacity: 0.2;
+}
+
 .HideRowIconContainer {
   position: absolute;
   left: -24px;

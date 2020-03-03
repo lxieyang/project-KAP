@@ -20,6 +20,10 @@ export const getOrigin = () => {
   return window.location.origin;
 };
 
+export const getPureUrlWithoutHash = url => {
+  return url.split('#')[0].split('?')[0];
+};
+
 export const openLinkInTextEditorExtension = (event, url) => {
   if (window.top !== window.self) {
     event.preventDefault();

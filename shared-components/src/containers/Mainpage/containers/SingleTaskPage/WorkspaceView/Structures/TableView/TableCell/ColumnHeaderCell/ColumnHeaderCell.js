@@ -700,10 +700,16 @@ class ColumnHeaderCell extends Component {
                     holdToDisplay={-1}
                   >
                     <div
-                      style={{
-                        width: '250px',
-                        minHeight: '65px'
-                      }}
+                      className={[
+                        styles.ColumnHeaderPiecesContainer,
+                        this.props.selectedUrls.length === 0
+                          ? styles.Normal
+                          : this.props.selectedUrls.indexOf(
+                              pieces[p.pieceId].references.url
+                            ) !== -1
+                          ? styles.Normal
+                          : styles.Fade
+                      ].join(' ')}
                     >
                       <PieceItem
                         piece={pieces[p.pieceId]}

@@ -6,6 +6,7 @@ import {
   getTaskById,
   getCurrentUserCurrentTaskId
 } from '../firestore_wrapper';
+import { updatePageUpdateTimestampViaUrl } from './page_functions';
 
 export const getAllSearchQueriesInTask = taskId => {
   return db
@@ -120,7 +121,6 @@ export const addPageToSearchQuery = async data => {
 
   // determine query id
   const queryId = await createNewSearchQuery({ query });
-  console.log(queryId);
 
   let currentUserId = getCurrentUserId();
   let currentTaskId = (await getCurrentUserCurrentTaskId().get()).data().id;
@@ -128,7 +128,7 @@ export const addPageToSearchQuery = async data => {
   let ref = db.collection(DB_COLLECTIONS.WEBPAGES).doc(data.key);
 
   let existingPages = [];
-  const querySnapshot = await getSearchQueryVisitedPages(queryId).get();
+  const querySnapshot = await getVisitedPagesInTask(currentTaskId).get();
   if (!querySnapshot.empty) {
     existingPages = querySnapshot.docs.map(doc => {
       return {
@@ -142,6 +142,7 @@ export const addPageToSearchQuery = async data => {
     const p = existingPages[i];
     if (p.url === data.url) {
       console.log('Existing page:', p.url);
+      updatePageUpdateTimestampViaUrl(p.url);
       return p.id;
     }
   }
@@ -153,6 +154,7 @@ export const addPageToSearchQuery = async data => {
     trashed: false,
     creationDate: firebase.firestore.FieldValue.serverTimestamp(),
     updateDate: firebase.firestore.FieldValue.serverTimestamp(),
+    leaveDate: null,
     url: url,
     title: title,
     references: { searchQuery: queryId, parent: false, task: currentTaskId }

@@ -1,17 +1,24 @@
 /* global chrome */
 import * as FirestoreManager from '../../../../../shared-components/src/firebase/firestore_wrapper';
-import { PIECE_TYPES } from '../../../../../shared-components/src/shared/types';
+import {
+  PIECE_TYPES
+} from '../../../../../shared-components/src/shared/types';
 
 let showSuccessStatusInIconBadgeTimeout = 0;
+
 function showSuccessStatusInIconBadge(success = true) {
   // change to success
-  chrome.browserAction.setBadgeText({ text: success ? '✓' : '✕' });
+  chrome.browserAction.setBadgeText({
+    text: success ? '✓' : '✕'
+  });
   chrome.browserAction.setBadgeBackgroundColor({
     color: success ? [31, 187, 45, 1] : [251, 11, 32, 1]
   });
   clearTimeout(showSuccessStatusInIconBadgeTimeout);
   showSuccessStatusInIconBadgeTimeout = setTimeout(() => {
-    chrome.browserAction.setBadgeText({ text: '' });
+    chrome.browserAction.setBadgeText({
+      text: ''
+    });
   }, 6000);
 }
 
@@ -76,12 +83,12 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     } = request.payload;
 
     FirestoreManager.createPiece(
-      annotation,
-      contextData,
-      annotationType,
-      type,
-      timer
-    )
+        annotation,
+        contextData,
+        annotationType,
+        type,
+        timer
+      )
       .then(pieceId => {
         // chrome.runtime.sendMessage({
         //   msg: 'SHOW_SUCCESS_STATUS_BADGE',
@@ -90,9 +97,13 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         showSuccessStatusInIconBadge(true);
 
         if (type === PIECE_TYPES.option) {
-          FirestoreManager.putOptionIntoDefaultTable({ pieceId });
+          FirestoreManager.putOptionIntoDefaultTable({
+            pieceId
+          });
         } else if (type === PIECE_TYPES.criterion) {
-          FirestoreManager.putCriterionIntoDefaultTable({ pieceId });
+          FirestoreManager.putCriterionIntoDefaultTable({
+            pieceId
+          });
         }
       })
       .catch(error => {
@@ -117,12 +128,12 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     } = request.payload;
 
     FirestoreManager.createPiece(
-      annotation,
-      contextData,
-      annotationType,
-      type,
-      timer
-    )
+        annotation,
+        contextData,
+        annotationType,
+        type,
+        timer
+      )
       .then(pieceId => {
         // chrome.runtime.sendMessage({
         //   msg: 'SHOW_SUCCESS_STATUS_BADGE',
@@ -158,7 +169,12 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         showSuccessStatusInIconBadge(false);
       });
   } else if (request.msg === 'PUT_EXISTING_ANNOTATION_IN_TABLE') {
-    const { tableId, cellId, pieceId, ratingType } = request.payload;
+    const {
+      tableId,
+      cellId,
+      pieceId,
+      ratingType
+    } = request.payload;
     FirestoreManager.addPieceToTableCellById(
       tableId,
       cellId,

@@ -1,5 +1,5 @@
 /* global chrome */
-// import $ from 'jquery';
+import $ from 'jquery';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import ScreenshotModal from './components/ScreenshotModal';
@@ -51,9 +51,14 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 // check id token from background
 let loggedIn = false;
 let userIdToken = null;
-chrome.runtime.sendMessage({ msg: 'GET_USER_INFO' }, response => {
-  signInOutUserWithCredential(response.idToken);
-});
+chrome.runtime.sendMessage(
+  {
+    msg: 'GET_USER_INFO'
+  },
+  response => {
+    signInOutUserWithCredential(response.idToken);
+  }
+);
 // authenticate upon signin
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.msg === 'USER_LOGIN_STATUS_CHANGED') {
@@ -134,6 +139,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 //
 /* special fix for Cynthia's textbook */
 let MathJaxUsed = false;
+
 function injectScript(file, node) {
   var th = document.getElementsByTagName(node)[0];
   var s = document.createElement('script');
@@ -201,13 +207,6 @@ function displayTooltipButtonBasedOnRectPosition(rect, props) {
   popOverAnchor.style.left = `${leftPosition}px`;
 }
 
-// TODO: enable store functionality later
-// let store = new Store({
-//   [ANNOTATION_TYPES.Highlight]: Highlight,
-//   [ANNOTATION_TYPES.Snippet]: Snippet
-// });
-// store.init();
-
 // init selectors
 let snippetSelectorTimer = {
   startTimestamp: 0,
@@ -255,13 +254,20 @@ let captureWindow;
 /* Sidebar manager & tracking status manager */
 let shouldShrinkBody = false;
 let shouldUseEscapeKeyToToggleSidebar = true;
-chrome.runtime.sendMessage({ msg: 'SHOULD_SHRINK_BODY' }, response => {
-  shouldShrinkBody = response.SHOULD_SHRINK_BODY;
-  document.body.style.transition = 'all 0.25s ease-in';
-});
+chrome.runtime.sendMessage(
+  {
+    msg: 'SHOULD_SHRINK_BODY'
+  },
+  response => {
+    shouldShrinkBody = response.SHOULD_SHRINK_BODY;
+    document.body.style.transition = 'all 0.25s ease-in';
+  }
+);
 
 chrome.runtime.sendMessage(
-  { msg: 'SHOULD_TOGGLE_SIDEBAR_WITH_ESC_KEY' },
+  {
+    msg: 'SHOULD_TOGGLE_SIDEBAR_WITH_ESC_KEY'
+  },
   response => {
     shouldUseEscapeKeyToToggleSidebar =
       response.SHOULD_TOGGLE_SIDEBAR_WITH_ESC_KEY;

@@ -24,6 +24,19 @@
   /* border-top: none !important; */
 }
 
+.ColumnHeaderPiecesContainer {
+  width: 260px;
+  min-height: 65px;
+}
+
+.ColumnHeaderPiecesContainer.Normal {
+  opacity: 1;
+}
+
+.ColumnHeaderPiecesContainer.Fade {
+  opacity: 0.2;
+}
+
 .DeleteColumnIconContainer {
   position: absolute;
   top: -24px;

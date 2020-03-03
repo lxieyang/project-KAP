@@ -1,4 +1,5 @@
 import queryString from 'query-string';
+import { getPureUrlWithoutHash } from '../../../../../../shared-components/src/shared/utilities';
 import firebase from '../../../../../../shared-components/src/firebase/firebase';
 import * as FirestoreManager from '../../../../../../shared-components/src/firebase/firestore_wrapper';
 
@@ -64,11 +65,17 @@ const keepTrackOfWebpage = (parentUrl, url, title) => {
 
   console.log('PARENT:', parentUrl);
   console.log('NOW', url);
-  FirestoreManager.addPageToTask({ url, parentUrl, title });
+  FirestoreManager.addPageToTask({
+    url: getPureUrlWithoutHash(url),
+    parentUrl: getPureUrlWithoutHash(url),
+    title
+  });
 };
 
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
   if (changeInfo.url !== undefined && changeInfo.url !== null) {
+    // leaving previous url
+    FirestoreManager.updatePageLeaveTimestampViaUrl(allTabs[tabId].url);
     if (tab.openerTabId === undefined) {
       if (
         allTabs[tabId].query === null &&
@@ -100,4 +107,13 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
     // update page data
     FirestoreManager.updatePageTitleViaUrl(tab.url, tab.title);
   }
+
+  if (changeInfo.favIconUrl !== null && changeInfo.favIconUrl !== undefined) {
+    // update page data
+    FirestoreManager.updatePageFaviconUrlViaUrl(tab.url, changeInfo.favIconUrl);
+  }
+});
+
+chrome.tabs.onRemoved.addListener((tabId, removeInfo) => {
+  FirestoreManager.updatePageLeaveTimestampViaUrl(allTabs[tabId].url);
 });

@@ -21,7 +21,10 @@ class SingleTaskPage extends Component {
     taskExists: false,
 
     taskId: null,
-    isDemoTask: false
+    isDemoTask: false,
+    selectedDomains: [],
+    selectedUrls: [],
+    selectedQueries: []
   };
 
   componentDidMount() {
@@ -84,7 +87,37 @@ class SingleTaskPage extends Component {
         <TaskContext.Provider
           value={{
             currentTaskId: this.state.taskId,
-            isDemoTask: this.state.isDemoTask
+            isDemoTask: this.state.isDemoTask,
+            selectedDomains: this.state.selectedDomains,
+            addSelectedDomain: item => {
+              let selectedDomains = [...this.state.selectedDomains];
+              if (selectedDomains.indexOf(item) === -1) {
+                selectedDomains.push(item);
+              } else {
+                selectedDomains = selectedDomains.filter(i => i !== item);
+              }
+              this.setState({ selectedDomains });
+            },
+            selectedQueries: this.state.selectedQueries,
+            addSelectedQuery: item => {
+              let selectedQueries = [...this.state.selectedQueries];
+              if (selectedQueries.indexOf(item) === -1) {
+                selectedQueries.push(item);
+              } else {
+                selectedQueries = selectedQueries.filter(i => i !== item);
+              }
+              this.setState({ selectedQueries });
+            },
+            selectedUrls: this.state.selectedUrls,
+            addSelectedUrl: item => {
+              let selectedUrls = [...this.state.selectedUrls];
+              if (selectedUrls.indexOf(item) === -1) {
+                selectedUrls.push(item);
+              } else {
+                selectedUrls = selectedUrls.filter(i => i !== item);
+              }
+              this.setState({ selectedUrls });
+            }
           }}
         >
           <div className={styles.SingleTaskPageContainer}>

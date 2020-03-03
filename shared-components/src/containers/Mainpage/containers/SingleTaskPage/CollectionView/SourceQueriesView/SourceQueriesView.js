@@ -160,7 +160,8 @@ class SourceQueriesView extends Component {
                   </div>
                   <div style={{ flex: 1 }} />
                   <div className={styles.TimeContainer}>
-                    {moment(item.creationDate).format('MMM D h:ma')}
+                    <div>{moment(item.creationDate).format('MMM D')}</div>
+                    <div>{moment(item.creationDate).format('h:ma')}</div>
                   </div>
                 </div>
               </div>
