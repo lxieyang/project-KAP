@@ -24,6 +24,10 @@ import Looks from 'mdi-material-ui/Looks';
 import Tooltip from '@material-ui/core/Tooltip';
 import Switch from '@material-ui/core/Switch';
 
+import { FaArrowAltCircleUp, FaCheck } from 'react-icons/fa';
+import { IoMdTime } from 'react-icons/io';
+import { AiFillFire } from 'react-icons/ai';
+
 import Textarea from 'react-textarea-autosize';
 
 import * as FirestoreManager from '../../../../../../../firebase/firestore_wrapper';
@@ -386,6 +390,12 @@ class PieceItem extends Component {
         break;
     }
 
+    let answerURLOnSO = null;
+    const answerMetaInfo = piece.answerMetaInfo;
+    if (answerMetaInfo) {
+      answerURLOnSO = answerMetaInfo.answerLink;
+    }
+
     return connectDragPreview(
       <div>
         <React.Fragment>
@@ -501,58 +511,78 @@ class PieceItem extends Component {
                             placement={'top'}
                           >
                             <span
-                              className={classesInCSS.TagSpan}
-                              style={{ backgroundColor: 'rgb(230, 230, 230)' }}
+                              className={[
+                                classesInCSS.TagSpan,
+                                classesInCSS.LinkContainer
+                              ].join(' ')}
+                              style={{ backgroundColor: 'transparent' }}
                             >
-                              <div
+                              <a
+                                href={
+                                  answerURLOnSO
+                                    ? answerURLOnSO
+                                    : piece.references.url
+                                }
+                                target="__blank"
                                 style={{
                                   display: 'flex',
                                   alignItems: 'center'
                                 }}
                               >
-                                From:
-                                <a
-                                  href={piece.references.url}
-                                  target="__blank"
-                                  style={{
-                                    display: 'flex',
-                                    alignItems: 'center'
-                                  }}
-                                >
-                                  <img
-                                    src={
-                                      GET_FAVICON_URL_PREFIX +
-                                      piece.references.url
-                                    }
-                                    alt={''}
-                                  />
-                                  <span>
-                                    {new URL(piece.references.url).hostname}
-                                  </span>
-                                </a>
-                              </div>
+                                <img
+                                  src={
+                                    GET_FAVICON_URL_PREFIX +
+                                    piece.references.url
+                                  }
+                                  alt={''}
+                                />
+                                <span>
+                                  {new URL(piece.references.url).hostname}
+                                </span>
+                              </a>
                             </span>
                           </Tooltip>
                         )}
-                        <span
-                          className={classesInCSS.TagSpan}
-                          style={{
-                            backgroundColor: `rgba(17, 240, 76, ${this.props
-                              .fakePopularityNumber / 100})`
-                          }}
-                        >
-                          {this.props.fakePopularityNumber} up votes
-                        </span>
-                        <span
-                          className={classesInCSS.TagSpan}
-                          style={{
-                            backgroundColor: this.props.isRecent
-                              ? 'rgb(194, 245, 66)'
-                              : 'rgb(221, 222, 213)'
-                          }}
-                        >
-                          {this.props.fakeDate.toLocaleDateString()}
-                        </span>
+                        {this.props.popularityNumber && (
+                          <div>
+                            <span className={classesInCSS.TagSpan}>
+                              <FaArrowAltCircleUp
+                                className={[
+                                  classesInCSS.Icon,
+                                  classesInCSS.VoteIcon
+                                ].join(' ')}
+                              />
+                              {this.props.popularityNumber} up votes
+                            </span>
+                          </div>
+                        )}
+                        {this.props.answerAccepted === true && (
+                          <div>
+                            <span className={classesInCSS.TagSpan}>
+                              <FaCheck
+                                className={[
+                                  classesInCSS.Icon,
+                                  classesInCSS.AcceptedIcon
+                                ].join(' ')}
+                              />
+                              accepted answer
+                            </span>
+                          </div>
+                        )}
+                        {this.props.updateDate && (
+                          <div>
+                            <span className={classesInCSS.TagSpan}>
+                              <IoMdTime
+                                className={[
+                                  classesInCSS.Icon,
+                                  classesInCSS.TimeIcon
+                                ].join(' ')}
+                              />
+                              updated {moment(this.props.updateDate).fromNow()}
+                              {/* {this.props.updateDate.toLocaleDateString()} */}
+                            </span>
+                          </div>
+                        )}
                       </div>
                     </React.Fragment>
                   )}

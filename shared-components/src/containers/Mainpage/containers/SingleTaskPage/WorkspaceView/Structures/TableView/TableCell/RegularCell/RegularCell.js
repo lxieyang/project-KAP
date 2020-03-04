@@ -29,6 +29,10 @@ import IconButton from '@material-ui/core/IconButton';
 import Popover from '@material-ui/core/Popover';
 import Button from '@material-ui/core/Button';
 
+import { FaArrowAltCircleUp, FaCheck } from 'react-icons/fa';
+import { IoMdTime } from 'react-icons/io';
+import { AiFillFire } from 'react-icons/ai';
+
 import Textarea from 'react-textarea-autosize';
 import { ContextMenu, MenuItem, ContextMenuTrigger } from 'react-contextmenu';
 
@@ -712,17 +716,28 @@ class RegularCell extends Component {
                     }
 
                     const piece = pieces[p.pieceId];
-                    const fakePopularityNumber = Math.floor(
-                      Math.random() * 100
-                    );
 
-                    const fakeDate = getRandomDate(
-                      new Date(2019, 1, 1),
-                      new Date(2020, 4, 1)
-                    );
+                    let popularityNumber = null; // Math.floor(Math.random() * 100);
+                    let updateDate = null; // getRandomDate(new Date(2019, 1, 1),new Date(2020, 4, 1));
+                    let isRecent = null;
+                    let answerURLOnSO = null;
+                    let answerAccepted = null;
 
-                    const isRecent =
-                      (new Date(2020, 4, 1) - fakeDate) / (1000 * 86400) < 100;
+                    const answerMetaInfo = piece.answerMetaInfo;
+                    if (answerMetaInfo) {
+                      popularityNumber = answerMetaInfo.answerVoteCount
+                        ? parseInt(answerMetaInfo.answerVoteCount, 10)
+                        : null;
+                      updateDate = answerMetaInfo.answerEditedTime
+                        ? new Date(answerMetaInfo.answerEditedTime)
+                        : answerMetaInfo.answerCreatedTime
+                        ? new Date(answerMetaInfo.answerCreatedTime)
+                        : null;
+                      isRecent =
+                        (new Date() - updateDate) / (1000 * 86400) < 100;
+                      answerURLOnSO = answerMetaInfo.answerLink;
+                      answerAccepted = answerMetaInfo.answerAccepted;
+                    }
 
                     return (
                       <React.Fragment key={`${p.pieceId}-${idx}`}>
@@ -737,15 +752,18 @@ class RegularCell extends Component {
                               ? styles.Normal
                               : styles.Fade
                           ].join(' ')}
-                          data-tip
-                          data-for={`${cell.id}-${p.pieceId}`}
                         >
-                          <div className={styles.AttitudeIconVariantI}>
+                          <div
+                            className={styles.AttitudeIconVariantI}
+                            data-tip
+                            data-for={`${cell.id}-${p.pieceId}`}
+                          >
                             {icon}
                           </div>
                           <div style={{ flex: 1, marginLeft: 3 }}>
-                            <div style={{ fontSize: 13 }}>
-                              {getFirstNWords(5, piece.name)}
+                            <div className={styles.PieceNameContainer}>
+                              {piece.name}
+                              {/* {getFirstNWords(5, piece.name)} */}
                             </div>
                             <div className={styles.TagsContainer}>
                               {piece.references.url !== false && (
@@ -756,12 +774,13 @@ class RegularCell extends Component {
                                   placement={'top'}
                                 >
                                   <a
-                                    href={piece.references.url}
+                                    href={
+                                      answerURLOnSO
+                                        ? answerURLOnSO
+                                        : piece.references.url
+                                    }
                                     target="__blank"
                                     className={styles.TagSpan}
-                                    style={{
-                                      backgroundColor: 'rgb(230, 230, 230)'
-                                    }}
                                   >
                                     <img
                                       src={
@@ -776,25 +795,50 @@ class RegularCell extends Component {
                                   </a>
                                 </Tooltip>
                               )}
-                              <span
-                                className={styles.TagSpan}
-                                style={{
-                                  backgroundColor: `rgba(17, 240, 76, ${fakePopularityNumber /
-                                    100})`
-                                }}
-                              >
-                                {fakePopularityNumber} up votes
-                              </span>
-                              <span
-                                className={styles.TagSpan}
-                                style={{
-                                  backgroundColor: isRecent
-                                    ? 'rgb(194, 245, 66)'
-                                    : 'rgb(221, 222, 213)'
-                                }}
-                              >
-                                {fakeDate.toLocaleDateString()}
-                              </span>
+                              {popularityNumber && (
+                                <span
+                                  className={styles.TagSpan}
+                                  title={`${popularityNumber} up votes`}
+                                >
+                                  <FaArrowAltCircleUp
+                                    className={[
+                                      styles.Icon,
+                                      styles.VoteIcon
+                                    ].join(' ')}
+                                  />
+                                  {popularityNumber}
+                                </span>
+                              )}
+                              {answerAccepted === true && (
+                                <div>
+                                  <span
+                                    className={styles.TagSpan}
+                                    title={`Answer accepted by the question asker`}
+                                  >
+                                    <FaCheck
+                                      className={[
+                                        styles.Icon,
+                                        styles.AcceptedIcon
+                                      ].join(' ')}
+                                    />
+                                    accepted
+                                  </span>
+                                </div>
+                              )}
+                              {updateDate && (
+                                <span
+                                  className={styles.TagSpan}
+                                  title={`Updated on ${updateDate.toLocaleDateString()}`}
+                                >
+                                  <IoMdTime
+                                    className={[
+                                      styles.Icon,
+                                      styles.TimeIcon
+                                    ].join(' ')}
+                                  />
+                                  {updateDate.toLocaleDateString()}
+                                </span>
+                              )}
                             </div>
                           </div>
                         </div>
@@ -818,9 +862,10 @@ class RegularCell extends Component {
                                 openScreenshot={this.props.openScreenshot}
                                 isDemoTask={this.props.isDemoTask}
                                 attitudeIcon={icon}
-                                fakePopularityNumber={fakePopularityNumber}
-                                fakeDate={fakeDate}
+                                popularityNumber={popularityNumber}
+                                updateDate={updateDate}
                                 isRecent={isRecent}
+                                answerAccepted={answerAccepted}
                               />
                             );
                           }}

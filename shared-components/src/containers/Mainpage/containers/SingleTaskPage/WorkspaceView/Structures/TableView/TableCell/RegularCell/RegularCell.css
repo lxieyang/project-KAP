@@ -116,6 +116,7 @@
   flex-flow: column;
   justify-content: center;
   align-items: center;
+  max-width: 320px;
 }
 
 .EvidenceIconContainer {
@@ -158,13 +159,28 @@
   border: 2px solid transparent;
 }
 
-.AttitudeInTableContainerVariantI:hover .AttitudeIconVariantI {
+/* .AttitudeInTableContainerVariantI:hover .AttitudeIconVariantI {
+  transform: scale(1.1);
+  box-shadow: 0 4px 10px 0 rgba(0, 0, 0, 0.2), 0 4px 20px 0 rgba(0, 0, 0, 0.19);
+} */
+
+.AttitudeIconVariantI:hover {
   transform: scale(1.1);
   box-shadow: 0 4px 10px 0 rgba(0, 0, 0, 0.2), 0 4px 20px 0 rgba(0, 0, 0, 0.19);
 }
-.AttitudeInTableContainerVariantI:hover .TagsContainer {
+
+/* .AttitudeInTableContainerVariantI:hover .PieceNameContainer {
   opacity: 0;
+} */
+
+.PieceNameContainer {
+  font-size: 13px;
+  font-weight: 400;
 }
+
+/* .AttitudeInTableContainerVariantI:hover .TagsContainer {
+  opacity: 0;
+} */
 
 .TagsContainer {
   display: flex;
@@ -175,11 +191,29 @@
 .TagSpan {
   display: inline-flex;
   align-items: center;
-  border-radius: 9px;
-  padding: 2px 4px;
+  border-radius: 6px;
+  padding: 2px 2px;
   font-size: 11px;
   margin: 2px 2px;
-  border: 1px solid lightgray;
+  /* border: 1px solid lightgray; */
+}
+
+.TagSpan .Icon {
+  width: 16px;
+  height: 16px;
+  margin-right: 2px;
+}
+
+.VoteIcon {
+  color: rgb(231, 74, 46);
+}
+
+.AcceptedIcon {
+  color: rgb(98, 166, 110);
+}
+
+.TimeIcon {
+  color: gray;
 }
 
 .AttitudeInTableCell {

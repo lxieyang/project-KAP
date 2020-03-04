@@ -4,10 +4,8 @@ import {
   PIECE_TYPES,
   TIMESTAMP_TYPES
 } from '../../shared/types';
-import {
-  encode,
-  decode
-} from '../utilities/firebase_encode_decode.js';
+import { getFirstSentence } from '../../shared/utilities';
+import { encode, decode } from '../utilities/firebase_encode_decode.js';
 import {
   db,
   getCurrentUserId,
@@ -113,7 +111,7 @@ export const clearTrashedPiecesForeverByTaskId = async taskId => {
   });
 
   // Commit the batch
-  batch.commit().then(function () {
+  batch.commit().then(function() {
     // console.log('cleared');
   });
 };
@@ -142,9 +140,8 @@ export const revivePieceById = pieceId => {
 /* screenshot */
 export const addScreenshotToPieceById = async (
   pieceId,
-  imageDataUrl, {
-    dimensions
-  }
+  imageDataUrl,
+  { dimensions }
 ) => {
   updateCurrentTaskUpdateTime();
   return getScreenshotById(pieceId).set({
@@ -256,7 +253,8 @@ export const deleteCommentById = (pieceId, commentId) => {
 
 /* create a piece */
 export const createPiece = async (
-  data, {
+  data,
+  {
     url,
     hostname,
     pathname,
@@ -281,7 +279,7 @@ export const createPiece = async (
     annotationType: annotationType,
     pieceType: pieceType || PIECE_TYPES.snippet,
     shouldUseScreenshot: shouldUseScreenshot ? shouldUseScreenshot : false,
-    answerMetaInfo,
+    answerMetaInfo: answerMetaInfo !== undefined ? answerMetaInfo : null,
     creationDate: firebase.firestore.FieldValue.serverTimestamp(),
     updateDate: firebase.firestore.FieldValue.serverTimestamp(),
     references: {
@@ -304,7 +302,7 @@ export const createPiece = async (
       break;
     case ANNOTATION_TYPES.Highlight:
       piece.text = data.text.trim();
-      piece.name = data.text.trim();
+      piece.name = getFirstSentence(data.text.trim());
       piece.html = data.html;
       if (piece.html) piece.html = xss.filter(data.html) || null;
       piece.anchorCoordinates = data.anchorCoordinates || {};
@@ -317,7 +315,7 @@ export const createPiece = async (
       break;
     case ANNOTATION_TYPES.Snippet:
       piece.text = data.text.trim() || '';
-      piece.name = data.text.trim() || '';
+      piece.name = getFirstSentence(data.text.trim()) || '';
       piece.html = data.html.map(html => xss.filter(html)) || null;
       piece.anchorCoordinates = data.anchorCoordinates || {};
       piece.initialDimensions = data.initialDimensions || {};

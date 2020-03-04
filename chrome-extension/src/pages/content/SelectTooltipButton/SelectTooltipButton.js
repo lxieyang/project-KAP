@@ -30,7 +30,8 @@ const getAnswerInfoOnStackOverflow = (
         answerVoteCount: null,
         answerLink: null,
         answerCreatedTime: null,
-        answerEditedTime: null
+        answerEditedTime: null,
+        answerAccepted: null
       };
       answerMetaInfo.answerVoteCount = $(answerPost).find(
         '.js-vote-count'
@@ -50,6 +51,18 @@ const getAnswerInfoOnStackOverflow = (
         .children('span.relativetime');
       if (createdTime.length > 0) {
         answerMetaInfo.answerCreatedTime = createdTime[0].title;
+      }
+
+      let accepted = $(answerPost).find('.js-accepted-answer-indicator');
+      if (accepted.length > 0) {
+        accepted = accepted[0];
+        if (!$(accepted).hasClass('d-none')) {
+          answerMetaInfo.answerAccepted = true;
+        } else {
+          answerMetaInfo.answerAccepted = false;
+        }
+      } else {
+        answerMetaInfo.answerAccepted = false;
       }
 
       return answerMetaInfo;
