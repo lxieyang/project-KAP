@@ -261,7 +261,8 @@ export const createPiece = async (
     pageTitle,
     taskId,
     shouldUseScreenshot,
-    answerMetaInfo
+    answerMetaInfo,
+    codeSnippets
   },
   annotationType,
   pieceType,
@@ -280,6 +281,7 @@ export const createPiece = async (
     pieceType: pieceType || PIECE_TYPES.snippet,
     shouldUseScreenshot: shouldUseScreenshot ? shouldUseScreenshot : false,
     answerMetaInfo: answerMetaInfo !== undefined ? answerMetaInfo : null,
+    codeSnippets: codeSnippets !== undefined ? codeSnippets : null,
     creationDate: firebase.firestore.FieldValue.serverTimestamp(),
     updateDate: firebase.firestore.FieldValue.serverTimestamp(),
     references: {

@@ -29,7 +29,7 @@ import IconButton from '@material-ui/core/IconButton';
 import Popover from '@material-ui/core/Popover';
 import Button from '@material-ui/core/Button';
 
-import { FaArrowAltCircleUp, FaCheck } from 'react-icons/fa';
+import { FaArrowAltCircleUp, FaCheck, FaCode } from 'react-icons/fa';
 import { IoMdTime } from 'react-icons/io';
 import { AiFillFire } from 'react-icons/ai';
 
@@ -722,6 +722,7 @@ class RegularCell extends Component {
                     let isRecent = null;
                     let answerURLOnSO = null;
                     let answerAccepted = null;
+                    const codeSnippets = piece.codeSnippets;
 
                     const answerMetaInfo = piece.answerMetaInfo;
                     if (answerMetaInfo) {
@@ -767,10 +768,13 @@ class RegularCell extends Component {
                             </div>
                             <div className={styles.TagsContainer}>
                               {piece.references.url !== false && (
-                                <Tooltip
-                                  title={`${
-                                    new URL(piece.references.url).hostname // }  ---  Click to open`} //   piece.references.pageTitle // title={`${
-                                  }   ---  Click to open`}
+                                <Tooltip // title={`${
+                                  //   new URL(piece.references.url).hostname // }  ---  Click to open`} //   piece.references.pageTitle // title={`${
+                                  // }   ---  Click to open`}
+                                  title={`
+                                  ${
+                                    piece.references.pageTitle
+                                  }   --- Click to open`}
                                   placement={'top'}
                                 >
                                   <a
@@ -789,9 +793,11 @@ class RegularCell extends Component {
                                       }
                                       alt={''}
                                     />
-                                    {/* <span style={{ fontSize: 11 }}>
-                                    {new URL(piece.references.url).hostname}
-                                  </span> */}
+                                    <span
+                                      style={{ fontSize: 11, marginLeft: 4 }}
+                                    >
+                                      {new URL(piece.references.url).hostname}
+                                    </span>
                                   </a>
                                 </Tooltip>
                               )}
@@ -837,6 +843,19 @@ class RegularCell extends Component {
                                     ].join(' ')}
                                   />
                                   {updateDate.toLocaleDateString()}
+                                </span>
+                              )}
+                              {codeSnippets && codeSnippets.length > 0 && (
+                                <span
+                                  className={styles.TagSpan}
+                                  title={`Contains code snippets`}
+                                >
+                                  <FaCode
+                                    className={[
+                                      styles.Icon,
+                                      styles.CodeIcon
+                                    ].join(' ')}
+                                  />
                                 </span>
                               )}
                             </div>

@@ -85,6 +85,8 @@ class SelectTooltipButton extends Component {
     createdPieceId: null,
     createdPieceRect: null,
 
+    codeSnippets: [],
+
     answerMetaInfo: null
   };
 
@@ -103,13 +105,28 @@ class SelectTooltipButton extends Component {
       if (this.props.annotationType === ANNOTATION_TYPES.Highlight) {
         annotation = new Highlight(this.props.range);
         answerMetaInfo = getAnswerInfoOnStackOverflow();
+        this.setState({ annotation, answerMetaInfo });
       } else if (this.props.annotationType === ANNOTATION_TYPES.Snippet) {
         annotation = new Snippet(
           this.props.captureWindow.getBoundingClientRect()
         );
         answerMetaInfo = getAnswerInfoOnStackOverflow(annotation.anchor);
+        const nodes = annotation.nodes;
+        let codeSnippets = [];
+        nodes.forEach(node => {
+          if (node.nodeName === 'PRE') {
+            let codeAnnotationSnippet = new Snippet(
+              node.getBoundingClientRect()
+            );
+            codeSnippets.push({
+              html: codeAnnotationSnippet.html,
+              text: codeAnnotationSnippet.text
+            });
+          }
+        });
+        console.log(codeSnippets);
+        this.setState({ annotation, answerMetaInfo, codeSnippets });
       }
-      this.setState({ annotation, answerMetaInfo });
     }, 5);
 
     // support for selecting annotation
@@ -145,7 +162,8 @@ class SelectTooltipButton extends Component {
             pathname: window.location.pathname,
             pageTitle: document.title,
             shouldUseScreenshot: this.state.shouldUseScreenshot,
-            answerMetaInfo: this.state.answerMetaInfo
+            answerMetaInfo: this.state.answerMetaInfo,
+            codeSnippets: this.state.codeSnippets
           },
           annotationType: this.props.annotationType,
           type: PIECE_TYPES.snippet,
@@ -295,7 +313,8 @@ class SelectTooltipButton extends Component {
         pathname: window.location.pathname,
         pageTitle: document.title,
         shouldUseScreenshot: this.state.shouldUseScreenshot,
-        answerMetaInfo: this.state.answerMetaInfo
+        answerMetaInfo: this.state.answerMetaInfo,
+        codeSnippets: this.state.codeSnippets
       },
       annotationType: this.props.annotationType,
       type: type,
