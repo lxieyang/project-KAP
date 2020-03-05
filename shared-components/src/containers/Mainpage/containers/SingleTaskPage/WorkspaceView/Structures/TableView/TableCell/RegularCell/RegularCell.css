@@ -198,13 +198,18 @@
   border: 1px solid rgb(224, 224, 224);
 }
 
-a.TagSpan span {
-  display: none;
-  transition: 0.1s all ease-in;
+a.TagSpan {
+  text-decoration: none;
+  transition: all 0.1s ease-in;
 }
 
-a.TagSpan:hover span {
-  display: inline;
+a.TagSpan span {
+  font-size: 11px;
+  margin-left: 4px;
+}
+
+a.TagSpan:hover {
+  background-color: rgb(235, 235, 235);
 }
 
 .TagSpan .Icon {

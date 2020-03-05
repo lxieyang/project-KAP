@@ -60,7 +60,7 @@ class CollectionView extends Component {
   static contextType = TaskContext;
 
   state = {
-    tabValue: 1,
+    tabValue: 0,
 
     searchQueries: [],
     visitedPages: [],
@@ -171,7 +171,7 @@ class CollectionView extends Component {
           <StyledTab
             label={
               <div className={styles.TabLabelContainer}>
-                <MdDomain className={styles.TabLabelIcon} /> Domains
+                <MdDomain className={styles.TabLabelIcon} /> Sources
               </div>
             }
           />
@@ -206,7 +206,11 @@ class CollectionView extends Component {
           disableLazyLoading
         >
           <TabPanel value={tabValue} index={0}>
-            <SourceDomainsView pages={this.state.visitedPages} />
+            <SourceDomainsView
+              queries={this.state.searchQueries}
+              pages={this.state.visitedPages}
+              pieces={this.state.pieces}
+            />
           </TabPanel>
           <TabPanel value={tabValue} index={1}>
             <SourcePagesView

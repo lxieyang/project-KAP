@@ -124,9 +124,16 @@ class SingleTaskPage extends Component {
             <SplitPane
               split="vertical"
               minSize={200}
-              defaultSize={348}
+              defaultSize={
+                localStorage.getItem('split-pane-left-size')
+                  ? parseInt(localStorage.getItem('split-pane-left-size'), 10)
+                  : 400
+              }
               maxSize={800}
               pane2Style={{ width: '100%' }}
+              onDragFinished={size => {
+                localStorage.setItem('split-pane-left-size', size);
+              }}
             >
               <div className={styles.LeftPane}>
                 <CollectionView

@@ -272,6 +272,7 @@ class SourcePagesView extends Component {
               </React.Fragment>
             );
           })}
+          <div style={{ height: 200 }} />
         </div>
       </div>
     );
