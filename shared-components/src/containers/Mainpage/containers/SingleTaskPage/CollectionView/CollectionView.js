@@ -61,7 +61,7 @@ class CollectionView extends Component {
   static contextType = TaskContext;
 
   state = {
-    tabValue: 2,
+    tabValue: 0,
 
     searchQueries: [],
     visitedPages: [],

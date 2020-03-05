@@ -57,6 +57,7 @@
     "react-input-autosize": "^2.2.1",
     "react-lines-ellipsis": "^0.14.0",
     "react-markdown": "^4.0.3",
+    "react-modal": "^3.11.2",
     "react-motion": "^0.5.2",
     "react-popper": "^1.0.2",
     "react-redux": "^5.0.7",

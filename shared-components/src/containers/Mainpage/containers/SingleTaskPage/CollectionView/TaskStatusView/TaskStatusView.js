@@ -15,6 +15,8 @@ import StarOutline from 'mdi-material-ui/StarOutline';
 import Collapse from '@material-ui/core/Collapse';
 import Tooltip from '@material-ui/core/Tooltip';
 
+import { FaClipboardList } from 'react-icons/fa';
+
 import { ToastContainer, toast, Flip } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
@@ -215,9 +217,7 @@ class TaskStatusView extends Component {
                   {task.isStarred ? (
                     <Star
                       className={classes.iconInIconButtons}
-                      style={{
-                        color: THEME_COLOR.starColor
-                      }}
+                      style={{ color: THEME_COLOR.starColor }}
                     />
                   ) : (
                     <StarOutline className={classes.iconInIconButtons} />
@@ -306,6 +306,12 @@ class TaskStatusView extends Component {
               />
             </React.Fragment>
           )}
+
+          <Tooltip title={`See Overview`} placement={'bottom'}>
+            <IconButton aria-label="Share" className={classes.iconButtons}>
+              <FaClipboardList className={classes.iconInIconButtons} />
+            </IconButton>
+          </Tooltip>
         </div>
         <Collapse in={this.state.commentsExpanded} timeout="auto">
           <div className={styles.TaskCommentsContainer}>

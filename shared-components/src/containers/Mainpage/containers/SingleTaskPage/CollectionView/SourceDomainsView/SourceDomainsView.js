@@ -43,7 +43,6 @@ class DomainItem extends Component {
   };
 
   removePage = (e, id) => {
-    console.log(id);
     FirestoreManager.removeVisitedPageById(id);
   };
 
