@@ -12,7 +12,7 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Typography from '@material-ui/core/Typography';
 
-import { FaSearch, FaBookmark } from 'react-icons/fa';
+import { FaSearch, FaBookmark, FaCode } from 'react-icons/fa';
 import { MdDomain } from 'react-icons/md';
 import { IoIosBrowsers } from 'react-icons/io';
 
@@ -20,6 +20,7 @@ import TaskContext from '../../../../../shared/task-context';
 import SourceDomainsView from './SourceDomainsView/SourceDomainsView';
 import SourcePagesView from './SourcePagesView/SourcePagesView';
 import SourceQueriesView from './SourceQueriesView/SourceQueriesView';
+import CodeSnippetsView from './CodeSnippetsView/CodeSnippetsView';
 
 import * as FirestoreManager from '../../../../../firebase/firestore_wrapper';
 import moment from 'moment';
@@ -60,7 +61,7 @@ class CollectionView extends Component {
   static contextType = TaskContext;
 
   state = {
-    tabValue: 0,
+    tabValue: 2,
 
     searchQueries: [],
     visitedPages: [],
@@ -175,17 +176,24 @@ class CollectionView extends Component {
               </div>
             }
           />
-          <StyledTab
+          {/* <StyledTab
             label={
               <div className={styles.TabLabelContainer}>
                 <IoIosBrowsers className={styles.TabLabelIcon} /> Pages
+              </div>
+            }
+          /> */}
+          <StyledTab
+            label={
+              <div className={styles.TabLabelContainer}>
+                <FaSearch className={styles.TabLabelIcon} /> Queries
               </div>
             }
           />
           <StyledTab
             label={
               <div className={styles.TabLabelContainer}>
-                <FaSearch className={styles.TabLabelIcon} /> Queries
+                <FaCode className={styles.TabLabelIcon} /> Code Snippets
               </div>
             }
           />
@@ -212,15 +220,22 @@ class CollectionView extends Component {
               pieces={this.state.pieces}
             />
           </TabPanel>
-          <TabPanel value={tabValue} index={1}>
+          {/* <TabPanel value={tabValue} index={1}>
             <SourcePagesView
+              queries={this.state.searchQueries}
+              pages={this.state.visitedPages}
+              pieces={this.state.pieces}
+            />
+          </TabPanel> */}
+          <TabPanel value={tabValue} index={1}>
+            <SourceQueriesView
               queries={this.state.searchQueries}
               pages={this.state.visitedPages}
               pieces={this.state.pieces}
             />
           </TabPanel>
           <TabPanel value={tabValue} index={2}>
-            <SourceQueriesView
+            <CodeSnippetsView
               queries={this.state.searchQueries}
               pages={this.state.visitedPages}
               pieces={this.state.pieces}

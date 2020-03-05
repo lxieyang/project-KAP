@@ -111,7 +111,7 @@
 
 .PageTitleContent a {
   text-decoration: none;
-  /* color: inherit; */
+  color: inherit;
 }
 
 .PageTitleContent a:hover {
@@ -123,4 +123,26 @@
   font-size: 11px;
   font-weight: 300;
   color: gray;
+}
+
+.PageSnippetsInfoContainer {
+  margin-left: 10px;
+  padding: 0px 10px 6px 0px;
+}
+
+.PageSnippetsInfoContainer span {
+  margin-right: 6px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.PageSnippetsInfoContainer .Avatar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-right: 4px;
+}
+
+.PageSnippetsInfoContainer .IconInsideAvatar {
+  font-size: 10px;
 }

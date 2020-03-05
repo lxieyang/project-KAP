@@ -31,7 +31,8 @@ const getAnswerInfoOnStackOverflow = (
         answerLink: null,
         answerCreatedTime: null,
         answerEditedTime: null,
-        answerAccepted: null
+        answerAccepted: null,
+        questionTags: []
       };
       answerMetaInfo.answerVoteCount = $(answerPost).find(
         '.js-vote-count'
@@ -64,6 +65,13 @@ const getAnswerInfoOnStackOverflow = (
       } else {
         answerMetaInfo.answerAccepted = false;
       }
+
+      let questionTagNodes = $(document).find('.post-tag.js-gps-track');
+      let questionTags = [];
+      questionTagNodes.each((idx, tag) => {
+        questionTags.push(tag.text);
+      });
+      answerMetaInfo.questionTags = questionTags;
 
       return answerMetaInfo;
     } else {
@@ -115,16 +123,30 @@ class SelectTooltipButton extends Component {
         let codeSnippets = [];
         nodes.forEach(node => {
           if (node.nodeName === 'PRE') {
-            let codeAnnotationSnippet = new Snippet(
+            const codeAnnotationSnippet = new Snippet(
               node.getBoundingClientRect()
             );
             codeSnippets.push({
               html: codeAnnotationSnippet.html,
               text: codeAnnotationSnippet.text
             });
+          } else {
+            const pres = $(node).find('pre');
+            if (pres.length > 0) {
+              // console.log(pres);
+              for (let i = 0; i < pres.length; i++) {
+                const codeAnnotationSnippet = new Snippet(
+                  pres[i].getBoundingClientRect()
+                );
+                codeSnippets.push({
+                  html: codeAnnotationSnippet.html,
+                  text: codeAnnotationSnippet.text
+                });
+              }
+            }
           }
         });
-        console.log(codeSnippets);
+        // console.log(codeSnippets);
         this.setState({ annotation, answerMetaInfo, codeSnippets });
       }
     }, 5);

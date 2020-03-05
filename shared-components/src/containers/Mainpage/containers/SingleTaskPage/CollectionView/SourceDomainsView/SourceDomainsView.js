@@ -3,11 +3,21 @@ import { reverse, sortBy } from 'lodash';
 import styles from './SourceDomainsView.css';
 
 import { Collapse } from 'react-collapse';
+
+import Avatar from '@material-ui/core/Avatar';
 import { IoIosArrowDropup, IoIosArrowDropdown } from 'react-icons/io';
+import { FaFlagCheckered, FaListUl, FaBookmark } from 'react-icons/fa';
 
 import Divider from '@material-ui/core/Divider';
 import Popover from 'react-tiny-popover';
 import moment from 'moment';
+
+import { PIECE_TYPES } from '../../../../../../shared/types';
+import { PIECE_COLOR } from '../../../../../../shared/theme';
+
+import { ContextMenu, MenuItem, ContextMenuTrigger } from 'react-contextmenu';
+
+import * as FirestoreManager from '../../../../../../firebase/firestore_wrapper';
 
 // const domains = [
 //   {
@@ -30,6 +40,11 @@ class DomainItem extends Component {
     this.setState(prevState => {
       return { isOpen: !prevState.isOpen };
     });
+  };
+
+  removePage = (e, id) => {
+    console.log(id);
+    FirestoreManager.removeVisitedPageById(id);
   };
 
   render() {
@@ -72,38 +87,116 @@ class DomainItem extends Component {
           <div className={styles.DomainPagesContainer}>
             {pages.map((item, idx) => {
               let progress = Math.round(Math.random() * 100) / 100;
+              const numberOfOptions = item.piecesInPage.filter(
+                piece => piece.pieceType === PIECE_TYPES.option
+              ).length;
+              const numberOfCriteria = item.piecesInPage.filter(
+                piece => piece.pieceType === PIECE_TYPES.criterion
+              ).length;
+              let numberOfSnippets = item.piecesInPage.filter(
+                piece => piece.pieceType === PIECE_TYPES.snippet
+              ).length;
               return (
                 <React.Fragment key={idx}>
-                  <div className={[styles.PageItemContainer].join(' ')}>
-                    <div
-                      className={styles.PageProgressIndicator}
-                      style={{ width: `${progress * 100}%` }}
-                    />
-                    <div className={styles.PageNameContainer}>
-                      <div className={styles.PageTitleContent} title={item.url}>
-                        <a
-                          href={item.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
+                  <ContextMenuTrigger
+                    id={`${item.id}-context-menu`}
+                    holdToDisplay={-1}
+                  >
+                    <div className={[styles.PageItemContainer].join(' ')}>
+                      <div
+                        className={styles.PageProgressIndicator}
+                        style={{ width: `${progress * 100}%` }}
+                      />
+                      <div className={styles.PageNameContainer}>
+                        <div
+                          className={styles.PageTitleContent}
+                          title={item.url}
                         >
-                          {item.title}
-                        </a>
-                      </div>
-                      <div className={styles.PageMetaInfo}>
-                        {/* {item.duration &&
+                          <a
+                            href={item.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            {item.title}
+                          </a>
+                        </div>
+                        <div className={styles.PageMetaInfo}>
+                          {/* {item.duration &&
                           `${parseInt(
                             moment.duration(item.duration).asMinutes(),
                             10
                           )}m ${moment.duration(item.duration).seconds()}s`}
                         {!item.duration && `still open`} */}
-                        <React.Fragment>
-                          <div>{moment(item.creationDate).format('MMM D')}</div>
-                          <div>{moment(item.creationDate).format('h:mma')}</div>
-                        </React.Fragment>
+                          <React.Fragment>
+                            <div>
+                              {moment(item.creationDate).format('MMM D')}
+                            </div>
+                            <div>
+                              {moment(item.creationDate).format('h:mma')}
+                            </div>
+                          </React.Fragment>
+                        </div>
+                      </div>
+                      <div className={styles.PageSnippetsInfoContainer}>
+                        {numberOfOptions > 0 && (
+                          <span>
+                            <Avatar
+                              style={{
+                                backgroundColor: PIECE_COLOR.option,
+                                width: '18px',
+                                height: '18px',
+                                color: 'white'
+                              }}
+                              className={styles.Avatar}
+                            >
+                              <FaListUl className={styles.IconInsideAvatar} />
+                            </Avatar>
+                            {numberOfOptions} options
+                          </span>
+                        )}
+                        {numberOfCriteria > 0 && (
+                          <span>
+                            <Avatar
+                              style={{
+                                backgroundColor: PIECE_COLOR.criterion,
+                                width: '18px',
+                                height: '18px',
+                                color: 'white'
+                              }}
+                              className={styles.Avatar}
+                            >
+                              <FaFlagCheckered
+                                className={styles.IconInsideAvatar}
+                              />
+                            </Avatar>
+                            {numberOfCriteria} criteria
+                          </span>
+                        )}
+                        {numberOfSnippets > 0 && (
+                          <span>
+                            <Avatar
+                              style={{
+                                backgroundColor: PIECE_COLOR.snippet,
+                                width: '18px',
+                                height: '18px',
+                                color: 'white'
+                              }}
+                              className={styles.Avatar}
+                            >
+                              <FaBookmark className={styles.IconInsideAvatar} />
+                            </Avatar>
+                            {numberOfSnippets} ratings
+                          </span>
+                        )}
                       </div>
                     </div>
-                  </div>
-                  {/* {idx !== pages.length - 1 && <Divider light />} */}
+                    {/* {idx !== pages.length - 1 && <Divider light />} */}
+                  </ContextMenuTrigger>
+                  <ContextMenu id={`${item.id}-context-menu`}>
+                    <MenuItem onClick={e => this.removePage(e, item.id)}>
+                      Remove from table
+                    </MenuItem>
+                  </ContextMenu>
                 </React.Fragment>
               );
             })}
@@ -117,7 +210,9 @@ class DomainItem extends Component {
 class SourceDomainsView extends Component {
   state = {
     isSortByPopoverOpen: false,
-    isFilterByPopoverOpen: false
+
+    isFilterByPopoverOpen: false,
+    filterByShowAllPagesVisited: true
   };
 
   setIsSortByPopoverOpen = to => {
@@ -131,16 +226,22 @@ class SourceDomainsView extends Component {
   };
 
   render() {
+    const { filterByShowAllPagesVisited } = this.state;
     let { pages, pieces } = this.props;
 
     pages = pages.map(page => {
-      const piecesInPage = pieces
-        .filter(item => item.references.url === page.url)
-        .map(item => item.id);
+      const piecesInPage = pieces.filter(
+        item => item.references.url === page.url
+      );
+      // .map(item => item.id);
       page.piecesInPage = piecesInPage;
       page.piecesNumber = piecesInPage.length;
       return page;
     });
+
+    if (filterByShowAllPagesVisited === false) {
+      pages = pages.filter(page => page.piecesNumber > 0);
+    }
 
     let domains = [];
     pages.forEach(p => {
@@ -171,8 +272,8 @@ class SourceDomainsView extends Component {
 
     return (
       <div className={styles.SourceDomainsViewContainer}>
-        {/* <div className={styles.InfoBar}>
-          <Popover
+        <div className={styles.InfoBar}>
+          {/* <Popover
             isOpen={this.state.isSortByPopoverOpen}
             position={'bottom'}
             containerClassName={styles.PopoverContainer}
@@ -201,7 +302,7 @@ class SourceDomainsView extends Component {
             >
               Sort by
             </div>
-          </Popover>
+          </Popover> */}
 
           <Popover
             isOpen={this.state.isFilterByPopoverOpen}
@@ -218,9 +319,31 @@ class SourceDomainsView extends Component {
                 }
               >
                 <ul style={{ padding: 0 }}>
-                  {domains.map((d, idx) => (
-                    <li key={idx}> &#10003; {d.domain}</li>
-                  ))}
+                  <li
+                    style={{
+                      backgroundColor: filterByShowAllPagesVisited
+                        ? 'lightgreen'
+                        : null
+                    }}
+                    onClick={() => {
+                      this.setState({ filterByShowAllPagesVisited: true });
+                    }}
+                  >
+                    Show all visited pages
+                  </li>
+
+                  <li
+                    style={{
+                      backgroundColor: !filterByShowAllPagesVisited
+                        ? 'lightgreen'
+                        : null
+                    }}
+                    onClick={() => {
+                      this.setState({ filterByShowAllPagesVisited: false });
+                    }}
+                  >
+                    Only show the pages that have snippets
+                  </li>
                 </ul>
               </div>
             }
@@ -234,7 +357,8 @@ class SourceDomainsView extends Component {
               Filter
             </div>
           </Popover>
-        </div> */}
+        </div>
+
         <div className={styles.ListContainer}>
           {domains.map((item, idx) => {
             return (

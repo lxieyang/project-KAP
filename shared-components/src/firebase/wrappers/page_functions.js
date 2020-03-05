@@ -71,6 +71,13 @@ export const updatePageLeaveTimestampViaUrl = async url => {
   }
 };
 
+export const removeVisitedPageById = pageId => {
+  return db
+    .collection(DB_COLLECTIONS.WEBPAGES)
+    .doc(pageId)
+    .delete();
+};
+
 export const addPageToTask = async data => {
   const { url, title, parentUrl } = data;
 
