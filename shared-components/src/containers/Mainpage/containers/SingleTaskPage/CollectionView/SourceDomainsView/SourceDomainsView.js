@@ -85,7 +85,7 @@ class DomainItem extends Component {
         <Collapse isOpened={this.state.isOpen}>
           <div className={styles.DomainPagesContainer}>
             {pages.map((item, idx) => {
-              let progress = Math.round(Math.random() * 100) / 100;
+              let progress = item.scrollPercentage ? item.scrollPercentage : 0; // Math.round(Math.random() * 100) / 100;
               const numberOfOptions = item.piecesInPage.filter(
                 piece => piece.pieceType === PIECE_TYPES.option
               ).length;
@@ -95,6 +95,7 @@ class DomainItem extends Component {
               let numberOfSnippets = item.piecesInPage.filter(
                 piece => piece.pieceType === PIECE_TYPES.snippet
               ).length;
+
               return (
                 <React.Fragment key={idx}>
                   <ContextMenuTrigger
@@ -120,19 +121,19 @@ class DomainItem extends Component {
                           </a>
                         </div>
                         <div className={styles.PageMetaInfo}>
-                          {/* {item.duration &&
-                          `${parseInt(
-                            moment.duration(item.duration).asMinutes(),
-                            10
-                          )}m ${moment.duration(item.duration).seconds()}s`}
-                        {!item.duration && `still open`} */}
                           <React.Fragment>
                             <div>
                               {moment(item.creationDate).format('MMM D')}
                             </div>
-                            <div>
+                            {/* <div>
                               {moment(item.creationDate).format('h:mma')}
-                            </div>
+                            </div> */}
+                            {item.duration &&
+                              `${parseInt(
+                                moment.duration(item.duration).asMinutes(),
+                                10
+                              )}m ${moment.duration(item.duration).seconds()}s`}
+                            {!item.duration && `still open`}
                           </React.Fragment>
                         </div>
                       </div>

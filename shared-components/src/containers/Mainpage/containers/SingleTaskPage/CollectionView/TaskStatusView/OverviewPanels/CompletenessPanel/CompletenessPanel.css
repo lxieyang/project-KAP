@@ -1,90 +1,75 @@
-.SourceDomainsViewContainer {
+.PanelContainer {
   height: 100%;
   display: flex;
   flex-direction: column;
+  padding: 0px 5px 5px 5px;
 }
 
-.InfoBar {
-  display: flex;
-  justify-content: flex-end;
+.Section {
+  margin-bottom: 15px;
+}
+
+.SectionHeader {
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.ExplanationText {
   font-size: 12px;
+  color: gray;
+  font-style: italic;
+  margin-bottom: 5px;
+  line-height: 0.9rem;
 }
 
-.InfoItem {
-  margin: 0px 3px;
-  cursor: pointer;
-  transition: all 0.1s ease-in;
-  border-radius: 10px;
-  padding: 1px 6px;
-}
-
-.InfoItem:hover {
-  background-color: lightgray;
-}
-
-.PopoverContainer {
-  opacity: 1;
-  background-color: white;
-  border-radius: 5px;
-  border: 1px solid gray;
-  padding: 0px 8px;
-}
-
-.ListContainer {
-  flex: 1;
-  overflow: scroll;
-}
-
-.SourceDomainItemContainer {
-  padding: 10px;
-  width: 100%;
-  box-sizing: border-box;
-
-  transition: all 0.1s ease-in;
-}
-
-/* .SourceDomainItemContainer:hover {
-  background-color: lightgray;
-} */
-
-.DomainNameContainer {
+.ListItem {
   display: flex;
   align-items: center;
+  margin: 8px 0px;
+  padding: 4px 6px;
+  border-radius: 5px;
+  box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.1);
 }
 
-.DomainIcon {
-  width: 28px;
-  height: 28px;
-  margin-right: 6px;
+.ItemIcon {
+  flex-shrink: 0;
+  width: 14px;
+  height: 14px;
+  margin-right: 4px;
 }
 
-.DomainTitle {
-  font-size: 18px;
-  font-weight: 500;
-  margin-right: 5px;
+.Avatar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-right: 4px;
 }
 
-.DomainStats {
+.IconInsideAvatar {
+  font-size: 10px;
+}
+
+.ItemContent {
+  font-weight: 400;
+  color: #333;
+}
+
+.ItemInlineInfo {
+  margin-left: 6px;
   font-size: 12px;
   color: gray;
 }
 
-.CollapseIcon {
+.ItemMetaInfo {
   flex-shrink: 0;
-  width: 20px;
-  height: 20px;
+  margin-left: 4px;
+  font-size: 10px;
   color: gray;
-  cursor: pointer;
-}
-
-.DomainPagesContainer {
-  margin-top: 5px;
-  margin-left: 20px;
 }
 
 .PageItemContainer {
   /* background-color: lightgray; */
-  margin: 12px 0px;
+  margin: 12px 6px;
   border-radius: 5px;
   box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.2);
   transition: all 0.1s ease-in;
@@ -102,11 +87,12 @@
 .PageNameContainer {
   display: flex;
   align-items: center;
-  padding: 3px 8px 5px 10px;
+  padding: 3px 8px 5px 4px;
 }
 
 .PageTitleContent {
   flex: 1;
+  font-size: 13px;
 }
 
 .PageTitleContent a {
@@ -126,7 +112,7 @@
 }
 
 .PageSnippetsInfoContainer {
-  margin-left: 10px;
+  margin-left: 20px;
   padding: 0px 10px 6px 0px;
 }
 

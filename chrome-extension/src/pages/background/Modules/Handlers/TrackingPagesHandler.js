@@ -47,7 +47,7 @@ gatherTabInfo();
  * - google tab
  */
 const keepTrackOfWebpage = (parentUrl, url, title) => {
-  if (url.indexOf('chrome://newtab') !== -1) {
+  if (url.indexOf('chrome://') !== -1) {
     return;
   }
   if (url.indexOf('localhost') !== -1) {
@@ -56,7 +56,7 @@ const keepTrackOfWebpage = (parentUrl, url, title) => {
   if (url.indexOf('www.google.com') !== -1) {
     return;
   }
-  if (parentUrl.indexOf('chrome://newtab') !== -1) {
+  if (parentUrl.indexOf('chrome://') !== -1) {
     parentUrl = null;
   }
   if (parentUrl.indexOf('localhost') !== -1) {
@@ -116,4 +116,19 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
 
 chrome.tabs.onRemoved.addListener((tabId, removeInfo) => {
   FirestoreManager.updatePageLeaveTimestampViaUrl(allTabs[tabId].url);
+});
+
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+  if (request.msg === 'PAGE_LOADED') {
+    let { url, scrollPercentage } = request.payload;
+    url = getPureUrlWithoutHash(url);
+    // reset scroll position
+    FirestoreManager.resetPageScrollPercentageViaUrl(url, scrollPercentage);
+  }
+  if (request.msg === 'PAGE_SCROLLED') {
+    let { url, scrollPercentage } = request.payload;
+    url = getPureUrlWithoutHash(url);
+    // update scroll position
+    FirestoreManager.updatePageScrollPercentageViaUrl(url, scrollPercentage);
+  }
 });

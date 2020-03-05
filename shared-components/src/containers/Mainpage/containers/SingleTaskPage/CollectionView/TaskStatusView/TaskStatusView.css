@@ -96,3 +96,50 @@
   max-height: 400px;
   overflow: auto;
 }
+
+.OverviewModal {
+  position: absolute;
+  top: 80px;
+  left: 80px;
+  right: 80px;
+  bottom: 80px;
+  padding: 20px;
+  border: 1px solid lightgray;
+  border-radius: 5px;
+  background-color: white;
+}
+
+.OverviewModal:focus {
+  outline: none;
+}
+
+.OverviewModalOverlay {
+}
+
+.TaskOverviewContainer {
+  max-height: 600px;
+
+  /* height: 400px; */
+
+  display: flex;
+  flex-direction: column;
+}
+
+.OverviewTitle {
+  margin-left: 5px;
+  font-weight: 600;
+  font-size: 18px;
+  color: rgb(92, 92, 92);
+}
+
+.TabLabelContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.TabLabelIcon {
+  flex-shrink: 0;
+  font-size: 12px;
+  margin-right: 4px;
+}

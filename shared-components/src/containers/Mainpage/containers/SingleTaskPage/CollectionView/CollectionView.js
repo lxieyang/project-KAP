@@ -158,7 +158,12 @@ class CollectionView extends Component {
 
     return (
       <React.Fragment>
-        <TaskStatusView userId={this.props.userId} />
+        <TaskStatusView
+          userId={this.props.userId}
+          queries={this.state.searchQueries}
+          pages={this.state.visitedPages}
+          pieces={this.state.pieces}
+        />
         <Divider light />
 
         <Tabs
@@ -167,7 +172,6 @@ class CollectionView extends Component {
           textColor="primary"
           variant="fullWidth"
           onChange={this.handleChange}
-          aria-label="disabled tabs example"
         >
           <StyledTab
             label={

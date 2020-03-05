@@ -1,5 +1,6 @@
 /* global chrome */
 import $ from 'jquery';
+import { debounce } from 'lodash';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import ScreenshotModal from './components/ScreenshotModal';
@@ -364,3 +365,26 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     Frame.toggle();
   }
 });
+
+chrome.runtime.sendMessage({
+  msg: 'PAGE_LOADED',
+  payload: {
+    url: window.location.href,
+    scrollPercentage:
+      ($(document).scrollTop() + window.innerHeight) / $(document).height()
+  }
+});
+
+document.addEventListener(
+  'scroll',
+  debounce(event => {
+    chrome.runtime.sendMessage({
+      msg: 'PAGE_SCROLLED',
+      payload: {
+        url: window.location.href,
+        scrollPercentage:
+          ($(document).scrollTop() + window.innerHeight) / $(document).height()
+      }
+    });
+  }, 100)
+);

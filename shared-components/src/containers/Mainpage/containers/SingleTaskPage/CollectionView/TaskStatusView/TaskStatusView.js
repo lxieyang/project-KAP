@@ -14,8 +14,14 @@ import Link from 'mdi-material-ui/Link';
 import StarOutline from 'mdi-material-ui/StarOutline';
 import Collapse from '@material-ui/core/Collapse';
 import Tooltip from '@material-ui/core/Tooltip';
+import Divider from '@material-ui/core/Divider';
+import SwipeableViews from 'react-swipeable-views';
+import Tabs from '@material-ui/core/Tabs';
+import Tab from '@material-ui/core/Tab';
+import Typography from '@material-ui/core/Typography';
 
-import { FaClipboardList } from 'react-icons/fa';
+import { FaClipboardList, FaMedal } from 'react-icons/fa';
+import { GoPackage, GoTasklist } from 'react-icons/go';
 
 import { ToastContainer, toast, Flip } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -23,6 +29,12 @@ import { CopyToClipboard } from 'react-copy-to-clipboard';
 
 import Textarea from 'react-textarea-autosize';
 import TaskComments from './TaskComments/TaskComments';
+
+import Modal from 'react-modal';
+
+import ContextPanel from './OverviewPanels/ContextPanel/ContextPanel';
+import TrustPanel from './OverviewPanels/TrustPanel/TrustPanel';
+import CompletenessPanel from './OverviewPanels/CompletenessPanel/CompletenessPanel';
 
 const materialStyles = theme => ({
   iconButtons: {
@@ -37,6 +49,38 @@ const materialStyles = theme => ({
     padding: theme.spacing.unit / 2
   }
 });
+
+const StyledTab = withStyles({
+  root: {
+    minWidth: 40,
+    minHeight: 30
+  },
+  label: {
+    fontSize: '12px',
+    textTransform: 'capitalize',
+    overflow: 'hidden'
+  },
+  labelContainer: {
+    padding: '4px 3px'
+  }
+})(Tab);
+
+function TabPanel(props) {
+  const { children, value, index, ...other } = props;
+
+  return (
+    <Typography
+      component="div"
+      role="tabpanel"
+      hidden={value !== index}
+      id={`full-width-tabpanel-${index}`}
+      {...other}
+      style={{ height: '100%' }}
+    >
+      {value === index && <React.Fragment>{children}</React.Fragment>}
+    </Typography>
+  );
+}
 
 class TaskStatusView extends Component {
   state = {
@@ -53,7 +97,16 @@ class TaskStatusView extends Component {
     commentsExpanded: false,
 
     // author detail
-    author: null
+    author: null,
+
+    overviewModalIsOpen: true, // not in use
+
+    overviewExpanded: true,
+    overviewTabValue: 0
+  };
+
+  handleTabChange = (event, newValue) => {
+    this.setState({ overviewTabValue: newValue });
   };
 
   componentDidMount() {
@@ -80,6 +133,12 @@ class TaskStatusView extends Component {
       return {
         commentsExpanded: !prevState.commentsExpanded
       };
+    });
+  };
+
+  toggleOverviewExpandedStatus = () => {
+    this.setState(prevState => {
+      return { overviewExpanded: !prevState.overviewExpanded };
     });
   };
 
@@ -158,6 +217,14 @@ class TaskStatusView extends Component {
         draggable: false
       }
     );
+  };
+
+  handleOverviewModalOpen = e => {
+    this.setState({ overviewModalIsOpen: true });
+  };
+
+  handleOverviewModalClose = e => {
+    this.setState({ overviewModalIsOpen: false });
   };
 
   render() {
@@ -244,7 +311,7 @@ class TaskStatusView extends Component {
             />
           </div>
 
-          <div style={{ position: 'relative' }}>
+          {/* <div style={{ position: 'relative' }}>
             <Tooltip
               title={
                 this.state.currentTaskCommentsCount > 0
@@ -276,7 +343,7 @@ class TaskStatusView extends Component {
                 ? this.state.currentTaskCommentsCount
                 : null}
             </span>
-          </div>
+          </div> */}
 
           {editAccess && (
             <React.Fragment>
@@ -307,22 +374,122 @@ class TaskStatusView extends Component {
             </React.Fragment>
           )}
 
-          <Tooltip title={`See Overview`} placement={'bottom'}>
-            <IconButton aria-label="Share" className={classes.iconButtons}>
+          {/* <Tooltip title={`See Overview`} placement={'bottom'}>
+            <IconButton
+              aria-label="Share"
+              className={classes.iconButtons}
+              onClick={e => this.handleOverviewModalOpen(e)}
+            >
+              <FaClipboardList className={classes.iconInIconButtons} />
+            </IconButton>
+          </Tooltip> */}
+
+          <Tooltip
+            title={
+              this.state.overviewExpanded ? 'Hide Overview' : 'Show Overview'
+            }
+            placement={'bottom'}
+          >
+            <IconButton
+              style={{
+                backgroundColor: this.state.overviewExpanded
+                  ? 'rgb(235, 235, 235)'
+                  : null
+              }}
+              className={classes.iconButtons}
+              onClick={() => this.toggleOverviewExpandedStatus()}
+            >
               <FaClipboardList className={classes.iconInIconButtons} />
             </IconButton>
           </Tooltip>
         </div>
-        <Collapse in={this.state.commentsExpanded} timeout="auto">
+
+        {/* <Collapse in={this.state.commentsExpanded} timeout="auto">
           <div className={styles.TaskCommentsContainer}>
-            <TaskComments
-              currentAuthor={FirestoreManager.getCurrentUser()}
-              taskId={this.state.task.id}
-              commentAccess={commentAccess}
-              setCurrentTaskCommentsCount={this.setCurrentTaskCommentsCount}
-            />
+            <TaskComments currentAuthor={FirestoreManager.getCurrentUser()} taskId={this.state.task.id} commentAccess={commentAccess} setCurrentTaskCommentsCount={this.setCurrentTaskCommentsCount} />
+          </div>
+        </Collapse> */}
+
+        <Collapse in={this.state.overviewExpanded} timeout="auto">
+          <div className={styles.TaskOverviewContainer}>
+            <div className={styles.OverviewTitle}>Overview</div>
+            <Tabs
+              value={this.state.overviewTabValue}
+              indicatorColor="secondary"
+              textColor="inherit"
+              variant="fullWidth"
+              style={{ minHeight: 36 }}
+              onChange={
+                this.handleTabChange // style={{ color: 'black' }}
+              }
+            >
+              <StyledTab
+                label={
+                  <div className={styles.TabLabelContainer}>
+                    <GoPackage className={styles.TabLabelIcon} />
+                    Task Context
+                  </div>
+                }
+              />
+              <StyledTab
+                label={
+                  <div className={styles.TabLabelContainer}>
+                    <FaMedal className={styles.TabLabelIcon} />
+                    Trustworthiness
+                  </div>
+                }
+              />
+              <StyledTab
+                label={
+                  <div className={styles.TabLabelContainer}>
+                    <GoTasklist className={styles.TabLabelIcon} />
+                    Thoroughness
+                  </div>
+                }
+              />
+            </Tabs>
+            <SwipeableViews
+              index={this.state.overviewTabValue}
+              onChangeIndex={this.handleTabChange}
+              style={{ flex: 1 }}
+              containerStyle={{ height: '100%' }}
+              disableLazyLoading
+            >
+              <TabPanel value={this.state.overviewTabValue} index={0}>
+                <ContextPanel
+                  queries={this.props.queries}
+                  pages={this.props.pages}
+                  pieces={this.props.pieces}
+                />
+              </TabPanel>
+              <TabPanel value={this.state.overviewTabValue} index={1}>
+                <TrustPanel
+                  queries={this.props.queries}
+                  pages={this.props.pages}
+                  pieces={this.props.pieces}
+                />
+              </TabPanel>
+              <TabPanel value={this.state.overviewTabValue} index={2}>
+                <CompletenessPanel
+                  queries={this.props.queries}
+                  pages={this.props.pages}
+                  pieces={this.props.pieces}
+                />
+              </TabPanel>
+            </SwipeableViews>
           </div>
         </Collapse>
+
+        {/* <Modal
+          isOpen={this.state.overviewModalIsOpen}
+          ariaHideApp={false}
+          contentLabel="Overview"
+          onRequestClose={e => this.handleOverviewModalClose(e)}
+          className={styles.OverviewModal}
+        >
+          // overlayClassName={styles.OverviewModalOverlay}
+          hahaha
+        </Modal> */}
       </React.Fragment>
     );
   }

@@ -156,7 +156,8 @@ class SourceQueriesView extends Component {
                 <div className={styles.NameContainer}>
                   <AiOutlineSearch className={styles.ItemIcon} />
                   <div className={styles.QueryContent}>
-                    {item.query} {item.visitedPages.length}
+                    {item.query}
+                    {/* {item.visitedPages.length} */}
                   </div>
                   <div style={{ flex: 1 }} />
                   <div className={styles.TimeContainer}>

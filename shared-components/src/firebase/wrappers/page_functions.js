@@ -71,6 +71,42 @@ export const updatePageLeaveTimestampViaUrl = async url => {
   }
 };
 
+export const resetPageScrollPercentageViaUrl = async (
+  url,
+  scrollPercentage
+) => {
+  let currentTaskId = (await getCurrentUserCurrentTaskId().get()).data().id;
+
+  const parentQuerySnapshot = await getPageInTaskByUrl(
+    currentTaskId,
+    url
+  ).get();
+  if (!parentQuerySnapshot.empty) {
+    parentQuerySnapshot.docs[0].ref.update({
+      scrollPercentage
+    });
+  }
+};
+
+export const updatePageScrollPercentageViaUrl = async (
+  url,
+  scrollPercentage
+) => {
+  let currentTaskId = (await getCurrentUserCurrentTaskId().get()).data().id;
+
+  const parentQuerySnapshot = await getPageInTaskByUrl(
+    currentTaskId,
+    url
+  ).get();
+  if (!parentQuerySnapshot.empty) {
+    let data = parentQuerySnapshot.docs[0].data();
+    let previousPercentage = data.scrollPercentage ? data.scrollPercentage : 0;
+    if (scrollPercentage >= previousPercentage) {
+      parentQuerySnapshot.docs[0].ref.update({ scrollPercentage });
+    }
+  }
+};
+
 export const removeVisitedPageById = pageId => {
   return db
     .collection(DB_COLLECTIONS.WEBPAGES)
@@ -123,6 +159,7 @@ export const addPageToTask = async data => {
     leaveDate: null,
     url: url,
     title: title,
+    scrollPercentage: 0,
     references: { searchQuery: false, parent: parent, task: currentTaskId }
   };
 
