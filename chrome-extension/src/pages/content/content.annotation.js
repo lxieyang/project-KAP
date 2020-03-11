@@ -411,8 +411,8 @@ const isElementInViewport = el => {
 
 if (url.includes('stackoverflow.com/questions/')) {
   try {
-    const hits = $("*:contains('numpy matrices')");
-    console.log(hits);
+    // const hits = $("*:contains('numpy matrices')");
+    // console.log(hits);
 
     const el = document.elementFromPoint(
       $(window).width() / 2,
@@ -453,6 +453,36 @@ if (url.includes('stackoverflow.com/questions/')) {
 
     console.log(
       htmls.reduce((acc, h) => {
+        return acc + h;
+      }, '')
+    );
+  } catch (err) {
+    console.log(err);
+  }
+} else {
+  try {
+    const windowHeight =
+      window.innerHeight || document.documentElement.clientHeight;
+    let el = document.elementFromPoint(
+      $(window).width() / 2,
+      $(window).height() / 3
+    );
+
+    el.classList.add('kap-approx-focus');
+    // console.log(el);
+    const elbb = el.getBoundingClientRect();
+    let rect = {
+      top: 0,
+      bottom: windowHeight,
+      left: elbb.left,
+      right: elbb.right,
+      width: elbb.width,
+      height: windowHeight
+    };
+    // console.log(rect);
+    const visiblePartHTML = new Snippet(rect).html;
+    console.log(
+      visiblePartHTML.reduce((acc, h) => {
         return acc + h;
       }, '')
     );
