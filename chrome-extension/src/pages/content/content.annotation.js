@@ -11,7 +11,8 @@ import SelectTooltipButton from './SelectTooltipButton/SelectTooltipButton';
 import SiphonTools from 'siphon-tools';
 import {
   HighlightSelector,
-  SnippetSelector
+  SnippetSelector,
+  Snippet
   // Store
 } from 'siphon-tools';
 
@@ -388,3 +389,74 @@ document.addEventListener(
     });
   }, 100)
 );
+
+/**
+ * Embeddable context object
+ */
+
+const url = window.location.href;
+
+const isElementInViewport = el => {
+  // Special bonus for those using jQuery
+  if (typeof $ === 'function' && el instanceof $) {
+    el = el[0];
+  }
+  const bound = 80;
+  const windowHeight =
+    window.innerHeight || document.documentElement.clientHeight;
+  let rect = el.getBoundingClientRect();
+
+  return !(rect.bottom < bound || rect.top > windowHeight - bound); // only checking top and bottom
+};
+
+if (url.includes('stackoverflow.com/questions/')) {
+  try {
+    const hits = $("*:contains('numpy matrices')");
+    console.log(hits);
+
+    const el = document.elementFromPoint(
+      $(window).width() / 2,
+      $(window).height() / 3
+    );
+
+    el.classList.add('kap-approx-focus');
+    console.log(el);
+
+    /**
+     *
+     *
+     *
+     *
+     */
+    let htmls = [];
+    const questionHeader = new Snippet(
+      $('#question-header h1')[0].getBoundingClientRect()
+    );
+    htmls = htmls.concat(questionHeader.html);
+
+    const questionStats = new Snippet(
+      $('.inner-content .grid.fw-wrap')[0].getBoundingClientRect()
+    );
+    htmls = htmls.concat(questionStats.html);
+
+    const question = new Snippet($('.question')[0].getBoundingClientRect());
+    htmls = htmls.concat(question.html);
+
+    const answers = $('.answer');
+    answers.each((idx, answer) => {
+      // console.log(isElementInViewport(answer));
+      if (isElementInViewport(answer)) {
+        answer = new Snippet(answer.getBoundingClientRect());
+        htmls = htmls.concat(answer.html);
+      }
+    });
+
+    console.log(
+      htmls.reduce((acc, h) => {
+        return acc + h;
+      }, '')
+    );
+  } catch (err) {
+    console.log(err);
+  }
+}

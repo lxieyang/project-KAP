@@ -1,0 +1,8 @@
+.TooltipContainer {
+  padding: 2px 6px;
+  max-width: 300px;
+  font-size: 11px;
+  font-style: italic;
+  line-height: 1rem;
+  z-index: 999999999;
+}

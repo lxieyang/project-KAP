@@ -36,6 +36,7 @@ import Popover from 'react-tiny-popover';
 import fasMore from '@fortawesome/fontawesome-free-solid/faEllipsisV';
 
 
+
 const getHTML = (htmls) => {
   let htmlString = ``;
   if (htmls !== undefined) {

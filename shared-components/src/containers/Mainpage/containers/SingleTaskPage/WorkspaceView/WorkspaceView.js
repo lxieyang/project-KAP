@@ -52,6 +52,9 @@ const WorkspaceContentContainer = styled.div`
 `;
 
 const StyledTab = withStyles({
+  root: {
+    maxWidth: 600
+  },
   label: {
     textTransform: 'capitalize',
     overflow: 'hidden'

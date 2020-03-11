@@ -19,6 +19,16 @@ import './Modules/ScreenshotSupport';
 import './Modules/Misc';
 import './Modules/GA';
 
+// import axios from 'axios';
+
+// axios
+//   .get(
+//     'http://suggestqueries.google.com/complete/search?client=chrome&q=react vs'
+//   )
+//   .then(result => {
+//     console.log(result.data[1]);
+//   });
+
 window.FirestoreManager = FirestoreManager;
 window.firebase = firebase;
 

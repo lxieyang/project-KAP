@@ -12,6 +12,8 @@ import { FaFlagCheckered, FaListUl, FaBookmark } from 'react-icons/fa';
 import { PIECE_TYPES } from '../../../../../../../../shared/types';
 import { PIECE_COLOR } from '../../../../../../../../shared/theme';
 
+import InfoTooltip from '../components/InfoTooltip/InfoTooltip';
+
 class ContextPanel extends Component {
   state = {};
 
@@ -36,10 +38,12 @@ class ContextPanel extends Component {
     return (
       <div className={styles.PanelContainer}>
         <div className={styles.Section}>
-          <div className={styles.SectionHeader}>Goal</div>
-          <div className={styles.ExplanationText}>
-            This is the goal of the author (default is the first search query
-            that the author used unless the author specifically edited it).
+          <div className={styles.SectionHeader}>
+            Goal{' '}
+            <InfoTooltip id={'goal'}>
+              This is the goal of the author (default is the first search query
+              that the author used unless the author specifically edited it)
+            </InfoTooltip>
           </div>
           <div>The author wanted to find out: </div>
           <div className={styles.ListItem}>
@@ -49,10 +53,13 @@ class ContextPanel extends Component {
         </div>
 
         <div className={styles.Section}>
-          <div className={styles.SectionHeader}>Queries</div>
-          <div className={styles.ExplanationText}>
-            These are the top search queries that the author used.
+          <div className={styles.SectionHeader}>
+            Queries{' '}
+            <InfoTooltip id={'query'}>
+              These are the top search queries that the author used.
+            </InfoTooltip>
           </div>
+
           <div>
             {queriesToDisplay.map((item, idx) => {
               return (
@@ -68,10 +75,13 @@ class ContextPanel extends Component {
         </div>
 
         <div className={styles.Section}>
-          <div className={styles.SectionHeader}>Criteria</div>
-          <div className={styles.ExplanationText}>
-            These are the criteria that the author found.
+          <div className={styles.SectionHeader}>
+            Criteria{' '}
+            <InfoTooltip id={'criteria'}>
+              These are the top search queries that the author used.
+            </InfoTooltip>
           </div>
+
           <div>
             {displayPieces.map((item, idx) => {
               return (

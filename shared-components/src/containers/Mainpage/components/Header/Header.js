@@ -25,13 +25,13 @@ import * as appRoutes from '../../../../shared/routes';
 
 const materialStyles = {
   toolbar: {
-    minHeight: 40,
+    minHeight: 32,
     paddingLeft: 16,
     paddingRight: 12
   },
   appAvatar: {
-    width: 30,
-    height: 30
+    width: 24,
+    height: 24
   },
   grow: {
     flexGrow: 1
@@ -49,8 +49,8 @@ const materialStyles = {
     margin: '4px 4px'
   },
   userAvatar: {
-    width: 22,
-    height: 22,
+    width: 24,
+    height: 24,
     marginRight: 4
   },
   username: {

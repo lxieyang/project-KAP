@@ -167,6 +167,8 @@
   padding-left: 8px;
   padding-right: 6px;
   border-left: 2px solid rgb(224, 226, 229);
+
+  position: relative;
 }
 
 .HTMLPreview {

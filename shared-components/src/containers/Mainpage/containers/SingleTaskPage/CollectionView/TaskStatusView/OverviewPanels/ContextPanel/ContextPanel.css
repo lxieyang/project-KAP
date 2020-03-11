@@ -12,6 +12,8 @@
 .SectionHeader {
   font-size: 16px;
   font-weight: 700;
+  display: flex;
+  align-items: center;
 }
 
 .ExplanationText {
