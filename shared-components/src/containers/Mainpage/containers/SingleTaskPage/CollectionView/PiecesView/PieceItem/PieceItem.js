@@ -190,6 +190,9 @@ class PieceItem extends Component {
       this.props.piece.shouldUseScreenshot &&
       this.props.piece.annotationType === ANNOTATION_TYPES.Snippet,
 
+    // context object control
+    displayingContext: false,
+
     // comment
     commentCount: 0
   };
@@ -205,6 +208,17 @@ class PieceItem extends Component {
     this.setState(prevState => {
       return { displayingScreenshot: !prevState.displayingScreenshot };
     });
+  };
+
+  switchShouldDisplayContext = e => {
+    e.stopPropagation();
+    this.setState(prevState => {
+      return { displayingContext: !prevState.displayingContext };
+    });
+
+    setTimeout(() => {
+      this.findingHTMLFocus();
+    }, 500);
   };
 
   componentDidMount() {
@@ -247,15 +261,8 @@ class PieceItem extends Component {
     }, 1000);
 
     setTimeout(() => {
-      const elem = document.querySelector(
-        `[id='${this.props.piece.id}-html'] .kap-approx-focus`
-      );
-      if (elem) {
-        // console.log(elem.offsetParent);
-        this.htmlRef.current.scrollTop = elem.offsetTop;
-        // console.log(this.htmlRef.current.scrollTop);
-      }
-    }, 1000);
+      this.findingHTMLFocus();
+    }, 10);
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -272,6 +279,21 @@ class PieceItem extends Component {
     this.unsubscribeScreenshot();
     this.unsubscribeAllComments();
   }
+
+  findingHTMLFocus = () => {
+    const elem = document.querySelector(
+      `[id='${this.props.piece.id}-html'] .kap-approx-focus`
+    );
+    if (elem) {
+      // console.log(elem.offsetParent);
+      // this.htmlRef.current.scrollTop = elem.offsetTop;
+      this.htmlRef.current.scrollBy({
+        top: elem.offsetTop,
+        left: 0,
+        behavior: 'smooth'
+      });
+    }
+  };
 
   // also allow Enter to submit
   keyPress(e) {
@@ -378,6 +400,7 @@ class PieceItem extends Component {
       screenshot,
       screenshotLoading,
       displayingScreenshot,
+      displayingContext,
       commentCount
     } = this.state;
 
@@ -792,6 +815,35 @@ class PieceItem extends Component {
                         </div>
                       )}
 
+                    {this.props.isDemoTask &&
+                      (piece.annotationType === ANNOTATION_TYPES.Snippet ||
+                        piece.annotationType ===
+                          ANNOTATION_TYPES.Highlight) && (
+                        <div>
+                          <div
+                            onClick={e => e.stopPropagation()}
+                            style={{ fontSize: '13px', marginLeft: '4px' }}
+                          >
+                            <Chip
+                              style={{ height: 24 }}
+                              label={
+                                displayingContext
+                                  ? 'Showing snippet context'
+                                  : 'Showing captured snippet'
+                              }
+                            />
+
+                            {context_object && (
+                              <Switch
+                                onClick={e => e.stopPropagation()}
+                                checked={displayingContext}
+                                onChange={this.switchShouldDisplayContext}
+                              />
+                            )}
+                          </div>
+                        </div>
+                      )}
+
                     {piece.annotationType === ANNOTATION_TYPES.Snippet &&
                     displayingScreenshot ? (
                       screenshotLoading ? (
@@ -841,7 +893,11 @@ class PieceItem extends Component {
                         <div
                           id={`${piece.id}-html`}
                           className={[classesInCSS.HTMLPreview].join(' ')}
-                          dangerouslySetInnerHTML={getHTML(piece.html)}
+                          dangerouslySetInnerHTML={getHTML(
+                            displayingContext
+                              ? context_object.contextHTML
+                              : piece.html
+                          )}
                         />
                       </div>
                     )}

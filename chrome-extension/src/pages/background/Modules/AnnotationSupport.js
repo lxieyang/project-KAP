@@ -80,6 +80,8 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       timer
     } = request.payload;
 
+    const tabId = sender.tab.id;
+
     FirestoreManager.createPiece(
       annotation,
       contextData,
@@ -93,6 +95,14 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         //   success: true
         // });
         showSuccessStatusInIconBadge(true);
+
+        chrome.tabs.sendMessage(tabId, {
+          msg: 'shouldGetContext',
+          payload: {
+            type: 'piece',
+            pieceId
+          }
+        });
 
         if (type === PIECE_TYPES.option) {
           FirestoreManager.putOptionIntoDefaultTable({

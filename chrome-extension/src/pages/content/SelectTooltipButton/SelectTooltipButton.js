@@ -118,8 +118,18 @@ class SelectTooltipButton extends Component {
         annotation = new Snippet(
           this.props.captureWindow.getBoundingClientRect()
         );
+
         answerMetaInfo = getAnswerInfoOnStackOverflow(annotation.anchor);
         const nodes = annotation.nodes;
+
+        /** context object support */
+        if (nodes.length > 0) {
+          let focusElement = nodes[0];
+          $(focusElement).addClass('kap-approx-focus');
+          // console.log(focusElement);
+        }
+
+        /** code snippets support */
         let codeSnippets = [];
         nodes.forEach(node => {
           if (node.nodeName === 'PRE') {
