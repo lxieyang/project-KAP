@@ -394,8 +394,6 @@ document.addEventListener(
  * Embeddable context object
  */
 
-const url = window.location.href;
-
 const isElementInViewport = el => {
   // Special bonus for those using jQuery
   if (typeof $ === 'function' && el instanceof $) {
@@ -409,84 +407,111 @@ const isElementInViewport = el => {
   return !(rect.bottom < bound || rect.top > windowHeight - bound); // only checking top and bottom
 };
 
-if (url.includes('stackoverflow.com/questions/')) {
-  try {
-    // const hits = $("*:contains('numpy matrices')");
-    // console.log(hits);
+const grabContext = () => {
+  const url = window.location.href;
+  if (url.includes('stackoverflow.com/questions/')) {
+    try {
+      // const hits = $("*:contains('numpy matrices')");
+      // console.log(hits);
 
-    const el = document.elementFromPoint(
-      $(window).width() / 2,
-      $(window).height() / 3
-    );
+      const el = document.elementFromPoint(
+        $(window).width() / 2,
+        $(window).height() / 3
+      );
 
-    el.classList.add('kap-approx-focus');
-    console.log(el);
+      el.classList.add('kap-approx-focus');
+      console.log(el);
 
-    /**
-     *
-     *
-     *
-     *
-     */
-    let htmls = [];
-    const questionHeader = new Snippet(
-      $('#question-header h1')[0].getBoundingClientRect()
-    );
-    htmls = htmls.concat(questionHeader.html);
+      let htmls = [];
+      const questionHeader = new Snippet(
+        $('#question-header h1')[0].getBoundingClientRect()
+      );
+      htmls = htmls.concat(questionHeader.html);
 
-    const questionStats = new Snippet(
-      $('.inner-content .grid.fw-wrap')[0].getBoundingClientRect()
-    );
-    htmls = htmls.concat(questionStats.html);
+      const questionStats = new Snippet(
+        $('.inner-content .grid.fw-wrap')[0].getBoundingClientRect()
+      );
+      htmls = htmls.concat(questionStats.html);
 
-    const question = new Snippet($('.question')[0].getBoundingClientRect());
-    htmls = htmls.concat(question.html);
+      const question = new Snippet($('.question')[0].getBoundingClientRect());
+      htmls = htmls.concat(question.html);
 
-    const answers = $('.answer');
-    answers.each((idx, answer) => {
-      // console.log(isElementInViewport(answer));
-      if (isElementInViewport(answer)) {
-        answer = new Snippet(answer.getBoundingClientRect());
-        htmls = htmls.concat(answer.html);
+      const answers = $('.answer');
+      answers.each((idx, answer) => {
+        // console.log(isElementInViewport(answer));
+        if (isElementInViewport(answer)) {
+          answer = new Snippet(answer.getBoundingClientRect());
+          htmls = htmls.concat(answer.html);
+        }
+      });
+
+      console.log(
+        htmls.reduce((acc, h) => {
+          return acc + h;
+        }, '')
+      );
+      return htmls;
+    } catch (err) {
+      console.log(err);
+    }
+  } else {
+    try {
+      const windowHeight =
+        window.innerHeight || document.documentElement.clientHeight;
+      let el = document.elementFromPoint(
+        $(window).width() / 2,
+        $(window).height() / 3
+      );
+
+      el.classList.add('kap-approx-focus');
+      // console.log(el);
+      const elbb = el.getBoundingClientRect();
+      let rect = {
+        top: 0,
+        bottom: windowHeight,
+        left: elbb.left,
+        right: elbb.right,
+        width: elbb.width,
+        height: windowHeight
+      };
+      // console.log(rect);
+      const visiblePartHTML = new Snippet(rect).html;
+      console.log(
+        visiblePartHTML.reduce((acc, h) => {
+          return acc + h;
+        }, '')
+      );
+
+      return visiblePartHTML;
+    } catch (err) {
+      console.log(err);
+    }
+  }
+};
+
+// setTimeout(() => {
+//   grabContext();
+// }, 3000);
+
+window.addEventListener(
+  'message',
+  e => {
+    const request = e.data;
+    if (request.msg === 'shouldGetContext') {
+      if (request.type === 'piece') {
+        const { pieceId } = request;
+        const contextHTML = grabContext();
+        chrome.runtime.sendMessage({
+          msg: 'SHOULD_STORE_CONTEXT',
+          payload: {
+            contextHTML,
+            url: window.location.href,
+            type: 'piece',
+            pieceId
+          }
+        });
       }
-    });
-
-    console.log(
-      htmls.reduce((acc, h) => {
-        return acc + h;
-      }, '')
-    );
-  } catch (err) {
-    console.log(err);
-  }
-} else {
-  try {
-    const windowHeight =
-      window.innerHeight || document.documentElement.clientHeight;
-    let el = document.elementFromPoint(
-      $(window).width() / 2,
-      $(window).height() / 3
-    );
-
-    el.classList.add('kap-approx-focus');
-    // console.log(el);
-    const elbb = el.getBoundingClientRect();
-    let rect = {
-      top: 0,
-      bottom: windowHeight,
-      left: elbb.left,
-      right: elbb.right,
-      width: elbb.width,
-      height: windowHeight
-    };
-    // console.log(rect);
-    const visiblePartHTML = new Snippet(rect).html;
-    console.log(
-      visiblePartHTML.reduce((acc, h) => {
-        return acc + h;
-      }, '')
-    );
-  } catch (err) {
-    console.log(err);
-  }
-}
+    }
+  },
+  false
+);

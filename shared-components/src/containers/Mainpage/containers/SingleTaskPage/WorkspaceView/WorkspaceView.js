@@ -71,6 +71,9 @@ class WorkspaceView extends Component {
     // pieces
     pieces: null,
 
+    // context objects
+    context_objects: [],
+
     // edit access
     taskId: '',
     editAccess: false
@@ -135,6 +138,20 @@ class WorkspaceView extends Component {
       // });
 
       this.setState({ pieces });
+    });
+
+    if (this.unsubscribeContectObjects) this.unsubscribeContectObjects();
+    this.unsubscribeContectObjects = FirestoreManager.getAllContextObjectsInTask(
+      taskId
+    ).onSnapshot(querySnapshot => {
+      let context_objects = [];
+      querySnapshot.forEach(snapshot => {
+        context_objects.push({
+          id: snapshot.id,
+          ...snapshot.data()
+        });
+      });
+      this.setState({ context_objects });
     });
 
     if (this.unsubscribeWorkspaces) this.unsubscribeWorkspaces();
@@ -211,6 +228,7 @@ class WorkspaceView extends Component {
     const {
       taskId,
       pieces,
+      context_objects,
       activeWorkspaceId,
       editAccess,
       commentAccess,
@@ -324,6 +342,7 @@ class WorkspaceView extends Component {
                         <TableView
                           taskId={taskId}
                           pieces={pieces}
+                          context_objects={context_objects}
                           workspace={workspace}
                           workspaceTypeString={'table'}
                           editAccess={editAccess}

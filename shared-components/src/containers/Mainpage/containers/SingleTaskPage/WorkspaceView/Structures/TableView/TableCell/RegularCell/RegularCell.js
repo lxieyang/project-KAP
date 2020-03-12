@@ -290,7 +290,7 @@ class RegularCell extends Component {
   };
 
   render() {
-    const { connectDropTarget, canDrop, isOver } = this.props;
+    const { connectDropTarget, canDrop, isOver, context_objects } = this.props;
     let {
       classes,
       cell,
@@ -716,6 +716,11 @@ class RegularCell extends Component {
                     }
 
                     const piece = pieces[p.pieceId];
+                    let context_object = context_objects.filter(
+                      c => c.references.pieceId === p.pieceId
+                    );
+                    context_object =
+                      context_object.length > 0 ? context_object[0] : null;
 
                     let popularityNumber = null; // Math.floor(Math.random() * 100);
                     let updateDate = null; // getRandomDate(new Date(2019, 1, 1),new Date(2020, 4, 1));
@@ -862,7 +867,7 @@ class RegularCell extends Component {
                           </div>
                         </div>
                         <ReactTooltip
-                          place="bottom"
+                          place={'left'}
                           type="light"
                           effect="solid"
                           delayHide={100}
@@ -872,6 +877,7 @@ class RegularCell extends Component {
                             return (
                               <PieceItem
                                 piece={pieces[p.pieceId]}
+                                context_object={context_object}
                                 editAccess={editAccess}
                                 commentAccess={commentAccess}
                                 cellId={cell.id}

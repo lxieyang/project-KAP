@@ -1,8 +1,6 @@
 /* global chrome */
 import * as FirestoreManager from '../../../../../shared-components/src/firebase/firestore_wrapper';
-import {
-  PIECE_TYPES
-} from '../../../../../shared-components/src/shared/types';
+import { PIECE_TYPES } from '../../../../../shared-components/src/shared/types';
 
 let showSuccessStatusInIconBadgeTimeout = 0;
 
@@ -83,12 +81,12 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     } = request.payload;
 
     FirestoreManager.createPiece(
-        annotation,
-        contextData,
-        annotationType,
-        type,
-        timer
-      )
+      annotation,
+      contextData,
+      annotationType,
+      type,
+      timer
+    )
       .then(pieceId => {
         // chrome.runtime.sendMessage({
         //   msg: 'SHOW_SUCCESS_STATUS_BADGE',
@@ -128,12 +126,12 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     } = request.payload;
 
     FirestoreManager.createPiece(
-        annotation,
-        contextData,
-        annotationType,
-        type,
-        timer
-      )
+      annotation,
+      contextData,
+      annotationType,
+      type,
+      timer
+    )
       .then(pieceId => {
         // chrome.runtime.sendMessage({
         //   msg: 'SHOW_SUCCESS_STATUS_BADGE',
@@ -169,17 +167,36 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         showSuccessStatusInIconBadge(false);
       });
   } else if (request.msg === 'PUT_EXISTING_ANNOTATION_IN_TABLE') {
-    const {
-      tableId,
-      cellId,
-      pieceId,
-      ratingType
-    } = request.payload;
+    const { tableId, cellId, pieceId, ratingType } = request.payload;
     FirestoreManager.addPieceToTableCellById(
       tableId,
       cellId,
       pieceId,
       ratingType
     );
+  }
+});
+
+/***
+ *
+ *
+ * Context support
+ *
+ *
+ *
+ */
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+  if (request.msg === 'SHOULD_STORE_CONTEXT') {
+    const { payload } = request;
+    const { contextHTML, url } = payload;
+    const type = payload.type;
+    if (type === 'piece') {
+      FirestoreManager.createContextObject({
+        contextHTML,
+        url,
+        type: 'piece',
+        pieceId: payload.pieceId
+      });
+    }
   }
 });

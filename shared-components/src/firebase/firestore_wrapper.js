@@ -37,3 +37,4 @@ export * from './wrappers/workspace_functions';
 export * from './wrappers/misc_functions';
 export * from './wrappers/query_functions';
 export * from './wrappers/page_functions';
+export * from './wrappers/context_functions';

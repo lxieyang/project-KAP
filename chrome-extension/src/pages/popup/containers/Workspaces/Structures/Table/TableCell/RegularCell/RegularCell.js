@@ -267,6 +267,20 @@ class RegularCell extends Component {
           PIECE_TYPES.snippet
         )
           .then(pieceId => {
+            console.log(pieceId);
+
+            const payload = {
+              msg: 'shouldGetContext',
+              type: 'piece',
+              pieceId
+            };
+
+            try {
+              window.parent.postMessage(payload, '*');
+            } catch (err) {
+              console.log(err);
+            }
+
             FirestoreManager.addPieceToTableCellById(
               this.props.workspace.id,
               this.props.cell.id,

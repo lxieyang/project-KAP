@@ -237,6 +237,7 @@ class TableView extends Component {
               numRows={tableRows.length}
               numColumns={tableRows[0].data.length}
               pieces={this.props.pieces}
+              context_objects={this.props.context_objects}
               editAccess={editAccess}
               commentAccess={commentAccess}
               cell={cell}
@@ -309,6 +310,7 @@ class TableView extends Component {
                       key={`${idx}-${indexInRow}`}
                       taskId={this.props.taskId}
                       pieces={this.props.pieces}
+                      context_objects={this.props.context_objects}
                       workspace={workspace}
                       editAccess={editAccess}
                       commentAccess={commentAccess}
