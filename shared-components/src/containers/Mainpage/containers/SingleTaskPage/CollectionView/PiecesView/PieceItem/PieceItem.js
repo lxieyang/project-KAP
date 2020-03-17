@@ -287,11 +287,13 @@ class PieceItem extends Component {
     if (elem) {
       // console.log(elem.offsetParent);
       // this.htmlRef.current.scrollTop = elem.offsetTop;
-      this.htmlRef.current.scrollBy({
-        top: elem.offsetTop,
-        left: 0,
-        behavior: 'smooth'
-      });
+      if (this.htmlRef.current) {
+        this.htmlRef.current.scrollBy({
+          top: elem.offsetTop,
+          left: 0,
+          behavior: 'smooth'
+        });
+      }
     }
   };
 

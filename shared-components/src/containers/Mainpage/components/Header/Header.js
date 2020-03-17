@@ -46,7 +46,7 @@ const materialStyles = {
   iconButton: {
     padding: 6,
     borderRadius: 4,
-    margin: '4px 4px'
+    margin: '0px 4px'
   },
   userAvatar: {
     width: 24,
@@ -114,7 +114,7 @@ class Header extends Component {
       <AppBar position="static" color="default">
         <Toolbar className={classes.toolbar} title={APP_NAME_SHORT}>
           <Avatar alt="app" className={classes.appAvatar}>
-            <Logo size="30px" />
+            <Logo size="24px" />
           </Avatar>
 
           <Typography

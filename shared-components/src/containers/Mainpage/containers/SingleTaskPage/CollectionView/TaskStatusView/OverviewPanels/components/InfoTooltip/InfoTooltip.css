@@ -1,3 +1,9 @@
+.InfoIcon {
+  margin-left: 6px;
+  font-size: 11px;
+  color: rgb(155, 155, 155);
+}
+
 .TooltipContainer {
   padding: 2px 6px;
   max-width: 300px;

@@ -163,6 +163,7 @@ class CollectionView extends Component {
           queries={this.state.searchQueries}
           pages={this.state.visitedPages}
           pieces={this.state.pieces}
+          changeTab={this.handleChange}
         />
         <Divider light />
 

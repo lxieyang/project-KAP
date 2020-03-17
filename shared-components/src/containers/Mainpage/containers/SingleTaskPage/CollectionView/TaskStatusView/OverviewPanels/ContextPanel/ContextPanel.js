@@ -6,7 +6,12 @@ import { sortBy } from 'lodash';
 import { AiOutlineSearch } from 'react-icons/ai';
 import { GiTargeting } from 'react-icons/gi';
 import Avatar from '@material-ui/core/Avatar';
-import { IoIosArrowDropup, IoIosArrowDropdown } from 'react-icons/io';
+import {
+  IoIosArrowDropup,
+  IoIosArrowDropdown,
+  IoIosTimer,
+  IoMdGlobe
+} from 'react-icons/io';
 import { FaFlagCheckered, FaListUl, FaBookmark } from 'react-icons/fa';
 
 import { PIECE_TYPES } from '../../../../../../../../shared/types';
@@ -14,8 +19,16 @@ import { PIECE_COLOR } from '../../../../../../../../shared/theme';
 
 import InfoTooltip from '../components/InfoTooltip/InfoTooltip';
 
+import Textarea from 'react-textarea-autosize';
+
 class ContextPanel extends Component {
-  state = {};
+  state = {
+    goalText: 'differences between python matrix and numpy array'
+  };
+
+  handleGoalTextChange = e => {
+    this.setState({ goalText: e.target.value });
+  };
 
   render() {
     let { queries, pieces } = this.props;
@@ -39,70 +52,78 @@ class ContextPanel extends Component {
       <div className={styles.PanelContainer}>
         <div className={styles.Section}>
           <div className={styles.SectionHeader}>
+            <GiTargeting className={styles.SectionHeaderIcon} />
             Goal{' '}
             <InfoTooltip id={'goal'}>
               This is the goal of the author (default is the first search query
               that the author used unless the author specifically edited it)
             </InfoTooltip>
           </div>
-          <div>The author wanted to find out: </div>
-          <div className={styles.ListItem}>
-            <GiTargeting className={styles.ItemIcon} />
-            {queriesToDisplay.length > 0 && queriesToDisplay[0].query}
+          <div className={styles.SectionContent}>
+            {/* <p>{this.state.goalText}</p> */}
+            <Textarea
+              minRows={1}
+              maxRows={3}
+              placeholder={''}
+              className={styles.Textarea}
+              value={this.state.goalText}
+              onChange={this.handleGoalTextChange}
+            />
           </div>
         </div>
 
         <div className={styles.Section}>
           <div className={styles.SectionHeader}>
-            Queries{' '}
-            <InfoTooltip id={'query'}>
-              These are the top search queries that the author used.
-            </InfoTooltip>
+            <IoIosTimer className={styles.SectionHeaderIcon} />
+            Information is <span className={styles.UpToDate}>
+              up-to-date
+            </span>{' '}
           </div>
-
-          <div>
-            {queriesToDisplay.map((item, idx) => {
-              return (
-                <div key={idx} className={styles.ListItem}>
-                  <AiOutlineSearch className={styles.ItemIcon} />
-                  <div className={styles.ItemContent}>{item.query}</div>
-                  <div style={{ flex: 1 }} />
-                  <div className={styles.ItemMetaInfo} />
-                </div>
-              );
-            })}
+          <div className={styles.SectionContent}>
+            <p>The task was updated 4 days ago.</p>
+            <p>The oldest information was from 1 year ago.</p>
           </div>
         </div>
 
         <div className={styles.Section}>
           <div className={styles.SectionHeader}>
-            Criteria{' '}
+            <AiOutlineSearch className={styles.SectionHeaderIcon} />
+            The author searched for
             <InfoTooltip id={'criteria'}>
               These are the top search queries that the author used.
             </InfoTooltip>
           </div>
-
-          <div>
-            {displayPieces.map((item, idx) => {
+          <div className={styles.SectionContent}>
+            {queriesToDisplay.map((item, idx) => {
               return (
                 <div key={idx} className={styles.ListItem}>
-                  <Avatar
-                    style={{
-                      backgroundColor: PIECE_COLOR.criterion,
-                      width: '18px',
-                      height: '18px',
-                      color: 'white'
-                    }}
-                    className={styles.Avatar}
-                  >
-                    <FaFlagCheckered className={styles.IconInsideAvatar} />
-                  </Avatar>
-                  <div className={styles.ItemContent}>{item.name}</div>
-                  <div style={{ flex: 1 }} />
-                  <div className={styles.ItemMetaInfo} />
+                  {item.query}
                 </div>
               );
             })}
+          </div>
+          <div className={styles.SectionFooter}>
+            <div
+              className={styles.LinkToElsewhere}
+              onClick={e => this.props.changeTab(e, 1)}
+            >
+              See the complete list of search queries
+            </div>
+          </div>
+        </div>
+
+        <div className={styles.Section}>
+          <div className={styles.SectionHeader}>
+            <IoMdGlobe className={styles.SectionHeaderIcon} />
+            Envrionment and constraints
+            <div className={styles.HeaderButtonAlignRight}>
+              <div className={styles.AddButton}>Add</div>
+            </div>
+          </div>
+
+          <div className={styles.SectionContent}>
+            <div className={styles.ListItem}>macOS</div>
+            <div className={styles.ListItem}>python 2.7</div>
           </div>
         </div>
       </div>

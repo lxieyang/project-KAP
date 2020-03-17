@@ -6,11 +6,19 @@ import { sortBy, reverse } from 'lodash';
 import { AiOutlineSearch } from 'react-icons/ai';
 import { GiTargeting } from 'react-icons/gi';
 import Avatar from '@material-ui/core/Avatar';
-import { IoIosArrowDropup, IoIosArrowDropdown } from 'react-icons/io';
+import {
+  IoIosArrowDropup,
+  IoIosArrowDropdown,
+  IoMdMedal
+} from 'react-icons/io';
 import { FaFlagCheckered, FaListUl, FaBookmark } from 'react-icons/fa';
+import { MdPinDrop } from 'react-icons/md';
+import { TiUser } from 'react-icons/ti';
 
 import { PIECE_TYPES } from '../../../../../../../../shared/types';
 import { PIECE_COLOR } from '../../../../../../../../shared/theme';
+
+import InfoTooltip from '../components/InfoTooltip/InfoTooltip';
 
 import moment from 'moment';
 
@@ -80,6 +88,66 @@ class TrustPanel extends Component {
     return (
       <div className={styles.PanelContainer}>
         <div className={styles.Section}>
+          <div className={styles.SectionHeader}>
+            <MdPinDrop className={styles.SectionHeaderIcon} />
+            <span className={styles.UpToDate}>Multiple</span>
+            Sources
+          </div>
+          <div className={styles.SectionContent}>
+            <p>
+              Information are from {domains.length} different sources, with the
+              top one being{' '}
+              <span className={styles.DomainItem}>
+                <img src={domains[0].favicon} alt="" />
+                {domains[0].domain}
+              </span>
+              .
+            </p>
+          </div>
+          <div className={styles.SectionFooter}>
+            <div
+              className={styles.LinkToElsewhere}
+              onClick={e => this.props.changeTab(e, 0)}
+            >
+              See the complete list of sources
+            </div>
+          </div>
+        </div>
+
+        <div className={styles.Section}>
+          <div className={styles.SectionHeader}>
+            <IoMdMedal className={styles.SectionHeaderIcon} />
+            <span className={styles.UpToDate}>High</span>
+            credibility
+          </div>
+          <div className={styles.SectionContent}>
+            <p>5/9 snippets are highly-acknowledged by the community.</p>
+            <p>8/9 snippets are updated recently.</p>
+            <p>In the table, there are 3 cells with corroborating evidence.</p>
+          </div>
+        </div>
+
+        <div className={styles.Section}>
+          <div className={styles.SectionHeader}>
+            <TiUser className={styles.SectionHeaderIcon} />
+            Task Author
+          </div>
+          <div className={styles.SectionContent}>
+            <p>
+              Github Profile:{' '}
+              <a
+                href={'https://github.com/octocat'}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                https://github.com/octocat
+              </a>
+            </p>
+            <p>The author is affiliated with @GitHub</p>
+          </div>
+        </div>
+
+        {/* <div className={styles.Section}>
           <div className={styles.SectionHeader}>Sources</div>
           <div className={styles.ExplanationText}>
             These are the top sources where the author got the information from.
@@ -107,7 +175,6 @@ class TrustPanel extends Component {
                   <div style={{ flex: 1 }} />
                   <div className={styles.ItemMetaInfo}>
                     <div>{moment(item.updateDate).format('MMM D')}</div>
-                    {/* <div>{moment(item.updateDate).format('h:mma')}</div> */}
                   </div>
                 </div>
               );
@@ -142,7 +209,7 @@ class TrustPanel extends Component {
               );
             })}
           </div>
-        </div>
+        </div> */}
       </div>
     );
   }

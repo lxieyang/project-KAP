@@ -9,7 +9,7 @@ const InfoTooltip = ({ id, children }) => {
       <IoMdInformationCircle
         data-tip
         data-for={id}
-        style={{ marginLeft: 4, color: 'gray' }}
+        className={styles.InfoIcon}
       />
       <ReactTooltip
         id={id}

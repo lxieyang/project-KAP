@@ -20,7 +20,12 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Typography from '@material-ui/core/Typography';
 
-import { FaClipboardList, FaMedal } from 'react-icons/fa';
+import {
+  FaClipboardList,
+  FaMedal,
+  FaAngleDown,
+  FaAngleUp
+} from 'react-icons/fa';
 import { GoPackage, GoTasklist } from 'react-icons/go';
 
 import { ToastContainer, toast, Flip } from 'react-toastify';
@@ -98,8 +103,6 @@ class TaskStatusView extends Component {
 
     // author detail
     author: null,
-
-    overviewModalIsOpen: true, // not in use
 
     overviewExpanded: true,
     overviewTabValue: 0
@@ -217,14 +220,6 @@ class TaskStatusView extends Component {
         draggable: false
       }
     );
-  };
-
-  handleOverviewModalOpen = e => {
-    this.setState({ overviewModalIsOpen: true });
-  };
-
-  handleOverviewModalClose = e => {
-    this.setState({ overviewModalIsOpen: false });
   };
 
   render() {
@@ -374,17 +369,7 @@ class TaskStatusView extends Component {
             </React.Fragment>
           )}
 
-          {/* <Tooltip title={`See Overview`} placement={'bottom'}>
-            <IconButton
-              aria-label="Share"
-              className={classes.iconButtons}
-              onClick={e => this.handleOverviewModalOpen(e)}
-            >
-              <FaClipboardList className={classes.iconInIconButtons} />
-            </IconButton>
-          </Tooltip> */}
-
-          <Tooltip
+          {/* <Tooltip
             title={
               this.state.overviewExpanded ? 'Hide Overview' : 'Show Overview'
             }
@@ -401,7 +386,7 @@ class TaskStatusView extends Component {
             >
               <FaClipboardList className={classes.iconInIconButtons} />
             </IconButton>
-          </Tooltip>
+          </Tooltip> */}
         </div>
 
         {/* <Collapse in={this.state.commentsExpanded} timeout="auto">
@@ -410,9 +395,32 @@ class TaskStatusView extends Component {
           </div>
         </Collapse> */}
 
+        <Divider light />
+        <div className={styles.OverviewTitleContainer}>
+          <span>Overview</span>
+          <div className={styles.OverviewToggleButtonContainer}>
+            <div
+              className={styles.OverviewToggleButton}
+              onClick={() => this.toggleOverviewExpandedStatus()}
+            >
+              {!this.state.overviewExpanded ? (
+                <FaAngleDown
+                  title={'Show Overview'}
+                  className={styles.ButtonIcon}
+                />
+              ) : (
+                <FaAngleUp
+                  title={'Hide Overview'}
+                  className={styles.ButtonIcon}
+                />
+              )}
+            </div>
+          </div>
+        </div>
+
         <Collapse in={this.state.overviewExpanded} timeout="auto">
           <div className={styles.TaskOverviewContainer}>
-            <div className={styles.OverviewTitle}>Overview</div>
+            {/* <div className={styles.OverviewTitle}>Overview</div> */}
             <Tabs
               value={this.state.overviewTabValue}
               indicatorColor="secondary"
@@ -460,6 +468,7 @@ class TaskStatusView extends Component {
                   queries={this.props.queries}
                   pages={this.props.pages}
                   pieces={this.props.pieces}
+                  changeTab={this.props.changeTab}
                 />
               </TabPanel>
               <TabPanel value={this.state.overviewTabValue} index={1}>
@@ -467,6 +476,7 @@ class TaskStatusView extends Component {
                   queries={this.props.queries}
                   pages={this.props.pages}
                   pieces={this.props.pieces}
+                  changeTab={this.props.changeTab}
                 />
               </TabPanel>
               <TabPanel value={this.state.overviewTabValue} index={2}>
@@ -474,22 +484,12 @@ class TaskStatusView extends Component {
                   queries={this.props.queries}
                   pages={this.props.pages}
                   pieces={this.props.pieces}
+                  changeTab={this.props.changeTab}
                 />
               </TabPanel>
             </SwipeableViews>
           </div>
         </Collapse>
-
-        {/* <Modal
-          isOpen={this.state.overviewModalIsOpen}
-          ariaHideApp={false}
-          contentLabel="Overview"
-          onRequestClose={e => this.handleOverviewModalClose(e)}
-          className={styles.OverviewModal}
-        >
-          // overlayClassName={styles.OverviewModalOverlay}
-          hahaha
-        </Modal> */}
       </React.Fragment>
     );
   }
