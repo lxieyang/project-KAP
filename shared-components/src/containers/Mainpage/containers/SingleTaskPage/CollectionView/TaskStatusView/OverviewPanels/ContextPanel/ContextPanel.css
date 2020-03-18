@@ -59,6 +59,17 @@
   font-size: 13px;
 }
 
+.GoalTextareaContainer {
+  display: flex;
+  align-items: center;
+}
+
+.FirstQueryIndicator {
+  font-size: 10px;
+  color: #666;
+  font-style: italic;
+}
+
 .SectionContent p {
   margin: 3px 0px 0px 0px;
 }
@@ -90,6 +101,31 @@
   padding: 1px 4px;
   border-radius: 5px;
   box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.2);
+
+  position: relative;
+}
+
+.ListItem:hover .DeleteIcon {
+  display: flex;
+}
+
+.DeleteIcon {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+
+  display: none;
+  justify-content: center;
+  align-items: center;
+  font-size: 9px;
+  top: -4px;
+  right: -6px;
+  cursor: pointer;
+}
+
+.DeleteIcon:hover {
+  background-color: lightgray;
 }
 
 .Textarea {
@@ -116,5 +152,69 @@
   color: #35383a;
   background-color: #fff;
   border-color: rgb(17, 100, 224);
+  outline: none;
+}
+
+.AddingNewEnvContainer {
+  font-size: 12px;
+
+  width: 70%;
+  max-width: 300px;
+}
+
+.Textarea.NewEnv {
+  width: 100%;
+
+  font-size: 12px;
+  padding: 3px 4px;
+
+  border: 1px solid rgb(226, 226, 226);
+  border-radius: 4px;
+  color: #000;
+  background: transparent !important;
+}
+
+.Textarea.NewEnv :hover {
+  border: 1px solid rgb(187, 187, 187);
+}
+
+.Textarea.NewEnv :focus {
+  color: #35383a;
+  background-color: #fff;
+  border-color: rgb(17, 100, 224);
+  outline: none;
+}
+
+.AddNewEnvButton {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  user-select: none;
+  color: #007bff;
+  border: 1px solid#007bff;
+  padding: 0px 6px;
+  font-size: 11px;
+  height: 18px;
+  width: 60px;
+  border-radius: 5px;
+  cursor: pointer;
+
+  /* transition: all 0.1s ease-in; */
+}
+
+.AddNewEnvButton.Disabled {
+  cursor: not-allowed;
+  pointer-events: all !important;
+  color: #007bff !important;
+  background-color: transparent !important;
+  opacity: 0.4;
+}
+
+.AddNewEnvButton:hover {
+  color: #fff;
+  background-color: #007bff;
+}
+
+.AddNewEnvButton:focus {
   outline: none;
 }

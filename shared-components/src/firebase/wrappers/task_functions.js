@@ -35,10 +35,62 @@ export const updateCurrentUserCurrentTaskId = taskId => {
 };
 
 export const updateTaskName = (taskId, newTaskName) => {
-  db.collection('tasks')
-    .doc(taskId)
-    .update({
-      name: newTaskName
+  getTaskById(taskId)
+    .update({ name: newTaskName })
+    .then(() => {
+      updateTaskUpdateTime(taskId);
+    });
+};
+
+export const updateTaskGoal = (taskId, newTaskGoal) => {
+  getTaskById(taskId)
+    .update({ goal: newTaskGoal })
+    .then(() => {
+      updateTaskUpdateTime(taskId);
+    });
+};
+
+export const getTaskEnvironmentsAndConstraints = taskId => {
+  return getTaskById(taskId).collection('envAndConstraints');
+};
+
+export const addTaskEnvironment = async (taskId, newEnvrionment) => {
+  const { name, url, suggested } = newEnvrionment;
+  getTaskById(taskId)
+    .collection('envAndConstraints')
+    .add({
+      name,
+      suggested: suggested ? suggested : false,
+      type: 'environment',
+      references: {
+        url: url ? url : false
+      },
+      creationDate: firebase.firestore.FieldValue.serverTimestamp(),
+      updateDate: firebase.firestore.FieldValue.serverTimestamp(),
+      authorId: getCurrentUserId()
+    })
+    .then(() => {
+      updateTaskUpdateTime(taskId);
+    });
+};
+
+export const removeTaskEnvrionmentOrConstraint = async (taskId, envId) => {
+  getTaskById(taskId)
+    .collection('envAndConstraints')
+    .doc(envId)
+    .delete();
+};
+
+export const addTaskConstraint = async (taskId, newConstraint) => {
+  const { name } = newConstraint;
+  getTaskById(taskId)
+    .collection('envAndConstraints')
+    .add({
+      name,
+      type: 'constraint',
+      creationDate: firebase.firestore.FieldValue.serverTimestamp(),
+      updateDate: firebase.firestore.FieldValue.serverTimestamp(),
+      authorId: getCurrentUserId()
     })
     .then(() => {
       updateTaskUpdateTime(taskId);
@@ -61,9 +113,6 @@ export const addCommentToATaskById = (taskId, newCommentContent) => {
       authorAvatarURL: getCurrentUser().photoURL
     })
     .then(() => {
-      getTaskById(taskId).update({
-        updateDate: firebase.firestore.FieldValue.serverTimestamp()
-      });
       updateTaskUpdateTime(taskId);
     });
 };
@@ -83,9 +132,6 @@ export const updateCommentToATaskById = (
       updateDate: firebase.firestore.FieldValue.serverTimestamp()
     })
     .then(() => {
-      getTaskById(taskId).update({
-        updateDate: firebase.firestore.FieldValue.serverTimestamp()
-      });
       updateTaskUpdateTime(taskId);
     });
 };
@@ -101,19 +147,15 @@ export const deleteCommentToATaskById = (taskId, commentId) => {
 };
 
 export const toggleTaskStarStatus = (taskId, to) => {
-  db.collection('tasks')
-    .doc(taskId)
-    .update({
-      isStarred: to
-    })
+  getTaskById(taskId)
+    .update({ isStarred: to })
     .then(() => {
       updateTaskUpdateTime(taskId);
     });
 };
 
 export const deleteTaskById = taskId => {
-  db.collection('tasks')
-    .doc(taskId)
+  getTaskById(taskId)
     .update({
       trashed: true
     })
@@ -136,8 +178,7 @@ export const deleteTaskById = taskId => {
 };
 
 export const reviveTaskById = taskId => {
-  db.collection('tasks')
-    .doc(taskId)
+  getTaskById(taskId)
     .update({
       trashed: false
     })
@@ -147,12 +188,9 @@ export const reviveTaskById = taskId => {
 };
 
 export const updateTaskUpdateTime = taskId => {
-  return db
-    .collection('tasks')
-    .doc(taskId)
-    .update({
-      updateDate: firebase.firestore.FieldValue.serverTimestamp()
-    });
+  return getTaskById(taskId).update({
+    updateDate: firebase.firestore.FieldValue.serverTimestamp()
+  });
 };
 
 export const updateCurrentTaskUpdateTime = async () => {
@@ -177,6 +215,7 @@ export const createTaskWithName = newTaskName => {
     updateDate: firebase.firestore.FieldValue.serverTimestamp(),
     isStarred: false,
     shareId: uuid(),
-    readOnlyId: uuid()
+    readOnlyId: uuid(),
+    goal: null
   });
 };

@@ -26,6 +26,7 @@ import {
   FaAngleDown,
   FaAngleUp
 } from 'react-icons/fa';
+import { IoIosArrowDown, IoIosArrowUp } from 'react-icons/io';
 import { GoPackage, GoTasklist } from 'react-icons/go';
 
 import { ToastContainer, toast, Flip } from 'react-toastify';
@@ -404,12 +405,12 @@ class TaskStatusView extends Component {
               onClick={() => this.toggleOverviewExpandedStatus()}
             >
               {!this.state.overviewExpanded ? (
-                <FaAngleDown
+                <IoIosArrowDown
                   title={'Show Overview'}
                   className={styles.ButtonIcon}
                 />
               ) : (
-                <FaAngleUp
+                <IoIosArrowUp
                   title={'Hide Overview'}
                   className={styles.ButtonIcon}
                 />
@@ -465,6 +466,7 @@ class TaskStatusView extends Component {
             >
               <TabPanel value={this.state.overviewTabValue} index={0}>
                 <ContextPanel
+                  task={task}
                   queries={this.props.queries}
                   pages={this.props.pages}
                   pieces={this.props.pieces}
@@ -473,6 +475,7 @@ class TaskStatusView extends Component {
               </TabPanel>
               <TabPanel value={this.state.overviewTabValue} index={1}>
                 <TrustPanel
+                  task={task}
                   queries={this.props.queries}
                   pages={this.props.pages}
                   pieces={this.props.pieces}
@@ -481,6 +484,7 @@ class TaskStatusView extends Component {
               </TabPanel>
               <TabPanel value={this.state.overviewTabValue} index={2}>
                 <CompletenessPanel
+                  task={task}
                   queries={this.props.queries}
                   pages={this.props.pages}
                   pieces={this.props.pieces}
