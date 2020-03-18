@@ -194,7 +194,7 @@
   border: 1px solid#007bff;
   padding: 0px 6px;
   font-size: 11px;
-  height: 18px;
+  height: 20px;
   width: 60px;
   border-radius: 5px;
   cursor: pointer;
@@ -215,6 +215,27 @@
   background-color: #007bff;
 }
 
-.AddNewEnvButton:focus {
+.AddNewEnvButton:focus,
+.CancelEnvButton:focus {
   outline: none;
+}
+
+.CancelEnvButton {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  user-select: none;
+  color: #ff1e00c7;
+  border: 1px solid#ff1e00c7;
+  padding: 0px 6px;
+  font-size: 11px;
+  height: 20px;
+  width: 60px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.CancelEnvButton:hover {
+  color: #fff;
+  background-color: #ff1e00c7;
 }

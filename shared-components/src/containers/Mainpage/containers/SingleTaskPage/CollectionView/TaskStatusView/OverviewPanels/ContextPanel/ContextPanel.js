@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import styles from './ContextPanel.css';
 
-import { sortBy } from 'lodash';
+import { sortBy, reverse } from 'lodash';
 
 import { AiOutlineSearch } from 'react-icons/ai';
 import { GiTargeting } from 'react-icons/gi';
@@ -52,6 +52,8 @@ class ContextPanel extends Component {
           constraints.push(data);
         }
       });
+      environments = sortBy(environments, ['creationDate']);
+      constraints = sortBy(constraints, ['creationDate']);
       this.setState({ environments, constraints });
       // console.log(environments, constraints);
     });
@@ -115,8 +117,14 @@ class ContextPanel extends Component {
 
   addNewEnvClickedHandler = () => {
     let newEnvText = this.state.newEnvText.trim();
+
     let newEnvType = this.state.newEnvType;
     this.setState({ isAddingNewEnv: false, newEnvText: '' });
+
+    if (newEnvText === '') {
+      return;
+    }
+
     if (newEnvType === 'constraint') {
       FirestoreManager.addTaskConstraint(this.props.task.id, {
         name: newEnvText
@@ -127,6 +135,13 @@ class ContextPanel extends Component {
         suggested: false
       });
     }
+  };
+
+  cancelNewEnvClickedHandler = () => {
+    this.setState({
+      isAddingNewEnv: false,
+      mewEnvText: ''
+    });
   };
 
   deleteEnvClickedHandler = (id, name) => {
@@ -153,9 +168,39 @@ class ContextPanel extends Component {
         })
       : [];
 
-    const displayPieces = pieces.filter(
-      p => p.pieceType === PIECE_TYPES.criterion
+    const piecesWithEnvironments = pieces.filter(
+      p =>
+        p.answerMetaInfo &&
+        p.answerMetaInfo.questionTags &&
+        p.answerMetaInfo.questionTags.length > 0
     );
+
+    const existingEnvTags = {};
+    piecesWithEnvironments.forEach(p => {
+      const tags = p.answerMetaInfo.questionTags;
+      tags.forEach(t => {
+        if (existingEnvTags[t]) {
+          // existingEnvTags[t]
+          existingEnvTags[t].pieceIds.push(p.id);
+          existingEnvTags[t].count += 1;
+          existingEnvTags[t].urls.add(p.references.url);
+        } else {
+          existingEnvTags[t] = {
+            pieceIds: [p.id],
+            count: 1,
+            urls: new Set([p.references.url])
+          };
+        }
+      });
+    });
+    let existingEnvTagsList = [];
+    for (let t in existingEnvTags) {
+      existingEnvTagsList.push({ name: t, ...existingEnvTags[t] });
+    }
+    existingEnvTagsList = reverse(sortBy(existingEnvTagsList, ['count']));
+    console.log(existingEnvTagsList);
+
+    const envList = existingEnvTagsList.concat(this.state.environments);
 
     return (
       <div className={styles.PanelContainer}>
@@ -252,18 +297,20 @@ class ContextPanel extends Component {
 
           <div className={styles.SectionContent}>
             <div>
-              {this.state.environments.map((item, idx) => {
+              {envList.map((item, idx) => {
                 return (
                   <div key={idx} className={styles.ListItem}>
                     {item.name}
-                    <div
-                      className={styles.DeleteIcon}
-                      onClick={() =>
-                        this.deleteEnvClickedHandler(item.id, item.name)
-                      }
-                    >
-                      &#10005;
-                    </div>
+                    {item.id && (
+                      <div
+                        className={styles.DeleteIcon}
+                        onClick={() =>
+                          this.deleteEnvClickedHandler(item.id, item.name)
+                        }
+                      >
+                        &#10005;
+                      </div>
+                    )}
                   </div>
                 );
               })}
@@ -328,7 +375,14 @@ class ContextPanel extends Component {
                     inputRef={ref => (this.newEnvTextarea = ref)}
                   />
                 </div>
-                <div style={{ marginTop: 3, textAlign: 'right' }}>
+                <div
+                  style={{
+                    marginTop: 3,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'flex-end'
+                  }}
+                >
                   <button
                     className={[
                       styles.AddNewEnvButton,
@@ -337,6 +391,13 @@ class ContextPanel extends Component {
                     onClick={this.addNewEnvClickedHandler}
                   >
                     Add
+                  </button>
+                  &nbsp;&nbsp;
+                  <button
+                    className={[styles.CancelEnvButton].join(' ')}
+                    onClick={this.cancelNewEnvClickedHandler}
+                  >
+                    Cancel
                   </button>
                 </div>
               </div>
