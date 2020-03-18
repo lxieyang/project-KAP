@@ -20,6 +20,21 @@ export const getAllContextObjectsInTask = taskId => {
     .where('trashed', '==', false);
 };
 
+export const getAllContextObjects = () => {
+  return db.collection('context_objects');
+};
+
+export const deleteContextObjectsByPieceId = pieceId => {
+  return getAllContextObjects()
+    .where('references.pieceId', '==', pieceId)
+    .get()
+    .then(querySnapshot => {
+      querySnapshot.forEach(snapshot => {
+        snapshot.ref.delete();
+      });
+    });
+};
+
 export const createContextObject = async ({
   url,
   type,

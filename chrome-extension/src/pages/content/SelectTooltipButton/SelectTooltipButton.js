@@ -120,6 +120,7 @@ class SelectTooltipButton extends Component {
         );
 
         answerMetaInfo = getAnswerInfoOnStackOverflow(annotation.anchor);
+
         const nodes = annotation.nodes;
 
         /** context object support */

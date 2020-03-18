@@ -12,7 +12,8 @@ import {
   getCurrentUserCurrentTaskId,
   updateTaskUpdateTime,
   updateCurrentTaskUpdateTime,
-  getCurrentUser
+  getCurrentUser,
+  deleteContextObjectsByPieceId
 } from '../firestore_wrapper';
 const xssFilter = require('xssfilter');
 const xss = new xssFilter({
@@ -90,6 +91,9 @@ export const deletePieceById = pieceId => {
 };
 
 export const deletePieceForeverById = pieceId => {
+  // remove context object
+  deleteContextObjectsByPieceId(pieceId);
+
   getPieceById(pieceId)
     .delete()
     .then(() => {
@@ -108,6 +112,7 @@ export const clearTrashedPiecesForeverByTaskId = async taskId => {
   trashedPieces.forEach(snapshot => {
     batch.delete(snapshot.ref);
     batch.delete(getScreenshotById(snapshot.id));
+    deleteContextObjectsByPieceId(snapshot.id); // remove context object
   });
 
   // Commit the batch
