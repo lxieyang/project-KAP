@@ -20,10 +20,28 @@ import { PIECE_COLOR } from '../../../../../../../../shared/theme';
 
 import InfoTooltip from '../components/InfoTooltip/InfoTooltip';
 
+import axios from 'axios';
+
 import moment from 'moment';
 
 class CompletenessPanel extends Component {
   state = {};
+
+  componentDidMount() {
+    axios
+      .get(
+        // 'http://localhost:8800/kap-project-nsh-2504/us-central1/getGoogleAutoSuggests',
+        'https://us-central1-kap-project-nsh-2504.cloudfunctions.net/getGoogleAutoSuggests',
+        {
+          params: {
+            q: 'coronavirus'
+          }
+        }
+      )
+      .then(result => {
+        console.log(result);
+      });
+  }
 
   render() {
     let { queries, pieces, pages, task } = this.props;

@@ -1,5 +1,6 @@
 const functions = require("firebase-functions");
 const admin = require("firebase-admin");
+const axios = require("axios");
 const cors = require("cors")({
   origin: true
 });
@@ -41,10 +42,12 @@ exports.cleanTableByRemovingTrashedPieces = functions.firestore
       change.after.data().trashed === true
     ) {
       console.log(`should attempt to clean ${pieceId} if it's in the table`);
-      let taskId = (await db
-        .collection("pieces")
-        .doc(pieceId)
-        .get()).data().references.task;
+      let taskId = (
+        await db
+          .collection("pieces")
+          .doc(pieceId)
+          .get()
+      ).data().references.task;
 
       let tables = await db
         .collection("workspaces")
@@ -93,6 +96,40 @@ exports.getUnakiteChromeStoreVersionString = functions.https.onRequest(
           return response.send({
             success: true,
             chromeWebStoreVersion: versionString
+          });
+        })
+        .catch(error => {
+          return response.send({
+            success: false,
+            error
+          });
+        });
+    });
+  }
+);
+
+exports.getGoogleAutoSuggests = functions.https.onRequest(
+  (request, response) => {
+    return cors(request, response, () => {
+      const { q } = request.query;
+      return axios
+        .get("http://suggestqueries.google.com/complete/search", {
+          params: {
+            client: "chrome",
+            q: q.trim() + " vs"
+          }
+        })
+        .then(result => {
+          let suggestedList = result.data[1];
+          console.log(suggestedList);
+          suggestedList = suggestedList.map(item => {
+            item = item.split("vs");
+            item = item[item.length - 1].trim();
+            return item;
+          });
+          return response.send({
+            success: true,
+            list: suggestedList
           });
         })
         .catch(error => {
