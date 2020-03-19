@@ -86,6 +86,7 @@
     "uuid": "^3.3.2",
     "validator": "^12.2.0",
     "w3-css": "^4.1.0",
+    "wink-lemmatizer": "^3.0.1",
     "xpath-dom": "^0.2.2",
     "xssfilter": "^0.5.3"
   },

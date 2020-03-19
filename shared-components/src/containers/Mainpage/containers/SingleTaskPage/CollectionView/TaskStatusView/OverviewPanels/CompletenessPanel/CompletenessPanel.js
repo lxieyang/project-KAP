@@ -22,26 +22,111 @@ import InfoTooltip from '../components/InfoTooltip/InfoTooltip';
 
 import axios from 'axios';
 
+import lemmatize from 'wink-lemmatizer';
+
 import moment from 'moment';
 
 class CompletenessPanel extends Component {
-  state = {};
+  state = {
+    googleSuggestedOptions: []
+  };
 
   componentDidMount() {
-    axios
-      .get(
-        // 'http://localhost:8800/kap-project-nsh-2504/us-central1/getGoogleAutoSuggests',
-        'https://us-central1-kap-project-nsh-2504.cloudfunctions.net/getGoogleAutoSuggests',
-        {
-          params: {
-            q: 'coronavirus'
-          }
-        }
-      )
-      .then(result => {
-        console.log(result);
-      });
+    this.updateGoogleSuggestedOptions();
   }
+
+  componentDidUpdate(prevProps) {
+    if (prevProps.pieces !== this.props.pieces) {
+      this.updateGoogleSuggestedOptions();
+    }
+  }
+
+  updateGoogleSuggestedOptions = async () => {
+    const { pieces } = this.props;
+    let optionPieces = pieces
+      .filter(p => p.pieceType === PIECE_TYPES.option)
+      .map(p => p.name.trim());
+
+    const augmentedOptionPieces = await Promise.all(
+      optionPieces.map(async p => {
+        const lemmatizer = p => {
+          return p
+            .toLowerCase()
+            .split(' ')
+            .map(item => lemmatize.noun(item.trim()))
+            .join(' ');
+        };
+
+        let lemmatizedOptionName = lemmatizer(p);
+
+        let vsList = (await axios.get(
+          // 'http://localhost:8800/kap-project-nsh-2504/us-central1/getGoogleAutoSuggests',
+          'https://us-central1-kap-project-nsh-2504.cloudfunctions.net/getGoogleAutoSuggests',
+          {
+            params: {
+              q: p
+            }
+          }
+        )).data.list.slice(0, 10);
+        let lemmatizedOptionVsList = vsList.map(item =>
+          lemmatizer(item.toLowerCase())
+        );
+
+        const otherOptions = optionPieces
+          .filter(item => item !== p)
+          .map(item => lemmatizer(item.toLowerCase()));
+        let filteredLemmatizedOptionVsList = lemmatizedOptionVsList.filter(
+          item => {
+            let retVal = true;
+            otherOptions.forEach(op => {
+              if (op.includes(item)) {
+                retVal = false;
+              }
+            });
+            return retVal;
+          }
+        );
+
+        return {
+          optionName: p,
+          lemmatizedOptionName,
+          optionVsList: vsList,
+          lemmatizedOptionVsList,
+          filteredLemmatizedOptionVsList
+        };
+      })
+    );
+
+    let rankedOptionVsMap = {};
+    for (let i = 0; i < augmentedOptionPieces.length; i++) {
+      let optionItem = augmentedOptionPieces[i];
+      for (
+        let j = 0;
+        j < optionItem.filteredLemmatizedOptionVsList.length;
+        j++
+      ) {
+        let item = optionItem.filteredLemmatizedOptionVsList[j];
+        if (rankedOptionVsMap[item]) {
+          rankedOptionVsMap[item] +=
+            optionItem.filteredLemmatizedOptionVsList.length - j;
+        } else {
+          rankedOptionVsMap[item] =
+            optionItem.filteredLemmatizedOptionVsList.length - j;
+        }
+      }
+    }
+
+    let rankedOptionVsList = reverse(
+      sortBy(
+        Object.keys(rankedOptionVsMap).map(key => {
+          return { name: key, count: rankedOptionVsMap[key] };
+        }),
+        ['count']
+      )
+    );
+
+    this.setState({ googleSuggestedOptions: rankedOptionVsList });
+  };
 
   render() {
     let { queries, pieces, pages, task } = this.props;
@@ -66,6 +151,14 @@ class CompletenessPanel extends Component {
     creationDate = creationDate.toDate();
     updateDate = updateDate.toDate();
     const approxDuration = updateDate - creationDate;
+
+    /**
+     * suggested options
+     */
+    const suggestedOptionsToShow = this.state.googleSuggestedOptions.slice(
+      0,
+      3
+    );
 
     return (
       <div className={styles.PanelContainer}>
@@ -122,13 +215,26 @@ class CompletenessPanel extends Component {
           </div>
           <div className={styles.SectionContent}>
             <p>
-              Based on everything so far, we think you might want explore the
-              following options:
+              Based on everything so far, Google suggest looking into these
+              additional options:
             </p>
             <div>
-              <div className={styles.ListItem}>xxxxxxxxx</div>
-              <div className={styles.ListItem}>yyyyyyyyy</div>
-              <div className={styles.ListItem}>zzzzzzzzz</div>
+              {suggestedOptionsToShow.length === 0 && (
+                <p style={{ fontStyle: 'italic', color: '#666' }}>
+                  Suggested options are not available at this time.
+                </p>
+              )}
+              {suggestedOptionsToShow.length > 0 && (
+                <React.Fragment>
+                  {suggestedOptionsToShow.map((item, idx) => {
+                    return (
+                      <div className={styles.ListItem} key={idx}>
+                        {item.name}
+                      </div>
+                    );
+                  })}
+                </React.Fragment>
+              )}
             </div>
           </div>
         </div>

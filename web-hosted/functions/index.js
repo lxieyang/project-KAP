@@ -121,10 +121,9 @@ exports.getGoogleAutoSuggests = functions.https.onRequest(
         })
         .then(result => {
           let suggestedList = result.data[1];
-          console.log(suggestedList);
+          // console.log(suggestedList);
           suggestedList = suggestedList.map(item => {
-            item = item.split("vs");
-            item = item[item.length - 1].trim();
+            item = item.substring(item.indexOf("vs") + 3);
             return item;
           });
           return response.send({
