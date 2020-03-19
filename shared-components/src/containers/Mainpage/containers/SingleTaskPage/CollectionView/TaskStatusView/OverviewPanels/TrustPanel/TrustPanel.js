@@ -9,21 +9,108 @@ import Avatar from '@material-ui/core/Avatar';
 import {
   IoIosArrowDropup,
   IoIosArrowDropdown,
-  IoMdMedal
+  IoMdMedal,
+  IoIosPeople,
+  IoIosLink
 } from 'react-icons/io';
 import { FaFlagCheckered, FaListUl, FaBookmark } from 'react-icons/fa';
 import { MdPinDrop } from 'react-icons/md';
 import { TiUser } from 'react-icons/ti';
+import { GiThreeKeys } from 'react-icons/gi';
 
 import { PIECE_TYPES } from '../../../../../../../../shared/types';
 import { PIECE_COLOR } from '../../../../../../../../shared/theme';
 
 import InfoTooltip from '../components/InfoTooltip/InfoTooltip';
+import isURL from 'validator/lib/isURL';
+
+import Textarea from 'react-textarea-autosize';
+
+import axios from 'axios';
+
+import * as FirestoreManager from '../../../../../../../../firebase/firestore_wrapper';
 
 import moment from 'moment';
+import { GET_FAVICON_URL_PREFIX } from '../../../../../../../../shared/constants';
 
 class TrustPanel extends Component {
-  state = {};
+  state = {
+    isEditingTaskAuthor: false,
+    authorGithubProfileLink: '',
+    authorGithubProfileLinkLegal: true,
+    authorGithubUserObject: null
+  };
+
+  editAuthorButtonClickedHandler = () => {
+    this.setState({ isEditingTaskAuthor: true });
+  };
+
+  authoGithubProfileLinkChangedHandler = e => {
+    this.setState({ authorGithubProfileLink: e.target.value });
+  };
+
+  updateAuthorGithubProfileLinkClickedHandler = () => {
+    let link = this.state.authorGithubProfileLink;
+    if (isURL(link) && link.includes('github.com/')) {
+      console.log('should update');
+      FirestoreManager.updateTaskAuthorGithubProfileLink(
+        this.props.task.id,
+        link
+      );
+      this.setState({
+        isEditingTaskAuthor: false,
+        authorGithubProfileLinkLegal: true
+      });
+    } else {
+      this.setState({ authorGithubProfileLinkLegal: false });
+    }
+  };
+
+  cancelUpdateAuthorGithubProfileLinkClickedHandler = () => {
+    this.setState({
+      isEditingTaskAuthor: false,
+      authorGithubProfileLinkLegal: true
+    });
+  };
+
+  componentDidMount() {
+    this.updateAuthorGithubLink();
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (prevProps.task !== this.props.task) {
+      this.updateAuthorGithubLink();
+    }
+  }
+
+  updateAuthorGithubLink = () => {
+    'should update author ghub link';
+
+    if (
+      this.props.task &&
+      this.props.task.githubProfileLink &&
+      this.props.task.githubProfileLink !== ''
+    ) {
+      const link = this.props.task.githubProfileLink;
+      this.setState({
+        authorGithubProfileLink: link
+      });
+
+      let login = link.split('github.com/');
+      login = login[login.length - 1];
+      axios.get(`https://api.github.com/users/${login}`).then(result => {
+        const { data } = result;
+        if (data.blog) {
+          if (!data.blog.includes('http')) {
+            data.blog = 'https://' + data.blog;
+          }
+        }
+        this.setState({
+          authorGithubUserObject: data
+        });
+      });
+    }
+  };
 
   render() {
     let { pieces, pages } = this.props;
@@ -44,6 +131,7 @@ class TrustPanel extends Component {
     });
 
     // pages = pages.filter(page => page.piecesNumber > 0);
+    // console.log(pages);
 
     let domains = [];
     pages.forEach(p => {
@@ -61,7 +149,7 @@ class TrustPanel extends Component {
             d.pages.push(p);
             d.numberOfPages = d.pages.length;
             d.numberOfPieces += p.piecesNumber;
-            if (d.favicon === null) {
+            if (d.favicon === null && p.faviconUrl) {
               d.favicon = p.faviconUrl;
             }
           }
@@ -78,10 +166,15 @@ class TrustPanel extends Component {
         }
       });
       d.updateDate = updateDate;
+
+      if (d.favicon === null) {
+        d.favicon = GET_FAVICON_URL_PREFIX + d.pages[0].url;
+      }
+
       return d;
     });
 
-    domains = reverse(sortBy(domains, ['numberOfPages', 'numberOfPieces']));
+    domains = reverse(sortBy(domains, ['numberOfPieces', 'numberOfPages']));
 
     // console.log(domains);
 
@@ -89,19 +182,28 @@ class TrustPanel extends Component {
       <div className={styles.PanelContainer}>
         <div className={styles.Section}>
           <div className={styles.SectionHeader}>
-            <MdPinDrop className={styles.SectionHeaderIcon} />
-            <span className={styles.UpToDate}>Multiple</span>
+            <GiThreeKeys className={styles.SectionHeaderIcon} />
+            {domains.length > 2 ? (
+              <span className={styles.UpToDate}>Multiple</span>
+            ) : (
+              <span className={styles.NotUpToDate}>Limited</span>
+            )}
             Sources
           </div>
           <div className={styles.SectionContent}>
             <p>
-              Information are from {domains.length} different sources, with the
-              top one being{' '}
-              <span className={styles.DomainItem}>
-                <img src={domains[0].favicon} alt="" />
-                {domains[0].domain}
-              </span>
-              .
+              Information are from {domains.length} different sources
+              {domains.length > 0 && (
+                <React.Fragment>
+                  , with the most used one being{' '}
+                  <span className={styles.DomainItem}>
+                    <img src={domains[0].favicon} alt="" />
+                    {domains[0].domain}
+                  </span>
+                  .
+                </React.Fragment>
+              )}
+              {domains.length === 0 && <React.Fragment>.</React.Fragment>}
             </p>
           </div>
           <div className={styles.SectionFooter}>
@@ -131,20 +233,188 @@ class TrustPanel extends Component {
           <div className={styles.SectionHeader}>
             <TiUser className={styles.SectionHeaderIcon} />
             Task Author
-          </div>
-          <div className={styles.SectionContent}>
-            <p>
-              Github Profile:{' '}
-              <a
-                href={'https://github.com/octocat'}
-                target="_blank"
-                rel="noopener noreferrer"
+            <div className={styles.HeaderButtonAlignRight}>
+              <div
+                className={styles.AddButton}
+                onClick={() => this.editAuthorButtonClickedHandler()}
               >
-                https://github.com/octocat
-              </a>
-            </p>
-            <p>The author is affiliated with @GitHub</p>
+                Edit
+              </div>
+            </div>
           </div>
+          {this.state.isEditingTaskAuthor && (
+            <div className={styles.SectionContent}>
+              <div>Please provide the author's Github Profile:</div>
+              {this.state.authorGithubProfileLinkLegal === false && (
+                <div
+                  style={{
+                    fontSize: 12,
+                    fontStyle: 'italic',
+                    color: 'red'
+                  }}
+                >
+                  Please provide a proper github profile url.
+                </div>
+              )}
+              <div>
+                <Textarea
+                  minRows={1}
+                  maxRows={2}
+                  className={[styles.Textarea].join(' ')}
+                  value={this.state.authorGithubProfileLink}
+                  onChange={this.authoGithubProfileLinkChangedHandler}
+                  placeholder={`github profile link`}
+                />
+              </div>
+              <div
+                style={{
+                  marginTop: 3,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'flex-start'
+                }}
+              >
+                <button
+                  className={[
+                    styles.AddNewEnvButton,
+                    this.state.newEnvText === '' ? styles.Disabled : null
+                  ].join(' ')}
+                  onClick={this.updateAuthorGithubProfileLinkClickedHandler}
+                >
+                  Update
+                </button>
+                &nbsp;&nbsp;
+                <button
+                  className={[styles.CancelEnvButton].join(' ')}
+                  onClick={
+                    this.cancelUpdateAuthorGithubProfileLinkClickedHandler
+                  }
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          )}
+          {!this.state.isEditingTaskAuthor && (
+            <div className={styles.SectionContent}>
+              {!this.state.authorGithubUserObject && (
+                <p style={{ fontStyle: 'italic', color: '#666' }}>
+                  Author information not available for the moment.
+                </p>
+              )}
+
+              {this.state.authorGithubUserObject && (
+                <div className={styles.AuthorInfoCard}>
+                  <div className={styles.AuthorAvatarContainer}>
+                    <a
+                      href={this.state.authorGithubProfileLink}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <img
+                        src={this.state.authorGithubUserObject.avatar_url}
+                        alt=""
+                      />
+                    </a>
+                  </div>
+                  <div className={styles.AuthorInfoContainer}>
+                    <div>
+                      <a
+                        href={this.state.authorGithubProfileLink}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <strong>
+                          {this.state.authorGithubUserObject.name}
+                        </strong>
+                      </a>
+                      &nbsp;&nbsp;
+                      <a
+                        href={this.state.authorGithubProfileLink}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <span>{this.state.authorGithubUserObject.login}</span>
+                      </a>
+                    </div>
+                    {this.state.authorGithubUserObject.bio && (
+                      <p>{this.state.authorGithubUserObject.bio}</p>
+                    )}
+                    {this.state.authorGithubUserObject.company && (
+                      <p
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          color: '#666',
+                          fontSize: 12
+                        }}
+                      >
+                        <IoIosPeople style={{ fontSize: 15 }} /> &nbsp;
+                        {this.state.authorGithubUserObject.company}
+                      </p>
+                    )}
+                    {this.state.authorGithubUserObject.location && (
+                      <p
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          color: '#666',
+                          fontSize: 12
+                        }}
+                      >
+                        <MdPinDrop style={{ fontSize: 15 }} />
+                        &nbsp;
+                        {this.state.authorGithubUserObject.location}
+                      </p>
+                    )}
+
+                    {this.state.authorGithubUserObject.blog && (
+                      <p
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          color: '#666',
+                          fontSize: 12
+                        }}
+                      >
+                        <IoIosLink style={{ fontSize: 15 }} />
+                        &nbsp;
+                        <a
+                          href={this.state.authorGithubUserObject.blog}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          {this.state.authorGithubUserObject.blog}
+                        </a>
+                      </p>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* {this.state.authorGithubUserObject && (
+                <React.Fragment>
+                  <p>
+                    Github Profile:{' '}
+                    <a
+                      href={this.state.authorGithubProfileLink}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {this.state.authorGithubUserObject.name} (@
+                      {this.state.authorGithubUserObject.login})
+                    </a>
+                  </p>
+                  {this.state.authorGithubUserObject.company && (
+                    <p>
+                      The author is affiliated with{' '}
+                      {this.state.authorGithubUserObject.company}.
+                    </p>
+                  )}
+                </React.Fragment>
+              )} */}
+            </div>
+          )}
         </div>
 
         {/* <div className={styles.Section}>

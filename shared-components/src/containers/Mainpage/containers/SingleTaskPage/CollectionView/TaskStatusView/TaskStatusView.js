@@ -106,7 +106,7 @@ class TaskStatusView extends Component {
     author: null,
 
     overviewExpanded: true,
-    overviewTabValue: 0
+    overviewTabValue: 1
   };
 
   handleTabChange = (event, newValue) => {

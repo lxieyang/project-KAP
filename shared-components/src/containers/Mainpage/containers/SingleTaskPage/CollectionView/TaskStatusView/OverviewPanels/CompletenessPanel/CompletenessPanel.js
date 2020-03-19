@@ -26,7 +26,7 @@ class CompletenessPanel extends Component {
   state = {};
 
   render() {
-    let { queries, pieces, pages } = this.props;
+    let { queries, pieces, pages, task } = this.props;
 
     const displayPieces = pieces.filter(
       p => p.pieceType === PIECE_TYPES.option
@@ -44,23 +44,47 @@ class CompletenessPanel extends Component {
 
     pages = reverse(sortBy(pages, ['piecesNumber']));
 
-    pages = pages.filter((_, idx) => idx < 4);
-
-    // pages = pages.filter(page => page.piecesNumber > 0);
+    let { creationDate, updateDate } = task;
+    creationDate = creationDate.toDate();
+    updateDate = updateDate.toDate();
+    const approxDuration = updateDate - creationDate;
 
     return (
       <div className={styles.PanelContainer}>
         <div className={styles.Section}>
           <div className={styles.SectionHeader}>
             <GiMicroscope className={styles.SectionHeaderIcon} />
-            <span className={styles.UpToDate}>Extensive</span>
+            {pieces.length > 8 ? (
+              <span className={styles.UpToDate}>Extensive</span>
+            ) : (
+              <span className={styles.NotUpToDate}>Limited</span>
+            )}
             Research
           </div>
           <div className={styles.SectionContent}>
-            <p>The author spent a total of 56 minutes on the task.</p>
             <p>
-              The author went through 13 pages, and collected 3 options, 3
-              criteria, and 7 pieces of evidence
+              The author spent a total of{' '}
+              <strong>{moment.duration(approxDuration).humanize()}</strong> on
+              the task.
+            </p>
+            <p>
+              The author went through <strong>{pages.length}</strong> pages, and
+              collected <strong>{pieces.length}</strong> snippets, of which{' '}
+              <strong>
+                {pieces.filter(p => p.pieceType === PIECE_TYPES.option).length}
+              </strong>{' '}
+              are options,{' '}
+              <strong>
+                {
+                  pieces.filter(p => p.pieceType === PIECE_TYPES.criterion)
+                    .length
+                }
+              </strong>{' '}
+              are criteria, and{' '}
+              <strong>
+                {pieces.filter(p => p.pieceType === PIECE_TYPES.snippet).length}
+              </strong>{' '}
+              are evidence snippets.
             </p>
           </div>
           <div className={styles.SectionFooter}>
@@ -83,11 +107,11 @@ class CompletenessPanel extends Component {
               Based on everything so far, we think you might want explore the
               following options:
             </p>
-            <p>
+            <div>
               <div className={styles.ListItem}>xxxxxxxxx</div>
               <div className={styles.ListItem}>yyyyyyyyy</div>
               <div className={styles.ListItem}>zzzzzzzzz</div>
-            </p>
+            </div>
           </div>
         </div>
 

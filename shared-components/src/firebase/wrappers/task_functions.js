@@ -50,6 +50,17 @@ export const updateTaskGoal = (taskId, newTaskGoal) => {
     });
 };
 
+export const updateTaskAuthorGithubProfileLink = (
+  taskId,
+  newGithubProfileLink
+) => {
+  getTaskById(taskId)
+    .update({ githubProfileLink: newGithubProfileLink })
+    .then(() => {
+      updateTaskUpdateTime(taskId);
+    });
+};
+
 export const getTaskEnvironmentsAndConstraints = taskId => {
   return getTaskById(taskId).collection('envAndConstraints');
 };
@@ -216,6 +227,7 @@ export const createTaskWithName = newTaskName => {
     isStarred: false,
     shareId: uuid(),
     readOnlyId: uuid(),
-    goal: null
+    goal: null,
+    githubProfileLink: null
   });
 };

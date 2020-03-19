@@ -26,6 +26,7 @@
   font-weight: 400;
   color: #666;
   cursor: pointer;
+  user-select: none;
 }
 
 .AddButton:hover {
@@ -66,9 +67,10 @@
 .DomainItem {
   display: inline-flex;
   align-items: center;
-  border-radius: 5px;
-  border: 1px solid lightgray;
+  /* border-radius: 5px; */
+  /* border: 1px solid transparent; */
   padding: 0px 2px;
+  font-style: italic;
 }
 
 .DomainItem img {
@@ -115,14 +117,14 @@
   font-size: 13px;
   padding: 2px 4px;
 
-  border: 1px solid transparent;
+  border: 1px solid rgb(226, 226, 226);
   border-radius: 4px;
   color: #000;
   background: transparent !important;
 }
 
 .Textarea:hover {
-  border: 1px solid rgb(226, 226, 226);
+  border: 1px solid rgb(185, 185, 185);
 }
 
 .Textarea:focus {
@@ -130,4 +132,91 @@
   background-color: #fff;
   border-color: rgb(17, 100, 224);
   outline: none;
+}
+
+.AddNewEnvButton {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  user-select: none;
+  color: #007bff;
+  border: 1px solid#007bff;
+  padding: 0px 6px;
+  font-size: 11px;
+  height: 20px;
+  width: 60px;
+  border-radius: 5px;
+  cursor: pointer;
+
+  /* transition: all 0.1s ease-in; */
+}
+
+.AddNewEnvButton.Disabled {
+  cursor: not-allowed;
+  pointer-events: all !important;
+  color: #007bff !important;
+  background-color: transparent !important;
+  opacity: 0.4;
+}
+
+.AddNewEnvButton:hover {
+  color: #fff;
+  background-color: #007bff;
+}
+
+.AddNewEnvButton:focus,
+.CancelEnvButton:focus {
+  outline: none;
+}
+
+.CancelEnvButton {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  user-select: none;
+  color: #ff1e00c7;
+  border: 1px solid#ff1e00c7;
+  padding: 0px 6px;
+  font-size: 11px;
+  height: 20px;
+  width: 60px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.CancelEnvButton:hover {
+  color: #fff;
+  background-color: #ff1e00c7;
+}
+
+.AuthorInfoCard {
+  margin-top: 4px;
+  border: 1px solid lightgray;
+  border-radius: 5px;
+  display: flex;
+  padding: 10px;
+}
+
+.AuthorAvatarContainer {
+  max-width: 50px;
+  margin-right: 8px;
+}
+
+.AuthorAvatarContainer img {
+  width: 100%;
+  border-radius: 3px;
+}
+
+.AuthorInfoContainer a {
+  text-decoration: none;
+  color: inherit;
+}
+
+.AuthorInfoContainer a span {
+  color: #666;
+}
+
+.AuthorInfoContainer a:hover,
+.AuthorInfoContainer a:hover span {
+  color: #007bff !important;
 }

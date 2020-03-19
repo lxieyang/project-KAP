@@ -26,6 +26,7 @@
   font-weight: 400;
   color: #666;
   cursor: pointer;
+  user-select: none;
 }
 
 .AddButton:hover {

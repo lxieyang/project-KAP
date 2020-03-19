@@ -198,7 +198,7 @@ class ContextPanel extends Component {
       existingEnvTagsList.push({ name: t, ...existingEnvTags[t] });
     }
     existingEnvTagsList = reverse(sortBy(existingEnvTagsList, ['count']));
-    console.log(existingEnvTagsList);
+    // console.log(existingEnvTagsList);
 
     const envList = existingEnvTagsList.concat(this.state.environments);
 
