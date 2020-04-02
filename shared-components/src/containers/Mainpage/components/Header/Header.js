@@ -128,6 +128,7 @@ class Header extends Component {
               tasksLoading={this.props.tasksLoading}
               currentTaskId={this.props.currentTaskId}
               currentTask={this.props.taskName}
+              pathname={location.pathname}
             />
           </Typography>
 

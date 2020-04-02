@@ -7,6 +7,7 @@ import { THEME_COLOR } from '../../../../../../shared/theme';
 import styles from './TaskStatusView.css';
 
 import { withStyles } from '@material-ui/core/styles';
+import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
 import Star from 'mdi-material-ui/Star';
 import Chat from 'mdi-material-ui/Chat';
@@ -41,6 +42,7 @@ import Modal from 'react-modal';
 import ContextPanel from './OverviewPanels/ContextPanel/ContextPanel';
 import TrustPanel from './OverviewPanels/TrustPanel/TrustPanel';
 import CompletenessPanel from './OverviewPanels/CompletenessPanel/CompletenessPanel';
+import TaskContext from '../../../../../../shared/task-context';
 
 const materialStyles = theme => ({
   iconButtons: {
@@ -53,6 +55,18 @@ const materialStyles = theme => ({
   },
   close: {
     padding: theme.spacing.unit / 2
+  },
+  viewControlButton: {
+    minWidth: '12px',
+    height: '100%',
+    fontSize: '14px',
+    textTransform: 'capitalize',
+    padding: '2px 6px',
+    lineHeight: '20px',
+    margin: '0px 2px',
+    overflow: 'hidden',
+    justifyContent: 'flex-start'
+    // flexShrink: 0
   }
 });
 
@@ -89,6 +103,7 @@ function TabPanel(props) {
 }
 
 class TaskStatusView extends Component {
+  static contextType = TaskContext;
   state = {
     task: null,
 
@@ -261,8 +276,74 @@ class TaskStatusView extends Component {
 
     return (
       <React.Fragment>
-        <div className={styles.TaskStatusViewContainer}>
-          <div className={styles.VariousButtonsContainer}>
+        <div className={styles.TaskViewControlsContainer}>
+          <Button
+            variant={'outlined'}
+            onClick={() => {
+              this.context.setCurrentTaskView('default');
+            }}
+            size="small"
+            className={[
+              classes.viewControlButton,
+              this.context.currentTaskView === 'default'
+                ? styles.CurrentViewControlButtonDefault
+                : null
+            ].join(' ')}
+          >
+            Default
+          </Button>
+          <Button
+            variant={'outlined'}
+            onClick={() => {
+              this.context.setCurrentTaskView('context');
+            }}
+            size="small"
+            className={[
+              classes.viewControlButton,
+              this.context.currentTaskView === 'context'
+                ? styles.CurrentViewControlButton
+                : null
+            ].join(' ')}
+          >
+            <GoPackage className={styles.ViewControlButtonIcon} />
+            Task Context
+          </Button>
+          <Button
+            variant={'outlined'}
+            onClick={() => {
+              this.context.setCurrentTaskView('trustworthiness');
+            }}
+            size="small"
+            className={[
+              classes.viewControlButton,
+              this.context.currentTaskView === 'trustworthiness'
+                ? styles.CurrentViewControlButton
+                : null
+            ].join(' ')}
+          >
+            <FaMedal className={styles.ViewControlButtonIcon} />
+            Trustworthiness
+          </Button>
+          <Button
+            variant={'outlined'}
+            onClick={() => {
+              this.context.setCurrentTaskView('thoroughness');
+            }}
+            size="small"
+            className={[
+              classes.viewControlButton,
+              this.context.currentTaskView === 'thoroughness'
+                ? styles.CurrentViewControlButton
+                : null
+            ].join(' ')}
+          >
+            <GoTasklist className={styles.ViewControlButtonIcon} />
+            Thoroughness
+          </Button>
+        </div>
+
+        {/* <div className={styles.TaskStatusViewContainer}> */}
+        {/* <div className={styles.VariousButtonsContainer}>
             {editAccess && (
               <Tooltip
                 title={`${
@@ -288,8 +369,8 @@ class TaskStatusView extends Component {
                 </IconButton>
               </Tooltip>
             )}
-          </div>
-          <div
+          </div> */}
+        {/* <div
             className={styles.TaskNameContainer}
             title={editAccess ? `Edit task name` : null}
           >
@@ -305,9 +386,9 @@ class TaskStatusView extends Component {
               onChange={e => this.handleTaskNameChange(e)}
               className={styles.Textarea}
             />
-          </div>
+          </div> */}
 
-          {/* <div style={{ position: 'relative' }}>
+        {/* <div style={{ position: 'relative' }}>
             <Tooltip
               title={
                 this.state.currentTaskCommentsCount > 0
@@ -341,7 +422,7 @@ class TaskStatusView extends Component {
             </span>
           </div> */}
 
-          {editAccess && (
+        {/* {editAccess && (
             <React.Fragment>
               <Tooltip title={`Get sharable link`} placement={'bottom'}>
                 <IconButton
@@ -368,9 +449,9 @@ class TaskStatusView extends Component {
                 pauseOnHover
               />
             </React.Fragment>
-          )}
+          )} */}
 
-          {/* <Tooltip
+        {/* <Tooltip
             title={
               this.state.overviewExpanded ? 'Hide Overview' : 'Show Overview'
             }
@@ -388,7 +469,7 @@ class TaskStatusView extends Component {
               <FaClipboardList className={classes.iconInIconButtons} />
             </IconButton>
           </Tooltip> */}
-        </div>
+        {/* </div> */}
 
         {/* <Collapse in={this.state.commentsExpanded} timeout="auto">
           <div className={styles.TaskCommentsContainer}>
@@ -397,6 +478,7 @@ class TaskStatusView extends Component {
         </Collapse> */}
 
         <Divider light />
+
         <div className={styles.OverviewTitleContainer}>
           <span>Overview</span>
           <div className={styles.OverviewToggleButtonContainer}>
@@ -419,18 +501,19 @@ class TaskStatusView extends Component {
           </div>
         </div>
 
-        <Collapse in={this.state.overviewExpanded} timeout="auto">
+        <Collapse
+          in={this.state.overviewExpanded}
+          timeout="auto"
+          style={{ flexShrink: 0 }}
+        >
           <div className={styles.TaskOverviewContainer}>
-            {/* <div className={styles.OverviewTitle}>Overview</div> */}
             <Tabs
               value={this.state.overviewTabValue}
               indicatorColor="secondary"
               textColor="inherit"
               variant="fullWidth"
               style={{ minHeight: 36 }}
-              onChange={
-                this.handleTabChange // style={{ color: 'black' }}
-              }
+              onChange={this.handleTabChange}
             >
               <StyledTab
                 label={

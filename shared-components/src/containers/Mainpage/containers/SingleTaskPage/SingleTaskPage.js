@@ -24,7 +24,9 @@ class SingleTaskPage extends Component {
     isDemoTask: false,
     selectedDomains: [],
     selectedUrls: [],
-    selectedQueries: []
+    selectedQueries: [],
+
+    currentTaskView: 'default'
   };
 
   componentDidMount() {
@@ -117,6 +119,10 @@ class SingleTaskPage extends Component {
                 selectedUrls = selectedUrls.filter(i => i !== item);
               }
               this.setState({ selectedUrls });
+            },
+            currentTaskView: this.state.currentTaskView,
+            setCurrentTaskView: toView => {
+              this.setState({ currentTaskView: toView });
             }
           }}
         >

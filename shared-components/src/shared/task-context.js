@@ -8,7 +8,9 @@ const taskContext = React.createContext({
   selectedUrls: [],
   assSelectedUrl: () => {},
   selectedQueries: [],
-  assSelectedQuery: () => {}
+  assSelectedQuery: () => {},
+  currentTaskView: 'default', // 'default', 'context', 'trustworthiness', 'thoroughness',
+  setCurrentTaskView: () => {}
 });
 
 export default taskContext;

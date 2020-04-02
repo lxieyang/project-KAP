@@ -22,6 +22,8 @@ import SourcePagesView from './SourcePagesView/SourcePagesView';
 import SourceQueriesView from './SourceQueriesView/SourceQueriesView';
 import CodeSnippetsView from './CodeSnippetsView/CodeSnippetsView';
 
+import OverviewPanelV2 from './OverviewPanelV2/OverviewPanelV2';
+
 import * as FirestoreManager from '../../../../../firebase/firestore_wrapper';
 import moment from 'moment';
 
@@ -167,7 +169,14 @@ class CollectionView extends Component {
         />
         <Divider light />
 
-        <Tabs
+        {/* <OverviewPanelV2
+          userId={this.props.userId}
+          queries={this.state.searchQueries}
+          pages={this.state.visitedPages}
+          pieces={this.state.pieces}
+        /> */}
+
+        {/* <Tabs
           value={tabValue}
           indicatorColor="primary"
           textColor="primary"
@@ -181,13 +190,7 @@ class CollectionView extends Component {
               </div>
             }
           />
-          {/* <StyledTab
-            label={
-              <div className={styles.TabLabelContainer}>
-                <IoIosBrowsers className={styles.TabLabelIcon} /> Pages
-              </div>
-            }
-          /> */}
+         
           <StyledTab
             label={
               <div className={styles.TabLabelContainer}>
@@ -225,13 +228,6 @@ class CollectionView extends Component {
               pieces={this.state.pieces}
             />
           </TabPanel>
-          {/* <TabPanel value={tabValue} index={1}>
-            <SourcePagesView
-              queries={this.state.searchQueries}
-              pages={this.state.visitedPages}
-              pieces={this.state.pieces}
-            />
-          </TabPanel> */}
           <TabPanel value={tabValue} index={1}>
             <SourceQueriesView
               queries={this.state.searchQueries}
@@ -252,7 +248,7 @@ class CollectionView extends Component {
               currentWorkspaceId={this.props.currentWorkspaceId}
             />
           </TabPanel>
-        </SwipeableViews>
+        </SwipeableViews> */}
       </React.Fragment>
     );
   }

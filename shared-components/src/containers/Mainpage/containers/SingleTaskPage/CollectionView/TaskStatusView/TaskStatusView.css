@@ -1,4 +1,6 @@
 .TaskStatusViewContainer {
+  flex-shrink: 0;
+
   margin-top: 2px;
   margin-bottom: 2px;
   font-size: 16px;
@@ -97,7 +99,42 @@
   overflow: auto;
 }
 
+.TaskViewControlsContainer {
+  flex-shrink: 0;
+
+  margin-top: 2px;
+  margin-bottom: 2px;
+  font-size: 16px;
+  box-sizing: border-box;
+  width: 100%;
+  padding: 0px 5px;
+  padding-bottom: 5px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.ViewControlButtonIcon {
+  flex-shrink: 0;
+  font-size: 13px;
+  margin-right: 3px;
+}
+
+.CurrentViewControlButtonDefault {
+  background-color: rgb(33, 150, 243) !important;
+  border-color: transparent !important;
+  color: #fff !important;
+}
+
+.CurrentViewControlButton {
+  background-color: rgb(255, 49, 90) !important;
+  border-color: transparent !important;
+  color: #fff !important;
+}
+
 .OverviewTitleContainer {
+  flex-shrink: 0;
+
   margin-left: 5px;
   min-height: 24px;
 
