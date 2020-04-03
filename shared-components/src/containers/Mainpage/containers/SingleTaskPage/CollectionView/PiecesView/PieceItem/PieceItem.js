@@ -62,7 +62,7 @@ const materialStyles = theme => ({
     padding: '0px',
     marginBottom: '8px'
   },
-  cardContent: { paddingBottom: '0px' },
+  cardContent: { paddingBottom: '3px' },
   expand: {
     padding: '4px',
     transform: 'rotate(0deg)',
@@ -214,7 +214,7 @@ class PieceItem extends Component {
     if (e) {
       e.stopPropagation();
     }
-    if (to) {
+    if (to !== null) {
       this.setState({ displayingContext: to });
     } else {
       this.setState(prevState => {
@@ -254,7 +254,8 @@ class PieceItem extends Component {
 
     if (
       this.props.cellType === TABLE_CELL_TYPES.columnHeader ||
-      this.props.cellType === TABLE_CELL_TYPES.regularCell
+      this.props.cellType === TABLE_CELL_TYPES.regularCell ||
+      this.props.cellType === TABLE_CELL_TYPES.rowHeader
     ) {
       if (this.props.isInContextView) {
         this.setState({ expanded: true });
@@ -296,7 +297,8 @@ class PieceItem extends Component {
     if (prevProps.isInContextView !== this.props.isInContextView) {
       if (
         this.props.cellType === TABLE_CELL_TYPES.columnHeader ||
-        this.props.cellType === TABLE_CELL_TYPES.regularCell
+        this.props.cellType === TABLE_CELL_TYPES.regularCell ||
+        this.props.cellType === TABLE_CELL_TYPES.rowHeader
       ) {
         if (this.props.isInContextView) {
           this.setState({ expanded: true });
@@ -482,7 +484,7 @@ class PieceItem extends Component {
             }}
           >
             <CardContent
-              style={{ display: 'flex', padding: '0px' }}
+              style={{ display: 'flex', padding: '0px', paddingBottom: '5px' }}
               className={classes.cardContent}
             >
               {connectDragSource(
@@ -569,13 +571,13 @@ class PieceItem extends Component {
                 )}
                 <div
                   className={classesInCSS.InfoActionBar}
-                  style={{
-                    opacity:
-                      this.state.expanded ||
-                      (!this.state.expanded && isHovering)
-                        ? '1'
-                        : '0.5'
-                  }}
+                  // style={{
+                  //   opacity:
+                  //     this.state.expanded ||
+                  //     (!this.state.expanded && isHovering)
+                  //       ? '1'
+                  //       : '0.5'
+                  // }}
                 >
                   {this.props.isDemoTask &&
                     this.props.cellType === TABLE_CELL_TYPES.regularCell && (
@@ -857,39 +859,6 @@ class PieceItem extends Component {
                         </div>
                       )}
 
-                    {this.props.isDemoTask &&
-                      (piece.annotationType === ANNOTATION_TYPES.Snippet ||
-                        piece.annotationType ===
-                          ANNOTATION_TYPES.Highlight) && (
-                        <div
-                          style={{
-                            fontWeight: 300
-                          }}
-                        >
-                          <div
-                            onClick={e => e.stopPropagation()}
-                            style={{ fontSize: '13px', marginLeft: '4px' }}
-                          >
-                            <Chip
-                              style={{ height: 24 }}
-                              label={
-                                displayingContext && context_object
-                                  ? 'Showing snippet context'
-                                  : 'Showing captured snippet'
-                              }
-                            />
-
-                            {context_object && (
-                              <Switch
-                                onClick={e => e.stopPropagation()}
-                                checked={displayingContext}
-                                onChange={this.switchShouldDisplayContext}
-                              />
-                            )}
-                          </div>
-                        </div>
-                      )}
-
                     {piece.annotationType === ANNOTATION_TYPES.Snippet &&
                     displayingScreenshot ? (
                       screenshotLoading ? (
@@ -933,7 +902,14 @@ class PieceItem extends Component {
                       )
                     ) : (
                       <div
-                        className={classesInCSS.OriginalContentContainer}
+                        className={[
+                          classesInCSS.OriginalContentContainer,
+                          this.props.cellType ===
+                            TABLE_CELL_TYPES.columnHeader ||
+                          this.props.cellType === TABLE_CELL_TYPES.rowHeader
+                            ? classesInCSS.OriginalContentContainerInTableHeader
+                            : null
+                        ].join(' ')}
                         ref={this.htmlRef}
                       >
                         <div
@@ -947,6 +923,87 @@ class PieceItem extends Component {
                         />
                       </div>
                     )}
+
+                    {/* {this.props.isDemoTask &&
+                      (piece.annotationType === ANNOTATION_TYPES.Snippet ||
+                        piece.annotationType ===
+                          ANNOTATION_TYPES.Highlight) && (
+                        <div
+                          style={{
+                            fontWeight: 300
+                          }}
+                        >
+                          <div
+                            onClick={e => e.stopPropagation()}
+                            style={{ fontSize: '13px', marginLeft: '4px' }}
+                          >
+                            <Chip
+                              style={{ height: 24 }}
+                              label={
+                                displayingContext && context_object
+                                  ? 'Showing snippet context'
+                                  : 'Showing captured snippet'
+                              }
+                            />
+
+                            {context_object && (
+                              <Switch
+                                onClick={e => e.stopPropagation()}
+                                checked={displayingContext}
+                                onChange={this.switchShouldDisplayContext}
+                              />
+                            )}
+                          </div>
+                        </div>
+                      )} */}
+
+                    {this.props.isDemoTask &&
+                      (piece.annotationType === ANNOTATION_TYPES.Snippet ||
+                        piece.annotationType ===
+                          ANNOTATION_TYPES.Highlight) && (
+                        <div
+                          style={{
+                            fontWeight: 300,
+                            fontStyle: 'italic'
+                          }}
+                        >
+                          <div
+                            onClick={e => e.stopPropagation()}
+                            style={{ fontSize: '13px', marginLeft: '8px' }}
+                          >
+                            Show:&nbsp;
+                            <input
+                              type="radio"
+                              id={`${piece.id}-show-captured-snippet`}
+                              name={`${piece.id}-switch`}
+                              checked={!displayingContext}
+                              onChange={this.switchShouldDisplayContext}
+                            />
+                            <label
+                              htmlFor={`${piece.id}-show-captured-snippet`}
+                            >
+                              HTML content
+                            </label>
+                            &nbsp;
+                            {context_object && (
+                              <React.Fragment>
+                                <input
+                                  type="radio"
+                                  id={`${piece.id}-show-snippet-context`}
+                                  name={`${piece.id}-switch`}
+                                  checked={displayingContext}
+                                  onChange={this.switchShouldDisplayContext}
+                                />
+                                <label
+                                  htmlFor={`${piece.id}-show-snippet-context`}
+                                >
+                                  Context
+                                </label>
+                              </React.Fragment>
+                            )}
+                          </div>
+                        </div>
+                      )}
                   </React.Fragment>
                 ) : (
                   <div
@@ -963,7 +1020,13 @@ class PieceItem extends Component {
                       className={classesInCSS.TextareaForPieceContent}
                     /> */}
                     <div
-                      className={classesInCSS.OriginalContentContainer}
+                      className={[
+                        classesInCSS.OriginalContentContainer,
+                        this.props.cellType === TABLE_CELL_TYPES.columnHeader ||
+                        this.props.cellType === TABLE_CELL_TYPES.rowHeader
+                          ? classesInCSS.OriginalContentContainerInTableHeader
+                          : null
+                      ].join(' ')}
                       ref={this.htmlRef}
                     >
                       {context_object && (

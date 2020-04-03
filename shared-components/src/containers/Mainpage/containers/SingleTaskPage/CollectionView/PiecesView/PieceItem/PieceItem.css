@@ -150,12 +150,13 @@
 
 .CollapseContainer {
   padding: 0px;
+  padding-bottom: 4px;
 }
 
 .OriginalContentContainer {
   max-width: 100%;
   padding: 2px 8px;
-  max-height: 200px;
+  max-height: 250px;
   overflow: auto;
   /* opacity: 0.8; */
   font-size: 1rem;
@@ -169,6 +170,10 @@
   border-left: 2px solid rgb(224, 226, 229);
 
   position: relative;
+}
+
+.OriginalContentContainerInTableHeader {
+  max-height: 120px;
 }
 
 .HTMLPreview {

@@ -105,6 +105,7 @@ class SingleTaskPage extends Component {
         // honestSignals.sourceDomain = true;
         break;
       case 'context':
+        honestSignals.sourceDomain = true;
         honestSignals.searchQuery = true;
         honestSignals.versions = true;
         break;

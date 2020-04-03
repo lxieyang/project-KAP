@@ -303,6 +303,8 @@ class RegularCell extends Component {
       commentCount,
       honestSignals,
       isInDefaultView,
+      isInContextView,
+      isInTrustworthinessView,
       isInThoroughnessView
     } = this.props;
     const { anchorEl, ratingAnchorEl } = this.state;
@@ -731,8 +733,8 @@ class RegularCell extends Component {
                     const pieceName = piece.name;
                     const pieceNameLength = pieceName.split(' ').length;
                     const pieceNameShort =
-                      pieceNameLength > 10
-                        ? getFirstNWords(10, pieceName)
+                      pieceNameLength > 6
+                        ? getFirstNWords(6, pieceName)
                         : pieceName;
 
                     let context_object = context_objects.filter(
@@ -788,7 +790,7 @@ class RegularCell extends Component {
                           {!isInDefaultView && (
                             <div style={{ flex: 1, marginLeft: 3 }}>
                               <div className={styles.PieceNameContainer}>
-                                {isInThoroughnessView
+                                {isInThoroughnessView || isInContextView
                                   ? pieceName
                                   : pieceNameShort}
                               </div>

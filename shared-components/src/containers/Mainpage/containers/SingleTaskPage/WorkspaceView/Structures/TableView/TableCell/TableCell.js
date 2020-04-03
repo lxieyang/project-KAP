@@ -83,6 +83,9 @@ class TableCell extends Component {
             honestSignals={this.context.honestSignalsInTable}
             isInDefaultView={this.context.currentTaskView === 'default'}
             isInContextView={this.context.currentTaskView === 'context'}
+            isInTrustworthinessView={
+              this.context.currentTaskView === 'trustworthiness'
+            }
             isInThoroughnessView={
               this.context.currentTaskView === 'thoroughness'
             }
@@ -100,6 +103,9 @@ class TableCell extends Component {
             honestSignals={this.context.honestSignalsInTable}
             isInDefaultView={this.context.currentTaskView === 'default'}
             isInContextView={this.context.currentTaskView === 'context'}
+            isInTrustworthinessView={
+              this.context.currentTaskView === 'trustworthiness'
+            }
             isInThoroughnessView={
               this.context.currentTaskView === 'thoroughness'
             }
@@ -118,6 +124,9 @@ class TableCell extends Component {
             honestSignals={this.context.honestSignalsInTable}
             isInDefaultView={this.context.currentTaskView === 'default'}
             isInContextView={this.context.currentTaskView === 'context'}
+            isInTrustworthinessView={
+              this.context.currentTaskView === 'trustworthiness'
+            }
             isInThoroughnessView={
               this.context.currentTaskView === 'thoroughness'
             }
