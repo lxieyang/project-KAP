@@ -149,7 +149,7 @@ class CompletenessPanel extends Component {
 
     let { creationDate, updateDate } = task;
     creationDate = creationDate.toDate();
-    updateDate = updateDate.toDate();
+    updateDate = updateDate ? updateDate.toDate() : new Date();
     const approxDuration = updateDate - creationDate;
 
     /**

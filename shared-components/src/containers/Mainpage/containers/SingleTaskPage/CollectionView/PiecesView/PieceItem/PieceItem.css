@@ -155,7 +155,7 @@
 .OriginalContentContainer {
   max-width: 100%;
   padding: 2px 8px;
-  max-height: 400px;
+  max-height: 200px;
   overflow: auto;
   /* opacity: 0.8; */
   font-size: 1rem;
@@ -173,6 +173,10 @@
 
 .HTMLPreview {
   font-size: 0.9rem;
+}
+
+.InColumnHeader {
+  font-size: 0.8rem;
 }
 
 .HTMLPreview:focus {

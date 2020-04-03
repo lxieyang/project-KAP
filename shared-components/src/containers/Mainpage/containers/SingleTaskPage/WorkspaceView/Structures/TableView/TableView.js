@@ -368,11 +368,11 @@ class TableView extends Component {
       <React.Fragment>
         <div className={styles.TableViewContainer}>
           {/* Table Name */}
-          <TableViewName
+          {/* <TableViewName
             editAccess={editAccess}
             workspace={workspace}
             workspaceTypeString={workspaceTypeString}
-          />
+          /> */}
 
           {/* Table Content */}
           <div className={styles.TableContentContainer}>

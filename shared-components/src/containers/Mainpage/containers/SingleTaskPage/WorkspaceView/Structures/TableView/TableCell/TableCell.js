@@ -78,8 +78,14 @@ class TableCell extends Component {
             {...this.props}
             comments={comments}
             commentCount={commentCount}
+            isDemoTask={this.context.isDemoTask}
             selectedUrls={this.context.selectedUrls}
             honestSignals={this.context.honestSignalsInTable}
+            isInDefaultView={this.context.currentTaskView === 'default'}
+            isInContextView={this.context.currentTaskView === 'context'}
+            isInThoroughnessView={
+              this.context.currentTaskView === 'thoroughness'
+            }
           />
         );
         break;
@@ -89,8 +95,14 @@ class TableCell extends Component {
             {...this.props}
             comments={comments}
             commentCount={commentCount}
+            isDemoTask={this.context.isDemoTask}
             selectedUrls={this.context.selectedUrls}
             honestSignals={this.context.honestSignalsInTable}
+            isInDefaultView={this.context.currentTaskView === 'default'}
+            isInContextView={this.context.currentTaskView === 'context'}
+            isInThoroughnessView={
+              this.context.currentTaskView === 'thoroughness'
+            }
           />
         );
         break;
@@ -104,6 +116,11 @@ class TableCell extends Component {
             isDemoTask={this.context.isDemoTask}
             selectedUrls={this.context.selectedUrls}
             honestSignals={this.context.honestSignalsInTable}
+            isInDefaultView={this.context.currentTaskView === 'default'}
+            isInContextView={this.context.currentTaskView === 'context'}
+            isInThoroughnessView={
+              this.context.currentTaskView === 'thoroughness'
+            }
           />
         );
         break;

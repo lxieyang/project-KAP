@@ -137,8 +137,8 @@
 }
 
 .AttitudeInTableContainerVariantI {
-  margin: 5px 10px;
-  display: flex;
+  margin: 5px 5px;
+  display: inline-flex;
 }
 
 .AttitudeInTableContainerVariantI.Normal {
@@ -219,6 +219,10 @@ a.TagSpan:hover {
 }
 
 .VoteIcon {
+  color: rgb(98, 166, 110);
+}
+
+.VoteIconNegative {
   color: rgb(231, 74, 46);
 }
 

@@ -19,7 +19,8 @@ const taskContext = React.createContext({
     captureTime: false,
     popularity: true,
     versions: false,
-    searchQuery: false
+    searchQuery: false,
+    code: false
   },
   setHonestSignalsInTable: () => {}
 });

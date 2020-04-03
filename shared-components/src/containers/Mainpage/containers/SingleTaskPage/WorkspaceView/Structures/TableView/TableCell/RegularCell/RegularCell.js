@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { sortBy, debounce } from 'lodash';
+import moment from 'moment';
 import styles from './RegularCell.css';
 import Spinner from '../../../../../../../../../components/UI/Spinner/Spinner';
 import ThumbV1 from '../../../../../../../../../components/UI/Thumbs/ThumbV1/ThumbV1';
@@ -32,6 +33,7 @@ import Button from '@material-ui/core/Button';
 import { FaArrowAltCircleUp, FaCheck, FaCode } from 'react-icons/fa';
 import { IoMdTime } from 'react-icons/io';
 import { AiFillFire } from 'react-icons/ai';
+import { GiSandsOfTime } from 'react-icons/gi';
 
 import Textarea from 'react-textarea-autosize';
 import { ContextMenu, MenuItem, ContextMenuTrigger } from 'react-contextmenu';
@@ -299,7 +301,9 @@ class RegularCell extends Component {
       commentAccess,
       comments,
       commentCount,
-      honestSignals
+      honestSignals,
+      isInDefaultView,
+      isInThoroughnessView
     } = this.props;
     const { anchorEl, ratingAnchorEl } = this.state;
     const open = Boolean(anchorEl);
@@ -694,7 +698,14 @@ class RegularCell extends Component {
           }}
         >
           {this.props.isDemoTask && (
-            <div className={styles.EvidenceIconContainerVariantI}>
+            <div
+              className={styles.EvidenceIconContainerVariantI}
+              style={{
+                display: isInDefaultView ? 'flex' : null,
+                justifyContent: isInDefaultView ? 'center' : null,
+                alignItems: isInDefaultView ? 'center' : null
+              }}
+            >
               {piecesList.length > 0 &&
                 sortBy(piecesList, ['rating']).map((p, idx) => {
                   if (
@@ -717,6 +728,13 @@ class RegularCell extends Component {
                     }
 
                     const piece = pieces[p.pieceId];
+                    const pieceName = piece.name;
+                    const pieceNameLength = pieceName.split(' ').length;
+                    const pieceNameShort =
+                      pieceNameLength > 10
+                        ? getFirstNWords(10, pieceName)
+                        : pieceName;
+
                     let context_object = context_objects.filter(
                       c => c.references.pieceId === p.pieceId
                     );
@@ -767,105 +785,141 @@ class RegularCell extends Component {
                           >
                             {icon}
                           </div>
-                          <div style={{ flex: 1, marginLeft: 3 }}>
-                            <div className={styles.PieceNameContainer}>
-                              {piece.name}
-                              {/* {getFirstNWords(5, piece.name)} */}
-                            </div>
-                            <div className={styles.TagsContainer}>
-                              {piece.references.url !== false && (
-                                <Tooltip // title={`${
-                                  //   new URL(piece.references.url).hostname // }  ---  Click to open`} //   piece.references.pageTitle // title={`${
-                                  // }   ---  Click to open`}
-                                  title={`
+                          {!isInDefaultView && (
+                            <div style={{ flex: 1, marginLeft: 3 }}>
+                              <div className={styles.PieceNameContainer}>
+                                {isInThoroughnessView
+                                  ? pieceName
+                                  : pieceNameShort}
+                              </div>
+                              <div className={styles.TagsContainer}>
+                                {honestSignals.sourceDomain &&
+                                  piece.references.url !== false && (
+                                    <Tooltip // title={`${
+                                      //   new URL(piece.references.url).hostname // }  ---  Click to open`} //   piece.references.pageTitle // title={`${
+                                      // }   ---  Click to open`}
+                                      title={`
                                   ${
                                     piece.references.pageTitle
                                   }   --- Click to open`}
-                                  placement={'top'}
-                                >
-                                  <a
-                                    href={
-                                      answerURLOnSO
-                                        ? answerURLOnSO
-                                        : piece.references.url
-                                    }
-                                    target="__blank"
-                                    className={styles.TagSpan}
-                                  >
-                                    <img
-                                      src={
-                                        GET_FAVICON_URL_PREFIX +
-                                        piece.references.url
-                                      }
-                                      alt={''}
-                                    />
-                                    <span
-                                      style={{ fontSize: 11, marginLeft: 4 }}
+                                      placement={'top'}
                                     >
-                                      {new URL(piece.references.url).hostname}
-                                    </span>
-                                  </a>
-                                </Tooltip>
-                              )}
-                              {popularityNumber && (
-                                <span
-                                  className={styles.TagSpan}
-                                  title={`${popularityNumber} up votes`}
-                                >
-                                  <FaArrowAltCircleUp
-                                    className={[
-                                      styles.Icon,
-                                      styles.VoteIcon
-                                    ].join(' ')}
-                                  />
-                                  {popularityNumber}
-                                </span>
-                              )}
-                              {answerAccepted === true && (
-                                <div>
+                                      <a
+                                        href={
+                                          answerURLOnSO
+                                            ? answerURLOnSO
+                                            : piece.references.url
+                                        }
+                                        target="__blank"
+                                        className={styles.TagSpan}
+                                      >
+                                        <img
+                                          src={
+                                            GET_FAVICON_URL_PREFIX +
+                                            piece.references.url
+                                          }
+                                          alt={''}
+                                        />
+                                        <span
+                                          style={{
+                                            fontSize: 11,
+                                            marginLeft: 4
+                                          }}
+                                        >
+                                          {
+                                            new URL(piece.references.url)
+                                              .hostname
+                                          }
+                                        </span>
+                                      </a>
+                                    </Tooltip>
+                                  )}
+                                {honestSignals.popularity && popularityNumber && (
                                   <span
                                     className={styles.TagSpan}
-                                    title={`Answer accepted by the question asker`}
+                                    title={`${popularityNumber} up votes`}
                                   >
-                                    <FaCheck
+                                    <FaArrowAltCircleUp
                                       className={[
                                         styles.Icon,
-                                        styles.AcceptedIcon
+                                        popularityNumber > 0
+                                          ? styles.VoteIcon
+                                          : styles.VoteIconNegative
                                       ].join(' ')}
                                     />
-                                    accepted
+                                    {popularityNumber}
                                   </span>
-                                </div>
-                              )}
-                              {updateDate && (
-                                <span
-                                  className={styles.TagSpan}
-                                  title={`Updated on ${updateDate.toLocaleDateString()}`}
-                                >
-                                  <IoMdTime
-                                    className={[
-                                      styles.Icon,
-                                      styles.TimeIcon
-                                    ].join(' ')}
-                                  />
-                                  {updateDate.toLocaleDateString()}
-                                </span>
-                              )}
-                              {codeSnippets && codeSnippets.length > 0 && (
-                                <span
-                                  className={styles.TagSpan}
-                                  title={`Contains code snippets`}
-                                >
-                                  <FaCode
-                                    className={[
-                                      styles.Icon,
-                                      styles.CodeIcon
-                                    ].join(' ')}
-                                  />
-                                </span>
-                              )}
+                                )}
+                                {honestSignals.popularity &&
+                                  answerAccepted === true && (
+                                    <div>
+                                      <span
+                                        className={styles.TagSpan}
+                                        title={`Answer accepted by the question asker`}
+                                      >
+                                        <FaCheck
+                                          className={[
+                                            styles.Icon,
+                                            styles.AcceptedIcon
+                                          ].join(' ')}
+                                        />
+                                        accepted
+                                      </span>
+                                    </div>
+                                  )}
+                                {honestSignals.updateTime && updateDate && (
+                                  <span
+                                    className={styles.TagSpan}
+                                    title={`Updated on ${updateDate.toLocaleDateString()}`}
+                                  >
+                                    <GiSandsOfTime
+                                      className={[
+                                        styles.Icon,
+                                        styles.TimeIcon
+                                      ].join(' ')}
+                                    />
+                                    updated {moment(updateDate).fromNow()}
+                                  </span>
+                                )}
+                                {honestSignals.captureTime &&
+                                  piece.creationDate && (
+                                    <span
+                                      className={styles.TagSpan}
+                                      title={`Collected on ${piece.creationDate
+                                        .toDate()
+                                        .toLocaleDateString()}`}
+                                    >
+                                      <IoMdTime
+                                        className={[
+                                          styles.Icon,
+                                          styles.TimeIcon
+                                        ].join(' ')}
+                                      />
+                                      collected{' '}
+                                      {moment(
+                                        piece.creationDate.toDate()
+                                      ).fromNow()}
+                                    </span>
+                                  )}
+
+                                {honestSignals.code &&
+                                  codeSnippets &&
+                                  codeSnippets.length > 0 && (
+                                    <span
+                                      className={styles.TagSpan}
+                                      title={`Contains code snippets`}
+                                    >
+                                      <FaCode
+                                        className={[
+                                          styles.Icon,
+                                          styles.CodeIcon
+                                        ].join(' ')}
+                                      />
+                                    </span>
+                                  )}
+                              </div>
                             </div>
-                          </div>
+                          )}
                         </div>
                         <ReactTooltip
                           place={'left'}
@@ -896,7 +950,9 @@ class RegularCell extends Component {
                             );
                           }}
                         />
-                        {idx !== piecesList.length - 1 && <hr />}
+                        {!isInDefaultView && idx !== piecesList.length - 1 && (
+                          <hr />
+                        )}
                       </React.Fragment>
                     );
                   } else {

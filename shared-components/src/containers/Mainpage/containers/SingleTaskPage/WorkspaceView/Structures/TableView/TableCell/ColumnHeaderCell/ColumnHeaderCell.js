@@ -390,7 +390,12 @@ class ColumnHeaderCell extends Component {
       editAccess,
       commentAccess,
       comments,
-      commentCount
+      commentCount,
+      context_objects,
+      honestSignals,
+      isInDefaultView,
+      isInContextView,
+      isInThoroughnessView
     } = this.props;
     const { anchorEl } = this.state;
     const open = Boolean(anchorEl);
@@ -693,6 +698,12 @@ class ColumnHeaderCell extends Component {
         {cellPieces.length > 0 ? (
           <div className={styles.ColumnHeaderCellContainer}>
             {cellPieces.map((p, idx) => {
+              let context_object = context_objects.filter(
+                c => c.references.pieceId === p.pieceId
+              );
+              context_object =
+                context_object.length > 0 ? context_object[0] : null;
+
               return (
                 <React.Fragment key={`${p.pieceId}-${idx}`}>
                   <ContextMenuTrigger
@@ -713,6 +724,7 @@ class ColumnHeaderCell extends Component {
                     >
                       <PieceItem
                         piece={pieces[p.pieceId]}
+                        context_object={context_object}
                         editAccess={editAccess}
                         commentAccess={commentAccess}
                         cellId={cell.id}
@@ -723,6 +735,11 @@ class ColumnHeaderCell extends Component {
                         switchDraggingPieceStatus={
                           this.switchDraggingPieceStatus
                         }
+                        isDemoTask={this.props.isDemoTask}
+                        honestSignals={honestSignals}
+                        isInDefaultView={isInDefaultView}
+                        isInContextView={isInContextView}
+                        isInThoroughnessView={isInThoroughnessView}
                       />
                     </div>
                   </ContextMenuTrigger>

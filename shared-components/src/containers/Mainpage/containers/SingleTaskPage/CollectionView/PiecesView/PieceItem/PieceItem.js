@@ -210,11 +210,17 @@ class PieceItem extends Component {
     });
   };
 
-  switchShouldDisplayContext = e => {
-    e.stopPropagation();
-    this.setState(prevState => {
-      return { displayingContext: !prevState.displayingContext };
-    });
+  switchShouldDisplayContext = (e, to = null) => {
+    if (e) {
+      e.stopPropagation();
+    }
+    if (to) {
+      this.setState({ displayingContext: to });
+    } else {
+      this.setState(prevState => {
+        return { displayingContext: !prevState.displayingContext };
+      });
+    }
 
     setTimeout(() => {
       this.findingHTMLFocus();
@@ -246,6 +252,19 @@ class PieceItem extends Component {
       this.setState({ expanded: true });
     }
 
+    if (
+      this.props.cellType === TABLE_CELL_TYPES.columnHeader ||
+      this.props.cellType === TABLE_CELL_TYPES.regularCell
+    ) {
+      if (this.props.isInContextView) {
+        this.setState({ expanded: true });
+        this.switchShouldDisplayContext(null, true);
+      } else {
+        this.setState({ expanded: false });
+        this.switchShouldDisplayContext(null, false);
+      }
+    }
+
     this.pieceNameinputCallback = debounce(event => {
       FirestoreManager.updatePieceName(
         this.props.piece.id,
@@ -260,9 +279,9 @@ class PieceItem extends Component {
       );
     }, 1000);
 
-    setTimeout(() => {
-      this.findingHTMLFocus();
-    }, 10);
+    // setTimeout(() => {
+    //   this.findingHTMLFocus();
+    // }, 10);
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -272,6 +291,21 @@ class PieceItem extends Component {
 
     if (prevProps.piece.text !== this.props.piece.text) {
       this.setState({ pieceText: this.props.piece.text });
+    }
+
+    if (prevProps.isInContextView !== this.props.isInContextView) {
+      if (
+        this.props.cellType === TABLE_CELL_TYPES.columnHeader ||
+        this.props.cellType === TABLE_CELL_TYPES.regularCell
+      ) {
+        if (this.props.isInContextView) {
+          this.setState({ expanded: true });
+          this.switchShouldDisplayContext(null, true);
+        } else {
+          this.setState({ expanded: false });
+          this.switchShouldDisplayContext(null, false);
+        }
+      }
     }
   }
 
@@ -536,95 +570,101 @@ class PieceItem extends Component {
                 <div
                   className={classesInCSS.InfoActionBar}
                   style={{
-                    opacity: this.state.expanded || isHovering ? '1' : '0.5'
+                    opacity:
+                      this.state.expanded ||
+                      (!this.state.expanded && isHovering)
+                        ? '1'
+                        : '0.5'
                   }}
                 >
-                  {this.props.isDemoTask && (
-                    <React.Fragment>
-                      <div>
-                        {piece.references.url !== false && (
-                          <Tooltip
-                            title={`${
-                              piece.references.pageTitle
-                            }  ---  Click to open`}
-                            placement={'top'}
-                          >
-                            <span
-                              className={[
-                                classesInCSS.TagSpan,
-                                classesInCSS.LinkContainer
-                              ].join(' ')}
-                              style={{ backgroundColor: 'transparent' }}
+                  {this.props.isDemoTask &&
+                    this.props.cellType === TABLE_CELL_TYPES.regularCell && (
+                      <React.Fragment>
+                        <div>
+                          {piece.references.url !== false && (
+                            <Tooltip
+                              title={`${
+                                piece.references.pageTitle
+                              }  ---  Click to open`}
+                              placement={'top'}
                             >
-                              <a
-                                href={
-                                  answerURLOnSO
-                                    ? answerURLOnSO
-                                    : piece.references.url
-                                }
-                                target="__blank"
-                                style={{
-                                  display: 'flex',
-                                  alignItems: 'center'
-                                }}
+                              <span
+                                className={[
+                                  classesInCSS.TagSpan,
+                                  classesInCSS.LinkContainer
+                                ].join(' ')}
+                                style={{ backgroundColor: 'transparent' }}
                               >
-                                <img
-                                  src={
-                                    GET_FAVICON_URL_PREFIX +
-                                    piece.references.url
+                                <a
+                                  href={
+                                    answerURLOnSO
+                                      ? answerURLOnSO
+                                      : piece.references.url
                                   }
-                                  alt={''}
+                                  target="__blank"
+                                  style={{
+                                    display: 'flex',
+                                    alignItems: 'center'
+                                  }}
+                                >
+                                  <img
+                                    src={
+                                      GET_FAVICON_URL_PREFIX +
+                                      piece.references.url
+                                    }
+                                    alt={''}
+                                  />
+                                  <span>
+                                    {new URL(piece.references.url).hostname}
+                                  </span>
+                                </a>
+                              </span>
+                            </Tooltip>
+                          )}
+                          {this.props.popularityNumber && (
+                            <div>
+                              <span className={classesInCSS.TagSpan}>
+                                <FaArrowAltCircleUp
+                                  className={[
+                                    classesInCSS.Icon,
+                                    classesInCSS.VoteIcon
+                                  ].join(' ')}
                                 />
-                                <span>
-                                  {new URL(piece.references.url).hostname}
-                                </span>
-                              </a>
-                            </span>
-                          </Tooltip>
-                        )}
-                        {this.props.popularityNumber && (
-                          <div>
-                            <span className={classesInCSS.TagSpan}>
-                              <FaArrowAltCircleUp
-                                className={[
-                                  classesInCSS.Icon,
-                                  classesInCSS.VoteIcon
-                                ].join(' ')}
-                              />
-                              {this.props.popularityNumber} up votes
-                            </span>
-                          </div>
-                        )}
-                        {this.props.answerAccepted === true && (
-                          <div>
-                            <span className={classesInCSS.TagSpan}>
-                              <FaCheck
-                                className={[
-                                  classesInCSS.Icon,
-                                  classesInCSS.AcceptedIcon
-                                ].join(' ')}
-                              />
-                              accepted answer
-                            </span>
-                          </div>
-                        )}
-                        {this.props.updateDate && (
-                          <div>
-                            <span className={classesInCSS.TagSpan}>
-                              <IoMdTime
-                                className={[
-                                  classesInCSS.Icon,
-                                  classesInCSS.TimeIcon
-                                ].join(' ')}
-                              />
-                              updated {moment(this.props.updateDate).fromNow()}
-                              {/* {this.props.updateDate.toLocaleDateString()} */}
-                            </span>
-                          </div>
-                        )}
-                      </div>
-                    </React.Fragment>
-                  )}
+                                {this.props.popularityNumber} up votes
+                              </span>
+                            </div>
+                          )}
+                          {this.props.answerAccepted === true && (
+                            <div>
+                              <span className={classesInCSS.TagSpan}>
+                                <FaCheck
+                                  className={[
+                                    classesInCSS.Icon,
+                                    classesInCSS.AcceptedIcon
+                                  ].join(' ')}
+                                />
+                                accepted answer
+                              </span>
+                            </div>
+                          )}
+                          {this.props.updateDate && (
+                            <div>
+                              <span className={classesInCSS.TagSpan}>
+                                <IoMdTime
+                                  className={[
+                                    classesInCSS.Icon,
+                                    classesInCSS.TimeIcon
+                                  ].join(' ')}
+                                />
+                                updated{' '}
+                                {moment(this.props.updateDate).fromNow()}
+                                {/* {this.props.updateDate.toLocaleDateString()} */}
+                              </span>
+                            </div>
+                          )}
+                        </div>
+                      </React.Fragment>
+                    )}
 
                   <div
                     style={{
@@ -633,7 +673,7 @@ class PieceItem extends Component {
                       alignItems: 'center'
                     }}
                   >
-                    {commentAccess !== undefined && commentAccess ? (
+                    {/* {commentAccess !== undefined && commentAccess ? (
                       <React.Fragment>
                         {!this.state.expanded ? (
                           <div style={{ position: 'relative' }}>
@@ -655,7 +695,7 @@ class PieceItem extends Component {
                           </div>
                         ) : null}
                       </React.Fragment>
-                    ) : null}
+                    ) : null} */}
 
                     {/*
                   <Tooltip title={`Edit ${typeText} name`} placement={'top'}>
@@ -821,7 +861,11 @@ class PieceItem extends Component {
                       (piece.annotationType === ANNOTATION_TYPES.Snippet ||
                         piece.annotationType ===
                           ANNOTATION_TYPES.Highlight) && (
-                        <div>
+                        <div
+                          style={{
+                            fontWeight: 300
+                          }}
+                        >
                           <div
                             onClick={e => e.stopPropagation()}
                             style={{ fontSize: '13px', marginLeft: '4px' }}
@@ -829,7 +873,7 @@ class PieceItem extends Component {
                             <Chip
                               style={{ height: 24 }}
                               label={
-                                displayingContext
+                                displayingContext && context_object
                                   ? 'Showing snippet context'
                                   : 'Showing captured snippet'
                               }
@@ -896,7 +940,7 @@ class PieceItem extends Component {
                           id={`${piece.id}-html`}
                           className={[classesInCSS.HTMLPreview].join(' ')}
                           dangerouslySetInnerHTML={getHTML(
-                            displayingContext
+                            displayingContext && context_object
                               ? context_object.contextHTML
                               : piece.html
                           )}
@@ -925,7 +969,13 @@ class PieceItem extends Component {
                       {context_object && (
                         <div
                           id={`${piece.id}-html`}
-                          className={[classesInCSS.HTMLPreview].join(' ')}
+                          className={[
+                            classesInCSS.HTMLPreview,
+                            this.props.cellType ===
+                            TABLE_CELL_TYPES.columnHeader
+                              ? classesInCSS.InColumnHeader
+                              : null
+                          ].join(' ')}
                           dangerouslySetInnerHTML={getHTML(
                             context_object.contextHTML
                           )}
@@ -937,7 +987,7 @@ class PieceItem extends Component {
               </div>
             </Collapse>
 
-            <div>
+            {/* <div>
               <Comments
                 commentAccess={commentAccess}
                 expanded={this.state.expanded}
@@ -947,7 +997,7 @@ class PieceItem extends Component {
                 cellId={this.props.cellId}
                 cellType={this.props.cellType}
               />
-            </div>
+            </div> */}
           </Card>
         </React.Fragment>
       </div>

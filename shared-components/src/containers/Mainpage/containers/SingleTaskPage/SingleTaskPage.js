@@ -37,7 +37,8 @@ class SingleTaskPage extends Component {
       captureTime: false,
       popularity: true,
       versions: false,
-      searchQuery: false
+      searchQuery: false,
+      code: false
     }
   };
 
@@ -76,7 +77,7 @@ class SingleTaskPage extends Component {
         : 400
     });
 
-    this.setCurrentTaskView('default');
+    this.setCurrentTaskView('context');
   }
 
   setCurrentWorkspaceId = workspaceId => {
@@ -96,13 +97,12 @@ class SingleTaskPage extends Component {
       captureTime: false,
       popularity: false,
       versions: false,
-      searchQuery: false
+      searchQuery: false,
+      code: false
     };
     switch (toView) {
       case 'default':
-        honestSignals.sourceDomain = true;
-        honestSignals.updateTime = true;
-        honestSignals.popularity = true;
+        // honestSignals.sourceDomain = true;
         break;
       case 'context':
         honestSignals.searchQuery = true;
@@ -118,6 +118,7 @@ class SingleTaskPage extends Component {
         honestSignals.sourcePage = true;
         honestSignals.sourcePageDuration = true;
         honestSignals.captureTime = true;
+        honestSignals.code = true;
         break;
       default:
         break;
