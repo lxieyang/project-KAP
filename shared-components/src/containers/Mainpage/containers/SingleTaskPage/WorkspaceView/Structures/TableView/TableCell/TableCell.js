@@ -79,6 +79,7 @@ class TableCell extends Component {
             comments={comments}
             commentCount={commentCount}
             selectedUrls={this.context.selectedUrls}
+            honestSignals={this.context.honestSignalsInTable}
           />
         );
         break;
@@ -89,6 +90,7 @@ class TableCell extends Component {
             comments={comments}
             commentCount={commentCount}
             selectedUrls={this.context.selectedUrls}
+            honestSignals={this.context.honestSignalsInTable}
           />
         );
         break;
@@ -101,6 +103,7 @@ class TableCell extends Component {
             commentCount={commentCount}
             isDemoTask={this.context.isDemoTask}
             selectedUrls={this.context.selectedUrls}
+            honestSignals={this.context.honestSignalsInTable}
           />
         );
         break;

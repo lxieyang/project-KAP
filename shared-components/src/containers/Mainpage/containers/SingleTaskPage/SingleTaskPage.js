@@ -15,6 +15,8 @@ import TaskContext from '../../../../shared/task-context';
 
 class SingleTaskPage extends Component {
   state = {
+    leftPaneSize: 400,
+
     currentWorkspaceId: '0',
 
     taskLoading: true,
@@ -26,20 +28,35 @@ class SingleTaskPage extends Component {
     selectedUrls: [],
     selectedQueries: [],
 
-    currentTaskView: 'default'
+    currentTaskView: 'default',
+    honestSignalsInTable: {
+      sourceDomain: true,
+      sourcePage: false,
+      sourcePageDuration: false,
+      updateTime: true,
+      captureTime: false,
+      popularity: true,
+      versions: false,
+      searchQuery: false
+    }
   };
 
   componentDidMount() {
     let taskId = getTaskIdFromPath(this.props.history.location.pathname);
     this.setState({
-      taskId,
-      isDemoTask: taskId === 'z2Xs6eFIvi7sw1fCl1a6' // taskId === 'fnbS9l31Y6rMBj0CrsQA'
+      taskId
+      // isDemoTask: taskId === 'z2Xs6eFIvi7sw1fCl1a6' // taskId === 'fnbS9l31Y6rMBj0CrsQA'
     });
 
     this.unsubscribeTaskId = FirestoreManager.getTaskById(taskId).onSnapshot(
       snapshot => {
         if (snapshot.exists) {
           let task = { id: snapshot.id, ...snapshot.data() };
+          const isDemoTask =
+            task.creationDate.toDate() > new Date('2020-02-01');
+          // console.log(isDemoTask);
+          this.setState({ isDemoTask });
+
           this.setState({
             taskLoading: false,
             taskExists: task.trashed ? false : true
@@ -52,6 +69,14 @@ class SingleTaskPage extends Component {
         }
       }
     );
+
+    this.setState({
+      leftPaneSize: localStorage.getItem('split-pane-left-size')
+        ? parseInt(localStorage.getItem('split-pane-left-size'), 10)
+        : 400
+    });
+
+    this.setCurrentTaskView('default');
   }
 
   setCurrentWorkspaceId = workspaceId => {
@@ -61,6 +86,47 @@ class SingleTaskPage extends Component {
   componentWillUnmount() {
     this.unsubscribeTaskId();
   }
+
+  setCurrentTaskView = toView => {
+    let honestSignals = {
+      sourceDomain: false,
+      sourcePage: false,
+      sourcePageDuration: false,
+      updateTime: false,
+      captureTime: false,
+      popularity: false,
+      versions: false,
+      searchQuery: false
+    };
+    switch (toView) {
+      case 'default':
+        honestSignals.sourceDomain = true;
+        honestSignals.updateTime = true;
+        honestSignals.popularity = true;
+        break;
+      case 'context':
+        honestSignals.searchQuery = true;
+        honestSignals.versions = true;
+        break;
+      case 'trustworthiness':
+        honestSignals.sourceDomain = true;
+        honestSignals.updateTime = true;
+        honestSignals.popularity = true;
+        break;
+      case 'thoroughness':
+        honestSignals.sourceDomain = true;
+        honestSignals.sourcePage = true;
+        honestSignals.sourcePageDuration = true;
+        honestSignals.captureTime = true;
+        break;
+      default:
+        break;
+    }
+    this.setState({
+      currentTaskView: toView,
+      honestSignalsInTable: honestSignals
+    });
+  };
 
   render() {
     const { taskLoading, taskExists } = this.state;
@@ -121,23 +187,29 @@ class SingleTaskPage extends Component {
               this.setState({ selectedUrls });
             },
             currentTaskView: this.state.currentTaskView,
-            setCurrentTaskView: toView => {
-              this.setState({ currentTaskView: toView });
-            }
+            setCurrentTaskView: this.setCurrentTaskView,
+            honestSignalsInTable: this.state.honestSignalsInTable
           }}
         >
           <div className={styles.SingleTaskPageContainer}>
             <SplitPane
               split="vertical"
-              minSize={200}
-              defaultSize={
-                localStorage.getItem('split-pane-left-size')
-                  ? parseInt(localStorage.getItem('split-pane-left-size'), 10)
-                  : 400
-              }
+              minSize={50}
               maxSize={800}
               pane2Style={{ width: '100%' }}
+              // defaultSize={
+              //   localStorage.getItem('split-pane-left-size')
+              //     ? parseInt(localStorage.getItem('split-pane-left-size'), 10)
+              //     : 400
+              // }
+              size={this.state.leftPaneSize}
+              onChange={size => {
+                // console.log('size');
+                // this.setState({ leftPaneSize: size });
+              }}
               onDragFinished={size => {
+                // console.log('finish');
+                this.setState({ leftPaneSize: size });
                 localStorage.setItem('split-pane-left-size', size);
               }}
             >

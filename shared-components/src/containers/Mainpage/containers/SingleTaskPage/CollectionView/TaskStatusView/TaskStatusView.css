@@ -107,8 +107,8 @@
   font-size: 16px;
   box-sizing: border-box;
   width: 100%;
-  padding: 0px 5px;
-  padding-bottom: 5px;
+  padding: 3px 5px;
+  /* padding-bottom: 5px; */
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -120,14 +120,32 @@
   margin-right: 3px;
 }
 
-.CurrentViewControlButtonDefault {
-  background-color: rgb(33, 150, 243) !important;
+.CurrentViewControlButton {
+  background-color: rgb(255, 49, 90) !important;
   border-color: transparent !important;
   color: #fff !important;
 }
 
-.CurrentViewControlButton {
-  background-color: rgb(255, 49, 90) !important;
+.CurrentViewControlButtonDefault {
+  background-color: #607d8b !important;
+  border-color: transparent !important;
+  color: #fff !important;
+}
+
+.CurrentViewControlButtonTaskContext {
+  background-color: #ffca28 !important;
+  border-color: transparent !important;
+  color: #000 !important;
+}
+
+.CurrentViewControlButtonTrustworthiness {
+  background-color: #d4e157 !important;
+  border-color: transparent !important;
+  color: #000 !important;
+}
+
+.CurrentViewControlButtonThoroughness {
+  background-color: #26a69a !important;
   border-color: transparent !important;
   color: #fff !important;
 }

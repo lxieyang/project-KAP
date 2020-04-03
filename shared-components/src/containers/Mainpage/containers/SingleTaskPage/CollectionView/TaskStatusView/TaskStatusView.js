@@ -59,14 +59,13 @@ const materialStyles = theme => ({
   viewControlButton: {
     minWidth: '12px',
     height: '100%',
-    fontSize: '14px',
+    fontSize: '13px',
     textTransform: 'capitalize',
-    padding: '2px 6px',
-    lineHeight: '20px',
-    margin: '0px 2px',
+    padding: '4px 4px',
+    lineHeight: '14px',
+    margin: '0px 1px',
     overflow: 'hidden',
     justifyContent: 'flex-start'
-    // flexShrink: 0
   }
 });
 
@@ -301,12 +300,12 @@ class TaskStatusView extends Component {
             className={[
               classes.viewControlButton,
               this.context.currentTaskView === 'context'
-                ? styles.CurrentViewControlButton
+                ? styles.CurrentViewControlButtonTaskContext
                 : null
             ].join(' ')}
           >
             <GoPackage className={styles.ViewControlButtonIcon} />
-            Task Context
+            Context
           </Button>
           <Button
             variant={'outlined'}
@@ -317,7 +316,7 @@ class TaskStatusView extends Component {
             className={[
               classes.viewControlButton,
               this.context.currentTaskView === 'trustworthiness'
-                ? styles.CurrentViewControlButton
+                ? styles.CurrentViewControlButtonTrustworthiness
                 : null
             ].join(' ')}
           >
@@ -333,7 +332,7 @@ class TaskStatusView extends Component {
             className={[
               classes.viewControlButton,
               this.context.currentTaskView === 'thoroughness'
-                ? styles.CurrentViewControlButton
+                ? styles.CurrentViewControlButtonThoroughness
                 : null
             ].join(' ')}
           >

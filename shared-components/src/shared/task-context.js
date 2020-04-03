@@ -10,7 +10,18 @@ const taskContext = React.createContext({
   selectedQueries: [],
   assSelectedQuery: () => {},
   currentTaskView: 'default', // 'default', 'context', 'trustworthiness', 'thoroughness',
-  setCurrentTaskView: () => {}
+  setCurrentTaskView: () => {},
+  honestSignalsInTable: {
+    sourceDomain: true,
+    sourcePage: false,
+    sourcePageDuration: false,
+    updateTime: true,
+    captureTime: false,
+    popularity: true,
+    versions: false,
+    searchQuery: false
+  },
+  setHonestSignalsInTable: () => {}
 });
 
 export default taskContext;

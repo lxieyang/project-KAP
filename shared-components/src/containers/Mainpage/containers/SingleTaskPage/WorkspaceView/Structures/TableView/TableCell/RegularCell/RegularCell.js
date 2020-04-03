@@ -298,7 +298,8 @@ class RegularCell extends Component {
       editAccess,
       commentAccess,
       comments,
-      commentCount
+      commentCount,
+      honestSignals
     } = this.props;
     const { anchorEl, ratingAnchorEl } = this.state;
     const open = Boolean(anchorEl);
