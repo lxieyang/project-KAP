@@ -735,11 +735,35 @@ class RowHeaderCell extends Component {
         {cellPieces.length > 0 ? (
           <div className={styles.RowHeaderCellContainer}>
             {cellPieces.map((p, idx) => {
+              const piece = pieces[p.pieceId];
+
               let context_object = context_objects.filter(
                 c => c.references.pieceId === p.pieceId
               );
               context_object =
                 context_object.length > 0 ? context_object[0] : null;
+
+              let popularityNumber = null; // Math.floor(Math.random() * 100);
+              let updateDate = null; // getRandomDate(new Date(2019, 1, 1),new Date(2020, 4, 1));
+              let isRecent = null;
+              let answerURLOnSO = null;
+              let answerAccepted = null;
+              const codeSnippets = piece.codeSnippets;
+
+              const answerMetaInfo = piece.answerMetaInfo;
+              if (answerMetaInfo) {
+                popularityNumber = answerMetaInfo.answerVoteCount
+                  ? parseInt(answerMetaInfo.answerVoteCount, 10)
+                  : null;
+                updateDate = answerMetaInfo.answerEditedTime
+                  ? new Date(answerMetaInfo.answerEditedTime)
+                  : answerMetaInfo.answerCreatedTime
+                  ? new Date(answerMetaInfo.answerCreatedTime)
+                  : null;
+                isRecent = (new Date() - updateDate) / (1000 * 86400) < 100;
+                answerURLOnSO = answerMetaInfo.answerLink;
+                answerAccepted = answerMetaInfo.answerAccepted;
+              }
 
               return (
                 <React.Fragment key={`${p.pieceId}-${idx}`}>
@@ -773,6 +797,11 @@ class RowHeaderCell extends Component {
                           this.switchDraggingPieceStatus
                         }
                         isDemoTask={this.props.isDemoTask}
+                        popularityNumber={popularityNumber}
+                        updateDate={updateDate}
+                        isRecent={isRecent}
+                        answerAccepted={answerAccepted}
+                        answerURLOnSO={answerURLOnSO}
                         honestSignals={honestSignals}
                         isInDefaultView={isInDefaultView}
                         isInContextView={isInContextView}

@@ -230,15 +230,20 @@
   align-items: center;
   border-radius: 5px;
   padding: 2px 4px;
-  font-size: 14px;
+  font-size: 12px;
+  font-style: italic;
   margin: 1px 2px;
   font-weight: 400;
   border: 1px solid transparent;
   transition: all 0.1s ease-in;
 }
 
+.TagSpan.LinkContainer {
+  border: 1px solid rgb(224, 224, 224);
+}
+
 .TagSpan.LinkContainer:hover {
-  border: 1px solid lightgray;
+  background-color: rgb(235, 235, 235);
 }
 
 .TagSpan a {
@@ -247,8 +252,8 @@
 }
 
 .TagSpan img {
-  width: 20px;
-  height: 20px;
+  width: 16px;
+  height: 16px;
   margin-right: 4px;
 }
 
@@ -259,6 +264,10 @@
 }
 
 .VoteIcon {
+  color: rgb(98, 166, 110);
+}
+
+.VoteIconNegative {
   color: rgb(231, 74, 46);
 }
 

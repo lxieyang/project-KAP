@@ -431,8 +431,13 @@ class PieceItem extends Component {
       isHovering,
       editAccess,
       commentAccess,
-      attitudeIcon
+      attitudeIcon,
+      popularityNumber,
+      updateDate,
+      isRecent,
+      answerAccepted
     } = this.props;
+
     const {
       maxScreenshotHeight,
       screenshot,
@@ -629,7 +634,9 @@ class PieceItem extends Component {
                                 <FaArrowAltCircleUp
                                   className={[
                                     classesInCSS.Icon,
-                                    classesInCSS.VoteIcon
+                                    this.props.popularityNumber > 0
+                                      ? classesInCSS.VoteIcon
+                                      : classesInCSS.VoteIconNegative
                                   ].join(' ')}
                                 />
                                 {this.props.popularityNumber} up votes
@@ -664,6 +671,96 @@ class PieceItem extends Component {
                               </span>
                             </div>
                           )}
+                        </div>
+                      </React.Fragment>
+                    )}
+
+                  {this.props.isDemoTask &&
+                    (this.props.cellType === TABLE_CELL_TYPES.rowHeader ||
+                      this.props.cellType ===
+                        TABLE_CELL_TYPES.columnHeader) && (
+                      <React.Fragment>
+                        <div>
+                          {piece.references.url !== false && (
+                            <Tooltip
+                              title={`${
+                                piece.references.pageTitle
+                              }  ---  Click to open`}
+                              placement={'top'}
+                            >
+                              <span
+                                className={[
+                                  classesInCSS.TagSpan,
+                                  classesInCSS.LinkContainer
+                                ].join(' ')}
+                                style={{ backgroundColor: 'transparent' }}
+                              >
+                                <a
+                                  href={
+                                    answerURLOnSO
+                                      ? answerURLOnSO
+                                      : piece.references.url
+                                  }
+                                  target="__blank"
+                                  style={{
+                                    display: 'flex',
+                                    alignItems: 'center'
+                                  }}
+                                >
+                                  <img
+                                    src={
+                                      GET_FAVICON_URL_PREFIX +
+                                      piece.references.url
+                                    }
+                                    alt={''}
+                                  />
+                                  <span>
+                                    {new URL(piece.references.url).hostname}
+                                  </span>
+                                </a>
+                              </span>
+                            </Tooltip>
+                          )}
+                          {/* {this.props.popularityNumber && (
+                            <div>
+                              <span className={classesInCSS.TagSpan}>
+                                <FaArrowAltCircleUp
+                                  className={[
+                                    classesInCSS.Icon,
+                                    classesInCSS.VoteIcon
+                                  ].join(' ')}
+                                />
+                                {this.props.popularityNumber} up votes
+                              </span>
+                            </div>
+                          )}
+                          {this.props.answerAccepted === true && (
+                            <div>
+                              <span className={classesInCSS.TagSpan}>
+                                <FaCheck
+                                  className={[
+                                    classesInCSS.Icon,
+                                    classesInCSS.AcceptedIcon
+                                  ].join(' ')}
+                                />
+                                accepted answer
+                              </span>
+                            </div>
+                          )}
+                          {this.props.updateDate && (
+                            <div>
+                              <span className={classesInCSS.TagSpan}>
+                                <IoMdTime
+                                  className={[
+                                    classesInCSS.Icon,
+                                    classesInCSS.TimeIcon
+                                  ].join(' ')}
+                                />
+                                updated{' '}
+                                {moment(this.props.updateDate).fromNow()}
+                              </span>
+                            </div>
+                          )} */}
                         </div>
                       </React.Fragment>
                     )}
@@ -969,7 +1066,7 @@ class PieceItem extends Component {
                         >
                           <div
                             onClick={e => e.stopPropagation()}
-                            style={{ fontSize: '13px', marginLeft: '8px' }}
+                            style={{ fontSize: '11px', marginLeft: '8px' }}
                           >
                             Show:&nbsp;
                             <input

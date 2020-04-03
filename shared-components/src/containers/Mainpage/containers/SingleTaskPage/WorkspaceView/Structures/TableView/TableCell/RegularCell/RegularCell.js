@@ -948,6 +948,7 @@ class RegularCell extends Component {
                                 updateDate={updateDate}
                                 isRecent={isRecent}
                                 answerAccepted={answerAccepted}
+                                answerURLOnSO={answerURLOnSO}
                               />
                             );
                           }}
