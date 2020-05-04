@@ -21,15 +21,6 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Typography from '@material-ui/core/Typography';
 
-import {
-  FaClipboardList,
-  FaMedal,
-  FaAngleDown,
-  FaAngleUp
-} from 'react-icons/fa';
-import { IoIosArrowDown, IoIosArrowUp } from 'react-icons/io';
-import { GoPackage, GoTasklist } from 'react-icons/go';
-
 import { ToastContainer, toast, Flip } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
@@ -242,7 +233,6 @@ class TaskStatusView extends Component {
       commentAccess,
       author
     } = this.state;
-    const { classes } = this.props;
 
     if (task === null) {
       return null;
@@ -409,129 +399,53 @@ class TaskStatusView extends Component {
 
         {/* <Divider light /> */}
 
-        {/* <div className={styles.OverviewTitleContainer}>
-          <span>Overview</span>
-          <div className={styles.OverviewToggleButtonContainer}>
-            <div
-              className={styles.OverviewToggleButton}
-              onClick={() => this.toggleOverviewExpandedStatus()}
-            >
-              {!this.state.overviewExpanded ? (
-                <IoIosArrowDown
-                  title={'Show Overview'}
-                  className={styles.ButtonIcon}
-                />
-              ) : (
-                <IoIosArrowUp
-                  title={'Hide Overview'}
-                  className={styles.ButtonIcon}
-                />
-              )}
-            </div>
-          </div>
-        </div> */}
-
-        <Collapse
-          in={this.state.overviewExpanded}
-          timeout="auto"
-          style={{ flexShrink: 0 }}
-        >
-          <div className={styles.TaskOverviewContainer}>
-            {/* <Tabs
-              value={this.state.overviewTabValue}
-              indicatorColor="secondary"
-              textColor="inherit"
-              variant="fullWidth"
-              style={{ minHeight: 36 }}
-              onChange={this.handleTabChange}
-            >
-              <StyledTab
-                label={
-                  <div className={styles.TabLabelContainer}>
-                    <GoPackage className={styles.TabLabelIcon} />
-                    Task Context
-                  </div>
-                }
+        <div className={styles.TaskOverviewContainer}>
+          <SwipeableViews
+            // index={this.state.overviewTabValue}
+            index={PanelMap[this.context.currentTaskView]}
+            onChangeIndex={this.handleTabChange}
+            style={{ flex: 1 }}
+            containerStyle={{ height: '100%' }}
+            disableLazyLoading
+          >
+            <TabPanel value={PanelMap[this.context.currentTaskView]} index={0}>
+              <DefaultPanel
+                task={task}
+                queries={this.props.queries}
+                pages={this.props.pages}
+                pieces={this.props.pieces}
+                changeTab={this.props.changeTab}
               />
-              <StyledTab
-                label={
-                  <div className={styles.TabLabelContainer}>
-                    <FaMedal className={styles.TabLabelIcon} />
-                    Trustworthiness
-                  </div>
-                }
+            </TabPanel>
+            <TabPanel value={PanelMap[this.context.currentTaskView]} index={1}>
+              <ContextPanel
+                task={task}
+                queries={this.props.queries}
+                pages={this.props.pages}
+                pieces={this.props.pieces}
+                changeTab={this.props.changeTab}
               />
-              <StyledTab
-                label={
-                  <div className={styles.TabLabelContainer}>
-                    <GoTasklist className={styles.TabLabelIcon} />
-                    Thoroughness
-                  </div>
-                }
+            </TabPanel>
+            <TabPanel value={PanelMap[this.context.currentTaskView]} index={2}>
+              <TrustPanel
+                task={task}
+                queries={this.props.queries}
+                pages={this.props.pages}
+                pieces={this.props.pieces}
+                changeTab={this.props.changeTab}
               />
-            </Tabs> */}
-
-            <br />
-
-            <SwipeableViews
-              // index={this.state.overviewTabValue}
-              index={PanelMap[this.context.currentTaskView]}
-              onChangeIndex={this.handleTabChange}
-              style={{ flex: 1 }}
-              containerStyle={{ height: '100%' }}
-              disableLazyLoading
-            >
-              <TabPanel
-                value={PanelMap[this.context.currentTaskView]}
-                index={0}
-              >
-                <DefaultPanel
-                  task={task}
-                  queries={this.props.queries}
-                  pages={this.props.pages}
-                  pieces={this.props.pieces}
-                  changeTab={this.props.changeTab}
-                />
-              </TabPanel>
-              <TabPanel
-                value={PanelMap[this.context.currentTaskView]}
-                index={1}
-              >
-                <ContextPanel
-                  task={task}
-                  queries={this.props.queries}
-                  pages={this.props.pages}
-                  pieces={this.props.pieces}
-                  changeTab={this.props.changeTab}
-                />
-              </TabPanel>
-              <TabPanel
-                value={PanelMap[this.context.currentTaskView]}
-                index={2}
-              >
-                <TrustPanel
-                  task={task}
-                  queries={this.props.queries}
-                  pages={this.props.pages}
-                  pieces={this.props.pieces}
-                  changeTab={this.props.changeTab}
-                />
-              </TabPanel>
-              <TabPanel
-                value={PanelMap[this.context.currentTaskView]}
-                index={3}
-              >
-                <CompletenessPanel
-                  task={task}
-                  queries={this.props.queries}
-                  pages={this.props.pages}
-                  pieces={this.props.pieces}
-                  changeTab={this.props.changeTab}
-                />
-              </TabPanel>
-            </SwipeableViews>
-          </div>
-        </Collapse>
+            </TabPanel>
+            <TabPanel value={PanelMap[this.context.currentTaskView]} index={3}>
+              <CompletenessPanel
+                task={task}
+                queries={this.props.queries}
+                pages={this.props.pages}
+                pieces={this.props.pieces}
+                changeTab={this.props.changeTab}
+              />
+            </TabPanel>
+          </SwipeableViews>
+        </div>
       </React.Fragment>
     );
   }
