@@ -27,7 +27,8 @@ const materialStyles = {
   toolbar: {
     minHeight: 32,
     paddingLeft: 16,
-    paddingRight: 12
+    paddingRight: 12,
+    fontFamily: 'arial, sans-serif !important'
   },
   appAvatar: {
     width: 24,
@@ -41,7 +42,8 @@ const materialStyles = {
     marginLeft: 10,
     display: 'flex',
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
+    fontFamily: 'arial, sans-serif !important'
   },
   iconButton: {
     padding: 6,
@@ -55,7 +57,8 @@ const materialStyles = {
   },
   username: {
     fontWeight: 300,
-    fontSize: 16
+    fontSize: 16,
+    fontFamily: 'arial, sans-serif !important'
   },
   menuItem: {
     padding: '4px 8px',
