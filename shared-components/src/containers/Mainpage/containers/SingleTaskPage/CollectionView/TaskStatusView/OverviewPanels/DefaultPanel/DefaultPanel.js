@@ -129,7 +129,6 @@ class DefaultPanel extends Component {
 
     return (
       <div className={styles.OverviewPanelV2Contaienr}>
-        {/* <div className={styles.OverviewTitleContainer}>Overview</div> */}
         <div className={styles.OverviewContent}>
           <ExpansionPanel>
             <ExpansionPanelSummary

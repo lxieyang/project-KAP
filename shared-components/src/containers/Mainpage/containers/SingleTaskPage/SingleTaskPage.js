@@ -13,6 +13,11 @@ import WorkspaceView from './WorkspaceView/WorkspaceView';
 
 import TaskContext from '../../../../shared/task-context';
 
+import { FaMedal } from 'react-icons/fa';
+import { GoPackage, GoTasklist } from 'react-icons/go';
+import { withStyles } from '@material-ui/core/styles';
+import Button from '@material-ui/core/Button';
+
 class SingleTaskPage extends Component {
   state = {
     leftPaneSize: 400,
@@ -77,7 +82,7 @@ class SingleTaskPage extends Component {
         : 400
     });
 
-    this.setCurrentTaskView('default');
+    this.setCurrentTaskView('trustworthiness');
   }
 
   setCurrentWorkspaceId = workspaceId => {
@@ -194,14 +199,79 @@ class SingleTaskPage extends Component {
           }}
         >
           <div className={styles.SingleTaskPageContainer}>
+            {/* Task View Tabs */}
+            <div className={styles.TaskViewTabsContainer}>
+              <Button
+                variant={'outlined'}
+                onClick={() => {
+                  this.setCurrentTaskView('default');
+                }}
+                size="small"
+                className={[
+                  styles.ViewControlButton,
+                  this.state.currentTaskView === 'default'
+                    ? styles.CurrentViewControlButtonDefault
+                    : null
+                ].join(' ')}
+              >
+                Default View
+              </Button>
+              <Button
+                variant={'outlined'}
+                onClick={() => {
+                  this.setCurrentTaskView('context');
+                }}
+                size="small"
+                className={[
+                  styles.ViewControlButton,
+                  this.state.currentTaskView === 'context'
+                    ? styles.CurrentViewControlButtonTaskContext
+                    : null
+                ].join(' ')}
+              >
+                <GoPackage className={styles.ViewControlButtonIcon} />
+                Context View
+              </Button>
+              <Button
+                variant={'outlined'}
+                onClick={() => {
+                  this.setCurrentTaskView('trustworthiness');
+                }}
+                size="small"
+                className={[
+                  styles.ViewControlButton,
+                  this.state.currentTaskView === 'trustworthiness'
+                    ? styles.CurrentViewControlButtonTrustworthiness
+                    : null
+                ].join(' ')}
+              >
+                <FaMedal className={styles.ViewControlButtonIcon} />
+                Trustworthiness View
+              </Button>
+              <Button
+                variant={'outlined'}
+                onClick={() => {
+                  this.setCurrentTaskView('thoroughness');
+                }}
+                size="small"
+                className={[
+                  styles.ViewControlButton,
+                  this.state.currentTaskView === 'thoroughness'
+                    ? styles.CurrentViewControlButtonThoroughness
+                    : null
+                ].join(' ')}
+              >
+                <GoTasklist className={styles.ViewControlButtonIcon} />
+                Thoroughness View
+              </Button>
+            </div>
+
+            {/* Split pane: overview + table */}
             <SplitPane
               split="vertical"
               minSize={50}
               maxSize={800}
-              pane2Style={{ width: '100%' }}
-              // defaultSize={
-              //   localStorage.getItem('split-pane-left-size')
-              //     ? parseInt(localStorage.getItem('split-pane-left-size'), 10)
+              pane2Style={{ width: '100%' }} //     ? parseInt(localStorage.getItem('split-pane-left-size'), 10) //   localStorage.getItem('split-pane-left-size') // defaultSize={
               //     : 400
               // }
               size={this.state.leftPaneSize}

@@ -43,12 +43,11 @@ const WorkspaceContainer = styled.div`
 
 const WorkspaceContentContainer = styled.div`
   position: absolute;
-  top: 48px;
+  top: 0px; /* 48px */
   bottom: 0px;
   left: 0px;
   right: 0px;
   overflow: auto;
-  /* background-color: rgb(236, 236, 236); */
 `;
 
 const StyledTab = withStyles({
@@ -254,7 +253,7 @@ class WorkspaceView extends Component {
     return (
       <React.Fragment>
         <WorkspaceContainer>
-          <div>
+          {/* <div>
             <Tabs
               value={activeWorkspaceId}
               indicatorColor="primary"
@@ -320,7 +319,7 @@ class WorkspaceView extends Component {
                 );
               })}
             </Tabs>
-          </div>
+          </div> */}
 
           {activeWorkspaceId === '0' ? (
             <WorkspaceContentContainer className="workspace-content-container">

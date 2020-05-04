@@ -56,17 +56,6 @@ const materialStyles = theme => ({
   },
   close: {
     padding: theme.spacing.unit / 2
-  },
-  viewControlButton: {
-    minWidth: '12px',
-    height: '100%',
-    fontSize: '13px',
-    textTransform: 'capitalize',
-    padding: '4px 4px',
-    lineHeight: '14px',
-    margin: '0px 1px',
-    overflow: 'hidden',
-    justifyContent: 'flex-start'
   }
 });
 
@@ -283,72 +272,6 @@ class TaskStatusView extends Component {
 
     return (
       <React.Fragment>
-        <div className={styles.TaskViewControlsContainer}>
-          <Button
-            variant={'outlined'}
-            onClick={() => {
-              this.context.setCurrentTaskView('default');
-            }}
-            size="small"
-            className={[
-              classes.viewControlButton,
-              this.context.currentTaskView === 'default'
-                ? styles.CurrentViewControlButtonDefault
-                : null
-            ].join(' ')}
-          >
-            Default
-          </Button>
-          <Button
-            variant={'outlined'}
-            onClick={() => {
-              this.context.setCurrentTaskView('context');
-            }}
-            size="small"
-            className={[
-              classes.viewControlButton,
-              this.context.currentTaskView === 'context'
-                ? styles.CurrentViewControlButtonTaskContext
-                : null
-            ].join(' ')}
-          >
-            <GoPackage className={styles.ViewControlButtonIcon} />
-            Context
-          </Button>
-          <Button
-            variant={'outlined'}
-            onClick={() => {
-              this.context.setCurrentTaskView('trustworthiness');
-            }}
-            size="small"
-            className={[
-              classes.viewControlButton,
-              this.context.currentTaskView === 'trustworthiness'
-                ? styles.CurrentViewControlButtonTrustworthiness
-                : null
-            ].join(' ')}
-          >
-            <FaMedal className={styles.ViewControlButtonIcon} />
-            Trustworthiness
-          </Button>
-          <Button
-            variant={'outlined'}
-            onClick={() => {
-              this.context.setCurrentTaskView('thoroughness');
-            }}
-            size="small"
-            className={[
-              classes.viewControlButton,
-              this.context.currentTaskView === 'thoroughness'
-                ? styles.CurrentViewControlButtonThoroughness
-                : null
-            ].join(' ')}
-          >
-            <GoTasklist className={styles.ViewControlButtonIcon} />
-            Thoroughness
-          </Button>
-        </div>
-
         {/* <div className={styles.TaskStatusViewContainer}> */}
         {/* <div className={styles.VariousButtonsContainer}>
             {editAccess && (
@@ -484,7 +407,7 @@ class TaskStatusView extends Component {
           </div>
         </Collapse> */}
 
-        <Divider light />
+        {/* <Divider light /> */}
 
         {/* <div className={styles.OverviewTitleContainer}>
           <span>Overview</span>
