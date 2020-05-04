@@ -23,6 +23,7 @@ import SourceQueriesView from './SourceQueriesView/SourceQueriesView';
 import CodeSnippetsView from './CodeSnippetsView/CodeSnippetsView';
 
 import OverviewPanelV2 from './OverviewPanelV2/OverviewPanelV2';
+import OverviewPanelV3 from './OverviewPanelV3/OverviewPanelV3';
 
 import * as FirestoreManager from '../../../../../firebase/firestore_wrapper';
 import moment from 'moment';
@@ -170,6 +171,13 @@ class CollectionView extends Component {
         <Divider light />
 
         {/* <OverviewPanelV2
+          userId={this.props.userId}
+          queries={this.state.searchQueries}
+          pages={this.state.visitedPages}
+          pieces={this.state.pieces}
+        /> */}
+
+        {/* <OverviewPanelV3
           userId={this.props.userId}
           queries={this.state.searchQueries}
           pages={this.state.visitedPages}

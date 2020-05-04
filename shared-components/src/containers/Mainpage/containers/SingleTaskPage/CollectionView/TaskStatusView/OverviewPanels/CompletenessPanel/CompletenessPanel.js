@@ -165,12 +165,12 @@ class CompletenessPanel extends Component {
         <div className={styles.Section}>
           <div className={styles.SectionHeader}>
             <GiMicroscope className={styles.SectionHeaderIcon} />
-            {pieces.length > 8 ? (
+            {/* {pieces.length > 8 ? (
               <span className={styles.UpToDate}>Extensive</span>
             ) : (
               <span className={styles.NotUpToDate}>Limited</span>
-            )}
-            Research
+            )} */}
+            Effort
           </div>
           <div className={styles.SectionContent}>
             <p>
@@ -205,10 +205,11 @@ class CompletenessPanel extends Component {
             >
               See the complete list of web pages the author went through
             </div>
+            <div style={{ color: 'red' }}>put the complete timeline here.</div>
           </div>
         </div>
 
-        <div className={styles.Section}>
+        {/* <div className={styles.Section}>
           <div className={styles.SectionHeader}>
             <GiBinoculars className={styles.SectionHeaderIcon} />
             Next steps
@@ -237,7 +238,7 @@ class CompletenessPanel extends Component {
               )}
             </div>
           </div>
-        </div>
+        </div> */}
 
         {/* <div className={styles.Section}>
           <div className={styles.SectionHeader}>Pages & Snippets</div>

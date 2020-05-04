@@ -230,10 +230,10 @@
   align-items: center;
   border-radius: 5px;
   padding: 2px 4px;
-  font-size: 12px;
+  font-size: 11px;
   font-style: italic;
   margin: 1px 2px;
-  font-weight: 400;
+  font-weight: 300;
   border: 1px solid transparent;
   transition: all 0.1s ease-in;
 }
@@ -248,7 +248,7 @@
 
 .TagSpan a {
   text-decoration: none;
-  font-weight: 500;
+  font-weight: 300;
 }
 
 .TagSpan img {
@@ -258,9 +258,9 @@
 }
 
 .TagSpan .Icon {
-  width: 18px;
-  height: 18px;
-  margin-right: 6px;
+  width: 16px;
+  height: 16px;
+  margin-right: 4px;
 }
 
 .VoteIcon {
@@ -277,4 +277,25 @@
 
 .TimeIcon {
   color: gray;
+}
+
+.SuggestedOptionsContainer {
+  width: 100%;
+  padding: 6px;
+  font-weight: 400;
+  font-size: 12px;
+  font-style: italic;
+}
+
+.SuggestedOptionsContainer .ListItem {
+  display: inline-block;
+  font-weight: 300;
+  font-size: 11px;
+  font-style: italic;
+  color: rgb(78, 78, 78);
+
+  margin: 2px 3px;
+  padding: 1px 4px;
+  border-radius: 5px;
+  box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.2);
 }

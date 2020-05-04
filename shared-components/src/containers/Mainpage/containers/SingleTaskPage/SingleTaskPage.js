@@ -77,7 +77,7 @@ class SingleTaskPage extends Component {
         : 400
     });
 
-    this.setCurrentTaskView('context');
+    this.setCurrentTaskView('default');
   }
 
   setCurrentWorkspaceId = workspaceId => {

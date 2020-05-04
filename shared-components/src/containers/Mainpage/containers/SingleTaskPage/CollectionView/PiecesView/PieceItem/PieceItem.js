@@ -30,6 +30,10 @@ import { AiFillFire } from 'react-icons/ai';
 
 import Textarea from 'react-textarea-autosize';
 
+import axios from 'axios';
+
+import lemmatize from 'wink-lemmatizer';
+
 import * as FirestoreManager from '../../../../../../../firebase/firestore_wrapper';
 import {
   PIECE_TYPES,
@@ -193,6 +197,9 @@ class PieceItem extends Component {
     // context object control
     displayingContext: false,
 
+    // google suggestions control
+    optionVsList: [],
+
     // comment
     commentCount: 0
   };
@@ -283,12 +290,24 @@ class PieceItem extends Component {
     // setTimeout(() => {
     //   this.findingHTMLFocus();
     // }, 10);
+
+    if (this.props.cellType === TABLE_CELL_TYPES.rowHeader) {
+      this.updateGoogleSuggestedOptions();
+    }
   }
 
   componentDidUpdate(prevProps, prevState) {
     if (prevProps.piece.name !== this.props.piece.name) {
       this.setState({ pieceName: this.props.piece.name });
     }
+
+    // prevent abuse
+    // if (
+    //   prevProps.piece.name !== this.props.piece.name ||
+    //   this.props.cellType === TABLE_CELL_TYPES.rowHeader
+    // ) {
+    //   this.updateGoogleSuggestedOptions();
+    // }
 
     if (prevProps.piece.text !== this.props.piece.text) {
       this.setState({ pieceText: this.props.piece.text });
@@ -315,6 +334,36 @@ class PieceItem extends Component {
     this.unsubscribeScreenshot();
     this.unsubscribeAllComments();
   }
+
+  updateGoogleSuggestedOptions = async () => {
+    const lemmatizer = p => {
+      return p
+        .toLowerCase()
+        .split(' ')
+        .map(item => lemmatize.noun(item.trim()))
+        .join(' ');
+    };
+
+    const pieceName = this.props.piece.name.trim();
+    let vsList = await axios.get(
+      // 'http://localhost:8800/kap-project-nsh-2504/us-central1/getGoogleAutoSuggests',
+      'https://us-central1-kap-project-nsh-2504.cloudfunctions.net/getGoogleAutoSuggests',
+      {
+        params: {
+          q: pieceName
+        }
+      }
+    );
+    // console.log(vsList);
+    vsList = vsList.data.list.slice(0, 5);
+    let lemmatizedOptionVsList = vsList.map(item =>
+      lemmatizer(item.toLowerCase())
+    );
+
+    this.setState({
+      optionVsList: lemmatizedOptionVsList
+    });
+  };
 
   findingHTMLFocus = () => {
     const elem = document.querySelector(
@@ -435,7 +484,8 @@ class PieceItem extends Component {
       popularityNumber,
       updateDate,
       isRecent,
-      answerAccepted
+      answerAccepted,
+      isInThoroughnessView
     } = this.props;
 
     const {
@@ -628,7 +678,7 @@ class PieceItem extends Component {
                               </span>
                             </Tooltip>
                           )}
-                          {this.props.popularityNumber && (
+                          {this.props.popularityNumber !== null && (
                             <div>
                               <span className={classesInCSS.TagSpan}>
                                 <FaArrowAltCircleUp
@@ -677,8 +727,8 @@ class PieceItem extends Component {
 
                   {this.props.isDemoTask &&
                     (this.props.cellType === TABLE_CELL_TYPES.rowHeader ||
-                      this.props.cellType ===
-                        TABLE_CELL_TYPES.columnHeader) && (
+                      this.props.cellType === TABLE_CELL_TYPES.columnHeader) &&
+                    !this.props.isInDefaultView && (
                       <React.Fragment>
                         <div>
                           {piece.references.url !== false && (
@@ -1146,6 +1196,21 @@ class PieceItem extends Component {
                 )}
               </div>
             </Collapse>
+
+            {isInThoroughnessView && this.state.optionVsList.length > 0 && (
+              <div className={classesInCSS.SuggestedOptionsContainer}>
+                <em>Often considered vs:</em>
+                <div>
+                  {this.state.optionVsList.map((item, idx) => {
+                    return (
+                      <div className={classesInCSS.ListItem} key={idx}>
+                        {item}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
 
             {/* <div>
               <Comments

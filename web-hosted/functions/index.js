@@ -126,12 +126,14 @@ exports.getGoogleAutoSuggests = functions.https.onRequest(
             item = item.substring(item.indexOf("vs") + 3);
             return item;
           });
+          console.log(suggestedList);
           return response.send({
             success: true,
             list: suggestedList
           });
         })
         .catch(error => {
+          console.log(error);
           return response.send({
             success: false,
             error

@@ -42,6 +42,7 @@ import Modal from 'react-modal';
 import ContextPanel from './OverviewPanels/ContextPanel/ContextPanel';
 import TrustPanel from './OverviewPanels/TrustPanel/TrustPanel';
 import CompletenessPanel from './OverviewPanels/CompletenessPanel/CompletenessPanel';
+import DefaultPanel from './OverviewPanels/DefaultPanel/DefaultPanel';
 import TaskContext from '../../../../../../shared/task-context';
 
 const materialStyles = theme => ({
@@ -100,6 +101,13 @@ function TabPanel(props) {
     </Typography>
   );
 }
+
+const PanelMap = {
+  default: 0,
+  context: 1,
+  trustworthiness: 2,
+  thoroughness: 3
+};
 
 class TaskStatusView extends Component {
   static contextType = TaskContext;
@@ -478,7 +486,7 @@ class TaskStatusView extends Component {
 
         <Divider light />
 
-        <div className={styles.OverviewTitleContainer}>
+        {/* <div className={styles.OverviewTitleContainer}>
           <span>Overview</span>
           <div className={styles.OverviewToggleButtonContainer}>
             <div
@@ -498,7 +506,7 @@ class TaskStatusView extends Component {
               )}
             </div>
           </div>
-        </div>
+        </div> */}
 
         <Collapse
           in={this.state.overviewExpanded}
@@ -506,7 +514,7 @@ class TaskStatusView extends Component {
           style={{ flexShrink: 0 }}
         >
           <div className={styles.TaskOverviewContainer}>
-            <Tabs
+            {/* <Tabs
               value={this.state.overviewTabValue}
               indicatorColor="secondary"
               textColor="inherit"
@@ -538,15 +546,34 @@ class TaskStatusView extends Component {
                   </div>
                 }
               />
-            </Tabs>
+            </Tabs> */}
+
+            <br />
+
             <SwipeableViews
-              index={this.state.overviewTabValue}
+              // index={this.state.overviewTabValue}
+              index={PanelMap[this.context.currentTaskView]}
               onChangeIndex={this.handleTabChange}
               style={{ flex: 1 }}
               containerStyle={{ height: '100%' }}
               disableLazyLoading
             >
-              <TabPanel value={this.state.overviewTabValue} index={0}>
+              <TabPanel
+                value={PanelMap[this.context.currentTaskView]}
+                index={0}
+              >
+                <DefaultPanel
+                  task={task}
+                  queries={this.props.queries}
+                  pages={this.props.pages}
+                  pieces={this.props.pieces}
+                  changeTab={this.props.changeTab}
+                />
+              </TabPanel>
+              <TabPanel
+                value={PanelMap[this.context.currentTaskView]}
+                index={1}
+              >
                 <ContextPanel
                   task={task}
                   queries={this.props.queries}
@@ -555,7 +582,10 @@ class TaskStatusView extends Component {
                   changeTab={this.props.changeTab}
                 />
               </TabPanel>
-              <TabPanel value={this.state.overviewTabValue} index={1}>
+              <TabPanel
+                value={PanelMap[this.context.currentTaskView]}
+                index={2}
+              >
                 <TrustPanel
                   task={task}
                   queries={this.props.queries}
@@ -564,7 +594,10 @@ class TaskStatusView extends Component {
                   changeTab={this.props.changeTab}
                 />
               </TabPanel>
-              <TabPanel value={this.state.overviewTabValue} index={2}>
+              <TabPanel
+                value={PanelMap[this.context.currentTaskView]}
+                index={3}
+              >
                 <CompletenessPanel
                   task={task}
                   queries={this.props.queries}

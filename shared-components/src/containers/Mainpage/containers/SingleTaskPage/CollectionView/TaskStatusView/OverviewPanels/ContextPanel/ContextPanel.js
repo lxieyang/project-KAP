@@ -241,7 +241,7 @@ class ContextPanel extends Component {
           </div>
         </div>
 
-        <div className={styles.Section}>
+        {/* <div className={styles.Section}>
           <div className={styles.SectionHeader}>
             <IoIosTimer className={styles.SectionHeaderIcon} />
             Information is <span className={styles.UpToDate}>
@@ -252,7 +252,7 @@ class ContextPanel extends Component {
             <p>The task was updated 4 days ago.</p>
             <p>The oldest information was from 1 year ago.</p>
           </div>
-        </div>
+        </div> */}
 
         <div className={styles.Section}>
           <div className={styles.SectionHeader}>
@@ -278,13 +278,16 @@ class ContextPanel extends Component {
             >
               See the complete list of search queries
             </div>
+            <div style={{ color: 'red' }}>
+              put the complete list of search queries here
+            </div>
           </div>
         </div>
 
         <div className={styles.Section}>
           <div className={styles.SectionHeader}>
             <IoMdGlobe className={styles.SectionHeaderIcon} />
-            Envrionment and constraints
+            Envrionment and Versions
             <div className={styles.HeaderButtonAlignRight}>
               <div
                 className={styles.AddButton}

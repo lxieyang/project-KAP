@@ -186,6 +186,7 @@
   display: flex;
   align-items: center;
   flex-wrap: wrap;
+  font-style: italic;
 }
 
 .TagSpan {

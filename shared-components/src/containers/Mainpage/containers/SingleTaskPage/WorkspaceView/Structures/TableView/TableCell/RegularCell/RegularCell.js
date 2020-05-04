@@ -836,22 +836,23 @@ class RegularCell extends Component {
                                       </a>
                                     </Tooltip>
                                   )}
-                                {honestSignals.popularity && popularityNumber && (
-                                  <span
-                                    className={styles.TagSpan}
-                                    title={`${popularityNumber} up votes`}
-                                  >
-                                    <FaArrowAltCircleUp
-                                      className={[
-                                        styles.Icon,
-                                        popularityNumber > 0
-                                          ? styles.VoteIcon
-                                          : styles.VoteIconNegative
-                                      ].join(' ')}
-                                    />
-                                    {popularityNumber}
-                                  </span>
-                                )}
+                                {honestSignals.popularity &&
+                                  popularityNumber !== null && (
+                                    <span
+                                      className={styles.TagSpan}
+                                      title={`${popularityNumber} up votes`}
+                                    >
+                                      <FaArrowAltCircleUp
+                                        className={[
+                                          styles.Icon,
+                                          popularityNumber > 0
+                                            ? styles.VoteIcon
+                                            : styles.VoteIconNegative
+                                        ].join(' ')}
+                                      />
+                                      {popularityNumber}
+                                    </span>
+                                  )}
                                 {honestSignals.popularity &&
                                   answerAccepted === true && (
                                     <div>
@@ -883,7 +884,7 @@ class RegularCell extends Component {
                                     updated {moment(updateDate).fromNow()}
                                   </span>
                                 )}
-                                {honestSignals.captureTime &&
+                                {/* {honestSignals.captureTime &&
                                   piece.creationDate && (
                                     <span
                                       className={styles.TagSpan}
@@ -902,7 +903,7 @@ class RegularCell extends Component {
                                         piece.creationDate.toDate()
                                       ).fromNow()}
                                     </span>
-                                  )}
+                                  )} */}
 
                                 {honestSignals.code &&
                                   codeSnippets &&
