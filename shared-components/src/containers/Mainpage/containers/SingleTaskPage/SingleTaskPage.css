@@ -1,6 +1,9 @@
 .SingleTaskPageContainer {
   width: 100%;
   height: 100%;
+
+  display: flex;
+  flex-direction: column;
 }
 
 .TaskViewTabsContainer {
@@ -20,7 +23,7 @@
   padding: 0px !important;
   font-size: 1em !important;
   text-transform: capitalize !important;
-  margin: 0px 10px;
+  margin: 0px 10px !important;
 
   opacity: 0.6 !important;
 
@@ -74,6 +77,11 @@
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.SplitPaneContainer {
+  flex: 1;
+  position: relative;
 }
 
 .LeftPane {

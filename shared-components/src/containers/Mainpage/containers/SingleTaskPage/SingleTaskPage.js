@@ -267,45 +267,40 @@ class SingleTaskPage extends Component {
             </div>
 
             {/* Split pane: overview + table */}
-            <SplitPane
-              split="vertical"
-              minSize={50}
-              maxSize={800}
-              pane2Style={{ width: '100%' }} //     ? parseInt(localStorage.getItem('split-pane-left-size'), 10) //   localStorage.getItem('split-pane-left-size') // defaultSize={
-              //     : 400
-              // }
-              size={this.state.leftPaneSize}
-              onChange={size => {
-                // console.log('size');
-                // this.setState({ leftPaneSize: size });
-              }}
-              onDragFinished={size => {
-                // console.log('finish');
-                this.setState({ leftPaneSize: size });
-                localStorage.setItem('split-pane-left-size', size);
-              }}
-            >
-              <div className={styles.LeftPane}>
-                <CollectionView
-                  userId={this.props.userId}
-                  currentWorkspaceId={this.state.currentWorkspaceId}
-                />
-              </div>
-              <div className={styles.RightPane}>
-                <WorkspaceView
-                  userId={this.props.userId}
-                  setCurrentWorkspaceId={this.setCurrentWorkspaceId}
-                />
-              </div>
-            </SplitPane>
-            {/*
-          <div className={styles.LeftPane}>
-            <CollectionView />
-          </div>
-          <div className={styles.RightPane}>
-            <WorkspaceView />
-          </div>
-      */}
+            <div className={styles.SplitPaneContainer}>
+              <SplitPane
+                split="vertical"
+                style={{ height: '100%' }}
+                minSize={50}
+                maxSize={800}
+                pane2Style={{ width: '100%' }} //     ? parseInt(localStorage.getItem('split-pane-left-size'), 10) //   localStorage.getItem('split-pane-left-size') // defaultSize={
+                //     : 400
+                // }
+                size={this.state.leftPaneSize}
+                onChange={size => {
+                  // console.log('size');
+                  // this.setState({ leftPaneSize: size });
+                }}
+                onDragFinished={size => {
+                  // console.log('finish');
+                  this.setState({ leftPaneSize: size });
+                  localStorage.setItem('split-pane-left-size', size);
+                }}
+              >
+                <div className={styles.LeftPane}>
+                  <CollectionView
+                    userId={this.props.userId}
+                    currentWorkspaceId={this.state.currentWorkspaceId}
+                  />
+                </div>
+                <div className={styles.RightPane}>
+                  <WorkspaceView
+                    userId={this.props.userId}
+                    setCurrentWorkspaceId={this.setCurrentWorkspaceId}
+                  />
+                </div>
+              </SplitPane>
+            </div>
           </div>
         </TaskContext.Provider>
       </React.Fragment>
