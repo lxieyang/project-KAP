@@ -13,9 +13,11 @@ import WorkspaceView from './WorkspaceView/WorkspaceView';
 
 import TaskContext from '../../../../shared/task-context';
 
-import { FaMedal } from 'react-icons/fa';
-import { GoPackage, GoTasklist } from 'react-icons/go';
-import { withStyles } from '@material-ui/core/styles';
+import {
+  FaBoxOpen as ContextIcon,
+  FaHandshake as TrustIcon,
+  FaTasks as CompletenessIcon
+} from 'react-icons/fa';
 import Button from '@material-ui/core/Button';
 
 class SingleTaskPage extends Component {
@@ -229,7 +231,7 @@ class SingleTaskPage extends Component {
                     : null
                 ].join(' ')}
               >
-                <GoPackage className={styles.ViewControlButtonIcon} />
+                <ContextIcon className={styles.ViewControlButtonIcon} />
                 Context View
               </Button>
               <Button
@@ -245,7 +247,7 @@ class SingleTaskPage extends Component {
                     : null
                 ].join(' ')}
               >
-                <FaMedal className={styles.ViewControlButtonIcon} />
+                <TrustIcon className={styles.ViewControlButtonIcon} />
                 Trustworthiness View
               </Button>
               <Button
@@ -261,7 +263,7 @@ class SingleTaskPage extends Component {
                     : null
                 ].join(' ')}
               >
-                <GoTasklist className={styles.ViewControlButtonIcon} />
+                <CompletenessIcon className={styles.ViewControlButtonIcon} />
                 Thoroughness View
               </Button>
             </div>
