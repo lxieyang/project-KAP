@@ -3,17 +3,7 @@ import styles from './TrustPanel.css';
 
 import { sortBy, reverse } from 'lodash';
 
-import { AiOutlineSearch } from 'react-icons/ai';
-import { GiTargeting } from 'react-icons/gi';
-import Avatar from '@material-ui/core/Avatar';
-import {
-  IoIosArrowDropup,
-  IoIosArrowDropdown,
-  IoMdMedal,
-  IoIosPeople,
-  IoIosLink
-} from 'react-icons/io';
-import { FaFlagCheckered, FaListUl, FaBookmark } from 'react-icons/fa';
+import { IoMdMedal, IoIosPeople, IoIosLink } from 'react-icons/io';
 import { MdPinDrop } from 'react-icons/md';
 import { TiUser } from 'react-icons/ti';
 import { GiThreeKeys } from 'react-icons/gi';
@@ -24,6 +14,9 @@ import { PIECE_COLOR } from '../../../../../../../../shared/theme';
 import InfoTooltip from '../components/InfoTooltip/InfoTooltip';
 import isURL from 'validator/lib/isURL';
 
+import { Collapse } from 'react-collapse';
+import { IoIosArrowBack, IoIosArrowDown } from 'react-icons/io';
+
 import Textarea from 'react-textarea-autosize';
 
 import axios from 'axios';
@@ -32,6 +25,70 @@ import * as FirestoreManager from '../../../../../../../../firebase/firestore_wr
 
 import moment from 'moment';
 import { GET_FAVICON_URL_PREFIX } from '../../../../../../../../shared/constants';
+
+import SourcesComponent from '../components/SourcesComponent/SourcesComponent';
+
+class Section extends Component {
+  state = { isOpen: true };
+
+  handleSwitchCollapsedStatus = e => {
+    this.setState(prevState => {
+      return { isOpen: !prevState.isOpen };
+    });
+  };
+
+  render() {
+    const {
+      headerName,
+      headerContent,
+      children,
+      footer,
+      numOfWarnings
+    } = this.props;
+    const { isOpen } = this.state;
+
+    let gradeColor = '#4dae4c';
+    if (numOfWarnings === 1 || numOfWarnings === 2) {
+      gradeColor = '#FCBB21';
+    } else if (numOfWarnings > 2) {
+      gradeColor = '#E32722';
+    }
+
+    return (
+      <div
+        className={[
+          styles.Section,
+          isOpen ? styles.SectionOpen : styles.SectionClosed
+        ].join(' ')}
+        style={{
+          [isOpen ? 'borderTopColor' : 'borderLeftColor']: gradeColor
+        }}
+      >
+        {headerName && (
+          <div
+            className={styles.SectionHeader}
+            onClick={this.handleSwitchCollapsedStatus}
+          >
+            <div className={styles.HeaderName}>{headerName}</div>
+            {!isOpen && (
+              <div className={styles.HeaderContent}>{headerContent}</div>
+            )}
+
+            <div className={styles.CollapseButtonContainer}>
+              <div className={styles.CollapseButton}>
+                {isOpen ? <IoIosArrowDown /> : <IoIosArrowBack />}
+              </div>
+            </div>
+          </div>
+        )}
+        <Collapse isOpened={isOpen}>
+          <div className={styles.SectionContent}>{children}</div>
+          {footer && <div className={styles.SectionFooter}>{footer}</div>}
+        </Collapse>
+      </div>
+    );
+  }
+}
 
 class TrustPanel extends Component {
   state = {
@@ -176,10 +233,65 @@ class TrustPanel extends Component {
 
     domains = reverse(sortBy(domains, ['numberOfPieces', 'numberOfPages']));
 
-    // console.log(domains);
-
     return (
       <div className={styles.PanelContainer}>
+        {/* Table trustworthiness */}
+        <Section
+          headerIcon={<GiThreeKeys className={styles.SectionHeaderIcon} />}
+          headerName={'Sources'}
+          headerContent={
+            <React.Fragment>
+              {domains.map((domain, idx) => {
+                return (
+                  <img
+                    style={{ width: 16, height: 16, margin: '0px 3px' }}
+                    src={domain.favicon}
+                    alt=""
+                    key={idx}
+                  />
+                );
+              })}
+            </React.Fragment>
+          }
+          header={
+            <React.Fragment>
+              Sources &nbsp;{' '}
+              {domains.map((domain, idx) => {
+                return (
+                  <img
+                    style={{ width: 16, height: 16, margin: '0px 3px' }}
+                    src={domain.favicon}
+                    alt=""
+                    key={idx}
+                  />
+                );
+              })}
+            </React.Fragment>
+          }
+          footer={<SourcesComponent />}
+          numOfWarnings={0}
+        >
+          {domains.length <= 1 ? (
+            <div>- Information are all from a single source website.</div>
+          ) : (
+            <div>
+              + Information are from {domains.length} different source websites.
+            </div>
+          )}
+          {domains.length > 0 && (
+            <div>
+              {/* TODO: calculate this number */}+{' '}
+              {((domains[0].numberOfPieces / pieces.length) * 100).toFixed(0)}%
+              of the snippets are collected from{' '}
+              <span className={styles.DomainItem}>
+                <img src={domains[0].favicon} alt="" />
+                {domains[0].domain}
+              </span>
+              .
+            </div>
+          )}
+        </Section>
+
         <div className={styles.Section}>
           <div className={styles.SectionHeader}>
             <GiThreeKeys className={styles.SectionHeaderIcon} />

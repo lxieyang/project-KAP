@@ -1,4 +1,5 @@
 .PanelContainer {
+  box-sizing: border-box;
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -7,14 +8,73 @@
 
 .Section {
   margin-bottom: 9px;
+  border: 1px solid lightgray;
+  border-radius: 3px;
+
+  /* transition: all 0.05s ease-in; */
+}
+
+.Section.SectionOpen {
+  border-top-width: 5px;
+}
+
+.Section.SectionClosed {
+  border-left-width: 5px;
 }
 
 .SectionHeader {
-  font-size: 16px;
-  font-weight: 800;
+  padding: 6px 6px;
+  font-size: 18px;
+  color: #444;
+  font-weight: normal;
   display: flex;
   align-items: center;
   font-family: arial, sans-serif !important;
+
+  position: relative;
+}
+
+.Section.SectionOpen .SectionHeader {
+  justify-content: center;
+}
+
+.HeaderName {
+  margin-right: 6px;
+}
+
+.HeaderContent {
+  display: flex;
+  align-items: center;
+}
+
+.CollapseButtonContainer {
+  position: absolute;
+  right: 6px;
+  top: 0;
+  bottom: 0;
+
+  display: flex;
+  align-items: center;
+}
+
+.CollapseButton {
+  cursor: pointer;
+  background-color: transparent;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.5;
+
+  transition: all 0.1s ease-in;
+}
+
+.CollapseButton:hover {
+  opacity: 1;
+  background-color: rgb(224, 224, 224);
 }
 
 .HeaderButtonAlignRight {
@@ -57,7 +117,7 @@
 
 .SectionContent {
   font-weight: 400;
-  margin-left: 16px;
+  padding: 2px 6px;
   font-size: 13px;
 }
 
@@ -80,7 +140,7 @@
 }
 
 .SectionFooter {
-  margin-left: 16px;
+  padding: 2px 6px;
   font-size: 13px;
 }
 

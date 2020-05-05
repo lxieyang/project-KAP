@@ -41,7 +41,7 @@
     "react-awesome-popover": "^2.0.6",
     "react-chrome-redux": "^1.5.1",
     "react-clamp-lines": "^2.2.0",
-    "react-collapse": "^4.0.3",
+    "react-collapse": "^5.0.1",
     "react-contenteditable": "^2.1.6",
     "react-contextmenu": "^2.10.0",
     "react-copy-to-clipboard": "^5.0.1",
