@@ -3,6 +3,18 @@
   font-size: 11px;
 }
 
+.SwitchContainer {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  font-size: 10px;
+  font-weight: 300;
+}
+
+.Switch {
+  margin: 0px 4px;
+}
+
 .DomainEntryContainer {
   display: flex;
   align-items: center;

@@ -235,45 +235,6 @@ class TrustPanel extends Component {
 
         <div className={styles.Section}>
           <div className={styles.SectionHeader}>
-            <GiThreeKeys className={styles.SectionHeaderIcon} />
-            {domains.length > 2 ? (
-              <span className={styles.UpToDate}>Multiple</span>
-            ) : (
-              <span className={styles.NotUpToDate}>Limited</span>
-            )}
-            Sources
-          </div>
-          <div className={styles.SectionContent}>
-            <p>
-              Information are from {domains.length} different sources
-              {domains.length > 0 && (
-                <React.Fragment>
-                  , with the most used one being{' '}
-                  <span className={styles.DomainItem}>
-                    <img src={domains[0].favicon} alt="" />
-                    {domains[0].domain}
-                  </span>
-                  .
-                </React.Fragment>
-              )}
-              {domains.length === 0 && <React.Fragment>.</React.Fragment>}
-            </p>
-          </div>
-          <div className={styles.SectionFooter}>
-            <div
-              className={styles.LinkToElsewhere}
-              onClick={e => this.props.changeTab(e, 0)}
-            >
-              See the complete list of sources
-            </div>
-            <div style={{ color: 'red' }}>
-              put the complete list of sources, pages, and stats here.
-            </div>
-          </div>
-        </div>
-
-        <div className={styles.Section}>
-          <div className={styles.SectionHeader}>
             <IoMdMedal className={styles.SectionHeaderIcon} />
             <span className={styles.UpToDate}>High</span>
             Snippet credibility

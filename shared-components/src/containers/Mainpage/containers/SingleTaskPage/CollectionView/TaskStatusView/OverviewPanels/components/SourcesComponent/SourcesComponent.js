@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import styles from './SourcesComponent.css';
+import Switch from 'react-switch';
 
 import ReactHoverObserver from 'react-hover-observer';
 
@@ -18,7 +19,11 @@ import TaskContext from '../../../../../../../../../shared/task-context';
 class SourcesComponent extends Component {
   static contextType = TaskContext;
   state = {
-    domains: []
+    piechartView: false
+  };
+
+  handleViewChange = toStatus => {
+    this.setState({ piechartView: toStatus });
   };
 
   onHoverChanged = e => {
@@ -26,7 +31,7 @@ class SourcesComponent extends Component {
   };
 
   render() {
-    // const { domains } = this.state;
+    const { piechartView } = this.state;
     let { domains, pieces } = this.props;
     domains = domains.map(d => {
       let color = DOMAIN_THEME_COLOR[d.domain];
@@ -51,73 +56,90 @@ class SourcesComponent extends Component {
           shouldOpenOnMount={true}
           headerName={'List of source domains'}
         >
-          <div className={styles.SourcesComponentContainer}>
-            {domains.map((d, idx) => {
-              const percent = (
-                (d.numberOfPieces / maxNumOfPieces) *
-                100
-              ).toFixed(0);
-              const onHoverChanged = ({ isHovering }) => {
-                if (isHovering) {
-                  this.context.addSelectedDomain(d.domain);
-                } else {
-                  this.context.removeSelectedDomain(d.domain);
-                }
-              };
-              return (
-                <ReactHoverObserver
-                  key={idx}
-                  {...{
-                    onHoverChanged: onHoverChanged
-                  }}
-                >
-                  {({ isHovering }) => (
-                    <div
-                      className={styles.DomainEntryContainer}
-                      style={{
-                        borderBottomColor: d.color,
-                        borderBottomWidth: this.context.selectedDomains.includes(
-                          d.domain
-                        )
-                          ? 1
-                          : null
-                      }}
-                      key={idx}
-                    >
-                      <div
-                        className={styles.DomainEntryPercentage}
-                        style={{
-                          width: `${percent}%`,
-                          backgroundColor: d.color
-                        }}
-                      />
+          <div className={styles.SwitchContainer}>
+            Default View
+            <Switch
+              onChange={this.handleViewChange}
+              checked={piechartView}
+              uncheckedIcon={false}
+              checkedIcon={false}
+              className={styles.Switch}
+              height={10}
+              width={28}
+            />
+            Piechart View
+          </div>
 
-                      <img src={d.favicon} alt="" />
-                      <span
-                        className={styles.DomainName}
-                        // style={{ color: d.foregroundColor }}
+          <div className={styles.SourcesComponentContainer}>
+            {!piechartView &&
+              domains.map((d, idx) => {
+                const percent = (
+                  (d.numberOfPieces / maxNumOfPieces) *
+                  100
+                ).toFixed(0);
+                const onHoverChanged = ({ isHovering }) => {
+                  if (isHovering) {
+                    this.context.addSelectedDomain(d.domain);
+                  } else {
+                    this.context.removeSelectedDomain(d.domain);
+                  }
+                };
+                return (
+                  <ReactHoverObserver
+                    key={idx}
+                    {...{
+                      onHoverChanged: onHoverChanged
+                    }}
+                  >
+                    {({ isHovering }) => (
+                      <div
+                        className={styles.DomainEntryContainer}
+                        style={{
+                          borderBottomColor: d.color,
+                          borderBottomWidth: this.context.selectedDomains.includes(
+                            d.domain
+                          )
+                            ? 1
+                            : null
+                        }}
+                        key={idx}
                       >
-                        {d.domain}
-                      </span>
-                      <div style={{ flex: 1 }} />
-                      <span className={styles.DomainStats}>
-                        {d.numberOfPieces} snippets
-                      </span>
-                    </div>
-                  )}
-                </ReactHoverObserver>
-              );
-            })}
-            <div className={styles.PiechartContainer}>
-              <PieChart
-                domains={domains}
-                selectedDomains={this.context.selectedDomains}
-                addSelectedDomain={this.context.addSelectedDomain}
-                removeSelectedDomain={this.context.removeSelectedDomain}
-                clearSelectedDomains={this.context.clearSelectedDomains}
-                setSelectedDomains={this.context.setSelectedDomains}
-              />
-            </div>
+                        <div
+                          className={styles.DomainEntryPercentage}
+                          style={{
+                            width: `${percent}%`,
+                            backgroundColor: d.color
+                          }}
+                        />
+
+                        <img src={d.favicon} alt="" />
+                        <span
+                          className={styles.DomainName}
+                          // style={{ color: d.foregroundColor }}
+                        >
+                          {d.domain}
+                        </span>
+                        <div style={{ flex: 1 }} />
+                        <span className={styles.DomainStats}>
+                          {d.numberOfPieces} snippets
+                        </span>
+                      </div>
+                    )}
+                  </ReactHoverObserver>
+                );
+              })}
+            {piechartView && (
+              <div className={styles.PiechartContainer}>
+                <PieChart
+                  domains={domains}
+                  selectedDomains={this.context.selectedDomains}
+                  addSelectedDomain={this.context.addSelectedDomain}
+                  removeSelectedDomain={this.context.removeSelectedDomain}
+                  clearSelectedDomains={this.context.clearSelectedDomains}
+                  setSelectedDomains={this.context.setSelectedDomains}
+                />
+              </div>
+            )}
           </div>
         </BaseComponent>
       </React.Fragment>
