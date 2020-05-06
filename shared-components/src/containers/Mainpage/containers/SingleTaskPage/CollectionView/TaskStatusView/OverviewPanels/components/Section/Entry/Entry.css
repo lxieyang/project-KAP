@@ -1,0 +1,17 @@
+.EntryContainer {
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  margin: 6px 0px;
+  padding: 2px 2px;
+  line-height: 16px;
+  background-color: rgb(242, 242, 242);
+}
+
+.StatusIndicator {
+  font-size: 15px;
+  margin-right: 4px;
+  display: flex;
+  align-items: center;
+  height: 100%;
+}

@@ -126,8 +126,9 @@
 }
 
 .DomainItem {
+  height: 100%;
   display: inline-flex;
-  align-items: center;
+  align-items: flex-start;
   /* border-radius: 5px; */
   /* border: 1px solid transparent; */
   padding: 0px 2px;

@@ -9,7 +9,11 @@ import { TiUser } from 'react-icons/ti';
 import { GiThreeKeys } from 'react-icons/gi';
 
 import { PIECE_TYPES } from '../../../../../../../../shared/types';
-import { PIECE_COLOR } from '../../../../../../../../shared/theme';
+import {
+  PIECE_COLOR,
+  DOMAIN_THEME_COLOR
+} from '../../../../../../../../shared/theme';
+import ColorAlpha from 'color-alpha';
 
 import InfoTooltip from '../components/InfoTooltip/InfoTooltip';
 import isURL from 'validator/lib/isURL';
@@ -27,7 +31,216 @@ import moment from 'moment';
 import { GET_FAVICON_URL_PREFIX } from '../../../../../../../../shared/constants';
 
 import Section from '../components/Section/Section';
+import Entry from '../components/Section/Entry/Entry';
 import SourcesComponent from '../components/SourcesComponent/SourcesComponent';
+
+class SourcesSection extends Component {
+  state = {
+    domains: [],
+    pieces: [],
+    pages: [],
+
+    sourceDiversityStatus: 'bad',
+    sourceCredibilityStatus: 'bad'
+  };
+
+  componentDidMount() {
+    this.updateData();
+  }
+
+  componentDidUpdate(prevProps) {
+    if (
+      prevProps.pieces !== this.props.pieces &&
+      this.props.pieces.length > 0 &&
+      this.props.pages.length > 0
+    ) {
+      this.updateData();
+    }
+  }
+
+  updateData() {
+    let { pieces, pages } = this.props;
+    // console.log(queries);
+
+    const displayPieces = pieces.filter(
+      p => p.pieceType === PIECE_TYPES.option
+    );
+
+    pages = pages.map(page => {
+      const piecesInPage = pieces.filter(
+        item => item.references.url === page.url
+      );
+      // .map(item => item.id);
+      page.piecesInPage = piecesInPage;
+      page.piecesNumber = piecesInPage.length;
+      return page;
+    });
+
+    // pages = pages.filter(page => page.piecesNumber > 0);
+    // console.log(pages);
+
+    let domains = [];
+    pages.forEach(p => {
+      if (domains.filter(d => d.domain === p.domain).length === 0) {
+        domains.push({
+          domain: p.domain,
+          pages: [p],
+          numberOfPages: 1,
+          numberOfPieces: p.piecesNumber,
+          favicon: p.faviconUrl ? p.faviconUrl : null
+        });
+      } else {
+        domains = domains.map(d => {
+          if (d.domain === p.domain) {
+            d.pages.push(p);
+            d.numberOfPages = d.pages.length;
+            d.numberOfPieces += p.piecesNumber;
+            if (d.favicon === null && p.faviconUrl) {
+              d.favicon = p.faviconUrl;
+            }
+          }
+          return d;
+        });
+      }
+    });
+
+    domains = domains.map(d => {
+      let updateDate = d.pages[0].updateDate;
+      d.pages.forEach(p => {
+        if (p.updateDate > updateDate) {
+          updateDate = p.updateDate;
+        }
+      });
+      d.updateDate = updateDate;
+
+      if (d.favicon === null) {
+        d.favicon = GET_FAVICON_URL_PREFIX + d.pages[0].url;
+      }
+
+      return d;
+    });
+
+    domains = reverse(sortBy(domains, ['numberOfPieces', 'numberOfPages']));
+
+    domains = domains.filter(d => d.numberOfPieces > 0);
+    this.setState({ domains, pieces, pages });
+
+    if (domains.length > 1) {
+      this.setState({ sourceDiversityStatus: 'good' });
+    } else {
+      this.setState({ sourceDiversityStatus: 'bad' });
+    }
+
+    // TODO: source credibility status checker
+    this.setState({ sourceCredibilityStatus: 'good' });
+  }
+
+  render() {
+    const { domains, pieces } = this.state;
+
+    return (
+      <Section
+        headerIcon={<GiThreeKeys className={styles.SectionHeaderIcon} />}
+        headerName={'Sources'}
+        headerContent={
+          <React.Fragment>
+            {domains.map((domain, idx) => {
+              return (
+                <img
+                  style={{ width: 16, height: 16, margin: '0px 3px' }}
+                  src={domain.favicon}
+                  alt=""
+                  key={idx}
+                />
+              );
+            })}
+          </React.Fragment>
+        }
+        header={
+          <React.Fragment>
+            Sources &nbsp;{' '}
+            {domains.map((domain, idx) => {
+              return (
+                <img
+                  title={domain.domain}
+                  style={{ width: 16, height: 16, margin: '0px 3px' }}
+                  src={domain.favicon}
+                  alt=""
+                  key={idx}
+                />
+              );
+            })}
+          </React.Fragment>
+        }
+        footer={
+          <SourcesComponent
+            domains={domains}
+            pieces={pieces}
+            shouldOpenOnMount={false}
+          />
+        }
+        numOfWarnings={[
+          this.state.sourceDiversityStatus === 'bad' ? 1 : 0,
+          this.state.sourceCredibilityStatus === 'bad' ? 1 : 0
+        ].reduce((a, b) => a + b)}
+      >
+        <Entry
+          status={this.state.sourceCredibilityStatus}
+          content={
+            <div style={{ verticalAlign: 'middle' }}>
+              All sources (
+              {domains.map((domain, idx) => {
+                return (
+                  <img
+                    title={domain.domain}
+                    style={{ width: 14, height: 13, margin: '0px 3px' }}
+                    src={domain.favicon}
+                    alt=""
+                    key={idx}
+                  />
+                );
+              })}
+              ) are credibile.
+            </div>
+          }
+        />
+
+        <Entry
+          status={this.state.sourceDiversityStatus}
+          content={
+            <React.Fragment>
+              {domains.length > 1
+                ? `Information are from ${domains.length} different sources,`
+                : `Information are all from a single source,`}
+              {domains.length > 0 && (
+                <React.Fragment>
+                  {' '}
+                  the most-used one being{' '}
+                  <span
+                    className={styles.DomainItem}
+                    style={{
+                      backgroundColor: DOMAIN_THEME_COLOR[domains[0].domain]
+                        ? ColorAlpha(DOMAIN_THEME_COLOR[domains[0].domain], 0.2)
+                        : ColorAlpha('gray', 0.3)
+                    }}
+                  >
+                    <img src={domains[0].favicon} alt="" />
+                    {domains[0].domain}
+                  </span>
+                  , which is where{' '}
+                  {((domains[0].numberOfPieces / pieces.length) * 100).toFixed(
+                    0
+                  )}
+                  % of the snippets are collected from.
+                </React.Fragment>
+              )}
+            </React.Fragment>
+          }
+        />
+      </Section>
+    );
+  }
+}
 
 class TrustPanel extends Component {
   state = {
@@ -110,128 +323,11 @@ class TrustPanel extends Component {
 
   render() {
     let { pieces, pages } = this.props;
-    // console.log(queries);
-
-    const displayPieces = pieces.filter(
-      p => p.pieceType === PIECE_TYPES.option
-    );
-
-    pages = pages.map(page => {
-      const piecesInPage = pieces.filter(
-        item => item.references.url === page.url
-      );
-      // .map(item => item.id);
-      page.piecesInPage = piecesInPage;
-      page.piecesNumber = piecesInPage.length;
-      return page;
-    });
-
-    // pages = pages.filter(page => page.piecesNumber > 0);
-    // console.log(pages);
-
-    let domains = [];
-    pages.forEach(p => {
-      if (domains.filter(d => d.domain === p.domain).length === 0) {
-        domains.push({
-          domain: p.domain,
-          pages: [p],
-          numberOfPages: 1,
-          numberOfPieces: p.piecesNumber,
-          favicon: p.faviconUrl ? p.faviconUrl : null
-        });
-      } else {
-        domains = domains.map(d => {
-          if (d.domain === p.domain) {
-            d.pages.push(p);
-            d.numberOfPages = d.pages.length;
-            d.numberOfPieces += p.piecesNumber;
-            if (d.favicon === null && p.faviconUrl) {
-              d.favicon = p.faviconUrl;
-            }
-          }
-          return d;
-        });
-      }
-    });
-
-    domains = domains.map(d => {
-      let updateDate = d.pages[0].updateDate;
-      d.pages.forEach(p => {
-        if (p.updateDate > updateDate) {
-          updateDate = p.updateDate;
-        }
-      });
-      d.updateDate = updateDate;
-
-      if (d.favicon === null) {
-        d.favicon = GET_FAVICON_URL_PREFIX + d.pages[0].url;
-      }
-
-      return d;
-    });
-
-    domains = reverse(sortBy(domains, ['numberOfPieces', 'numberOfPages']));
-
-    domains = domains.filter(d => d.numberOfPieces > 0);
 
     return (
       <div className={styles.PanelContainer}>
-        {/* Table trustworthiness */}
-        <Section
-          headerIcon={<GiThreeKeys className={styles.SectionHeaderIcon} />}
-          headerName={'Sources'}
-          headerContent={
-            <React.Fragment>
-              {domains.map((domain, idx) => {
-                return (
-                  <img
-                    style={{ width: 16, height: 16, margin: '0px 3px' }}
-                    src={domain.favicon}
-                    alt=""
-                    key={idx}
-                  />
-                );
-              })}
-            </React.Fragment>
-          }
-          header={
-            <React.Fragment>
-              Sources &nbsp;{' '}
-              {domains.map((domain, idx) => {
-                return (
-                  <img
-                    style={{ width: 16, height: 16, margin: '0px 3px' }}
-                    src={domain.favicon}
-                    alt=""
-                    key={idx}
-                  />
-                );
-              })}
-            </React.Fragment>
-          }
-          footer={<SourcesComponent domains={domains} pieces={pieces} />}
-          numOfWarnings={0}
-        >
-          {domains.length <= 1 ? (
-            <div>- Information are all from a single source website.</div>
-          ) : (
-            <div>
-              + Information are from {domains.length} different source websites.
-            </div>
-          )}
-          {domains.length > 0 && (
-            <div>
-              {/* TODO: calculate this number */}+{' '}
-              {((domains[0].numberOfPieces / pieces.length) * 100).toFixed(0)}%
-              of the snippets are collected from{' '}
-              <span className={styles.DomainItem}>
-                <img src={domains[0].favicon} alt="" />
-                {domains[0].domain}
-              </span>
-              .
-            </div>
-          )}
-        </Section>
+        {/* Sources trustworthiness */}
+        <SourcesSection pieces={pieces} pages={pages} />
 
         <div className={styles.Section}>
           <div className={styles.SectionHeader}>

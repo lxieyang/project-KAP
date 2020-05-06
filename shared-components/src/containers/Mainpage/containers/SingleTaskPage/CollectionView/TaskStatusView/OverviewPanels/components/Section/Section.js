@@ -23,11 +23,15 @@ class Section extends Component {
     } = this.props;
     const { isOpen } = this.state;
 
+    let statusString = 'good';
+
     let gradeColor = '#4dae4c';
     if (numOfWarnings === 1 || numOfWarnings === 2) {
       gradeColor = '#FCBB21';
+      statusString = 'fair';
     } else if (numOfWarnings > 2) {
       gradeColor = '#E32722';
+      statusString = 'bad';
     }
 
     return (
@@ -51,6 +55,12 @@ class Section extends Component {
             )}
 
             <div className={styles.CollapseButtonContainer}>
+              <div
+                className={styles.StatusIndicator}
+                style={{ backgroundColor: gradeColor }}
+              >
+                {statusString}
+              </div>
               <div className={styles.CollapseButton}>
                 {isOpen ? <IoIosArrowDown /> : <IoIosArrowBack />}
               </div>

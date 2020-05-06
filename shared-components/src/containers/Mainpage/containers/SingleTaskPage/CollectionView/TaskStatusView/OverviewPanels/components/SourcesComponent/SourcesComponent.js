@@ -32,7 +32,7 @@ class SourcesComponent extends Component {
 
   render() {
     const { piechartView } = this.state;
-    let { domains, pieces } = this.props;
+    let { domains, pieces, shouldOpenOnMount } = this.props;
     domains = domains.map(d => {
       let color = DOMAIN_THEME_COLOR[d.domain];
       if (!color) {
@@ -53,7 +53,7 @@ class SourcesComponent extends Component {
       <React.Fragment>
         <Divider light />
         <BaseComponent
-          shouldOpenOnMount={true}
+          shouldOpenOnMount={shouldOpenOnMount}
           headerName={'List of source domains'}
         >
           <div className={styles.SwitchContainer}>
@@ -65,7 +65,7 @@ class SourcesComponent extends Component {
               checkedIcon={false}
               className={styles.Switch}
               height={10}
-              width={28}
+              width={20}
             />
             Piechart View
           </div>

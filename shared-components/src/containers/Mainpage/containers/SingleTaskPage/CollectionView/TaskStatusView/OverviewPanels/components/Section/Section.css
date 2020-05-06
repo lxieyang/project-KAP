@@ -49,6 +49,14 @@
   align-items: center;
 }
 
+.StatusIndicator {
+  padding: 0 3px;
+  font-size: 13px;
+  line-height: 16px;
+  font-weight: 300;
+  margin-right: 6px;
+}
+
 .CollapseButton {
   cursor: pointer;
   background-color: transparent;
