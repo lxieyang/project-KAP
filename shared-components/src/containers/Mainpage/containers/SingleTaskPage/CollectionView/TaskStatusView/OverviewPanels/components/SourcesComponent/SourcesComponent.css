@@ -1,0 +1,50 @@
+.SourcesComponentContainer {
+  width: 100%;
+  font-size: 11px;
+}
+
+.DomainEntryContainer {
+  display: flex;
+  align-items: center;
+
+  margin: 4px 0px;
+  padding: 1px 3px;
+
+  position: relative;
+}
+
+.DomainEntryContainer img {
+  width: 16px;
+  height: 16px;
+  margin-right: 4px;
+  z-index: 1001;
+}
+
+.DomainEntryContainer .DomainName {
+  z-index: 1001;
+  /* min-width: 140px; */
+  margin-right: 4px;
+  font-style: italic;
+}
+
+.DomainEntryContainer .DomainStats {
+  z-index: 1001;
+  margin-right: 4px;
+}
+
+.DomainEntryPercentage {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  background-color: rgb(235, 235, 235);
+  z-index: 1000;
+  opacity: 0.2;
+}
+
+.PiechartContainer {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

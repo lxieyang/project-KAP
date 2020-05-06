@@ -1,7 +1,14 @@
 .BaseComponentContainer {
-  border: 1px solid black;
+  /* border: 1px solid black; */
   font-size: 12px;
 }
 .BaseComponentHeader {
-  font-size: 1.2em;
+  font-size: 1em;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.BaseComponentHeader:hover {
+  text-decoration: underline;
 }

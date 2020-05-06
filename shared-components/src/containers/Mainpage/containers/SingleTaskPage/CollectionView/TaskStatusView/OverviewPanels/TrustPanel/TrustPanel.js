@@ -208,7 +208,7 @@ class TrustPanel extends Component {
               })}
             </React.Fragment>
           }
-          footer={<SourcesComponent domains={domains} />}
+          footer={<SourcesComponent domains={domains} pieces={pieces} />}
           numOfWarnings={0}
         >
           {domains.length <= 1 ? (
