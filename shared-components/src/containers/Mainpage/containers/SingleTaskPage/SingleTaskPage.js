@@ -170,10 +170,23 @@ class SingleTaskPage extends Component {
               let selectedDomains = [...this.state.selectedDomains];
               if (selectedDomains.indexOf(item) === -1) {
                 selectedDomains.push(item);
+              }
+              this.setState({ selectedDomains });
+            },
+            removeSelectedDomain: item => {
+              let selectedDomains = [...this.state.selectedDomains];
+              if (selectedDomains.indexOf(item) === -1) {
+                return;
               } else {
                 selectedDomains = selectedDomains.filter(i => i !== item);
               }
               this.setState({ selectedDomains });
+            },
+            setSelectedDomains: (domains = []) => {
+              this.setState({ selectedDomains: domains });
+            },
+            clearSelectedDomains: () => {
+              this.setState({ selectedDomains: [] });
             },
             selectedQueries: this.state.selectedQueries,
             addSelectedQuery: item => {

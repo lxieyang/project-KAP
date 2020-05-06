@@ -10,7 +10,15 @@
   margin: 4px 0px;
   padding: 1px 3px;
 
+  border-bottom-style: solid;
+  border-bottom-width: 0px;
+  box-sizing: border-box;
+
   position: relative;
+}
+
+.DomainEntryContainer:hover {
+  border-bottom-width: 1px;
 }
 
 .DomainEntryContainer img {
@@ -24,6 +32,7 @@
   z-index: 1001;
   /* min-width: 140px; */
   margin-right: 4px;
+  user-select: none;
   font-style: italic;
 }
 

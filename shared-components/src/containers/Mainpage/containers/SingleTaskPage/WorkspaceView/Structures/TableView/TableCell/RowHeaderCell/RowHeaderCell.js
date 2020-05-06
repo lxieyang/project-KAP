@@ -774,11 +774,17 @@ class RowHeaderCell extends Component {
                     <div
                       className={[
                         styles.RowHeaderPiecesContainer,
-                        this.props.selectedUrls.length === 0
+                        this.props.selectedUrls.length === 0 &&
+                        this.props.selectedDomains.length === 0
                           ? styles.Normal
-                          : this.props.selectedUrls.indexOf(
+                          : pieces[p.pieceId].references.url &&
+                            (this.props.selectedUrls.indexOf(
                               pieces[p.pieceId].references.url
-                            ) !== -1
+                            ) !== -1 ||
+                              this.props.selectedDomains.includes(
+                                new URL(pieces[p.pieceId].references.url)
+                                  .hostname
+                              ))
                           ? styles.Normal
                           : styles.Fade
                       ].join(' ')}

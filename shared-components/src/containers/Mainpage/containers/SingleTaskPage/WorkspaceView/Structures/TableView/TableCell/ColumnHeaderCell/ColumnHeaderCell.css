@@ -28,6 +28,8 @@
 .ColumnHeaderPiecesContainer {
   width: 260px;
   min-height: 65px;
+
+  transition: all 0.1s ease-in;
 }
 
 .ColumnHeaderPiecesContainer.Normal {

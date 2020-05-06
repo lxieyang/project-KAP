@@ -80,6 +80,7 @@ class TableCell extends Component {
             commentCount={commentCount}
             isDemoTask={this.context.isDemoTask}
             selectedUrls={this.context.selectedUrls}
+            selectedDomains={this.context.selectedDomains}
             honestSignals={this.context.honestSignalsInTable}
             isInDefaultView={this.context.currentTaskView === 'default'}
             isInContextView={this.context.currentTaskView === 'context'}
@@ -100,6 +101,7 @@ class TableCell extends Component {
             commentCount={commentCount}
             isDemoTask={this.context.isDemoTask}
             selectedUrls={this.context.selectedUrls}
+            selectedDomains={this.context.selectedDomains}
             honestSignals={this.context.honestSignalsInTable}
             isInDefaultView={this.context.currentTaskView === 'default'}
             isInContextView={this.context.currentTaskView === 'context'}
@@ -121,6 +123,7 @@ class TableCell extends Component {
             commentCount={commentCount}
             isDemoTask={this.context.isDemoTask}
             selectedUrls={this.context.selectedUrls}
+            selectedDomains={this.context.selectedDomains}
             honestSignals={this.context.honestSignalsInTable}
             isInDefaultView={this.context.currentTaskView === 'default'}
             isInContextView={this.context.currentTaskView === 'context'}

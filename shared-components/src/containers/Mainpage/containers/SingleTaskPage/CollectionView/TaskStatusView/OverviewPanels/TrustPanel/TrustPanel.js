@@ -171,6 +171,7 @@ class TrustPanel extends Component {
     });
 
     domains = reverse(sortBy(domains, ['numberOfPieces', 'numberOfPages']));
+
     domains = domains.filter(d => d.numberOfPieces > 0);
 
     return (
