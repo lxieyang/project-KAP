@@ -26,69 +26,8 @@ import * as FirestoreManager from '../../../../../../../../firebase/firestore_wr
 import moment from 'moment';
 import { GET_FAVICON_URL_PREFIX } from '../../../../../../../../shared/constants';
 
+import Section from '../components/Section/Section';
 import SourcesComponent from '../components/SourcesComponent/SourcesComponent';
-
-class Section extends Component {
-  state = { isOpen: true };
-
-  handleSwitchCollapsedStatus = e => {
-    this.setState(prevState => {
-      return { isOpen: !prevState.isOpen };
-    });
-  };
-
-  render() {
-    const {
-      headerName,
-      headerContent,
-      children,
-      footer,
-      numOfWarnings
-    } = this.props;
-    const { isOpen } = this.state;
-
-    let gradeColor = '#4dae4c';
-    if (numOfWarnings === 1 || numOfWarnings === 2) {
-      gradeColor = '#FCBB21';
-    } else if (numOfWarnings > 2) {
-      gradeColor = '#E32722';
-    }
-
-    return (
-      <div
-        className={[
-          styles.Section,
-          isOpen ? styles.SectionOpen : styles.SectionClosed
-        ].join(' ')}
-        style={{
-          [isOpen ? 'borderTopColor' : 'borderLeftColor']: gradeColor
-        }}
-      >
-        {headerName && (
-          <div
-            className={styles.SectionHeader}
-            onClick={this.handleSwitchCollapsedStatus}
-          >
-            <div className={styles.HeaderName}>{headerName}</div>
-            {!isOpen && (
-              <div className={styles.HeaderContent}>{headerContent}</div>
-            )}
-
-            <div className={styles.CollapseButtonContainer}>
-              <div className={styles.CollapseButton}>
-                {isOpen ? <IoIosArrowDown /> : <IoIosArrowBack />}
-              </div>
-            </div>
-          </div>
-        )}
-        <Collapse isOpened={isOpen}>
-          <div className={styles.SectionContent}>{children}</div>
-          {footer && <div className={styles.SectionFooter}>{footer}</div>}
-        </Collapse>
-      </div>
-    );
-  }
-}
 
 class TrustPanel extends Component {
   state = {
@@ -232,6 +171,7 @@ class TrustPanel extends Component {
     });
 
     domains = reverse(sortBy(domains, ['numberOfPieces', 'numberOfPages']));
+    domains = domains.filter(d => d.numberOfPieces > 0);
 
     return (
       <div className={styles.PanelContainer}>
@@ -268,7 +208,7 @@ class TrustPanel extends Component {
               })}
             </React.Fragment>
           }
-          footer={<SourcesComponent />}
+          footer={<SourcesComponent domains={domains} />}
           numOfWarnings={0}
         >
           {domains.length <= 1 ? (

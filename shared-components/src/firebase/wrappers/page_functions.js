@@ -115,7 +115,7 @@ export const removeVisitedPageById = pageId => {
 };
 
 export const addPageToTask = async data => {
-  const { url, title, parentUrl } = data;
+  const { url, title, favIconUrl } = data;
 
   let currentUserId = getCurrentUserId();
   let currentTaskId = (await getCurrentUserCurrentTaskId().get()).data().id;
@@ -139,18 +139,6 @@ export const addPageToTask = async data => {
     }
   }
 
-  // get parent
-  let parent = false;
-  if (parentUrl !== null) {
-    let parentQuerySnapshot = await getPageInTaskByUrl(
-      currentTaskId,
-      parentUrl
-    ).get();
-    if (!parentQuerySnapshot.empty) {
-      parent = parentQuerySnapshot.docs[0].id;
-    }
-  }
-
   let newPage = {
     creator: currentUserId,
     trashed: false,
@@ -159,8 +147,9 @@ export const addPageToTask = async data => {
     leaveDate: null,
     url: url,
     title: title,
+    faviconUrl: favIconUrl,
     scrollPercentage: 0,
-    references: { searchQuery: false, parent: parent, task: currentTaskId }
+    references: { searchQuery: false, task: currentTaskId }
   };
 
   return ref.set(newPage).then(() => {

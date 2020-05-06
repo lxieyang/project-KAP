@@ -46,7 +46,7 @@ gatherTabInfo();
  * - localhost
  * - google tab
  */
-const keepTrackOfWebpage = (parentUrl, url, title) => {
+const keepTrackOfWebpage = (parentUrl, url, title, favIconUrl) => {
   if (url.indexOf('chrome://') !== -1) {
     return;
   }
@@ -56,61 +56,26 @@ const keepTrackOfWebpage = (parentUrl, url, title) => {
   if (url.indexOf('www.google.com') !== -1) {
     return;
   }
-  if (parentUrl.indexOf('chrome://') !== -1) {
-    parentUrl = null;
-  }
-  if (parentUrl.indexOf('localhost') !== -1) {
-    parentUrl = null;
+  if (url.indexOf('photos.google') !== -1) {
+    return;
   }
 
-  console.log('PARENT:', parentUrl);
+  if (getSearchQueryFromURL(url) !== null) {
+    return;
+  }
+
   console.log('NOW', url);
   FirestoreManager.addPageToTask({
     url: getPureUrlWithoutHash(url),
-    parentUrl: getPureUrlWithoutHash(url),
-    title
+    title,
+    favIconUrl
   });
 };
 
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
-  if (changeInfo.url !== undefined && changeInfo.url !== null) {
-    // leaving previous url
-    FirestoreManager.updatePageLeaveTimestampViaUrl(allTabs[tabId].url);
-    if (tab.openerTabId === undefined) {
-      if (
-        allTabs[tabId].query === null &&
-        getSearchQueryFromURL(changeInfo.url) === null
-      ) {
-        // should track
-        keepTrackOfWebpage(allTabs[tabId].url, changeInfo.url, tab.title);
-      }
-    } else {
-      if (
-        (allTabs[tab.openerTabId].query === null &&
-          getSearchQueryFromURL(changeInfo.url) === null) ||
-        (allTabs[tab.openerTabId].query !== null &&
-          allTabs[tabId].query === null &&
-          getSearchQueryFromURL(changeInfo.url) === null)
-      ) {
-        // should track
-        keepTrackOfWebpage(
-          allTabs[tab.openerTabId].url,
-          changeInfo.url,
-          tab.title
-        );
-      }
-    }
-  }
-
   if (changeInfo.status === 'complete') {
     gatherTabInfo();
-    // update page data
-    FirestoreManager.updatePageTitleViaUrl(tab.url, tab.title);
-  }
-
-  if (changeInfo.favIconUrl !== null && changeInfo.favIconUrl !== undefined) {
-    // update page data
-    FirestoreManager.updatePageFaviconUrlViaUrl(tab.url, changeInfo.favIconUrl);
+    keepTrackOfWebpage(null, tab.url, tab.title, tab.favIconUrl);
   }
 });
 

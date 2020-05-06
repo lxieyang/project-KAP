@@ -1,0 +1,7 @@
+.BaseComponentContainer {
+  border: 1px solid black;
+  font-size: 12px;
+}
+.BaseComponentHeader {
+  font-size: 1.2em;
+}
