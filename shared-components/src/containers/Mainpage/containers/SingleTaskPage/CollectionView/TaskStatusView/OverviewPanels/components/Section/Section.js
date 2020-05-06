@@ -4,6 +4,8 @@ import styles from './Section.css';
 import { Collapse } from 'react-collapse';
 import { IoIosArrowBack, IoIosArrowDown } from 'react-icons/io';
 
+import invert from 'invert-color';
+
 class Section extends Component {
   state = { isOpen: true };
 
@@ -31,7 +33,7 @@ class Section extends Component {
       statusString = 'fair';
     } else if (numOfWarnings > 2) {
       gradeColor = '#E32722';
-      statusString = 'bad';
+      statusString = 'poor';
     }
 
     return (
@@ -57,7 +59,10 @@ class Section extends Component {
             <div className={styles.CollapseButtonContainer}>
               <div
                 className={styles.StatusIndicator}
-                style={{ backgroundColor: gradeColor }}
+                style={{
+                  backgroundColor: gradeColor,
+                  color: invert(gradeColor, true)
+                }}
               >
                 {statusString}
               </div>

@@ -33,6 +33,7 @@ import { GET_FAVICON_URL_PREFIX } from '../../../../../../../../shared/constants
 import Section from '../components/Section/Section';
 import Entry from '../components/Section/Entry/Entry';
 import SourcesComponent from '../components/SourcesComponent/SourcesComponent';
+import SnippetsComponent from '../components/SnippetsComponent/SnippetsComponent';
 
 class SourcesSection extends Component {
   state = {
@@ -147,21 +148,6 @@ class SourcesSection extends Component {
             {domains.map((domain, idx) => {
               return (
                 <img
-                  style={{ width: 16, height: 16, margin: '0px 3px' }}
-                  src={domain.favicon}
-                  alt=""
-                  key={idx}
-                />
-              );
-            })}
-          </React.Fragment>
-        }
-        header={
-          <React.Fragment>
-            Sources &nbsp;{' '}
-            {domains.map((domain, idx) => {
-              return (
-                <img
                   title={domain.domain}
                   style={{ width: 16, height: 16, margin: '0px 3px' }}
                   src={domain.favicon}
@@ -236,6 +222,74 @@ class SourcesSection extends Component {
               )}
             </React.Fragment>
           }
+        />
+      </Section>
+    );
+  }
+}
+
+class SnippetsSection extends Component {
+  state = {
+    pieces: [],
+
+    evidencePopularityStatus: 'bad',
+    optionsPopularityStatus: 'bad',
+    upToDateNessStatus: 'bad',
+    corroboratingEvidenceStatus: 'bad'
+  };
+
+  componentDidMount() {
+    this.updateData();
+  }
+
+  componentDidUpdate(prevProps) {
+    if (
+      prevProps.pieces !== this.props.pieces &&
+      this.props.pieces.length > 0
+    ) {
+      this.updateData();
+    }
+  }
+
+  updateData = () => {
+    let { pieces } = this.props;
+    console.log(pieces);
+    this.setState({ pieces });
+  };
+
+  render() {
+    const { pieces } = this.state;
+    return (
+      <Section
+        headerIcon={<GiThreeKeys className={styles.SectionHeaderIcon} />}
+        headerName={'Snippets'}
+        headerContent={<React.Fragment>snippets stats</React.Fragment>}
+        numOfWarnings={[
+          this.state.evidencePopularityStatus === 'bad' ? 1 : 0,
+          this.state.optionsPopularityStatus === 'bad' ? 1 : 0,
+          this.state.upToDateNessStatus === 'bad' ? 1 : 0,
+          this.state.corroboratingEvidenceStatus === 'bad' ? 1 : 0
+        ].reduce((a, b) => a + b)}
+        footer={<SnippetsComponent pieces={pieces} shouldOpenOnMount={true} />}
+      >
+        <Entry
+          status={this.state.evidencePopularityStatus}
+          content={<React.Fragment>popularity</React.Fragment>}
+        />
+
+        <Entry
+          status={this.state.optionsPopularityStatus}
+          content={<React.Fragment>option</React.Fragment>}
+        />
+
+        <Entry
+          status={this.state.upToDateNessStatus}
+          content={<React.Fragment>uptodate</React.Fragment>}
+        />
+
+        <Entry
+          status={this.state.corroboratingEvidenceStatus}
+          content={<React.Fragment>corroborating evidence</React.Fragment>}
         />
       </Section>
     );
@@ -328,6 +382,9 @@ class TrustPanel extends Component {
       <div className={styles.PanelContainer}>
         {/* Sources trustworthiness */}
         <SourcesSection pieces={pieces} pages={pages} />
+
+        {/* Snippets trustworthiness */}
+        <SnippetsSection pieces={pieces} />
 
         <div className={styles.Section}>
           <div className={styles.SectionHeader}>
