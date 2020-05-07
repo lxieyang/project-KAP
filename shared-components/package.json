@@ -20,6 +20,7 @@
     "chrome-tab-identifier": "0.0.1",
     "classnames": "^2.2.6",
     "color-alpha": "^1.0.4",
+    "count-array-values": "^1.2.1",
     "fast-average-color": "^6.0.1",
     "fg-loadcss": "^2.1.0",
     "firebase": "^7.10.0",

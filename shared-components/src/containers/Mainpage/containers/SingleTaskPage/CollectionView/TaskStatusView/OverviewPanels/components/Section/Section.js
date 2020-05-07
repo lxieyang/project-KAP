@@ -25,10 +25,13 @@ class Section extends Component {
     } = this.props;
     const { isOpen } = this.state;
 
-    let statusString = 'good';
+    let statusString = '';
+    let gradeColor = '#d3d3d3';
 
-    let gradeColor = '#4dae4c';
-    if (numOfWarnings === 1) {
+    if (numOfWarnings === 0) {
+      gradeColor = '#4dae4c';
+      statusString = 'good';
+    } else if (numOfWarnings === 1) {
       gradeColor = '#FCBB21';
       statusString = 'fair';
     } else if (numOfWarnings > 1) {
@@ -60,6 +63,7 @@ class Section extends Component {
               <div
                 className={styles.StatusIndicator}
                 style={{
+                  display: statusString.length === 0 ? 'none' : null,
                   backgroundColor: gradeColor,
                   color: invert(gradeColor, true)
                 }}

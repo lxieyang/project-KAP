@@ -7,6 +7,9 @@ import { IoMdMedal, IoIosPeople, IoIosLink } from 'react-icons/io';
 import { MdPinDrop } from 'react-icons/md';
 import { TiUser } from 'react-icons/ti';
 import { GiThreeKeys } from 'react-icons/gi';
+import { RiCodeSSlashLine } from 'react-icons/ri';
+
+import countArrayValues from 'count-array-values';
 
 import {
   PIECE_TYPES,
@@ -148,7 +151,6 @@ class SourcesSection extends Component {
 
     return (
       <Section
-        headerIcon={<GiThreeKeys className={styles.SectionHeaderIcon} />}
         headerName={'Sources'}
         headerContent={
           <React.Fragment>
@@ -169,7 +171,7 @@ class SourcesSection extends Component {
           <SourcesComponent
             domains={domains}
             pieces={pieces}
-            shouldOpenOnMount={false}
+            shouldOpenOnMount={true}
           />
         }
         numOfWarnings={[
@@ -438,7 +440,6 @@ class SnippetsSection extends Component {
     // const { pieces } = this.state;
     return (
       <Section
-        headerIcon={<GiThreeKeys className={styles.SectionHeaderIcon} />}
         headerName={'Tables and Snippets'}
         // headerContent={<React.Fragment>snippets stats</React.Fragment>}
         numOfWarnings={[
@@ -587,12 +588,35 @@ class SnippetsSection extends Component {
   }
 }
 
+class AuthorSection extends Component {
+  state = {};
+
+  render() {
+    return (
+      <Section
+        headerName={'Table Author'}
+        headerContent={
+          this.props.authorObj && (
+            <div style={{ fontSize: 13, fontWeight: 300 }}>
+              {this.props.authorObj.name}
+            </div>
+          )
+        }
+      >
+        {this.props.children}
+      </Section>
+    );
+  }
+}
+
 class TrustPanel extends Component {
   state = {
     isEditingTaskAuthor: false,
     authorGithubProfileLink: '',
     authorGithubProfileLinkLegal: true,
-    authorGithubUserObject: null
+    authorGithubUserObject: null,
+    authorGithubLanguages: [],
+    authorGithubRepos: []
   };
 
   editAuthorButtonClickedHandler = () => {
@@ -663,6 +687,16 @@ class TrustPanel extends Component {
           authorGithubUserObject: data
         });
       });
+      axios.get(`https://api.github.com/users/${login}/repos`).then(result => {
+        const { data } = result;
+        this.setState({ authorGithubRepos: [] });
+        let languages = data
+          .map(repo => repo.language)
+          .filter(item => item !== null);
+        languages = countArrayValues(languages);
+        languages = languages.slice(0, 2);
+        this.setState({ authorGithubLanguages: languages });
+      });
     }
   };
 
@@ -674,22 +708,11 @@ class TrustPanel extends Component {
         {/* Sources trustworthiness */}
         <SourcesSection pieces={pieces} pages={pages} />
 
-        {/* Snippets trustworthiness */}
+        {/* Table & Snippets trustworthiness */}
         <SnippetsSection pieces={pieces} cells={cells} />
 
-        <div className={styles.Section}>
-          <div className={styles.SectionHeader}>
-            <TiUser className={styles.SectionHeaderIcon} />
-            Task Author
-            <div className={styles.HeaderButtonAlignRight}>
-              <div
-                className={styles.AddButton}
-                onClick={() => this.editAuthorButtonClickedHandler()}
-              >
-                Edit
-              </div>
-            </div>
-          </div>
+        {/* Author section */}
+        <AuthorSection authorObj={this.state.authorGithubUserObject}>
           {this.state.isEditingTaskAuthor && (
             <div className={styles.SectionContent}>
               <div>Please provide the author's Github Profile:</div>
@@ -747,12 +770,26 @@ class TrustPanel extends Component {
             <div className={styles.SectionContent}>
               {!this.state.authorGithubUserObject && (
                 <p style={{ fontStyle: 'italic', color: '#666' }}>
-                  Author information not available for the moment.
+                  Author information not available for the moment. Please{' '}
+                  <span
+                    className={styles.AuthorInfoEditButton}
+                    onClick={() => this.editAuthorButtonClickedHandler()}
+                  >
+                    add here
+                  </span>
                 </p>
               )}
 
               {this.state.authorGithubUserObject && (
                 <div className={styles.AuthorInfoCard}>
+                  <div className={styles.AuthorInfoEditButtonContainer}>
+                    <div
+                      className={styles.AuthorInfoEditButton}
+                      onClick={() => this.editAuthorButtonClickedHandler()}
+                    >
+                      Edit
+                    </div>
+                  </div>
                   <div className={styles.AuthorAvatarContainer}>
                     <a
                       href={this.state.authorGithubProfileLink}
@@ -788,6 +825,30 @@ class TrustPanel extends Component {
                     {this.state.authorGithubUserObject.bio && (
                       <p>{this.state.authorGithubUserObject.bio}</p>
                     )}
+
+                    {this.state.authorGithubLanguages.length > 0 && (
+                      <p
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          color: '#666',
+                          fontSize: 12
+                        }}
+                      >
+                        <RiCodeSSlashLine style={{ fontSize: 15 }} /> &nbsp;
+                        {this.state.authorGithubLanguages.map((l, idx) => {
+                          let isLast =
+                            idx === this.state.authorGithubLanguages.length - 1;
+                          return (
+                            <span key={idx}>
+                              {l.value}
+                              {isLast ? '.' : ','}&nbsp;
+                            </span>
+                          );
+                        })}
+                      </p>
+                    )}
+
                     {this.state.authorGithubUserObject.company && (
                       <p
                         style={{
@@ -799,20 +860,6 @@ class TrustPanel extends Component {
                       >
                         <IoIosPeople style={{ fontSize: 15 }} /> &nbsp;
                         {this.state.authorGithubUserObject.company}
-                      </p>
-                    )}
-                    {this.state.authorGithubUserObject.location && (
-                      <p
-                        style={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          color: '#666',
-                          fontSize: 12
-                        }}
-                      >
-                        <MdPinDrop style={{ fontSize: 15 }} />
-                        &nbsp;
-                        {this.state.authorGithubUserObject.location}
                       </p>
                     )}
 
@@ -839,95 +886,9 @@ class TrustPanel extends Component {
                   </div>
                 </div>
               )}
-
-              {/* {this.state.authorGithubUserObject && (
-                <React.Fragment>
-                  <p>
-                    Github Profile:{' '}
-                    <a
-                      href={this.state.authorGithubProfileLink}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      {this.state.authorGithubUserObject.name} (@
-                      {this.state.authorGithubUserObject.login})
-                    </a>
-                  </p>
-                  {this.state.authorGithubUserObject.company && (
-                    <p>
-                      The author is affiliated with{' '}
-                      {this.state.authorGithubUserObject.company}.
-                    </p>
-                  )}
-                </React.Fragment>
-              )} */}
             </div>
           )}
-        </div>
-
-        {/* <div className={styles.Section}>
-          <div className={styles.SectionHeader}>Sources</div>
-          <div className={styles.ExplanationText}>
-            These are the top sources where the author got the information from.
-          </div>
-          <div>
-            {domains.map((item, idx) => {
-              return (
-                <div key={idx} className={styles.ListItem}>
-                  <img
-                    src={
-                      item.favicon
-                        ? item.favicon
-                        : `https://plus.google.com/_/favicon?domain_url=${
-                            item.domain
-                          }`
-                    }
-                    alt=""
-                    className={styles.ItemIcon}
-                  />
-                  <div className={styles.ItemContent}>{item.domain}</div>
-                  <div className={styles.ItemInlineInfo}>
-                    {item.numberOfPages} pages &nbsp; {item.numberOfPieces}{' '}
-                    snippets
-                  </div>
-                  <div style={{ flex: 1 }} />
-                  <div className={styles.ItemMetaInfo}>
-                    <div>{moment(item.updateDate).format('MMM D')}</div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-
-        <div className={styles.Section}>
-          <div className={styles.SectionHeader}>Options</div>
-          <div className={styles.ExplanationText}>
-            These are some top options that the author found.
-          </div>
-          <div>
-            {displayPieces.map((item, idx) => {
-              return (
-                <div key={idx} className={styles.ListItem}>
-                  <Avatar
-                    style={{
-                      backgroundColor: PIECE_COLOR.option,
-                      width: '18px',
-                      height: '18px',
-                      color: 'white'
-                    }}
-                    className={styles.Avatar}
-                  >
-                    <FaListUl className={styles.IconInsideAvatar} />
-                  </Avatar>
-                  <div className={styles.ItemContent}>{item.name}</div>
-                  <div style={{ flex: 1 }} />
-                  <div className={styles.ItemMetaInfo} />
-                </div>
-              );
-            })}
-          </div>
-        </div> */}
+        </AuthorSection>
       </div>
     );
   }

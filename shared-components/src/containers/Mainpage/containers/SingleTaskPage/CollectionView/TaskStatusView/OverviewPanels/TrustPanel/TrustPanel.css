@@ -253,14 +253,39 @@
 
 .AuthorInfoCard {
   margin-top: 4px;
-  border: 1px solid lightgray;
+  /* border: 1px solid lightgray; */
   border-radius: 5px;
   display: flex;
-  padding: 10px;
+  /* padding: 10px; */
+
+  position: relative;
+}
+
+.AuthorInfoEditButtonContainer {
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 20px;
+  width: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.AuthorInfoEditButton {
+  font-size: 11px;
+  font-weight: 400;
+  color: #666;
+  cursor: pointer;
+  user-select: none;
+}
+
+.AuthorInfoEditButton:hover {
+  text-decoration: underline;
 }
 
 .AuthorAvatarContainer {
-  max-width: 50px;
+  max-width: 36px;
   margin-right: 8px;
 }
 
