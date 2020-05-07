@@ -679,25 +679,6 @@ class TrustPanel extends Component {
 
         <div className={styles.Section}>
           <div className={styles.SectionHeader}>
-            <IoMdMedal className={styles.SectionHeaderIcon} />
-            <span className={styles.UpToDate}>High</span>
-            Snippet credibility
-          </div>
-          <div className={styles.SectionContent}>
-            <p>5/9 snippets are highly-acknowledged by the community.</p>
-            <p>8/9 snippets are updated recently.</p>
-            <p>In the table, there are 3 cells with corroborating evidence.</p>
-          </div>
-          <div className={styles.SectionFooter}>
-            <div style={{ color: 'red' }}>
-              put the complete list of snippets here, with more interactions
-              between the table and the overview.
-            </div>
-          </div>
-        </div>
-
-        <div className={styles.Section}>
-          <div className={styles.SectionHeader}>
             <TiUser className={styles.SectionHeaderIcon} />
             Task Author
             <div className={styles.HeaderButtonAlignRight}>

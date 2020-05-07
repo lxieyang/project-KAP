@@ -28,10 +28,10 @@ class Section extends Component {
     let statusString = 'good';
 
     let gradeColor = '#4dae4c';
-    if (numOfWarnings === 1 || numOfWarnings === 2) {
+    if (numOfWarnings === 1) {
       gradeColor = '#FCBB21';
       statusString = 'fair';
-    } else if (numOfWarnings > 2) {
+    } else if (numOfWarnings > 1) {
       gradeColor = '#E32722';
       statusString = 'poor';
     }
