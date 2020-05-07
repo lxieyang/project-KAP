@@ -45,8 +45,8 @@ class SourcesSection extends Component {
     pieces: [],
     pages: [],
 
-    sourceDiversityStatus: 'bad',
-    sourceCredibilityStatus: 'bad'
+    sourceDiversityStatus: 'neutral',
+    sourceCredibilityStatus: 'neutral'
   };
 
   componentDidMount() {
@@ -256,11 +256,12 @@ class SnippetsSection extends Component {
   state = {
     pieces: [],
 
-    evidencePopularityStatus: 'bad',
+    evidencePopularityStatus: 'neutral',
     highUpVotedEvidenceSnippets: [],
-    optionsPopularityStatus: 'bad',
-    upToDateNessStatus: 'bad',
-    corroboratingEvidenceStatus: 'bad'
+    // optionsPopularityStatus: 'bad',
+    upToDateNessStatus: 'neutral',
+    withUpdateDateSnippets: [],
+    corroboratingEvidenceStatus: 'neutral'
   };
 
   componentDidMount() {
@@ -284,7 +285,6 @@ class SnippetsSection extends Component {
     let evidenceSnippets = pieces.filter(
       p => p.pieceType === PIECE_TYPES.snippet
     );
-    console.log(evidenceSnippets);
     // TODO: right now, all from stack overflow
     let SOEvidenceSnippets = evidenceSnippets.filter(p => {
       if (
@@ -296,7 +296,6 @@ class SnippetsSection extends Component {
         return false;
       }
     });
-    console.log(SOEvidenceSnippets);
     let highUpVotedEvidenceSnippets = SOEvidenceSnippets.filter(p => {
       if (
         p.answerMetaInfo &&
@@ -309,7 +308,6 @@ class SnippetsSection extends Component {
         return false;
       }
     });
-    console.log(highUpVotedEvidenceSnippets);
 
     if (highUpVotedEvidenceSnippets.length >= 3) {
       this.setState({
@@ -322,6 +320,65 @@ class SnippetsSection extends Component {
         highUpVotedEvidenceSnippets
       });
     }
+
+    /* up-to-dateness */
+    // TODO: only limiting to SO atm
+    let SOSnippets = evidenceSnippets.filter(p => {
+      if (
+        p.references.hostname &&
+        p.references.hostname.includes('stackoverflow')
+      ) {
+        return true;
+      } else {
+        return false;
+      }
+    });
+    console.log(SOSnippets);
+    let withUpdateDateSnippets = SOSnippets.map(p => {
+      if (
+        p.answerMetaInfo &&
+        (p.answerMetaInfo.answerEditedTime ||
+          p.answerMetaInfo.answerCreatedTime)
+      ) {
+        let updateDate = p.answerMetaInfo.answerEditedTime
+          ? new Date(p.answerMetaInfo.answerEditedTime)
+          : p.answerMetaInfo.answerCreatedTime
+          ? new Date(p.answerMetaInfo.answerCreatedTime)
+          : null;
+        // TODO: make use of these matrics
+        let isRecent = updateDate
+          ? (new Date() - updateDate) / (1000 * 86400) < 365 * 3
+          : false;
+        p.updateDate = updateDate;
+        p.isRecent = isRecent;
+      }
+
+      return p;
+    });
+    //   .filter(p => {
+    //   if (p.isRecent !== undefined) {
+    //     return p.isRecent;
+    //   } else {
+    //     return false;
+    //   }
+    // });
+    withUpdateDateSnippets = sortBy(withUpdateDateSnippets, ['updateDate']);
+    console.log(withUpdateDateSnippets);
+
+    this.setState({ withUpdateDateSnippets });
+    if (withUpdateDateSnippets.length > 0) {
+      if (
+        (new Date() - withUpdateDateSnippets[0].updateDate.getTime()) /
+          (1000 * 86400) >
+        365 * 3 // 3 years
+      ) {
+        this.setState({ upToDateNessStatus: 'bad' });
+      } else {
+        this.setState({ upToDateNessStatus: 'good' });
+      }
+    } else {
+      this.setState({ upToDateNessStatus: 'neutral' });
+    }
   };
 
   render() {
@@ -333,7 +390,7 @@ class SnippetsSection extends Component {
         headerContent={<React.Fragment>snippets stats</React.Fragment>}
         numOfWarnings={[
           this.state.evidencePopularityStatus === 'bad' ? 1 : 0,
-          this.state.optionsPopularityStatus === 'bad' ? 1 : 0,
+          // this.state.optionsPopularityStatus === 'bad' ? 1 : 0,
           this.state.upToDateNessStatus === 'bad' ? 1 : 0,
           this.state.corroboratingEvidenceStatus === 'bad' ? 1 : 0
         ].reduce((a, b) => a + b)}
@@ -365,14 +422,43 @@ class SnippetsSection extends Component {
           }
         />
 
-        <Entry
+        {/* <Entry
           status={this.state.optionsPopularityStatus}
           content={<React.Fragment>option</React.Fragment>}
-        />
+        /> */}
 
         <Entry
           status={this.state.upToDateNessStatus}
-          content={<React.Fragment>uptodate</React.Fragment>}
+          content={
+            <React.Fragment>
+              <strong> Up-to-dateness </strong> -{' '}
+              {this.state.withUpdateDateSnippets.length === 0 && (
+                <em>Currently not available</em>
+              )}
+              {this.state.withUpdateDateSnippets.length > 0 && (
+                <ReactHoverObserver
+                  className={styles.InlineHoverObserver}
+                  {...{
+                    onHoverChanged: ({ isHovering }) => {
+                      if (isHovering) {
+                        this.context.setSelectedSnippets([
+                          this.state.withUpdateDateSnippets[0].id
+                        ]);
+                      } else {
+                        this.context.clearSelectedSnippets();
+                      }
+                    }
+                  }}
+                >
+                  The oldest snippet was updated{' '}
+                  {moment(
+                    this.state.withUpdateDateSnippets[0].updateDate
+                  ).fromNow()}
+                  .
+                </ReactHoverObserver>
+              )}
+            </React.Fragment>
+          }
         />
 
         <Entry
