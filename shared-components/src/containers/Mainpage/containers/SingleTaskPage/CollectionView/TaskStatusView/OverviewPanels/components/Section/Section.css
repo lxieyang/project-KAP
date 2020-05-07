@@ -27,7 +27,8 @@
 }
 
 .Section.SectionOpen .SectionHeader {
-  justify-content: center;
+  /* justify-content: center; */
+  padding-left: 6px;
 }
 
 .HeaderName {

@@ -240,10 +240,14 @@ class SourcesSection extends Component {
                     </span>
                   </ReactHoverObserver>
                   , which is where{' '}
-                  {((domains[0].numberOfPieces / pieces.length) * 100).toFixed(
-                    0
-                  )}
-                  % of the snippets are collected from.
+                  <strong>
+                    {(
+                      (domains[0].numberOfPieces / pieces.length) *
+                      100
+                    ).toFixed(0)}
+                    %
+                  </strong>{' '}
+                  of the snippets are collected from.
                 </React.Fragment>
               )}
             </React.Fragment>
@@ -468,9 +472,10 @@ class SnippetsSection extends Component {
                 }}
               >
                 <strong> Evidence popularity </strong> -{' '}
-                {this.state.highUpVotedEvidenceSnippets.length} evidence
-                snippets received at least {EVIDENCE_POPULARITY_THRESHOLD}{' '}
-                up-votes on <span>Stack Overflow</span>.
+                <strong>{this.state.highUpVotedEvidenceSnippets.length}</strong>{' '}
+                evidence snippets received at least{' '}
+                {EVIDENCE_POPULARITY_THRESHOLD} up-votes on{' '}
+                <span>Stack Overflow</span>.
               </ReactHoverObserver>
             </React.Fragment>
           }
@@ -505,9 +510,11 @@ class SnippetsSection extends Component {
                   }}
                 >
                   The oldest snippet was updated{' '}
-                  {moment(
-                    this.state.withUpdateDateSnippets[0].updateDate
-                  ).fromNow()}
+                  <strong>
+                    {moment(
+                      this.state.withUpdateDateSnippets[0].updateDate
+                    ).fromNow()}
+                  </strong>
                   .
                 </ReactHoverObserver>
               )}
@@ -544,7 +551,7 @@ class SnippetsSection extends Component {
                     >
                       There{' '}
                       {this.state.conflictingCells.length === 1 ? 'is' : 'are'}{' '}
-                      {this.state.conflictingCells.length} cell
+                      <strong>{this.state.conflictingCells.length}</strong> cell
                       {this.state.conflictingCells.length === 1 ? '' : 's'} with
                       conflicting evidence.
                     </ReactHoverObserver>
@@ -572,7 +579,8 @@ class SnippetsSection extends Component {
                       {this.state.corroboratingCells.length === 1
                         ? 'is'
                         : 'are'}{' '}
-                      {this.state.corroboratingCells.length} cell
+                      <strong>{this.state.corroboratingCells.length}</strong>{' '}
+                      cell
                       {this.state.corroboratingCells.length === 1
                         ? ''
                         : 's'}{' '}

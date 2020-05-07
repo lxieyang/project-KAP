@@ -65,7 +65,11 @@ class Section extends Component {
                 style={{
                   display: statusString.length === 0 ? 'none' : null,
                   backgroundColor: gradeColor,
-                  color: invert(gradeColor, true)
+                  color: invert(gradeColor, {
+                    black: '#3a3a3a',
+                    white: '#fafafa',
+                    threshold: 0.33
+                  })
                 }}
               >
                 {statusString}
