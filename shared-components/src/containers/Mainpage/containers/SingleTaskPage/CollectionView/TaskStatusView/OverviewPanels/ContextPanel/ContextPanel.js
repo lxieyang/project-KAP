@@ -23,6 +23,39 @@ import Textarea from 'react-textarea-autosize';
 
 import * as FirestoreManager from '../../../../../../../../firebase/firestore_wrapper';
 
+import Section from '../components/Section/Section';
+import Entry from '../components/Section/Entry/Entry';
+
+class QuerySection extends Component {
+  render() {
+    return (
+      <Section headerName={'Search Queries'} headerContent={''}>
+        queries
+      </Section>
+    );
+  }
+}
+
+class VersionSection extends Component {
+  render() {
+    return (
+      <Section headerName={'Versions and Environments'} headerContent={''}>
+        versions
+      </Section>
+    );
+  }
+}
+
+class GoalSection extends Component {
+  render() {
+    return (
+      <Section headerName={'Goals and Constraints'} headerContent={''}>
+        goals and constraints
+      </Section>
+    );
+  }
+}
+
 class ContextPanel extends Component {
   state = {
     goalText: '',
@@ -204,6 +237,17 @@ class ContextPanel extends Component {
 
     return (
       <div className={styles.PanelContainer}>
+        {/* query section */}
+        <QuerySection />
+
+        {/* version section */}
+        <VersionSection />
+
+        {/* goals section */}
+        <GoalSection />
+
+        <h3 style={{ color: 'red' }}>old stuff below</h3>
+
         <div className={styles.Section}>
           <div className={styles.SectionHeader}>
             <GiTargeting className={styles.SectionHeaderIcon} />
