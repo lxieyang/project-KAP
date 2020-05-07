@@ -210,6 +210,12 @@ class SingleTaskPage extends Component {
               }
               this.setState({ selectedUrls });
             },
+            setSelectedUrls: urls => {
+              this.setState({ selectedUrls: urls });
+            },
+            clearSelectedUrls: () => {
+              this.setState({ selectedUrls: [] });
+            },
             selectedSnippets: this.state.selectedSnippets,
             setSelectedSnippets: ids => {
               this.setState({ selectedSnippets: ids });

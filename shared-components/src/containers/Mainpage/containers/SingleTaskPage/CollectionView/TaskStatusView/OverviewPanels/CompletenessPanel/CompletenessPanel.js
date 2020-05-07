@@ -55,7 +55,9 @@ class EffortSection extends Component {
       (prevProps.pieces !== this.props.pieces &&
         this.props.pieces.length > 0) ||
       (prevProps.task !== this.props.task && this.props.task !== null) ||
-      (prevProps.pages !== this.props.pages && this.props.pages.length > 0)
+      (prevProps.pages !== this.props.pages && this.props.pages.length > 0) ||
+      (prevProps.queries !== this.props.queries &&
+        this.props.queries.length > 0)
     ) {
       this.updateData();
     }
@@ -84,8 +86,6 @@ class EffortSection extends Component {
     const approxDuration = updateDate - creationDate;
     this.setState({ taskUpdateDate: updateDate });
 
-    console.log(approxDuration);
-
     /* effort spent */
     // TODO: actually do this
     this.setState({ effortSpentStatus: 'good' });
@@ -93,7 +93,6 @@ class EffortSection extends Component {
       let taskId = task.id;
       let gen = RandGen.create(taskId);
       let duration = (gen.range(120) + 45) * 60 * 1000;
-      console.log(duration, moment.duration(duration).humanize());
       this.setState({ taskDuration: duration });
     }
 
@@ -312,54 +311,12 @@ class CompletenessPanel extends Component {
     return (
       <div className={styles.PanelContainer}>
         {/* Research and Exploration Section */}
-        <EffortSection pieces={pieces} pages={pages} task={task} />
-
-        <div className={styles.Section}>
-          <div className={styles.SectionHeader}>
-            <GiMicroscope className={styles.SectionHeaderIcon} />
-            {/* {pieces.length > 8 ? (
-              <span className={styles.UpToDate}>Extensive</span>
-            ) : (
-              <span className={styles.NotUpToDate}>Limited</span>
-            )} */}
-            Effort
-          </div>
-          <div className={styles.SectionContent}>
-            <p>
-              The author spent a total of{' '}
-              <strong>{moment.duration(approxDuration).humanize()}</strong> on
-              the task.
-            </p>
-            <p>
-              The author went through <strong>{pages.length}</strong> pages, and
-              collected <strong>{pieces.length}</strong> snippets, of which{' '}
-              <strong>
-                {pieces.filter(p => p.pieceType === PIECE_TYPES.option).length}
-              </strong>{' '}
-              are options,{' '}
-              <strong>
-                {
-                  pieces.filter(p => p.pieceType === PIECE_TYPES.criterion)
-                    .length
-                }
-              </strong>{' '}
-              are criteria, and{' '}
-              <strong>
-                {pieces.filter(p => p.pieceType === PIECE_TYPES.snippet).length}
-              </strong>{' '}
-              are evidence snippets.
-            </p>
-          </div>
-          <div className={styles.SectionFooter}>
-            <div
-              className={styles.LinkToElsewhere}
-              onClick={e => this.props.changeTab(e, 0)}
-            >
-              See the complete list of web pages the author went through
-            </div>
-            <div style={{ color: 'red' }}>put the complete timeline here.</div>
-          </div>
-        </div>
+        <EffortSection
+          pieces={pieces}
+          pages={pages}
+          task={task}
+          queries={queries}
+        />
 
         {/* <div className={styles.Section}>
           <div className={styles.SectionHeader}>

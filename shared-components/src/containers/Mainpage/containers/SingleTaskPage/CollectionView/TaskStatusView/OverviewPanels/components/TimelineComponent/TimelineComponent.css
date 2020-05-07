@@ -1,0 +1,149 @@
+.TimelineContainer {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.Entry {
+  /* width: 100%; */
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  margin: 4px 0px;
+  /* background-color: #e3e3e3; */
+
+  position: relative;
+}
+
+.ProgressCheckerContainer {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: -12px;
+  width: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.ProgressCheckerIcon {
+  font-size: 10px;
+  color: green;
+}
+
+.Timestamp {
+  flex-shrink: 0;
+  font-size: 10px;
+  /* font-style: italic; */
+}
+
+.Entry.Query {
+  font-weight: 400;
+  font-size: 12px;
+  color: #333;
+
+  margin: 4px 4px;
+  margin-top: 8px;
+  padding: 1px 4px;
+  border-radius: 5px;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.2);
+}
+
+.SearchQueryIcon {
+  margin-right: 4px;
+}
+
+.QueryContent {
+  /* text-decoration: underline; */
+}
+
+.Entry.Page {
+  margin-left: 15px;
+  margin-right: 4px;
+
+  display: block;
+  box-sizing: border-box;
+  border-bottom: 1px solid #e3e3e3;
+  padding: 4px 0px;
+  padding-right: 3px;
+}
+
+.NameContainer {
+  display: flex;
+  align-items: center;
+}
+
+.ItemIcon {
+  flex-shrink: 0;
+  width: 14px;
+  height: 14px;
+  margin-right: 4px;
+}
+
+.TitleContent {
+  flex: 1;
+  font-weight: 400;
+  line-height: 1.2em;
+}
+
+.TitleContent a {
+  text-decoration: none;
+  color: inherit;
+}
+
+.TitleContent a:hover {
+  text-decoration: underline;
+  color: inherit;
+}
+
+.MetaData {
+  flex-shrink: 0;
+  margin-left: 4px;
+  font-size: 9px;
+  color: #666;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.RelatedContentContainer {
+  margin-left: 20px;
+  margin-right: 20px;
+}
+
+.PieceItem {
+  font-size: 10px;
+  display: inline-flex;
+  align-items: center;
+  margin: 3px;
+  padding: 2px 4px;
+  line-height: 1.2em;
+  border-radius: 4px;
+  border: 1px solid #e3e3e3;
+  user-select: none;
+
+  transition: all 0.1s ease-in;
+}
+
+.PieceItem:hover {
+  background-color: lightgray;
+}
+
+.PieceIconContainer {
+  flex-shrink: 0;
+  border-radius: 50%;
+  width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  margin-right: 3px;
+}
+
+.PieceIcon {
+  font-size: px;
+}
+
+.InlineHoverObserver {
+  display: inline;
+}
