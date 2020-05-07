@@ -423,6 +423,7 @@ class TaskStatusView extends Component {
                 queries={this.props.queries}
                 pages={this.props.pages}
                 pieces={this.props.pieces}
+                cells={this.props.cells}
                 changeTab={this.props.changeTab}
               />
             </TabPanel>
@@ -432,6 +433,7 @@ class TaskStatusView extends Component {
                 queries={this.props.queries}
                 pages={this.props.pages}
                 pieces={this.props.pieces}
+                cells={this.props.cells}
                 changeTab={this.props.changeTab}
               />
             </TabPanel>
@@ -441,6 +443,7 @@ class TaskStatusView extends Component {
                 queries={this.props.queries}
                 pages={this.props.pages}
                 pieces={this.props.pieces}
+                cells={this.props.cells}
                 changeTab={this.props.changeTab}
               />
             </TabPanel>

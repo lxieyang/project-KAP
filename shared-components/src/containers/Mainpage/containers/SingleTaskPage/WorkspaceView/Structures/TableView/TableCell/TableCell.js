@@ -82,6 +82,7 @@ class TableCell extends Component {
             selectedUrls={this.context.selectedUrls}
             selectedDomains={this.context.selectedDomains}
             selectedSnippets={this.context.selectedSnippets}
+            selectedCells={this.context.selectedCells}
             honestSignals={this.context.honestSignalsInTable}
             isInDefaultView={this.context.currentTaskView === 'default'}
             isInContextView={this.context.currentTaskView === 'context'}
@@ -104,6 +105,7 @@ class TableCell extends Component {
             selectedUrls={this.context.selectedUrls}
             selectedDomains={this.context.selectedDomains}
             selectedSnippets={this.context.selectedSnippets}
+            selectedCells={this.context.selectedCells}
             honestSignals={this.context.honestSignalsInTable}
             isInDefaultView={this.context.currentTaskView === 'default'}
             isInContextView={this.context.currentTaskView === 'context'}
@@ -127,6 +129,7 @@ class TableCell extends Component {
             selectedUrls={this.context.selectedUrls}
             selectedDomains={this.context.selectedDomains}
             selectedSnippets={this.context.selectedSnippets}
+            selectedCells={this.context.selectedCells}
             honestSignals={this.context.honestSignalsInTable}
             isInDefaultView={this.context.currentTaskView === 'default'}
             isInContextView={this.context.currentTaskView === 'context'}

@@ -68,7 +68,8 @@ class CollectionView extends Component {
 
     searchQueries: [],
     visitedPages: [],
-    pieces: []
+    pieces: [],
+    cells: []
   };
 
   componentDidMount() {
@@ -135,6 +136,28 @@ class CollectionView extends Component {
         });
         this.setState({ pieces });
       });
+
+    FirestoreManager.getAllWorkspacesInTask(this.context.currentTaskId)
+      .get()
+      .then(snapshot => {
+        if (!snapshot.empty) {
+          let workspaceId = snapshot.docs[0].id;
+          FirestoreManager.getAllTableCellsInTableById(workspaceId)
+            .get()
+            .then(cellsSnapshot => {
+              if (!cellsSnapshot.empty) {
+                let cells = [];
+                cellsSnapshot.forEach(snapshot => {
+                  cells.push({
+                    id: snapshot.id,
+                    ...snapshot.data()
+                  });
+                });
+                this.setState({ cells });
+              }
+            });
+        }
+      });
   }
 
   componentWillUnmount() {
@@ -166,6 +189,7 @@ class CollectionView extends Component {
           queries={this.state.searchQueries}
           pages={this.state.visitedPages}
           pieces={this.state.pieces}
+          cells={this.state.cells}
           changeTab={this.handleChange}
         />
         <Divider light />

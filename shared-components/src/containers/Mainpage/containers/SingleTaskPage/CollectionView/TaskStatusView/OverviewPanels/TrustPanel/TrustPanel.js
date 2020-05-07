@@ -8,7 +8,10 @@ import { MdPinDrop } from 'react-icons/md';
 import { TiUser } from 'react-icons/ti';
 import { GiThreeKeys } from 'react-icons/gi';
 
-import { PIECE_TYPES } from '../../../../../../../../shared/types';
+import {
+  PIECE_TYPES,
+  RATING_TYPES
+} from '../../../../../../../../shared/types';
 import {
   PIECE_COLOR,
   DOMAIN_THEME_COLOR
@@ -255,13 +258,17 @@ class SnippetsSection extends Component {
   static contextType = TaskContext;
   state = {
     pieces: [],
+    cells: [],
 
     evidencePopularityStatus: 'neutral',
     highUpVotedEvidenceSnippets: [],
     // optionsPopularityStatus: 'bad',
     upToDateNessStatus: 'neutral',
     withUpdateDateSnippets: [],
-    corroboratingEvidenceStatus: 'neutral'
+    corroboratingEvidenceStatus: 'neutral',
+    multipleEvidenceCells: [],
+    corroboratingCells: [],
+    conflictingCells: []
   };
 
   componentDidMount() {
@@ -270,16 +277,17 @@ class SnippetsSection extends Component {
 
   componentDidUpdate(prevProps) {
     if (
-      prevProps.pieces !== this.props.pieces &&
-      this.props.pieces.length > 0
+      (prevProps.pieces !== this.props.pieces &&
+        this.props.pieces.length > 0) ||
+      (prevProps.cells !== this.props.cells && this.props.cells.length > 0)
     ) {
       this.updateData();
     }
   }
 
   updateData = () => {
-    let { pieces } = this.props;
-    this.setState({ pieces });
+    let { pieces, cells } = this.props;
+    this.setState({ pieces, cells });
 
     /* evidence popularity */
     let evidenceSnippets = pieces.filter(
@@ -333,7 +341,7 @@ class SnippetsSection extends Component {
         return false;
       }
     });
-    console.log(SOSnippets);
+    // console.log(SOSnippets);
     let withUpdateDateSnippets = SOSnippets.map(p => {
       if (
         p.answerMetaInfo &&
@@ -363,7 +371,7 @@ class SnippetsSection extends Component {
     //   }
     // });
     withUpdateDateSnippets = sortBy(withUpdateDateSnippets, ['updateDate']);
-    console.log(withUpdateDateSnippets);
+    // console.log(withUpdateDateSnippets);
 
     this.setState({ withUpdateDateSnippets });
     if (withUpdateDateSnippets.length > 0) {
@@ -379,22 +387,67 @@ class SnippetsSection extends Component {
     } else {
       this.setState({ upToDateNessStatus: 'neutral' });
     }
+
+    /* corroborating evidence */
+    if (cells && cells.length > 0) {
+      let multipleEvidenceCells = cells.filter(c => {
+        let tempPieces = c.pieces.filter(
+          p =>
+            p.rating === RATING_TYPES.positive ||
+            p.rating === RATING_TYPES.negative
+        );
+        return tempPieces.length > 1;
+      });
+      // console.log(multipleEvidenceCells);
+      if (multipleEvidenceCells.length > 0) {
+        let corroboratingCells = multipleEvidenceCells.filter(c => {
+          let ratings = c.pieces.map(p => p.rating);
+          if (ratings.every((val, i, arr) => val === arr[0])) {
+            return true;
+          } else {
+            return false;
+          }
+        });
+        let conflictingCells = multipleEvidenceCells.filter(c => {
+          let ratings = c.pieces.map(p => p.rating);
+          if (ratings.every((val, i, arr) => val === arr[0])) {
+            return false;
+          } else {
+            return true;
+          }
+        });
+        this.setState({
+          multipleEvidenceCells,
+          corroboratingCells,
+          conflictingCells
+        });
+        if (conflictingCells.length > 0) {
+          this.setState({ corroboratingEvidenceStatus: 'bad' });
+        } else {
+          this.setState({ corroboratingEvidenceStatus: 'good' });
+        }
+      } else {
+        this.setState({ corroboratingEvidenceStatus: 'neutral' });
+      }
+    } else {
+      this.setState({ corroboratingEvidenceStatus: 'neutral' });
+    }
   };
 
   render() {
-    const { pieces } = this.state;
+    // const { pieces } = this.state;
     return (
       <Section
         headerIcon={<GiThreeKeys className={styles.SectionHeaderIcon} />}
-        headerName={'Snippets'}
-        headerContent={<React.Fragment>snippets stats</React.Fragment>}
+        headerName={'Tables and Snippets'}
+        // headerContent={<React.Fragment>snippets stats</React.Fragment>}
         numOfWarnings={[
           this.state.evidencePopularityStatus === 'bad' ? 1 : 0,
           // this.state.optionsPopularityStatus === 'bad' ? 1 : 0,
           this.state.upToDateNessStatus === 'bad' ? 1 : 0,
           this.state.corroboratingEvidenceStatus === 'bad' ? 1 : 0
         ].reduce((a, b) => a + b)}
-        footer={<SnippetsComponent pieces={pieces} shouldOpenOnMount={true} />}
+        // footer={<SnippetsComponent pieces={pieces} shouldOpenOnMount={true} />}
       >
         <Entry
           status={this.state.evidencePopularityStatus}
@@ -463,7 +516,71 @@ class SnippetsSection extends Component {
 
         <Entry
           status={this.state.corroboratingEvidenceStatus}
-          content={<React.Fragment>corroborating evidence</React.Fragment>}
+          content={
+            <React.Fragment>
+              <strong>Evidence strength</strong> -{' '}
+              {this.state.multipleEvidenceCells.length === 0 && (
+                <React.Fragment>
+                  There are no cells with conflicting evidence.
+                </React.Fragment>
+              )}
+              {this.state.multipleEvidenceCells.length > 0 &&
+                this.state.conflictingCells.length > 0 && (
+                  <React.Fragment>
+                    <ReactHoverObserver
+                      className={styles.InlineHoverObserver}
+                      {...{
+                        onHoverChanged: ({ isHovering }) => {
+                          if (isHovering) {
+                            this.context.setSelectedCells(
+                              this.state.conflictingCells.map(c => c.id)
+                            );
+                          } else {
+                            this.context.clearSelectedCells();
+                          }
+                        }
+                      }}
+                    >
+                      There{' '}
+                      {this.state.conflictingCells.length === 1 ? 'is' : 'are'}{' '}
+                      {this.state.conflictingCells.length} cell
+                      {this.state.conflictingCells.length === 1 ? '' : 's'} with
+                      conflicting evidence.
+                    </ReactHoverObserver>
+                  </React.Fragment>
+                )}
+              {this.state.multipleEvidenceCells.length > 0 &&
+                this.state.conflictingCells.length === 0 &&
+                this.state.corroboratingCells.length > 0 && (
+                  <React.Fragment>
+                    <ReactHoverObserver
+                      className={styles.InlineHoverObserver}
+                      {...{
+                        onHoverChanged: ({ isHovering }) => {
+                          if (isHovering) {
+                            this.context.setSelectedCells(
+                              this.state.corroboratingCells.map(c => c.id)
+                            );
+                          } else {
+                            this.context.clearSelectedCells();
+                          }
+                        }
+                      }}
+                    >
+                      There{' '}
+                      {this.state.corroboratingCells.length === 1
+                        ? 'is'
+                        : 'are'}{' '}
+                      {this.state.corroboratingCells.length} cell
+                      {this.state.corroboratingCells.length === 1
+                        ? ''
+                        : 's'}{' '}
+                      with corroborating evidence.
+                    </ReactHoverObserver>
+                  </React.Fragment>
+                )}
+            </React.Fragment>
+          }
         />
       </Section>
     );
@@ -550,7 +667,7 @@ class TrustPanel extends Component {
   };
 
   render() {
-    let { pieces, pages } = this.props;
+    let { pieces, pages, cells } = this.props;
 
     return (
       <div className={styles.PanelContainer}>
@@ -558,7 +675,7 @@ class TrustPanel extends Component {
         <SourcesSection pieces={pieces} pages={pages} />
 
         {/* Snippets trustworthiness */}
-        <SnippetsSection pieces={pieces} />
+        <SnippetsSection pieces={pieces} cells={cells} />
 
         <div className={styles.Section}>
           <div className={styles.SectionHeader}>

@@ -17,6 +17,11 @@ const taskContext = React.createContext({
   removeSelectedSnippet: () => {},
   setSelectedSnippets: () => {},
   clearSelectedSnippets: () => {},
+  selectedCells: [],
+  addSelectedCell: () => {},
+  removeSelectedCell: () => {},
+  setSelectedCells: () => {},
+  clearSelectedCells: () => {},
   currentTaskView: 'default', // 'default', 'context', 'trustworthiness', 'thoroughness',
   setCurrentTaskView: () => {},
   honestSignalsInTable: {

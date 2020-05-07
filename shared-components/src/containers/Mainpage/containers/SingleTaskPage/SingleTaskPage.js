@@ -35,6 +35,7 @@ class SingleTaskPage extends Component {
     selectedUrls: [],
     selectedQueries: [],
     selectedSnippets: [],
+    selectedCells: [],
 
     currentTaskView: 'default',
     honestSignalsInTable: {
@@ -215,6 +216,13 @@ class SingleTaskPage extends Component {
             },
             clearSelectedSnippets: () => {
               this.setState({ selectedSnippets: [] });
+            },
+            selectedCells: this.state.selectedCells,
+            setSelectedCells: cells => {
+              this.setState({ selectedCells: cells });
+            },
+            clearSelectedCells: () => {
+              this.setState({ selectedCells: [] });
             },
             currentTaskView: this.state.currentTaskView,
             setCurrentTaskView: this.setCurrentTaskView,
