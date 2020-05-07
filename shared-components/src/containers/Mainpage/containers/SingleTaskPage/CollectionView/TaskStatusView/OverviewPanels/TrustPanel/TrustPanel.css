@@ -282,3 +282,7 @@
 .AuthorInfoContainer a:hover span {
   color: #007bff !important;
 }
+
+.InlineHoverObserver {
+  display: inline;
+}

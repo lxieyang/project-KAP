@@ -772,15 +772,17 @@ class RegularCell extends Component {
                           className={[
                             styles.AttitudeInTableContainerVariantI,
                             this.props.selectedUrls.length === 0 &&
-                            this.props.selectedDomains.length === 0
+                            this.props.selectedDomains.length === 0 &&
+                            this.props.selectedSnippets.length === 0
                               ? styles.Normal
-                              : piece.references.url &&
-                                (this.props.selectedUrls.indexOf(
-                                  piece.references.url
-                                ) !== -1 ||
-                                  this.props.selectedDomains.includes(
-                                    new URL(piece.references.url).hostname
-                                  ))
+                              : (piece.references.url &&
+                                  (this.props.selectedUrls.indexOf(
+                                    piece.references.url
+                                  ) !== -1 ||
+                                    this.props.selectedDomains.includes(
+                                      new URL(piece.references.url).hostname
+                                    ))) ||
+                                this.props.selectedSnippets.includes(p.pieceId)
                               ? styles.Normal
                               : styles.Fade
                           ].join(' ')}

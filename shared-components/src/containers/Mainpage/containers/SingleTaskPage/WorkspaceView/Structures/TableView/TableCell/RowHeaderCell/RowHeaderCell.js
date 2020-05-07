@@ -775,16 +775,18 @@ class RowHeaderCell extends Component {
                       className={[
                         styles.RowHeaderPiecesContainer,
                         this.props.selectedUrls.length === 0 &&
-                        this.props.selectedDomains.length === 0
+                        this.props.selectedDomains.length === 0 &&
+                        this.props.selectedSnippets.length === 0
                           ? styles.Normal
-                          : pieces[p.pieceId].references.url &&
-                            (this.props.selectedUrls.indexOf(
-                              pieces[p.pieceId].references.url
-                            ) !== -1 ||
-                              this.props.selectedDomains.includes(
-                                new URL(pieces[p.pieceId].references.url)
-                                  .hostname
-                              ))
+                          : (pieces[p.pieceId].references.url &&
+                              (this.props.selectedUrls.indexOf(
+                                pieces[p.pieceId].references.url
+                              ) !== -1 ||
+                                this.props.selectedDomains.includes(
+                                  new URL(pieces[p.pieceId].references.url)
+                                    .hostname
+                                ))) ||
+                            this.props.selectedSnippets.includes(p.pieceId)
                           ? styles.Normal
                           : styles.Fade
                       ].join(' ')}

@@ -26,10 +26,6 @@ class SourcesComponent extends Component {
     this.setState({ piechartView: toStatus });
   };
 
-  onHoverChanged = e => {
-    console.log(e);
-  };
-
   render() {
     const { piechartView } = this.state;
     let { domains, pieces, shouldOpenOnMount } = this.props;

@@ -12,6 +12,11 @@ const taskContext = React.createContext({
   assSelectedUrl: () => {},
   selectedQueries: [],
   assSelectedQuery: () => {},
+  selectedSnippets: [],
+  addSelectedSnippet: () => {},
+  removeSelectedSnippet: () => {},
+  setSelectedSnippets: () => {},
+  clearSelectedSnippets: () => {},
   currentTaskView: 'default', // 'default', 'context', 'trustworthiness', 'thoroughness',
   setCurrentTaskView: () => {},
   honestSignalsInTable: {

@@ -22,6 +22,7 @@ import { Collapse } from 'react-collapse';
 import { IoIosArrowBack, IoIosArrowDown } from 'react-icons/io';
 
 import Textarea from 'react-textarea-autosize';
+import ReactHoverObserver from 'react-hover-observer';
 
 import axios from 'axios';
 
@@ -30,12 +31,15 @@ import * as FirestoreManager from '../../../../../../../../firebase/firestore_wr
 import moment from 'moment';
 import { GET_FAVICON_URL_PREFIX } from '../../../../../../../../shared/constants';
 
+import TaskContext from '../../../../../../../../shared/task-context';
+
 import Section from '../components/Section/Section';
 import Entry from '../components/Section/Entry/Entry';
 import SourcesComponent from '../components/SourcesComponent/SourcesComponent';
 import SnippetsComponent from '../components/SnippetsComponent/SnippetsComponent';
 
 class SourcesSection extends Component {
+  static contextType = TaskContext;
   state = {
     domains: [],
     pieces: [],
@@ -174,7 +178,7 @@ class SourcesSection extends Component {
           status={this.state.sourceCredibilityStatus}
           content={
             <div style={{ verticalAlign: 'middle' }}>
-              All sources (
+              <strong>Souce credibility </strong> - All sources (
               {domains.map((domain, idx) => {
                 return (
                   <img
@@ -195,6 +199,7 @@ class SourcesSection extends Component {
           status={this.state.sourceDiversityStatus}
           content={
             <React.Fragment>
+              <strong>Source diversity </strong> -{' '}
               {domains.length > 1
                 ? `Information are from ${domains.length} different sources,`
                 : `Information are all from a single source,`}
@@ -202,17 +207,33 @@ class SourcesSection extends Component {
                 <React.Fragment>
                   {' '}
                   the most-used one being{' '}
-                  <span
-                    className={styles.DomainItem}
-                    style={{
-                      backgroundColor: DOMAIN_THEME_COLOR[domains[0].domain]
-                        ? ColorAlpha(DOMAIN_THEME_COLOR[domains[0].domain], 0.2)
-                        : ColorAlpha('gray', 0.3)
+                  <ReactHoverObserver
+                    className={styles.InlineHoverObserver}
+                    {...{
+                      onHoverChanged: ({ isHovering }) => {
+                        if (isHovering) {
+                          this.context.setSelectedDomains([domains[0].domain]);
+                        } else {
+                          this.context.clearSelectedDomains();
+                        }
+                      }
                     }}
                   >
-                    <img src={domains[0].favicon} alt="" />
-                    {domains[0].domain}
-                  </span>
+                    <span
+                      className={styles.DomainItem}
+                      style={{
+                        backgroundColor: DOMAIN_THEME_COLOR[domains[0].domain]
+                          ? ColorAlpha(
+                              DOMAIN_THEME_COLOR[domains[0].domain],
+                              0.2
+                            )
+                          : ColorAlpha('gray', 0.3)
+                      }}
+                    >
+                      <img src={domains[0].favicon} alt="" />
+                      {domains[0].domain}
+                    </span>
+                  </ReactHoverObserver>
                   , which is where{' '}
                   {((domains[0].numberOfPieces / pieces.length) * 100).toFixed(
                     0
@@ -228,11 +249,15 @@ class SourcesSection extends Component {
   }
 }
 
+const EVIDENCE_POPULARITY_THRESHOLD = 5;
+
 class SnippetsSection extends Component {
+  static contextType = TaskContext;
   state = {
     pieces: [],
 
     evidencePopularityStatus: 'bad',
+    highUpVotedEvidenceSnippets: [],
     optionsPopularityStatus: 'bad',
     upToDateNessStatus: 'bad',
     corroboratingEvidenceStatus: 'bad'
@@ -253,8 +278,50 @@ class SnippetsSection extends Component {
 
   updateData = () => {
     let { pieces } = this.props;
-    console.log(pieces);
     this.setState({ pieces });
+
+    /* evidence popularity */
+    let evidenceSnippets = pieces.filter(
+      p => p.pieceType === PIECE_TYPES.snippet
+    );
+    console.log(evidenceSnippets);
+    // TODO: right now, all from stack overflow
+    let SOEvidenceSnippets = evidenceSnippets.filter(p => {
+      if (
+        p.references.hostname &&
+        p.references.hostname.includes('stackoverflow')
+      ) {
+        return true;
+      } else {
+        return false;
+      }
+    });
+    console.log(SOEvidenceSnippets);
+    let highUpVotedEvidenceSnippets = SOEvidenceSnippets.filter(p => {
+      if (
+        p.answerMetaInfo &&
+        p.answerMetaInfo.answerVoteCount &&
+        parseInt(p.answerMetaInfo.answerVoteCount, 10) >=
+          EVIDENCE_POPULARITY_THRESHOLD
+      ) {
+        return true;
+      } else {
+        return false;
+      }
+    });
+    console.log(highUpVotedEvidenceSnippets);
+
+    if (highUpVotedEvidenceSnippets.length >= 3) {
+      this.setState({
+        evidencePopularityStatus: 'good',
+        highUpVotedEvidenceSnippets
+      });
+    } else {
+      this.setState({
+        evidencePopularityStatus: 'bad',
+        highUpVotedEvidenceSnippets
+      });
+    }
   };
 
   render() {
@@ -274,7 +341,28 @@ class SnippetsSection extends Component {
       >
         <Entry
           status={this.state.evidencePopularityStatus}
-          content={<React.Fragment>popularity</React.Fragment>}
+          content={
+            <React.Fragment>
+              <ReactHoverObserver
+                {...{
+                  onHoverChanged: ({ isHovering }) => {
+                    if (isHovering) {
+                      this.context.setSelectedSnippets(
+                        this.state.highUpVotedEvidenceSnippets.map(p => p.id)
+                      );
+                    } else {
+                      this.context.clearSelectedSnippets();
+                    }
+                  }
+                }}
+              >
+                <strong> Evidence popularity </strong> -{' '}
+                {this.state.highUpVotedEvidenceSnippets.length} evidence
+                snippets received at least {EVIDENCE_POPULARITY_THRESHOLD}{' '}
+                up-votes on <span>Stack Overflow</span>.
+              </ReactHoverObserver>
+            </React.Fragment>
+          }
         />
 
         <Entry
