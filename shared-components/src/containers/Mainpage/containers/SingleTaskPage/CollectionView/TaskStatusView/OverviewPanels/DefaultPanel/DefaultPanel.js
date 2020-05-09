@@ -127,6 +127,8 @@ class DefaultPanel extends Component {
 
     domains = reverse(sortBy(domains, ['numberOfPieces', 'numberOfPages']));
 
+    return null;
+
     return (
       <div className={styles.OverviewPanelV2Contaienr}>
         <div className={styles.OverviewContent}>

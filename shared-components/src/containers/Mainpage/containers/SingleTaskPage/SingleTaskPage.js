@@ -86,7 +86,7 @@ class SingleTaskPage extends Component {
         : 400
     });
 
-    this.setCurrentTaskView('thoroughness');
+    this.setCurrentTaskView('trustworthiness');
   }
 
   setCurrentWorkspaceId = workspaceId => {
@@ -238,7 +238,7 @@ class SingleTaskPage extends Component {
           <div className={styles.SingleTaskPageContainer}>
             {/* Task View Tabs */}
             <div className={styles.TaskViewTabsContainer}>
-              {/* <Button
+              <Button
                 variant={'outlined'}
                 onClick={() => {
                   this.setCurrentTaskView('default');
@@ -252,7 +252,7 @@ class SingleTaskPage extends Component {
                 ].join(' ')}
               >
                 Default View
-              </Button> */}
+              </Button>
               <Button
                 variant={'outlined'}
                 onClick={() => {

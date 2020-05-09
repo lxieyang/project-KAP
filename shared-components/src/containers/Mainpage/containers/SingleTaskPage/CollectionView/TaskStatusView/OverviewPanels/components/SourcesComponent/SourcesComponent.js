@@ -63,7 +63,7 @@ class SourcesComponent extends Component {
               height={10}
               width={20}
             />
-            Piechart View
+            Pie chart View
           </div>
 
           <div className={styles.SourcesComponentContainer}>
