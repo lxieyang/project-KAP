@@ -2,7 +2,11 @@ import React, { Component } from 'react';
 import styles from './Section.css';
 
 import { Collapse } from 'react-collapse';
-import { IoIosArrowBack, IoIosArrowDown } from 'react-icons/io';
+import {
+  IoIosArrowBack,
+  IoIosArrowDown,
+  IoIosArrowForward
+} from 'react-icons/io';
 
 import invert from 'invert-color';
 
@@ -46,7 +50,7 @@ class Section extends Component {
           isOpen ? styles.SectionOpen : styles.SectionClosed
         ].join(' ')}
         style={{
-          [isOpen ? 'borderTopColor' : 'borderLeftColor']: gradeColor
+          [isOpen ? 'borderTopColor' : 'borderRightColor']: gradeColor
         }}
       >
         {headerName && (
@@ -54,29 +58,32 @@ class Section extends Component {
             className={styles.SectionHeader}
             onClick={this.handleSwitchCollapsedStatus}
           >
+            <div className={styles.CollapseButtonContainer}>
+              <div className={styles.CollapseButton}>
+                {isOpen ? <IoIosArrowDown /> : <IoIosArrowForward />}
+              </div>
+            </div>
+
             <div className={styles.HeaderName}>{headerName}</div>
             {!isOpen && (
               <div className={styles.HeaderContent}>{headerContent}</div>
             )}
 
-            <div className={styles.CollapseButtonContainer}>
-              <div
-                className={styles.StatusIndicator}
-                style={{
-                  display: statusString.length === 0 ? 'none' : null,
-                  backgroundColor: gradeColor,
-                  color: invert(gradeColor, {
-                    black: '#3a3a3a',
-                    white: '#fafafa',
-                    threshold: 0.33
-                  })
-                }}
-              >
-                {statusString}
-              </div>
-              <div className={styles.CollapseButton}>
-                {isOpen ? <IoIosArrowDown /> : <IoIosArrowBack />}
-              </div>
+            <div style={{ flex: 1 }} />
+
+            <div
+              className={styles.StatusIndicator}
+              style={{
+                display: statusString.length === 0 ? 'none' : null,
+                backgroundColor: gradeColor,
+                color: invert(gradeColor, {
+                  black: '#3a3a3a',
+                  white: '#fafafa',
+                  threshold: 0.33
+                })
+              }}
+            >
+              {statusString}
             </div>
           </div>
         )}

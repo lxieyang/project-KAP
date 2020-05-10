@@ -19,15 +19,15 @@ import TaskContext from '../../../../../../../../../shared/task-context';
 class SourcesComponent extends Component {
   static contextType = TaskContext;
   state = {
-    piechartView: false
+    pieChartView: false
   };
 
   handleViewChange = toStatus => {
-    this.setState({ piechartView: toStatus });
+    this.setState({ pieChartView: toStatus });
   };
 
   render() {
-    const { piechartView } = this.state;
+    const { pieChartView } = this.state;
     let { domains, pieces, shouldOpenOnMount } = this.props;
     domains = domains.map(d => {
       let color = DOMAIN_THEME_COLOR[d.domain];
@@ -56,7 +56,7 @@ class SourcesComponent extends Component {
             Default View
             <Switch
               onChange={this.handleViewChange}
-              checked={piechartView}
+              checked={pieChartView}
               uncheckedIcon={false}
               checkedIcon={false}
               className={styles.Switch}
@@ -67,7 +67,7 @@ class SourcesComponent extends Component {
           </div>
 
           <div className={styles.SourcesComponentContainer}>
-            {!piechartView &&
+            {!pieChartView &&
               domains.map((d, idx) => {
                 const percent = (
                   (d.numberOfPieces / maxNumOfPieces) *
@@ -124,7 +124,7 @@ class SourcesComponent extends Component {
                   </ReactHoverObserver>
                 );
               })}
-            {piechartView && (
+            {pieChartView && (
               <div className={styles.PiechartContainer}>
                 <PieChart
                   domains={domains}

@@ -151,7 +151,7 @@ class SourcesSection extends Component {
 
     return (
       <Section
-        headerName={'Domains / Sites'}
+        headerName={'Domains'}
         headerContent={
           <React.Fragment>
             {domains.map((domain, idx) => {
