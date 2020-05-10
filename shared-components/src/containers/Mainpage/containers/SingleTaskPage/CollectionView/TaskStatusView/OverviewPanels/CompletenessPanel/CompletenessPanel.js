@@ -38,6 +38,7 @@ class EffortSection extends Component {
     queries: [],
     pages: [],
     pieces: [],
+    cells: [],
     task: null,
 
     effortSpentStatus: 'neutral',
@@ -57,14 +58,15 @@ class EffortSection extends Component {
       (prevProps.task !== this.props.task && this.props.task !== null) ||
       (prevProps.pages !== this.props.pages && this.props.pages.length > 0) ||
       (prevProps.queries !== this.props.queries &&
-        this.props.queries.length > 0)
+        this.props.queries.length > 0) ||
+      (prevProps.cells !== this.props.cells && this.props.cells.length > 0)
     ) {
       this.updateData();
     }
   }
 
   updateData = () => {
-    let { queries, pieces, pages, task } = this.props;
+    let { queries, pieces, pages, task, cells } = this.props;
 
     pages = pages.map(page => {
       const piecesInPage = pieces.filter(
@@ -78,7 +80,7 @@ class EffortSection extends Component {
 
     pages = reverse(sortBy(pages, ['piecesNumber']));
 
-    this.setState({ queries, pieces, pages, task });
+    this.setState({ queries, pieces, pages, task, cells });
 
     let { creationDate, updateDate } = task;
     creationDate = creationDate.toDate();
@@ -111,7 +113,7 @@ class EffortSection extends Component {
   };
 
   render() {
-    const { queries, pieces, pages, task } = this.state;
+    const { queries, pieces, pages, task, cells } = this.state;
 
     return (
       <Section
@@ -123,6 +125,7 @@ class EffortSection extends Component {
             queries={queries}
             pieces={pieces}
             pages={pages}
+            cells={cells}
           />
         }
         numOfWarnings={[
@@ -277,7 +280,7 @@ class CompletenessPanel extends Component {
   };
 
   render() {
-    let { queries, pieces, pages, task } = this.props;
+    let { queries, pieces, pages, task, cells } = this.props;
 
     const displayPieces = pieces.filter(
       p => p.pieceType === PIECE_TYPES.option
@@ -316,6 +319,7 @@ class CompletenessPanel extends Component {
           pages={pages}
           task={task}
           queries={queries}
+          cells={cells}
         />
 
         {/* <div className={styles.Section}>

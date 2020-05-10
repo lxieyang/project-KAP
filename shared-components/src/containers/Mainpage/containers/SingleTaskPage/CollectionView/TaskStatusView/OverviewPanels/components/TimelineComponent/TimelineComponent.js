@@ -16,6 +16,9 @@ import TaskContext from '../../../../../../../../../shared/task-context';
 
 import moment from 'moment';
 
+import randomColor from 'randomcolor';
+import colorAlpha from 'color-alpha';
+
 import styles from './TimelineComponent.css';
 
 import FontAwesomeIcon from '@fortawesome/react-fontawesome';
@@ -172,9 +175,16 @@ class Page extends Component {
 }
 
 class Query extends Component {
+  static contextType = TaskContext;
   state = {
     isOpen: true
   };
+
+  componentDidUpdate(prevProps) {
+    if (prevProps.cellColors !== this.props.cellColors) {
+      this.context.setCellColors(this.props.cellColors);
+    }
+  }
 
   handleCollapseButtonClicked = e => {
     this.setState(prevState => {
@@ -184,11 +194,14 @@ class Query extends Component {
 
   render() {
     const { isOpen } = this.state;
-    const { query } = this.props;
+    const { query, cellColors } = this.props;
     const { pages } = query;
 
     return (
-      <div className={styles.QueryBlockContainer}>
+      <div
+        className={styles.QueryBlockContainer}
+        style={{ backgroundColor: colorAlpha(query.color, 0.15) }}
+      >
         <div className={styles.QueryContainer}>
           <div
             className={styles.QueryCollapseButtonContainer}
@@ -231,36 +244,67 @@ class Query extends Component {
   }
 }
 
+const numOfColors = 10;
+
 class TimelineComponent extends Component {
   static contextType = TaskContext;
   state = {
     queries: [],
+    colorPalette: [],
+    cellColors: {},
     progressCheckerIdx: -1
   };
 
   componentDidMount() {
-    this.updateData();
+    let colorPalette = localStorage.getItem('colorPalette');
+    if (!colorPalette) {
+      colorPalette = randomColor({
+        count: numOfColors
+      });
+      localStorage.setItem('colorPalette', JSON.stringify(colorPalette));
+    } else {
+      colorPalette = JSON.parse(colorPalette);
+    }
+
+    this.setState({ colorPalette }, () => {
+      this.updateData();
+    });
   }
 
   componentDidUpdate(prevProps) {
     if (
       (prevProps.queries !== this.props.queries &&
         this.props.queries.length > 0) ||
-      (prevProps.pages !== this.props.pages && this.props.pages.length > 0)
+      (prevProps.pages !== this.props.pages && this.props.pages.length > 0) ||
+      (prevProps.cells !== this.props.cells && this.props.cells.length > 0)
     ) {
       this.updateData();
     }
   }
 
+  regenColorPalette = () => {
+    let colorPalette = randomColor({
+      count: numOfColors
+    });
+    this.setState({ colorPalette }, () => {
+      this.updateData();
+    });
+    localStorage.setItem('colorPalette', JSON.stringify(colorPalette));
+  };
+
   updateData = () => {
-    let { queries, pages } = this.props;
+    let { queries, pages, cells } = this.props;
+    const { colorPalette } = this.state;
 
     // console.log(queries);
     // console.log(pages);
     // console.log(pieces);
     queries = sortBy(
-      queries.map(q => {
-        return { ...q, creationDate: new Date(q.creationDate).getTime() };
+      queries.map((q, idx) => {
+        return {
+          ...q,
+          creationDate: new Date(q.creationDate).getTime()
+        };
       }),
       ['creationDate']
     );
@@ -307,15 +351,64 @@ class TimelineComponent extends Component {
         .reduce((a, b) => {
           return a + b;
         }, 0);
+
+      // assign color
+      query.color =
+        query.pages.length > 0 && colorPalette.length > 0
+          ? colorPalette[i % numOfColors]
+          : '#fff';
+
+      // gather pieces in the query
+      query.piecesInQuery = [];
+      query.pages.forEach(p => {
+        let pieceIds = p.piecesInPage.map(piece => piece.id);
+        query.piecesInQuery = query.piecesInQuery.concat(pieceIds);
+      });
     }
 
     // console.log(queries);
 
     this.setState({ queries });
+
+    // cell colors
+    for (let i = 0; i < cells.length; i++) {
+      let cell = cells[i];
+      cell.colors = null;
+      let piecesInCell = cell.pieces.map(p => p.pieceId);
+      if (piecesInCell.length === 1) {
+        for (let j = 0; j < queries.length; j++) {
+          if (queries[j].piecesInQuery.includes(piecesInCell[0])) {
+            cell.colors = queries[j].color;
+          }
+        }
+      } else if (piecesInCell.length > 1) {
+        cell.colors = {};
+        for (let j = 0; j < piecesInCell.length; j++) {
+          let pieceId = piecesInCell[j];
+          for (let k = 0; k < queries.length; k++) {
+            if (queries[k].piecesInQuery.includes(pieceId)) {
+              cell.colors[pieceId] = queries[k].color;
+            }
+          }
+        }
+      }
+    }
+
+    let cellColors = {};
+    cells.forEach(cell => {
+      cellColors[cell.id] = cell.colors;
+    });
+    this.setState(prevState => {
+      if (JSON.stringify(prevState.cellColors) !== JSON.stringify(cellColors)) {
+        return { cellColors };
+      } else {
+        return {};
+      }
+    });
   };
 
   render() {
-    const { queries } = this.state;
+    const { queries, cellColors } = this.state;
 
     return (
       <React.Fragment>
@@ -324,9 +417,17 @@ class TimelineComponent extends Component {
         <BaseComponent shouldOpenOnMount={true} headerName={'Timeline'}>
           <div className={styles.TimelineContainer}>
             {queries.map((query, idx) => {
-              return <Query idx={idx} key={query.id} query={query} />;
+              return (
+                <Query
+                  idx={idx}
+                  key={query.id}
+                  query={query}
+                  cellColors={cellColors}
+                />
+              );
             })}
           </div>
+          <button onClick={this.regenColorPalette}>regen colors</button>
         </BaseComponent>
       </React.Fragment>
     );

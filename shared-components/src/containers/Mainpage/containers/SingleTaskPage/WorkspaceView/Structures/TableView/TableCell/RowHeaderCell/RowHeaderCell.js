@@ -6,6 +6,7 @@ import indicator from 'ordinal/indicator';
 import ReactTooltip from 'react-tooltip';
 import styles from './RowHeaderCell.css';
 
+import colorAlpha from 'color-alpha';
 import PieceItem from '../../../../../CollectionView/PiecesView/PieceItem/PieceItem';
 
 import * as FirestoreManager from '../../../../../../../../../firebase/firestore_wrapper';
@@ -717,6 +718,10 @@ class RowHeaderCell extends Component {
             ? '#f8c471'
             : this.props.rowIndex === this.props.rowToSwitchB
             ? '#E89339'
+            : this.props.isInThoroughnessView &&
+              Object.keys(this.props.cellColors).length > 0 &&
+              this.props.cellColors[cell.id]
+            ? colorAlpha(this.props.cellColors[cell.id], 0.15)
             : null
         }}
       >

@@ -5,6 +5,7 @@ import fasFlagCheckered from '@fortawesome/fontawesome-free-solid/faFlagCheckere
 import indicator from 'ordinal/indicator';
 import ReactTooltip from 'react-tooltip';
 import styles from './ColumnHeaderCell.css';
+import colorAlpha from 'color-alpha';
 
 import PieceItem from '../../../../../CollectionView/PiecesView/PieceItem/PieceItem';
 
@@ -681,6 +682,10 @@ class ColumnHeaderCell extends Component {
               ? '#aed6f1'
               : this.props.columnIndex === this.props.columnToSwitchB
               ? '#89D6E6'
+              : this.props.isInThoroughnessView &&
+                Object.keys(this.props.cellColors).length > 0 &&
+                this.props.cellColors[cell.id]
+              ? colorAlpha(this.props.cellColors[cell.id], 0.15)
               : null
         }}
       >

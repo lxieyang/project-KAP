@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { sortBy, debounce } from 'lodash';
 import moment from 'moment';
 import styles from './RegularCell.css';
+import colorAlpha from 'color-alpha';
 import Spinner from '../../../../../../../../../components/UI/Spinner/Spinner';
 import ThumbV1 from '../../../../../../../../../components/UI/Thumbs/ThumbV1/ThumbV1';
 import InfoIcon from '../../../../../../../../../components/UI/Thumbs/InfoIcon/InfoIcon';
@@ -682,6 +683,11 @@ class RegularCell extends Component {
               ? '#f8c471'
               : this.props.rowIndex === this.props.rowToSwitchB
               ? '#E89339'
+              : this.props.isInThoroughnessView &&
+                Object.keys(this.props.cellColors).length > 0 &&
+                this.props.cellColors[cell.id] &&
+                typeof this.props.cellColors[cell.id] === 'string'
+              ? colorAlpha(this.props.cellColors[cell.id], 0.15)
               : 'transparent'
         }}
       >
@@ -790,6 +796,18 @@ class RegularCell extends Component {
                               ? styles.Normal
                               : styles.Fade
                           ].join(' ')}
+                          style={{
+                            backgroundColor:
+                              this.props.isInThoroughnessView &&
+                              Object.keys(this.props.cellColors).length > 0 &&
+                              this.props.cellColors[cell.id] &&
+                              typeof this.props.cellColors[cell.id] === 'object'
+                                ? colorAlpha(
+                                    this.props.cellColors[cell.id][p.pieceId],
+                                    0.15
+                                  )
+                                : null
+                          }}
                         >
                           <div
                             className={styles.AttitudeIconVariantI}

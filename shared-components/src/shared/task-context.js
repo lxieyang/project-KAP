@@ -19,6 +19,8 @@ const taskContext = React.createContext({
   removeSelectedSnippet: () => {},
   setSelectedSnippets: () => {},
   clearSelectedSnippets: () => {},
+  cellColors: {},
+  setCellColors: () => {},
   selectedCells: [],
   addSelectedCell: () => {},
   removeSelectedCell: () => {},
