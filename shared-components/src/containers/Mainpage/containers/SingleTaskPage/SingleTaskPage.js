@@ -86,7 +86,7 @@ class SingleTaskPage extends Component {
         : 400
     });
 
-    this.setCurrentTaskView('trustworthiness');
+    this.setCurrentTaskView('thoroughness');
   }
 
   setCurrentWorkspaceId = workspaceId => {

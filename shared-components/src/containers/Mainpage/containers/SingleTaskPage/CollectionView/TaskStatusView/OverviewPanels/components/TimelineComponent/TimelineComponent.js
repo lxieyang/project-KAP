@@ -3,7 +3,11 @@ import { sortBy } from 'lodash';
 import BaseComponent from '../BaseComponent/BaseComponent';
 
 import Divider from '@material-ui/core/Divider';
-import { AiOutlineSearch } from 'react-icons/ai';
+import { AiFillGoogleCircle as SearchIcon } from 'react-icons/ai';
+import {
+  AiOutlineMinusSquare as ExpandedIcon,
+  AiOutlinePlusSquare as CollapsedIcon
+} from 'react-icons/ai';
 import { FaHandPointRight } from 'react-icons/fa';
 import { Collapse } from 'react-collapse';
 import { IoIosArrowBack, IoIosArrowDown } from 'react-icons/io';
@@ -47,17 +51,27 @@ class Page extends Component {
   render() {
     const { item, idx } = this.props;
 
+    console.log(item);
+
     return (
       <div
-        className={[styles.Entry, styles.Page].join(' ')}
+        className={styles.PageBlockContainer}
         onClick={() => this.props.progressCheckClicked(idx)}
       >
-        {this.props.progressCheckerIdx === idx && (
-          <div className={styles.ProgressCheckerContainer}>
-            <FaHandPointRight className={styles.ProgressCheckerIcon} />
+        <div className={styles.PageNameContainer}>
+          {/* progress indicator */}
+          {/* <div className={styles.PageProgressBackdropContainer}>
+            <div
+              className={styles.PageProgressBackdrop}
+              style={{ width: `${item.scrollPercentage * 100}%` }}
+            />
+          </div> */}
+
+          {/* UI - link to the main timeline */}
+          <div className={styles.PageLinkLineContainer}>
+            <div className={styles.PageLinkLine} />
           </div>
-        )}
-        <div className={styles.NameContainer}>
+
           <img
             className={styles.ItemIcon}
             src={
@@ -68,6 +82,7 @@ class Page extends Component {
             alt={item.domain}
             title={item.url}
           />
+
           <div className={styles.TitleContent} title={item.url}>
             <ReactHoverObserver
               className={styles.InlineHoverObserver}
@@ -80,14 +95,16 @@ class Page extends Component {
               </a>
             </ReactHoverObserver>
           </div>
-          <div className={styles.MetaData}>
+
+          <div className={styles.PageMetaData}>
             <React.Fragment>
+              {/* Timestamp */}
               {moment(item.creationDate).format('h:mma')}
-              {/* <div>{moment(item.creationDate).format('MMM D')}</div>
-                      <div>{moment(item.creationDate).format('h:mma')}</div> */}
+              {/* duration */}
             </React.Fragment>
           </div>
         </div>
+
         <div className={styles.RelatedContentContainer}>
           {item.piecesInPage.map((piece, pidx) => {
             let pieceIcon = (
@@ -152,30 +169,71 @@ class Page extends Component {
   }
 }
 
+class Query extends Component {
+  state = {
+    isOpen: true
+  };
+
+  handleCollapseButtonClicked = e => {
+    this.setState(prevState => {
+      return { isOpen: !prevState.isOpen };
+    });
+  };
+
+  render() {
+    const { isOpen } = this.state;
+    const { query } = this.props;
+    const { pages } = query;
+
+    return (
+      <div className={styles.QueryBlockContainer}>
+        <div className={styles.QueryContainer}>
+          <div
+            className={styles.QueryCollapseButtonContainer}
+            onClick={e => this.handleCollapseButtonClicked(e)}
+          >
+            {pages.length > 0 ? (
+              isOpen ? (
+                <ExpandedIcon />
+              ) : (
+                <CollapsedIcon />
+              )
+            ) : null}
+          </div>
+          <div className={styles.QueryIconContainer}>
+            <SearchIcon className={styles.SearchQueryIcon} />
+          </div>
+          <div className={styles.QueryContentContainer}>{query.query}</div>
+          <div style={{ flex: 1 }} />
+          <div className={styles.QueryMetaData}>
+            {/* timestamp */}
+            {/* {moment(query.creationDate).format('MMM D h:mma')} */}
+            {/* duration */}
+            {moment.duration(query.duration).humanize()}
+          </div>
+        </div>
+        <Collapse isOpened={isOpen}>
+          {pages.length > 0 && (
+            <div className={styles.PagesContainer}>
+              <div className={styles.PagesLeftLine} />
+              <div className={styles.Pages}>
+                {pages.map((page, pidx) => {
+                  return <Page key={pidx} item={page} idx={pidx} />;
+                })}
+              </div>
+            </div>
+          )}
+        </Collapse>
+      </div>
+    );
+  }
+}
+
 class TimelineComponent extends Component {
   static contextType = TaskContext;
   state = {
-    sortedSombinedQueriesAndPages: [],
+    queries: [],
     progressCheckerIdx: -1
-  };
-
-  progressCheckClicked = idx => {
-    const { sortedSombinedQueriesAndPages } = this.state;
-    if (this.state.progressCheckerIdx === idx) {
-      this.setState({ progressCheckerIdx: -1 });
-      this.context.clearSelectedSnippets();
-    } else {
-      this.setState({ progressCheckerIdx: idx });
-      let items = sortedSombinedQueriesAndPages.slice(0, idx + 1);
-      let snippetIds = [];
-      items.forEach(item => {
-        if (item.piecesInPage) {
-          snippetIds = snippetIds.concat(item.piecesInPage.map(p => p.id));
-        }
-      });
-
-      this.context.setSelectedSnippets(snippetIds);
-    }
   };
 
   componentDidMount() {
@@ -198,25 +256,43 @@ class TimelineComponent extends Component {
     // console.log(queries);
     // console.log(pages);
     // console.log(pieces);
-
-    let combinedQueriesAndPages = queries
-      .map(q => {
+    queries = sortBy(
+      queries.map(q => {
         return { ...q, creationDate: new Date(q.creationDate).getTime() };
-      })
-      .concat(pages);
-    let sortedSombinedQueriesAndPages = sortBy(combinedQueriesAndPages, [
-      'creationDate'
-    ]);
+      }),
+      ['creationDate']
+    );
 
-    this.setState({
-      sortedSombinedQueriesAndPages
-    });
-    // this.setState({ progressCheckerIdx: -1 });
-    // this.context.clearSelectedSnippets();
+    for (let i = 0; i < queries.length; i++) {
+      let query = queries[i];
+      let nextQuery = null;
+      if (i !== queries.length - 1) {
+        nextQuery = queries[i + 1];
+      }
+
+      if (nextQuery) {
+        query.pages = pages.filter(
+          p =>
+            p.creationDate >= query.creationDate &&
+            p.creationDate < nextQuery.creationDate
+        );
+
+        query.duration = nextQuery.creationDate - query.creationDate;
+        query.duration = query.duration * 1.5; // TODO: remove this adjustment coefficient
+      } else {
+        query.pages = pages.filter(p => p.creationDate >= query.creationDate);
+        // TODO: make this real
+        query.duration = query.pages.length * 2 * 60 * 1000; // 2 min / page
+      }
+    }
+
+    // console.log(queries);
+
+    this.setState({ queries });
   };
 
   render() {
-    const { sortedSombinedQueriesAndPages, progressCheckerIdx } = this.state;
+    const { queries } = this.state;
 
     return (
       <React.Fragment>
@@ -224,50 +300,8 @@ class TimelineComponent extends Component {
         <Divider light />{' '}
         <BaseComponent shouldOpenOnMount={true} headerName={'Timeline'}>
           <div className={styles.TimelineContainer}>
-            {sortedSombinedQueriesAndPages.map((item, idx) => {
-              if (item.query) {
-                // query
-                return (
-                  <div
-                    key={item.id}
-                    className={[styles.Entry, styles.Query].join(' ')}
-                    onClick={() => this.progressCheckClicked(idx)}
-                  >
-                    {progressCheckerIdx === idx && (
-                      <div className={styles.ProgressCheckerContainer}>
-                        <FaHandPointRight
-                          className={styles.ProgressCheckerIcon}
-                        />
-                      </div>
-                    )}
-
-                    <AiOutlineSearch className={styles.SearchQueryIcon} />
-                    <span className={styles.QueryContent}>{item.query}</span>
-                    <div style={{ flex: 1 }} />
-                    <div className={styles.MetaData}>
-                      {moment(item.creationDate).format('MMM D h:mma')}
-                      {/* <div>{moment(item.creationDate).format('MMM D')}</div>
-                      <div>{moment(item.creationDate).format('h:mma')}</div> */}
-                    </div>
-                  </div>
-                );
-              } else if (item.title) {
-                // page
-                return (
-                  <Page
-                    key={item.id}
-                    item={item}
-                    idx={idx}
-                    progressCheckerIdx={progressCheckerIdx}
-                    progressCheckClicked={this.progressCheckClicked}
-                    sortedSombinedQueriesAndPages={
-                      sortedSombinedQueriesAndPages
-                    }
-                  />
-                );
-              } else {
-                return null;
-              }
+            {queries.map((query, idx) => {
+              return <Query idx={idx} key={query.id} query={query} />;
             })}
           </div>
         </BaseComponent>

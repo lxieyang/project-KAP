@@ -1,17 +1,91 @@
 .TimelineContainer {
   width: 100%;
   box-sizing: border-box;
+  font-family: sans-serif !important;
 }
 
-.Entry {
-  /* width: 100%; */
+.QueryBlockContainer {
+  margin-bottom: 8px;
+}
+
+.QueryContainer {
   box-sizing: border-box;
   display: flex;
   align-items: center;
-  margin: 4px 0px;
-  /* background-color: #e3e3e3; */
+  margin: 0px 1px;
+
+  /* margin: 4px 4px;
+  padding: 4px 6px;
+  border-radius: 5px;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.2); */
 
   position: relative;
+}
+
+.QueryCollapseButtonContainer {
+  flex-shrink: 0;
+  height: 100%;
+  width: 12px;
+  display: flex;
+  align-items: center;
+  margin-right: 3px;
+  cursor: pointer;
+  user-select: none;
+
+  opacity: 0.6;
+  transition: all 0.1s ease-in;
+}
+
+.QueryCollapseButtonContainer:hover {
+  opacity: 1;
+}
+
+.QueryIconContainer {
+  flex-shrink: 0;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  margin-right: 3px;
+}
+
+.SearchQueryIcon {
+  font-size: 15px;
+}
+
+.QueryContentContainer {
+  font-weight: 600;
+  font-size: 13px;
+  color: #333;
+}
+
+.QueryMetaData {
+  flex-shrink: 0;
+  margin-left: 4px;
+  font-size: 10px;
+  color: #666;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.PagesContainer {
+  display: flex;
+  justify-content: flex-start;
+  /* align-items: stretch; */
+}
+
+.PagesLeftLine {
+  align-self: stretch;
+  flex-shrink: 0;
+  /* background-color: black; */
+  width: 6px;
+  /* height: 100%; */
+  border-right: 1px dotted gray;
+  /* margin-right: 3px; */
+}
+
+.Pages {
+  flex: 1;
 }
 
 .ProgressCheckerContainer {
@@ -30,46 +104,58 @@
   color: green;
 }
 
-.Timestamp {
-  flex-shrink: 0;
-  font-size: 10px;
-  /* font-style: italic; */
-}
-
-.Entry.Query {
-  font-weight: 400;
-  font-size: 12px;
-  color: #333;
-
-  margin: 4px 4px;
-  margin-top: 8px;
-  padding: 1px 4px;
-  border-radius: 5px;
-  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.2);
-}
-
-.SearchQueryIcon {
-  margin-right: 4px;
-}
-
-.QueryContent {
-  /* text-decoration: underline; */
-}
-
-.Entry.Page {
-  margin-left: 15px;
-  margin-right: 4px;
+.PageBlockContainer {
+  margin-left: 20px;
+  /* margin-right: 4px; */
 
   display: block;
   box-sizing: border-box;
-  border-bottom: 1px solid #e3e3e3;
+  /* border-bottom: 1px solid #e3e3e3; */
   padding: 4px 0px;
-  padding-right: 3px;
+  /* padding-right: 3px; */
+
+  position: relative;
 }
 
-.NameContainer {
+.PageNameContainer {
   display: flex;
   align-items: center;
+
+  /* border: 1px solid gray; */
+
+  position: relative;
+}
+
+.PageProgressBackdropContainer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  z-index: -1;
+}
+
+.PageProgressBackdrop {
+  height: 100%;
+  background-color: lightgray;
+}
+
+.PageLinkLineContainer {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: -20px;
+  width: 18px;
+
+  display: flex;
+  align-items: center;
+  justify-content: stretch;
+}
+
+.PageLinkLine {
+  height: 0;
+  width: 100%;
+  border: 0.5px dotted gray;
 }
 
 .ItemIcon {
@@ -95,10 +181,10 @@
   color: inherit;
 }
 
-.MetaData {
+.PageMetaData {
   flex-shrink: 0;
   margin-left: 4px;
-  font-size: 9px;
+  font-size: 10px;
   color: #666;
   display: flex;
   flex-direction: column;
