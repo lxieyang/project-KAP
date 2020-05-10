@@ -43,21 +43,32 @@ export const updatePageFaviconUrlViaUrl = async (url, faviconUrl) => {
 };
 
 export const updatePageUpdateTimestampViaUrl = async url => {
+  if (!url) {
+    return;
+  }
   let currentTaskId = (await getCurrentUserCurrentTaskId().get()).data().id;
 
-  const parentQuerySnapshot = await getPageInTaskByUrl(
-    currentTaskId,
-    url
-  ).get();
+  let parentQuerySnapshot = await getPageInTaskByUrl(currentTaskId, url).get();
   if (!parentQuerySnapshot.empty) {
     parentQuerySnapshot.docs[0].ref.update({
       updateDate: firebase.firestore.FieldValue.serverTimestamp(),
       leaveDate: null
     });
+
+    // TODO: optimize this hack
+    setTimeout(async () => {
+      parentQuerySnapshot = await getPageInTaskByUrl(currentTaskId, url).get();
+      if (!parentQuerySnapshot.docs[0].data().leaveDate) {
+        updatePageLeaveTimestampViaUrl(url);
+      }
+    }, 1000 * 60 * 10);
   }
 };
 
 export const updatePageLeaveTimestampViaUrl = async url => {
+  if (!url) {
+    return;
+  }
   let currentTaskId = (await getCurrentUserCurrentTaskId().get()).data().id;
 
   const parentQuerySnapshot = await getPageInTaskByUrl(

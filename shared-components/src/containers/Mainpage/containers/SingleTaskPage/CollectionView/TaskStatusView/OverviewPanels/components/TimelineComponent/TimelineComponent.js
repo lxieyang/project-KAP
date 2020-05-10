@@ -51,7 +51,7 @@ class Page extends Component {
   render() {
     const { item, idx } = this.props;
 
-    console.log(item);
+    console.log(item.duration / 1000 / 60);
 
     return (
       <div

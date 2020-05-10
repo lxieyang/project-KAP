@@ -13,6 +13,7 @@ const getSearchQueryFromURL = url => {
 };
 
 let allTabs = {};
+let currentTabId = null;
 
 const gatherTabInfo = () => {
   chrome.tabs.query({}, tabs => {
@@ -76,11 +77,22 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
   if (changeInfo.status === 'complete') {
     gatherTabInfo();
     keepTrackOfWebpage(null, tab.url, tab.title, tab.favIconUrl);
+    currentTabId = tabId;
   }
 });
 
-chrome.tabs.onRemoved.addListener((tabId, removeInfo) => {
+chrome.tabs.onRemoved.addListener(({ tabId, removeInfo }) => {
   FirestoreManager.updatePageLeaveTimestampViaUrl(allTabs[tabId].url);
+});
+
+chrome.tabs.onActivated.addListener(({ tabId, windowId }) => {
+  if (allTabs[currentTabId]) {
+    FirestoreManager.updatePageLeaveTimestampViaUrl(allTabs[currentTabId].url);
+  }
+  currentTabId = tabId;
+  if (allTabs[tabId]) {
+    FirestoreManager.updatePageUpdateTimestampViaUrl(allTabs[tabId].url);
+  }
 });
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {

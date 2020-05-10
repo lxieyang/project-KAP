@@ -99,17 +99,11 @@ class CollectionView extends Component {
         const updateDate = data.updateDate.toDate().getTime();
         const leaveDate = data.leaveDate
           ? data.leaveDate.toDate().getTime()
-          : null;
+          : new Date().getTime();
 
         let duration = null;
         if (leaveDate !== null) {
           duration = leaveDate - updateDate;
-          // duration = moment.duration(leaveDate - updateDate);
-          // duration = moment.duration(70 * 60 * 1000 + 4000);
-          // console.log(moment(duration._data).format('mm:ss'));
-          // console.log(
-          //   parseInt(duration.asMinutes(), 10) + 'm ' + duration.seconds() + 's'
-          // );
         }
 
         pages.push({
