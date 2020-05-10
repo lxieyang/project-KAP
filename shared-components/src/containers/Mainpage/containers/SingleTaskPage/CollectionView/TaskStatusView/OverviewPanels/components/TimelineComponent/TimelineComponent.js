@@ -51,8 +51,6 @@ class Page extends Component {
   render() {
     const { item, idx } = this.props;
 
-    console.log(item.duration / 1000 / 60);
-
     return (
       <div
         className={styles.PageBlockContainer}
@@ -99,8 +97,12 @@ class Page extends Component {
           <div className={styles.PageMetaData}>
             <React.Fragment>
               {/* Timestamp */}
-              {moment(item.creationDate).format('h:mma')}
+              {/* {moment(item.creationDate).format('h:mma')} */}
+              {/* scroll percentage */}[
+              {(item.scrollPercentage * 100).toFixed(0)}%]
               {/* duration */}
+              &nbsp;
+              {moment.duration(item.duration).humanize()}
             </React.Fragment>
           </div>
         </div>
@@ -277,13 +279,34 @@ class TimelineComponent extends Component {
             p.creationDate < nextQuery.creationDate
         );
 
-        query.duration = nextQuery.creationDate - query.creationDate;
-        query.duration = query.duration * 1.5; // TODO: remove this adjustment coefficient
+        // query.duration = nextQuery.creationDate - query.creationDate;
+        // query.duration = query.duration * 1.5; // TODO: remove this adjustment coefficient
       } else {
         query.pages = pages.filter(p => p.creationDate >= query.creationDate);
         // TODO: make this real
-        query.duration = query.pages.length * 2 * 60 * 1000; // 2 min / page
+        // query.duration = query.pages.length * 2 * 60 * 1000; // 2 min / page
       }
+
+      // TODO: remove this
+      // rectify page duration for older versions
+      query.pages = query.pages.map(p => {
+        const minDuration = p.duration / 1000 / 60;
+        const secDuration = p.duration / 1000;
+
+        if (minDuration > 10) {
+          p.duration = 10 * 60 * 1000;
+        } else if (secDuration < 5) {
+          p.duration = 2 * 60 * 1000;
+        }
+        return p;
+      });
+
+      // calculate query duration
+      query.duration = query.pages
+        .map(p => p.duration)
+        .reduce((a, b) => {
+          return a + b;
+        }, 0);
     }
 
     // console.log(queries);

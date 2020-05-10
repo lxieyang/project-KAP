@@ -101,10 +101,7 @@ class CollectionView extends Component {
           ? data.leaveDate.toDate().getTime()
           : new Date().getTime();
 
-        let duration = null;
-        if (leaveDate !== null) {
-          duration = leaveDate - updateDate;
-        }
+        let duration = leaveDate - updateDate;
 
         pages.push({
           id: snapshot.id,
