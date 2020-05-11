@@ -52,6 +52,7 @@ table.ComparisonTable {
   border-collapse: collapse;
   margin: 0px 0px;
   font-size: 14px;
+  height: 1px;
 }
 
 .ComparisonTable th,

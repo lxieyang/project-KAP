@@ -2,6 +2,8 @@
   position: relative;
   transition: all 0.15s ease-in;
   box-sizing: border-box !important;
+  padding: 0px !important;
+  height: 100%;
 }
 
 .FirstRegularRow {
@@ -123,14 +125,15 @@
 }
 
 .RegularContentContainer {
+  height: 100%;
   display: flex;
   flex-flow: column;
-  justify-content: center;
-  align-items: center;
+  justify-content: stretch;
   max-width: 320px;
 }
 
 .EvidenceIconContainer {
+  height: 100%;
   display: flex;
   flex-flow: row;
   flex-wrap: wrap;
@@ -145,11 +148,15 @@
   width: 100%;
   height: 100%;
   min-height: 90px;
+  display: flex;
+  flex-direction: column;
 }
 
 .AttitudeInTableContainerVariantI {
-  padding: 5px 5px;
-  display: inline-flex;
+  flex: 1;
+  padding: 12px 5px;
+  display: flex;
+  justify-content: center;
 }
 
 .AttitudeInTableContainerVariantI.Normal {
@@ -189,14 +196,10 @@
   font-weight: 400;
 }
 
-/* .AttitudeInTableContainerVariantI:hover .TagsContainer {
-  opacity: 0;
-} */
-
 .TagsContainer {
-  display: flex;
+  /* display: flex;
   align-items: center;
-  flex-wrap: wrap;
+  flex-wrap: wrap; */
   font-style: italic;
 }
 
@@ -207,12 +210,13 @@
   padding: 2px 4px;
   font-size: 11px;
   margin: 2px 2px;
-  border: 1px solid rgb(224, 224, 224);
+  /* border: 1px solid rgb(224, 224, 224); */
 }
 
 a.TagSpan {
   text-decoration: none;
   transition: all 0.1s ease-in;
+  border: 1px solid rgb(224, 224, 224);
 }
 
 a.TagSpan span {

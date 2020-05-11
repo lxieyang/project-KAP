@@ -85,6 +85,7 @@ class TableCell extends Component {
             selectedCells={this.context.selectedCells}
             cellColors={this.context.cellColors}
             honestSignals={this.context.honestSignalsInTable}
+            activeSections={this.context.activeSections}
             isInDefaultView={this.context.currentTaskView === 'default'}
             isInContextView={this.context.currentTaskView === 'context'}
             isInTrustworthinessView={
@@ -109,6 +110,7 @@ class TableCell extends Component {
             selectedCells={this.context.selectedCells}
             cellColors={this.context.cellColors}
             honestSignals={this.context.honestSignalsInTable}
+            activeSections={this.context.activeSections}
             isInDefaultView={this.context.currentTaskView === 'default'}
             isInContextView={this.context.currentTaskView === 'context'}
             isInTrustworthinessView={
@@ -134,6 +136,7 @@ class TableCell extends Component {
             selectedCells={this.context.selectedCells}
             cellColors={this.context.cellColors}
             honestSignals={this.context.honestSignalsInTable}
+            activeSections={this.context.activeSections}
             isInDefaultView={this.context.currentTaskView === 'default'}
             isInContextView={this.context.currentTaskView === 'context'}
             isInTrustworthinessView={

@@ -27,6 +27,7 @@ import Switch from '@material-ui/core/Switch';
 import { FaArrowAltCircleUp, FaCheck } from 'react-icons/fa';
 import { IoMdTime } from 'react-icons/io';
 import { AiFillFire } from 'react-icons/ai';
+import { GiSandsOfTime } from 'react-icons/gi';
 
 import Textarea from 'react-textarea-autosize';
 
@@ -38,7 +39,8 @@ import * as FirestoreManager from '../../../../../../../firebase/firestore_wrapp
 import {
   PIECE_TYPES,
   ANNOTATION_TYPES,
-  TABLE_CELL_TYPES
+  TABLE_CELL_TYPES,
+  SECTION_TYPES
 } from '../../../../../../../shared/types';
 import { PIECE_COLOR, THEME_COLOR } from '../../../../../../../shared/theme';
 import {
@@ -709,7 +711,7 @@ class PieceItem extends Component {
                           {this.props.updateDate && (
                             <div>
                               <span className={classesInCSS.TagSpan}>
-                                <IoMdTime
+                                <GiSandsOfTime
                                   className={[
                                     classesInCSS.Icon,
                                     classesInCSS.TimeIcon
@@ -731,86 +733,104 @@ class PieceItem extends Component {
                     !this.props.isInDefaultView && (
                       <React.Fragment>
                         <div>
-                          {piece.references.url !== false && (
-                            <Tooltip
-                              title={`${
-                                piece.references.pageTitle
-                              }  ---  Click to open`}
-                              placement={'top'}
-                            >
-                              <span
-                                className={[
-                                  classesInCSS.TagSpan,
-                                  classesInCSS.LinkContainer
-                                ].join(' ')}
-                                style={{ backgroundColor: 'transparent' }}
+                          {piece.references.url !== false &&
+                            (this.props.activeSections.includes(
+                              SECTION_TYPES.section_sources
+                            ) ||
+                              this.props.activeSections.includes(
+                                SECTION_TYPES.section_effort
+                              )) && (
+                              <Tooltip
+                                title={`${
+                                  piece.references.pageTitle
+                                }  ---  Click to open`}
+                                placement={'top'}
                               >
-                                <a
-                                  href={
-                                    answerURLOnSO
-                                      ? answerURLOnSO
-                                      : piece.references.url
-                                  }
-                                  target="__blank"
-                                  style={{
-                                    display: 'flex',
-                                    alignItems: 'center'
-                                  }}
+                                <span
+                                  className={[
+                                    classesInCSS.TagSpan,
+                                    classesInCSS.LinkContainer
+                                  ].join(' ')}
+                                  style={{ backgroundColor: 'transparent' }}
                                 >
-                                  <img
-                                    src={
-                                      GET_FAVICON_URL_PREFIX +
-                                      piece.references.url
+                                  <a
+                                    href={
+                                      answerURLOnSO
+                                        ? answerURLOnSO
+                                        : piece.references.url
                                     }
-                                    alt={''}
+                                    target="__blank"
+                                    style={{
+                                      display: 'flex',
+                                      alignItems: 'center'
+                                    }}
+                                  >
+                                    <img
+                                      src={
+                                        GET_FAVICON_URL_PREFIX +
+                                        piece.references.url
+                                      }
+                                      alt={''}
+                                    />
+                                    <span>
+                                      {new URL(piece.references.url).hostname}
+                                    </span>
+                                  </a>
+                                </span>
+                              </Tooltip>
+                            )}
+                          {this.props.popularityNumber !== null &&
+                            this.props.activeSections.includes(
+                              SECTION_TYPES.section_snippets
+                            ) && (
+                              <div>
+                                <span className={classesInCSS.TagSpan}>
+                                  <FaArrowAltCircleUp
+                                    className={[
+                                      classesInCSS.Icon,
+                                      this.props.popularityNumber > 0
+                                        ? classesInCSS.VoteIcon
+                                        : classesInCSS.VoteIconNegative
+                                    ].join(' ')}
                                   />
-                                  <span>
-                                    {new URL(piece.references.url).hostname}
-                                  </span>
-                                </a>
-                              </span>
-                            </Tooltip>
-                          )}
-                          {/* {this.props.popularityNumber && (
-                            <div>
-                              <span className={classesInCSS.TagSpan}>
-                                <FaArrowAltCircleUp
-                                  className={[
-                                    classesInCSS.Icon,
-                                    classesInCSS.VoteIcon
-                                  ].join(' ')}
-                                />
-                                {this.props.popularityNumber} up votes
-                              </span>
-                            </div>
-                          )}
-                          {this.props.answerAccepted === true && (
-                            <div>
-                              <span className={classesInCSS.TagSpan}>
-                                <FaCheck
-                                  className={[
-                                    classesInCSS.Icon,
-                                    classesInCSS.AcceptedIcon
-                                  ].join(' ')}
-                                />
-                                accepted answer
-                              </span>
-                            </div>
-                          )}
-                          {this.props.updateDate && (
-                            <div>
-                              <span className={classesInCSS.TagSpan}>
-                                <IoMdTime
-                                  className={[
-                                    classesInCSS.Icon,
-                                    classesInCSS.TimeIcon
-                                  ].join(' ')}
-                                />
-                                updated{' '}
-                                {moment(this.props.updateDate).fromNow()}
-                              </span>
-                            </div>
-                          )} */}
+                                  {this.props.popularityNumber} up votes
+                                </span>
+                              </div>
+                            )}
+                          {this.props.answerAccepted === true &&
+                            this.props.activeSections.includes(
+                              SECTION_TYPES.section_snippets
+                            ) && (
+                              <div>
+                                <span className={classesInCSS.TagSpan}>
+                                  <FaCheck
+                                    className={[
+                                      classesInCSS.Icon,
+                                      classesInCSS.AcceptedIcon
+                                    ].join(' ')}
+                                  />
+                                  accepted answer
+                                </span>
+                              </div>
+                            )}
+                          {this.props.updateDate &&
+                            this.props.activeSections.includes(
+                              SECTION_TYPES.section_snippets
+                            ) && (
+                              <div>
+                                <span className={classesInCSS.TagSpan}>
+                                  <GiSandsOfTime
+                                    className={[
+                                      classesInCSS.Icon,
+                                      classesInCSS.TimeIcon
+                                    ].join(' ')}
+                                  />
+                                  updated{' '}
+                                  {moment(this.props.updateDate).fromNow()}
+                                  {/* {this.props.updateDate.toLocaleDateString()} */}
+                                </span>
+                              </div>
+                            )}
                         </div>
                       </React.Fragment>
                     )}

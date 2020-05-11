@@ -1,7 +1,10 @@
 .BaseComponentContainer {
   /* border: 1px solid black; */
   font-size: 12px;
+  max-height: 650px;
+  overflow: auto;
 }
+
 .BaseComponentHeader {
   font-size: 1em;
   display: flex;

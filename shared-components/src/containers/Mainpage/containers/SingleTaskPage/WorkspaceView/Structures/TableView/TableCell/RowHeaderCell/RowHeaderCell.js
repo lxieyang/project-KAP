@@ -33,7 +33,8 @@ import PropTypes from 'prop-types';
 import {
   PIECE_TYPES,
   TABLE_CELL_TYPES,
-  ANNOTATION_TYPES
+  ANNOTATION_TYPES,
+  SECTION_TYPES
 } from '../../../../../../../../../shared/types';
 import {
   THEME_COLOR,
@@ -719,6 +720,9 @@ class RowHeaderCell extends Component {
             : this.props.rowIndex === this.props.rowToSwitchB
             ? '#E89339'
             : this.props.isInThoroughnessView &&
+              this.props.activeSections.includes(
+                SECTION_TYPES.section_effort
+              ) &&
               Object.keys(this.props.cellColors).length > 0 &&
               this.props.cellColors[cell.id]
             ? this.props.cellColors[cell.id]
@@ -821,6 +825,7 @@ class RowHeaderCell extends Component {
                         isInDefaultView={isInDefaultView}
                         isInContextView={isInContextView}
                         isInThoroughnessView={isInThoroughnessView}
+                        activeSections={this.props.activeSections}
                       />
                     </div>
                   </ContextMenuTrigger>
