@@ -687,7 +687,7 @@ class RegularCell extends Component {
                 Object.keys(this.props.cellColors).length > 0 &&
                 this.props.cellColors[cell.id] &&
                 typeof this.props.cellColors[cell.id] === 'string'
-              ? colorAlpha(this.props.cellColors[cell.id], 0.15)
+              ? this.props.cellColors[cell.id]
               : 'transparent'
         }}
       >
@@ -802,10 +802,7 @@ class RegularCell extends Component {
                               Object.keys(this.props.cellColors).length > 0 &&
                               this.props.cellColors[cell.id] &&
                               typeof this.props.cellColors[cell.id] === 'object'
-                                ? colorAlpha(
-                                    this.props.cellColors[cell.id][p.pieceId],
-                                    0.15
-                                  )
+                                ? this.props.cellColors[cell.id][p.pieceId]
                                 : null
                           }}
                         >

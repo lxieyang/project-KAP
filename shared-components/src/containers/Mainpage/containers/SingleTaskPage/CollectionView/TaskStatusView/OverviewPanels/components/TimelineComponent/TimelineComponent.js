@@ -1,7 +1,10 @@
 import React, { Component } from 'react';
 import { sortBy } from 'lodash';
 import BaseComponent from '../BaseComponent/BaseComponent';
-
+import { SliderPicker } from 'react-color';
+import { Range } from 'rc-slider';
+import 'rc-slider/assets/index.css';
+import 'rc-tooltip/assets/bootstrap.css';
 import Divider from '@material-ui/core/Divider';
 import { AiFillGoogleCircle as SearchIcon } from 'react-icons/ai';
 import {
@@ -177,12 +180,18 @@ class Page extends Component {
 class Query extends Component {
   static contextType = TaskContext;
   state = {
-    isOpen: true
+    isOpen: false
   };
 
   componentDidUpdate(prevProps) {
     if (prevProps.cellColors !== this.props.cellColors) {
       this.context.setCellColors(this.props.cellColors);
+    }
+
+    if (prevProps.query.piecesInQuery !== this.props.query.piecesInQuery) {
+      if (this.props.query.piecesInQuery.length > 0) {
+        this.setState({ isOpen: true });
+      }
     }
   }
 
@@ -195,12 +204,12 @@ class Query extends Component {
   render() {
     const { isOpen } = this.state;
     const { query, cellColors } = this.props;
-    const { pages } = query;
+    const { pages, piecesInQuery } = query;
 
     return (
       <div
         className={styles.QueryBlockContainer}
-        style={{ backgroundColor: colorAlpha(query.color, 0.15) }}
+        style={{ backgroundColor: query.color }}
       >
         <div className={styles.QueryContainer}>
           <div
@@ -215,11 +224,22 @@ class Query extends Component {
               )
             ) : null}
           </div>
+
           <div className={styles.QueryIconContainer}>
             <SearchIcon className={styles.SearchQueryIcon} />
           </div>
+
           <div className={styles.QueryContentContainer}>{query.query}</div>
+
           <div style={{ flex: 1 }} />
+
+          {!isOpen && (
+            <div className={styles.QueryPagesStatsContainer}>
+              ({pages.length} pages
+              {pages.length > 0 ? `, ${piecesInQuery.length} snippets` : null})
+            </div>
+          )}
+
           <div className={styles.QueryMetaData}>
             {/* timestamp */}
             {/* {moment(query.creationDate).format('MMM D h:mma')} */}
@@ -244,29 +264,52 @@ class Query extends Component {
   }
 }
 
-const numOfColors = 10;
+const numOfColors = 1;
+const startAlphaInitial = 0.05;
+const endAlphaInitial = 0.5;
 
 class TimelineComponent extends Component {
   static contextType = TaskContext;
   state = {
     queries: [],
-    colorPalette: [],
     cellColors: {},
-    progressCheckerIdx: -1
+    progressCheckerIdx: -1,
+
+    colorAdjustmentIsOpen: true,
+    baseColor: '#fff',
+    startAlpha: startAlphaInitial,
+    endAlpha: endAlphaInitial
+  };
+
+  handleColorAdjustmentIsOpenClicked = () => {
+    this.setState(prevState => {
+      return { colorAdjustmentIsOpen: !prevState.colorAdjustmentIsOpen };
+    });
   };
 
   componentDidMount() {
-    let colorPalette = localStorage.getItem('colorPalette');
-    if (!colorPalette) {
-      colorPalette = randomColor({
-        count: numOfColors
-      });
-      localStorage.setItem('colorPalette', JSON.stringify(colorPalette));
-    } else {
-      colorPalette = JSON.parse(colorPalette);
+    let baseColor = localStorage.getItem('baseColor');
+    if (!baseColor) {
+      baseColor = randomColor();
+      localStorage.setItem('baseColor', baseColor);
     }
 
-    this.setState({ colorPalette }, () => {
+    let startAlpha = localStorage.getItem('startAlpha');
+    if (!startAlpha) {
+      startAlpha = startAlphaInitial;
+      localStorage.setItem('startAlpha', startAlpha);
+    } else {
+      startAlpha = parseFloat(startAlpha);
+    }
+
+    let endAlpha = localStorage.getItem('endAlpha');
+    if (!endAlpha) {
+      endAlpha = endAlphaInitial;
+      localStorage.setItem('endAlpha', endAlpha);
+    } else {
+      endAlpha = parseFloat(endAlpha);
+    }
+    this.setState({ baseColor, startAlpha, endAlpha }, () => {
       this.updateData();
     });
   }
@@ -282,19 +325,69 @@ class TimelineComponent extends Component {
     }
   }
 
-  regenColorPalette = () => {
-    let colorPalette = randomColor({
-      count: numOfColors
-    });
-    this.setState({ colorPalette }, () => {
+  handleBaseColorChangeComplete = color => {
+    color = color.hex;
+    localStorage.setItem('baseColor', color);
+    this.setState({ baseColor: color }, () => {
       this.updateData();
     });
-    localStorage.setItem('colorPalette', JSON.stringify(colorPalette));
+  };
+
+  handleBaseColorChange = color => {
+    color = color.hex;
+    this.setState({ baseColor: color }, () => {
+      let { queries, baseColor, startAlpha, endAlpha } = this.state;
+      this.setState({
+        queries: this.updateQueryColors(
+          queries,
+          baseColor,
+          startAlpha,
+          endAlpha
+        )
+      });
+    });
+  };
+
+  handleStartEndAlphaChangeComplete = ([startAlpha, endAlpha]) => {
+    startAlpha /= 100;
+    endAlpha /= 100;
+    localStorage.setItem('startAlpha', startAlpha);
+    localStorage.setItem('endAlpha', endAlpha);
+    this.setState({ startAlpha, endAlpha }, () => {
+      this.updateData();
+    });
+  };
+
+  updateQueryColors = (queries, baseColor, startAlpha, endAlpha) => {
+    let queriesNeedColorAssignment = queries.filter(
+      q => q.piecesInQuery.length > 0
+    );
+    if (queriesNeedColorAssignment.length === 1) {
+      queries = queries.map(q => {
+        if (q.piecesInQuery.length > 0) {
+          q.color = colorAlpha(baseColor, endAlpha);
+        }
+        return q;
+      });
+    } else if (queriesNeedColorAssignment.length > 1) {
+      const increment =
+        (endAlpha - startAlpha) / (queriesNeedColorAssignment.length - 1);
+      let pointer = 0;
+      for (let i = 0; i < queries.length; i++) {
+        let query = queries[i];
+        if (query.piecesInQuery.length > 0) {
+          query.color = colorAlpha(baseColor, startAlpha + pointer * increment);
+          pointer += 1;
+        }
+      }
+    }
+
+    return queries;
   };
 
   updateData = () => {
     let { queries, pages, cells } = this.props;
-    const { colorPalette } = this.state;
+    const { baseColor, startAlpha, endAlpha } = this.state;
 
     // console.log(queries);
     // console.log(pages);
@@ -352,11 +445,7 @@ class TimelineComponent extends Component {
           return a + b;
         }, 0);
 
-      // assign color
-      query.color =
-        query.pages.length > 0 && colorPalette.length > 0
-          ? colorPalette[i % numOfColors]
-          : '#fff';
+      query.color = 'transparent';
 
       // gather pieces in the query
       query.piecesInQuery = [];
@@ -366,7 +455,9 @@ class TimelineComponent extends Component {
       });
     }
 
-    // console.log(queries);
+    queries = this.updateQueryColors(queries, baseColor, startAlpha, endAlpha);
+
+    // assign color
 
     this.setState({ queries });
 
@@ -408,13 +499,43 @@ class TimelineComponent extends Component {
   };
 
   render() {
-    const { queries, cellColors } = this.state;
+    const { queries, baseColor, startAlpha, endAlpha, cellColors } = this.state;
 
     return (
       <React.Fragment>
         {' '}
         <Divider light />{' '}
-        <BaseComponent shouldOpenOnMount={true} headerName={'Timeline'}>
+        <BaseComponent
+          shouldOpenOnMount={true}
+          headerName={'Timeline'}
+          headerNameClicked={this.handleColorAdjustmentIsOpenClicked}
+        >
+          <Collapse isOpened={this.state.colorAdjustmentIsOpen}>
+            <SliderPicker
+              color={baseColor}
+              onChange={this.handleBaseColorChange}
+              onChangeComplete={this.handleBaseColorChangeComplete}
+            />
+            <br />
+            Start alpha val: {this.state.startAlpha}
+            <br />
+            End alpha val: {this.state.endAlpha}
+            <br />
+            <Range
+              min={0}
+              max={100}
+              value={[startAlpha * 100, endAlpha * 100]}
+              onChange={([startAlpha, endAlpha]) =>
+                this.setState({
+                  startAlpha: startAlpha / 100,
+                  endAlpha: endAlpha / 100
+                })
+              }
+              onAfterChange={this.handleStartEndAlphaChangeComplete}
+              tipFormatter={value => `${value}%`}
+            />
+            <br />
+          </Collapse>
           <div className={styles.TimelineContainer}>
             {queries.map((query, idx) => {
               return (
@@ -427,7 +548,6 @@ class TimelineComponent extends Component {
               );
             })}
           </div>
-          <button onClick={this.regenColorPalette}>regen colors</button>
         </BaseComponent>
       </React.Fragment>
     );

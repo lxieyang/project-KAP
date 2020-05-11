@@ -685,7 +685,7 @@ class ColumnHeaderCell extends Component {
               : this.props.isInThoroughnessView &&
                 Object.keys(this.props.cellColors).length > 0 &&
                 this.props.cellColors[cell.id]
-              ? colorAlpha(this.props.cellColors[cell.id], 0.15)
+              ? this.props.cellColors[cell.id]
               : null
         }}
       >

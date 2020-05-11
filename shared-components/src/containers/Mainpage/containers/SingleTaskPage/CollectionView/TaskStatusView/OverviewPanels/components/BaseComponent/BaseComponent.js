@@ -28,7 +28,16 @@ class BaseComponent extends Component {
           className={styles.BaseComponentHeader}
           onClick={this.handleSwitchCollapsedStatus}
         >
-          {headerName}
+          <div
+            onClick={e => {
+              if (this.props.headerNameClicked) {
+                e.stopPropagation();
+                this.props.headerNameClicked();
+              }
+            }}
+          >
+            {headerName}
+          </div>
           <div style={{ flex: 1 }} />
           {isOpen ? <BsFillEyeFill /> : <BsFillEyeSlashFill />}
         </div>

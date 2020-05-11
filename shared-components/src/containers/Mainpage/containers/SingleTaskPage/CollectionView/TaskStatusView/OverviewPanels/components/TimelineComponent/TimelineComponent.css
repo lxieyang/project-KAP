@@ -59,6 +59,13 @@
   color: #333;
 }
 
+.QueryPagesStatsContainer {
+  margin-right: 4px;
+  flex-shrink: 0;
+  font-size: 10px;
+  color: #666;
+}
+
 .QueryMetaData {
   flex-shrink: 0;
   margin-left: 4px;
