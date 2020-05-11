@@ -352,18 +352,27 @@ class PieceItem extends Component {
       'https://us-central1-kap-project-nsh-2504.cloudfunctions.net/getGoogleAutoSuggests',
       {
         params: {
-          q: pieceName
+          q: pieceName // this.context.addToOtherOptions({
+          //   original: pieceName,
+          //   alternatives: lemmatizedOptionVsList
+          // });
         }
       }
     );
     // console.log(vsList);
-    vsList = vsList.data.list.slice(0, 5);
-    let lemmatizedOptionVsList = vsList.map(item =>
-      lemmatizer(item.toLowerCase())
-    );
+    vsList = vsList.data.list;
+    vsList = vsList.map(item => lemmatizer(item.toLowerCase()));
+    vsList = vsList.filter(item => item.substr(0, 3) !== 'mpy'); // TODO: get rid of this hack
+    vsList = vsList.slice(0, 5);
+    let lemmatizedOptionVsList = vsList;
 
     this.setState({
       optionVsList: lemmatizedOptionVsList
+    });
+
+    this.props.addToOtherOptions({
+      original: pieceName,
+      alternatives: lemmatizedOptionVsList
     });
   };
 
@@ -1223,7 +1232,7 @@ class PieceItem extends Component {
               ) &&
               this.state.optionVsList.length > 0 && (
                 <div className={classesInCSS.SuggestedOptionsContainer}>
-                  <em>Often considered vs:</em>
+                  <em>Commonly searched for alternatives:</em>
                   <div>
                     {this.state.optionVsList.map((item, idx) => {
                       return (

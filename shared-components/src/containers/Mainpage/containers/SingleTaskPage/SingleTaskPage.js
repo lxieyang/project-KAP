@@ -37,6 +37,7 @@ class SingleTaskPage extends Component {
     selectedSnippets: [],
     selectedCells: [],
     cellColors: {},
+    otherOptions: [],
 
     currentTaskView: 'default',
     activeSections: [],
@@ -88,7 +89,7 @@ class SingleTaskPage extends Component {
         : 400
     });
 
-    this.setCurrentTaskView('trustworthiness');
+    this.setCurrentTaskView('thoroughness');
   }
 
   setCurrentWorkspaceId = workspaceId => {
@@ -235,6 +236,26 @@ class SingleTaskPage extends Component {
             cellColors: this.state.cellColors,
             setCellColors: cellColors => {
               this.setState({ cellColors });
+            },
+            otherOptions: this.state.otherOptions,
+            addToOtherOptions: ({ original, alternatives }) => {
+              if (
+                this.state.otherOptions.filter(o => o.original === original)
+                  .length > 0
+              ) {
+                let otherOptions = [...this.state.otherOptions];
+                otherOptions = otherOptions.map(o => {
+                  if (o.original === original) {
+                    o.alternatives = alternatives;
+                  }
+                  return o;
+                });
+                this.setState({ otherOptions });
+              } else {
+                let otherOptions = [...this.state.otherOptions];
+                otherOptions.push({ original, alternatives });
+                this.setState({ otherOptions });
+              }
             },
             currentTaskView: this.state.currentTaskView,
             setCurrentTaskView: this.setCurrentTaskView,

@@ -119,6 +119,7 @@ class TableCell extends Component {
             isInThoroughnessView={
               this.context.currentTaskView === 'thoroughness'
             }
+            addToOtherOptions={this.context.addToOtherOptions}
           />
         );
         break;

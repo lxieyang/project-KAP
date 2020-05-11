@@ -26,6 +26,8 @@ const taskContext = React.createContext({
   removeSelectedCell: () => {},
   setSelectedCells: () => {},
   clearSelectedCells: () => {},
+  otherOptions: [],
+  addToOtherOptions: () => {},
   currentTaskView: 'default', // 'default', 'context', 'trustworthiness', 'thoroughness',
   setCurrentTaskView: () => {},
   activeSections: [],

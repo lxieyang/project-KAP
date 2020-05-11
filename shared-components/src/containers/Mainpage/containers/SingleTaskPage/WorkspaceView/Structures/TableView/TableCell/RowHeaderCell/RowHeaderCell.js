@@ -826,6 +826,7 @@ class RowHeaderCell extends Component {
                         isInContextView={isInContextView}
                         isInThoroughnessView={isInThoroughnessView}
                         activeSections={this.props.activeSections}
+                        addToOtherOptions={this.props.addToOtherOptions}
                       />
                     </div>
                   </ContextMenuTrigger>
