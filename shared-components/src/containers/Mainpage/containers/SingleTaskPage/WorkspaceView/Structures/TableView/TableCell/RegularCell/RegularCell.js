@@ -297,6 +297,8 @@ class RegularCell extends Component {
     let {
       classes,
       cell,
+      rowIndex,
+      columnIndex,
       pieces,
       editAccess,
       commentAccess,
@@ -308,6 +310,8 @@ class RegularCell extends Component {
       isInTrustworthinessView,
       isInThoroughnessView
     } = this.props;
+    console.log(rowIndex, columnIndex);
+
     const { anchorEl, ratingAnchorEl } = this.state;
     const open = Boolean(anchorEl);
     const addRatingOpen = Boolean(ratingAnchorEl);
@@ -670,7 +674,11 @@ class RegularCell extends Component {
 
     return connectDropTarget(
       <td
-        className={styles.RegularCell}
+        className={[
+          styles.RegularCell,
+          rowIndex === 1 ? styles.FirstRegularRow : null,
+          columnIndex === 1 ? styles.FirstRegularColumn : null
+        ].join(' ')}
         style={{
           backgroundColor:
             this.props.columnIndex === this.props.columnToDelete

@@ -1,6 +1,17 @@
 .RegularCell {
   position: relative;
   transition: all 0.15s ease-in;
+  box-sizing: border-box !important;
+}
+
+.FirstRegularRow {
+  border-top-width: 3px !important;
+  border-top-color: #aaa !important;
+}
+
+.FirstRegularColumn {
+  border-left-width: 3px !important;
+  border-left-color: #aaa !important;
 }
 
 .HoverToReveal {
