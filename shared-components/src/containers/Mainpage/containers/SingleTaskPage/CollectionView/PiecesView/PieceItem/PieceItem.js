@@ -1129,7 +1129,7 @@ class PieceItem extends Component {
                             <label
                               htmlFor={`${piece.id}-show-captured-snippet`}
                             >
-                              HTML content
+                              snippet
                             </label>
                             &nbsp;
                             {context_object && (
@@ -1144,7 +1144,7 @@ class PieceItem extends Component {
                                 <label
                                   htmlFor={`${piece.id}-show-snippet-context`}
                                 >
-                                  Context
+                                  surroundings
                                 </label>
                               </React.Fragment>
                             )}
