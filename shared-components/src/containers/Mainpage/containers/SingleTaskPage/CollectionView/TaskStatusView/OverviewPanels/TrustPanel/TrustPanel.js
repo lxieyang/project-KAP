@@ -36,27 +36,90 @@ import axios from 'axios';
 import * as FirestoreManager from '../../../../../../../../firebase/firestore_wrapper';
 
 import moment from 'moment';
-import { GET_FAVICON_URL_PREFIX } from '../../../../../../../../shared/constants';
+import {
+  GET_FAVICON_URL_PREFIX,
+  credibleDomainsInitial
+} from '../../../../../../../../shared/constants';
 
 import TaskContext from '../../../../../../../../shared/task-context';
+
+import Popover from 'react-tiny-popover';
 
 import Section from '../components/Section/Section';
 import Entry from '../components/Section/Entry/Entry';
 import SourcesComponent from '../components/SourcesComponent/SourcesComponent';
 import SnippetsComponent from '../components/SnippetsComponent/SnippetsComponent';
+import Divider from '@material-ui/core/Divider';
 
 class SourcesSection extends Component {
   static contextType = TaskContext;
   state = {
     domains: [],
+    notCredibleDomains: [],
     pieces: [],
     pages: [],
+    credibleDomains: [],
+
+    showCredibleDomains: false,
+    newCredibleDomainInput: '',
 
     sourceDiversityStatus: 'neutral',
     sourceCredibilityStatus: 'neutral'
   };
 
+  openCredibleSourcesPopover = () => {
+    this.setState({ showCredibleDomains: true });
+  };
+
+  removeCredibleDomainItem = (e, item) => {
+    e.stopPropagation();
+    let credibleDomains = [...this.state.credibleDomains];
+    credibleDomains = credibleDomains.filter(d => d !== item);
+    localStorage.setItem('credibleDomains', JSON.stringify(credibleDomains));
+    this.setState({ credibleDomains }, () => {
+      this.updateData();
+    });
+  };
+
+  addCredibleDomainItem = () => {
+    let item = this.state.newCredibleDomainInput.trim();
+    try {
+      if (!item.startsWith('http')) {
+        item = 'http://' + item;
+      }
+      let newItem = new URL(item).hostname;
+
+      let credibleDomains = [...this.state.credibleDomains];
+      if (credibleDomains.filter(d => d === newItem).length === 0) {
+        credibleDomains.push(newItem);
+        localStorage.setItem(
+          'credibleDomains',
+          JSON.stringify(credibleDomains)
+        );
+        this.setState({ credibleDomains, newCredibleDomainInput: '' }, () => {
+          this.updateData();
+        });
+      } else {
+        this.setState({ newCredibleDomainInput: '' });
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   componentDidMount() {
+    localStorage.removeItem('credibleDomains');
+    let credibleDomains = localStorage.getItem('credibleDomains');
+
+    if (!credibleDomains) {
+      credibleDomains = credibleDomainsInitial;
+      localStorage.setItem('credibleDomains', JSON.stringify(credibleDomains));
+    } else {
+      credibleDomains = JSON.parse(credibleDomains);
+    }
+
+    this.setState({ credibleDomains });
+
     this.updateData();
   }
 
@@ -72,6 +135,7 @@ class SourcesSection extends Component {
 
   updateData() {
     let { pieces, pages } = this.props;
+    const { credibleDomains } = this.state;
     // console.log(queries);
 
     const displayPieces = pieces.filter(
@@ -144,7 +208,25 @@ class SourcesSection extends Component {
     }
 
     // TODO: source credibility status checker
-    this.setState({ sourceCredibilityStatus: 'good' });
+    domains = domains.map(d => {
+      if (
+        credibleDomains.includes(d.domain) ||
+        credibleDomains.some(
+          item => item.includes(d.domain) || d.domain.includes(item)
+        )
+      ) {
+        d.credible = true;
+      } else {
+        d.credible = false;
+      }
+      return d;
+    });
+    let notCredibleDomains = domains.filter(d => !d.credible);
+    if (notCredibleDomains.length === 0) {
+      this.setState({ notCredibleDomains, sourceCredibilityStatus: 'good' });
+    } else {
+      this.setState({ notCredibleDomains, sourceCredibilityStatus: 'bad' });
+    }
   }
 
   render() {
@@ -185,23 +267,120 @@ class SourcesSection extends Component {
           status={this.state.sourceCredibilityStatus}
           content={
             <div style={{ verticalAlign: 'middle' }}>
-              <strong>Souce credibility </strong> - All domains (
-              {domains.map((domain, idx) => {
-                return (
-                  <img
-                    title={domain.domain}
-                    style={{ width: 14, height: 13, margin: '0px 3px' }}
-                    src={domain.favicon}
-                    alt=""
-                    key={idx}
-                  />
-                );
-              })}
-              ) are credibile{' '}
-              <a style={{ textDecoration: 'underline', cursor: 'pointer' }}>
-                [whitelist of credible domains]
-              </a>
-              .
+              <strong>Credibility </strong> -{' '}
+              {this.state.notCredibleDomains.length === 0 && (
+                <React.Fragment>
+                  All domains (
+                  {domains.map((domain, idx) => {
+                    return (
+                      <img
+                        title={domain.domain}
+                        style={{ width: 14, height: 13, margin: '0px 3px' }}
+                        src={domain.favicon}
+                        alt=""
+                        key={idx}
+                      />
+                    );
+                  })}
+                  ) are credibile.
+                </React.Fragment>
+              )}
+              {this.state.notCredibleDomains.length > 0 && (
+                <React.Fragment>
+                  {this.state.notCredibleDomains.length} of the domains{' '}
+                  {this.state.notCredibleDomains.length === 1 ? 'is' : 'are'}{' '}
+                  not on the trusted whitelist:
+                  {this.state.notCredibleDomains.map((domain, idx) => {
+                    return (
+                      <div
+                        key={idx}
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          fontStyle: 'italic'
+                        }}
+                      >
+                        -{' '}
+                        <img
+                          title={domain.domain}
+                          style={{ width: 14, height: 13, margin: '0px 3px' }}
+                          src={domain.favicon}
+                          alt=""
+                        />
+                        {domain.domain}
+                        <div style={{ flex: 1 }} />
+                        <div
+                          className={styles.AddToTrustedButton}
+                          onClick={e => {
+                            this.setState(
+                              { newCredibleDomainInput: domain.domain },
+                              () => {
+                                this.addCredibleDomainItem();
+                              }
+                            );
+                          }}
+                        >
+                          {' '}
+                          add as trusted{' '}
+                        </div>
+                      </div>
+                    );
+                  })}
+                  <br />
+                </React.Fragment>
+              )}
+              <Popover
+                isOpen={this.state.showCredibleDomains}
+                position={'bottom'} // preferred position
+                onClickOutside={() =>
+                  this.setState({ showCredibleDomains: false })
+                }
+                containerClassName={styles.PopoverContainer}
+                content={
+                  <div className={styles.PopoverContentContainer}>
+                    {this.state.credibleDomains.map((item, idx) => {
+                      return (
+                        <div key={idx} className={styles.CredibleDomainItem}>
+                          <img
+                            alt={item}
+                            src={`https://plus.google.com/_/favicon?domain_url=${item}`}
+                          />
+                          {item.replace('www.', '')}
+                          <span style={{ flex: 1 }} />
+                          <div
+                            className={styles.RemoveCredibleDomainItem}
+                            onClick={e =>
+                              this.removeCredibleDomainItem(e, item)
+                            }
+                          >
+                            &times;
+                          </div>
+                        </div>
+                      );
+                    })}
+                    <Divider light />
+                    <input
+                      value={this.state.newCredibleDomainInput}
+                      onChange={e =>
+                        this.setState({
+                          newCredibleDomainInput: e.target.value
+                        })
+                      }
+                    />
+                    <button onClick={this.addCredibleDomainItem}>Add</button>
+                  </div>
+                }
+              >
+                <div>
+                  {' '}
+                  <a
+                    style={{ textDecoration: 'underline', cursor: 'pointer' }}
+                    onClick={this.openCredibleSourcesPopover}
+                  >
+                    [whitelist of popular credible domains]
+                  </a>
+                </div>
+              </Popover>
             </div>
           }
         />
@@ -210,7 +389,7 @@ class SourcesSection extends Component {
           status={this.state.sourceDiversityStatus}
           content={
             <React.Fragment>
-              <strong>Source diversity </strong> -{' '}
+              <strong>Diversity </strong> -{' '}
               {domains.length > 1
                 ? `Information are from ${domains.length} different domains,`
                 : `Information are all from a single domain,`}

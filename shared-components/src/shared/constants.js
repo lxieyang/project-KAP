@@ -25,3 +25,10 @@ export const SNIPPET_TYPE = {
   PIECE_GROUP: 4,
   COPIED_PIECE: 5
 };
+
+export const credibleDomainsInitial = [
+  'stackoverflow.com',
+  'developer.mozilla.org',
+  'www.w3schools.in',
+  'www.geeksforgeeks.org'
+];

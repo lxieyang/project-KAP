@@ -311,3 +311,48 @@
 .InlineHoverObserver {
   display: inline;
 }
+
+.PopoverContainer {
+  background-color: #fff;
+  border: 1px solid gray;
+  border-radius: 4px;
+  box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.2);
+}
+
+.PopoverContentContainer {
+  background-color: #fff;
+  box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.2);
+  padding: 3px;
+  max-height: 200px;
+  font-size: 10px;
+  overflow: auto;
+}
+
+.CredibleDomainItem {
+  margin: 4px 2px;
+  display: flex;
+  align-items: center;
+}
+
+.CredibleDomainItem img {
+  width: 12px;
+  height: 12px;
+  margin-right: 3px;
+}
+
+.RemoveCredibleDomainItem {
+  flex-shrink: 0;
+  margin-left: 4px;
+  cursor: pointer;
+}
+
+.AddToTrustedButton {
+  margin-right: 5px;
+  font-size: 9px;
+  cursor: pointer;
+  color: #666;
+}
+
+.AddToTrustedButton:hover {
+  text-decoration: underline;
+}
