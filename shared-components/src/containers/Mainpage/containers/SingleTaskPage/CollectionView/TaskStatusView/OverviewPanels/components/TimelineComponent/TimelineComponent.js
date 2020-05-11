@@ -275,7 +275,7 @@ class TimelineComponent extends Component {
     cellColors: {},
     progressCheckerIdx: -1,
 
-    colorAdjustmentIsOpen: true,
+    colorAdjustmentIsOpen: false,
     baseColor: '#fff',
     startAlpha: startAlphaInitial,
     endAlpha: endAlphaInitial

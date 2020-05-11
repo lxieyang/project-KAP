@@ -1,18 +1,41 @@
+.SectionWrapper {
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+}
+
+.SectionActiveStatusContainer {
+  width: 20px;
+  flex-shrink: 0;
+}
+
 .Section {
-  margin-bottom: 9px;
+  flex: 1;
   border: 1px solid lightgray;
   border-radius: 3px;
+  box-sizing: border-box;
 
   /* transition: all 0.05s ease-in; */
+}
+
+.SectionActive {
+  opacity: 1;
+  /* box-shadow: 0 0 5px 5px lightgray; */
+  /* border-width: 2px;
+  border-color: #333; */
+}
+
+.SectionInactive {
+  opacity: 0.4;
 }
 
 .Section.SectionOpen {
   border-top-width: 5px;
 }
 
-.Section.SectionClosed {
+/* .Section.SectionClosed {
   border-right-width: 5px;
-}
+} */
 
 .SectionHeader {
   padding: 6px 6px;
@@ -23,7 +46,13 @@
   align-items: center;
   font-family: arial, sans-serif !important;
 
+  transition: all 0.1s ease-in;
+
   /* position: relative; */
+}
+
+.SectionHeader:hover {
+  background-color: #e3e3e3;
 }
 
 .Section.SectionOpen .SectionHeader {

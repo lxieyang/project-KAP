@@ -151,6 +151,7 @@ class SourcesSection extends Component {
 
     return (
       <Section
+        active={true}
         headerName={'Domains'}
         headerContent={
           <React.Fragment>
@@ -444,6 +445,7 @@ class SnippetsSection extends Component {
     // const { pieces } = this.state;
     return (
       <Section
+        active={false}
         headerName={'Tables and Snippets'}
         // headerContent={<React.Fragment>snippets stats</React.Fragment>}
         numOfWarnings={[
@@ -602,6 +604,7 @@ class AuthorSection extends Component {
   render() {
     return (
       <Section
+        active={false}
         headerName={'Table Author'}
         headerContent={
           this.props.authorObj && (
