@@ -184,7 +184,7 @@ class SourcesSection extends Component {
           status={this.state.sourceCredibilityStatus}
           content={
             <div style={{ verticalAlign: 'middle' }}>
-              <strong>Souce credibility </strong> - All sources (
+              <strong>Souce credibility </strong> - All domains (
               {domains.map((domain, idx) => {
                 return (
                   <img
@@ -196,7 +196,11 @@ class SourcesSection extends Component {
                   />
                 );
               })}
-              ) are credibile.
+              ) are credibile{' '}
+              <a style={{ textDecoration: 'underline', cursor: 'pointer' }}>
+                [whitelist of credible domains]
+              </a>
+              .
             </div>
           }
         />
@@ -207,8 +211,8 @@ class SourcesSection extends Component {
             <React.Fragment>
               <strong>Source diversity </strong> -{' '}
               {domains.length > 1
-                ? `Information are from ${domains.length} different sources,`
-                : `Information are all from a single source,`}
+                ? `Information are from ${domains.length} different domains,`
+                : `Information are all from a single domain,`}
               {domains.length > 0 && (
                 <React.Fragment>
                   {' '}
