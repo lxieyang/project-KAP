@@ -884,7 +884,7 @@ class TrustPanel extends Component {
       });
       axios.get(`https://api.github.com/users/${login}/repos`).then(result => {
         const { data } = result;
-        this.setState({ authorGithubRepos: [] });
+        this.setState({ authorGithubRepos: data });
         let languages = data
           .map(repo => repo.language)
           .filter(item => item !== null);
@@ -897,6 +897,10 @@ class TrustPanel extends Component {
 
   render() {
     let { pieces, pages, cells } = this.props;
+
+    const sortedRepos = reverse(
+      sortBy(this.state.authorGithubRepos, ['stargazers_count'])
+    );
 
     return (
       <div className={styles.PanelContainer}>
@@ -1021,26 +1025,51 @@ class TrustPanel extends Component {
                       <p>{this.state.authorGithubUserObject.bio}</p>
                     )}
 
+                    {sortedRepos.length > 0 &&
+                      sortedRepos[0].stargazers_count > 0 && (
+                        <p
+                          style={{
+                            color: '#666',
+                            fontSize: 12
+                          }}
+                        >
+                          The most popular repo{' '}
+                          <a
+                            href={sortedRepos[0].html_url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            style={{ textDecoration: 'underline' }}
+                          >
+                            {sortedRepos[0].name}{' '}
+                          </a>{' '}
+                          has {sortedRepos[0].stargazers_count} &#x2605; and
+                          uses {sortedRepos[0].language}.
+                        </p>
+                      )}
+
                     {this.state.authorGithubLanguages.length > 0 && (
                       <p
                         style={{
                           display: 'flex',
                           alignItems: 'center',
+                          flexWrap: 'wrap',
                           color: '#666',
                           fontSize: 12
                         }}
                       >
-                        <RiCodeSSlashLine style={{ fontSize: 15 }} /> &nbsp;
+                        <RiCodeSSlashLine style={{ fontSize: 15 }} /> &nbsp; The
+                        author uses &nbsp;
                         {this.state.authorGithubLanguages.map((l, idx) => {
                           let isLast =
                             idx === this.state.authorGithubLanguages.length - 1;
                           return (
                             <span key={idx}>
                               {l.value}
-                              {isLast ? '.' : ','}&nbsp;
+                              {isLast ? '' : ','}&nbsp;
                             </span>
                           );
-                        })}
+                        })}{' '}
+                        the most often.
                       </p>
                     )}
 
