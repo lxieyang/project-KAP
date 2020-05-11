@@ -192,6 +192,21 @@ class CodeSection extends Component {
   }
 }
 
+class OtherOptionsSection extends Component {
+  state = {};
+
+  render() {
+    return (
+      <Section
+        headerName={SECTION_TYPES.section_other_options}
+        headerContent={''}
+      >
+        code
+      </Section>
+    );
+  }
+}
+
 class CompletenessPanel extends Component {
   state = {
     googleSuggestedOptions: []
@@ -338,6 +353,8 @@ class CompletenessPanel extends Component {
         />
 
         <CodeSection />
+
+        <OtherOptionsSection />
 
         {/* <div className={styles.Section}>
           <div className={styles.SectionHeader}>

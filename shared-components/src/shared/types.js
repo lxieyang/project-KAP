@@ -40,6 +40,7 @@ export const SECTION_TYPES = {
   section_author: 'Table Author',
   section_effort: 'Research and Exploration',
   section_code: 'Code',
+  section_other_options: 'Commonly Searched for Alternatives',
   section_queries: 'Search Queries',
   section_versions: 'Versions and Environments',
   section_goals: 'Goals and Constraints'

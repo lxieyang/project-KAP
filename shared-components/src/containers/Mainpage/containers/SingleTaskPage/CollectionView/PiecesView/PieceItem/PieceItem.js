@@ -1217,20 +1217,24 @@ class PieceItem extends Component {
               </div>
             </Collapse>
 
-            {isInThoroughnessView && this.state.optionVsList.length > 0 && (
-              <div className={classesInCSS.SuggestedOptionsContainer}>
-                <em>Often considered vs:</em>
-                <div>
-                  {this.state.optionVsList.map((item, idx) => {
-                    return (
-                      <div className={classesInCSS.ListItem} key={idx}>
-                        {item}
-                      </div>
-                    );
-                  })}
+            {isInThoroughnessView &&
+              this.props.activeSections.includes(
+                SECTION_TYPES.section_other_options
+              ) &&
+              this.state.optionVsList.length > 0 && (
+                <div className={classesInCSS.SuggestedOptionsContainer}>
+                  <em>Often considered vs:</em>
+                  <div>
+                    {this.state.optionVsList.map((item, idx) => {
+                      return (
+                        <div className={classesInCSS.ListItem} key={idx}>
+                          {item}
+                        </div>
+                      );
+                    })}
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
 
             {/* <div>
               <Comments
