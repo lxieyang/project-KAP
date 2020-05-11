@@ -506,7 +506,7 @@ class TimelineComponent extends Component {
         {' '}
         <Divider light />{' '}
         <BaseComponent
-          shouldOpenOnMount={true}
+          shouldOpenOnMount={this.props.shouldOpenOnMount}
           headerName={'Timeline'}
           headerNameClicked={this.handleColorAdjustmentIsOpenClicked}
         >

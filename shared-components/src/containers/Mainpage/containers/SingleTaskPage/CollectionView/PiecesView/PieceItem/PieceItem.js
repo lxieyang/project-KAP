@@ -24,7 +24,7 @@ import Looks from 'mdi-material-ui/Looks';
 import Tooltip from '@material-ui/core/Tooltip';
 import Switch from '@material-ui/core/Switch';
 
-import { FaArrowAltCircleUp, FaCheck } from 'react-icons/fa';
+import { FaArrowAltCircleUp, FaCheck, FaCode } from 'react-icons/fa';
 import { IoMdTime } from 'react-icons/io';
 import { AiFillFire } from 'react-icons/ai';
 import { GiSandsOfTime } from 'react-icons/gi';
@@ -837,6 +837,26 @@ class PieceItem extends Component {
                                   updated{' '}
                                   {moment(this.props.updateDate).fromNow()}
                                   {/* {this.props.updateDate.toLocaleDateString()} */}
+                                </span>
+                              </div>
+                            )}
+                          {this.props.codeSnippets &&
+                            this.props.codeSnippets.length > 0 &&
+                            this.props.activeSections.includes(
+                              SECTION_TYPES.section_code
+                            ) && (
+                              <div>
+                                <span
+                                  className={classesInCSS.TagSpan}
+                                  title={`Contains code snippets`}
+                                >
+                                  <FaCode
+                                    className={[
+                                      classesInCSS.Icon,
+                                      classesInCSS.CodeIcon
+                                    ].join(' ')}
+                                  />{' '}
+                                  contains code examples
                                 </span>
                               </div>
                             )}

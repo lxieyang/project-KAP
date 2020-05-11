@@ -821,6 +821,7 @@ class RowHeaderCell extends Component {
                         isRecent={isRecent}
                         answerAccepted={answerAccepted}
                         answerURLOnSO={answerURLOnSO}
+                        codeSnippets={codeSnippets}
                         honestSignals={honestSignals}
                         isInDefaultView={isInDefaultView}
                         isInContextView={isInContextView}

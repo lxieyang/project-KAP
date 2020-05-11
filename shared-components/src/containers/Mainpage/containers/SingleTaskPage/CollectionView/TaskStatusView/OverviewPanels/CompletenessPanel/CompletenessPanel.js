@@ -126,7 +126,7 @@ class EffortSection extends Component {
         headerContent={''}
         footer={
           <TimelineComponent
-            shouldOpenOnMount={true}
+            shouldOpenOnMount={false}
             queries={queries}
             pieces={pieces}
             pages={pages}
@@ -182,13 +182,70 @@ class EffortSection extends Component {
   }
 }
 
+const getHTML = htmls => {
+  let htmlString = ``;
+  if (htmls !== undefined) {
+    for (let html of htmls) {
+      htmlString += html;
+    }
+  }
+  return { __html: htmlString };
+};
+
 class CodeSection extends Component {
   state = {};
 
   render() {
+    const { pieces } = this.props;
+    const piecesWithCode = pieces
+      .filter(p => p.codeSnippets.length > 0)
+      .map(p => {
+        let codeSnippets = p.codeSnippets.map(item => {
+          return { content: item, pieceId: p.id };
+        });
+        return { ...p, codeSnippets };
+      });
+    console.log(piecesWithCode);
+
+    const codeSnippets = piecesWithCode
+      .map(p => p.codeSnippets)
+      .reduce((a, b) => a.concat(b), []);
+    console.log(codeSnippets);
+
     return (
       <Section headerName={SECTION_TYPES.section_code} headerContent={''}>
-        code
+        <div className={styles.CodeContainer}>
+          {codeSnippets.length > 0 && (
+            <React.Fragment>
+              <div>
+                The author <strong>copied and used</strong> the following code:
+              </div>
+              <div
+                className={styles.CodeHTML}
+                dangerouslySetInnerHTML={getHTML(codeSnippets[0].content.html)}
+              />
+              {codeSnippets.length > 1 && (
+                <React.Fragment>
+                  <div>Other code examples from snippets:</div>
+                  {codeSnippets.slice(1).map((code, idx) => {
+                    return (
+                      <div
+                        key={idx}
+                        className={styles.CodeHTML}
+                        dangerouslySetInnerHTML={getHTML(code.content.html)}
+                      />
+                    );
+                  })}
+                </React.Fragment>
+              )}
+            </React.Fragment>
+          )}
+          {codeSnippets.length === 0 && (
+            <div style={{ color: '#666', fontStyle: 'italic' }}>
+              No code examples detected
+            </div>
+          )}
+        </div>
       </Section>
     );
   }
@@ -385,7 +442,7 @@ class CompletenessPanel extends Component {
           cells={cells}
         />
 
-        <CodeSection />
+        <CodeSection pieces={pieces} cells={cells} />
 
         <OtherOptionsSection />
       </div>

@@ -982,7 +982,8 @@ class RegularCell extends Component {
                                               styles.Icon,
                                               styles.CodeIcon
                                             ].join(' ')}
-                                          />
+                                          />{' '}
+                                          contains code examples
                                         </span>
                                       </div>
                                     )}
