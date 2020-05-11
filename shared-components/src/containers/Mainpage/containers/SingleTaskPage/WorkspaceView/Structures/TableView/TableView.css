@@ -1,6 +1,7 @@
 .TableViewContainer {
   box-sizing: border-box;
   margin: 10px;
+  margin-left: 0px;
 }
 
 .TableNameContainer {

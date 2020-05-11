@@ -310,7 +310,6 @@ class RegularCell extends Component {
       isInTrustworthinessView,
       isInThoroughnessView
     } = this.props;
-    console.log(rowIndex, columnIndex);
 
     const { anchorEl, ratingAnchorEl } = this.state;
     const open = Boolean(anchorEl);
