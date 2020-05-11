@@ -28,8 +28,8 @@ const taskContext = React.createContext({
   clearSelectedCells: () => {},
   currentTaskView: 'default', // 'default', 'context', 'trustworthiness', 'thoroughness',
   setCurrentTaskView: () => {},
-  activeSection: '',
-  setActiveSection: () => {},
+  activeSections: [],
+  setActiveSections: () => {},
   honestSignalsInTable: {
     sourceDomain: true,
     sourcePage: false,

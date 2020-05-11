@@ -13,7 +13,8 @@ import countArrayValues from 'count-array-values';
 
 import {
   PIECE_TYPES,
-  RATING_TYPES
+  RATING_TYPES,
+  SECTION_TYPES
 } from '../../../../../../../../shared/types';
 import {
   PIECE_COLOR,
@@ -152,7 +153,7 @@ class SourcesSection extends Component {
     return (
       <Section
         active={true}
-        headerName={'Domains'}
+        headerName={SECTION_TYPES.section_sources}
         headerContent={
           <React.Fragment>
             {domains.map((domain, idx) => {
@@ -450,7 +451,7 @@ class SnippetsSection extends Component {
     return (
       <Section
         active={false}
-        headerName={'Tables and Snippets'}
+        headerName={SECTION_TYPES.section_snippets}
         // headerContent={<React.Fragment>snippets stats</React.Fragment>}
         numOfWarnings={[
           this.state.evidencePopularityStatus === 'bad' ? 1 : 0,
@@ -609,7 +610,7 @@ class AuthorSection extends Component {
     return (
       <Section
         active={false}
-        headerName={'Table Author'}
+        headerName={SECTION_TYPES.section_author}
         headerContent={
           this.props.authorObj && (
             <div style={{ fontSize: 13, fontWeight: 300 }}>

@@ -14,7 +14,10 @@ import {
 } from 'react-icons/io';
 import { FaFlagCheckered, FaListUl, FaBookmark } from 'react-icons/fa';
 
-import { PIECE_TYPES } from '../../../../../../../../shared/types';
+import {
+  PIECE_TYPES,
+  SECTION_TYPES
+} from '../../../../../../../../shared/types';
 import { PIECE_COLOR } from '../../../../../../../../shared/theme';
 
 import InfoTooltip from '../components/InfoTooltip/InfoTooltip';
@@ -29,7 +32,7 @@ import Entry from '../components/Section/Entry/Entry';
 class QuerySection extends Component {
   render() {
     return (
-      <Section headerName={'Search Queries'} headerContent={''}>
+      <Section headerName={SECTION_TYPES.section_queries} headerContent={''}>
         queries
       </Section>
     );
@@ -39,7 +42,7 @@ class QuerySection extends Component {
 class VersionSection extends Component {
   render() {
     return (
-      <Section headerName={'Versions and Environments'} headerContent={''}>
+      <Section headerName={SECTION_TYPES.section_versions} headerContent={''}>
         versions
       </Section>
     );
@@ -49,7 +52,7 @@ class VersionSection extends Component {
 class GoalSection extends Component {
   render() {
     return (
-      <Section headerName={'Goals and Constraints'} headerContent={''}>
+      <Section headerName={SECTION_TYPES.section_goals} headerContent={''}>
         goals and constraints
       </Section>
     );

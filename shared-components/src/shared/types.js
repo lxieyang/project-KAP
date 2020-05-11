@@ -33,3 +33,14 @@ export const TIMESTAMP_TYPES = {
   annotation: 1,
   inSidebar: 2
 };
+
+export const SECTION_TYPES = {
+  section_sources: 'Domains',
+  section_snippets: 'Tables and Snippets',
+  section_author: 'Table Author',
+  section_effort: 'Research and Exploration',
+  section_code: 'Code',
+  section_queries: 'Search Queries',
+  section_versions: 'Versions and Environments',
+  section_goals: 'Goals and Constraints'
+};

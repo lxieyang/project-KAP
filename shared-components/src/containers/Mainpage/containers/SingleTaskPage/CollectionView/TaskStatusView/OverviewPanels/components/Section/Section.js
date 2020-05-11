@@ -24,17 +24,21 @@ class Section extends Component {
   };
 
   handleSectionActiveClicked = e => {
-    if (this.context.activeSection === this.props.headerName) {
+    if (this.context.activeSections.includes(this.props.headerName)) {
       // cancel active status
-      this.context.setActiveSection(null);
+      let secs = this.context.activeSections.filter(
+        s => s !== this.props.headerName
+      );
+      this.context.setActiveSections(secs);
     } else {
-      this.context.setActiveSection(this.props.headerName);
+      let secs = [...this.context.activeSections];
+      secs.push(this.props.headerName);
+      this.context.setActiveSections(secs);
     }
   };
 
   render() {
     const {
-      active,
       headerName,
       headerContent,
       children,
@@ -42,7 +46,7 @@ class Section extends Component {
       numOfWarnings
     } = this.props;
     const { isOpen } = this.state;
-    const { activeSection } = this.context;
+    const { activeSections } = this.context;
 
     let statusString = '';
     let gradeColor = '#d3d3d3';
@@ -63,11 +67,10 @@ class Section extends Component {
         <div
           className={[
             styles.Section,
-
-            activeSection !== null && activeSection === headerName
+            activeSections.length > 0 && activeSections.includes(headerName)
               ? styles.SectionActive
               : null,
-            activeSection !== null && activeSection !== headerName
+            activeSections.length > 0 && !activeSections.includes(headerName)
               ? styles.SectionInactive
               : null,
             isOpen ? styles.SectionOpen : styles.SectionClosed

@@ -15,7 +15,10 @@ import { FaFlagCheckered, FaListUl, FaBookmark } from 'react-icons/fa';
 import { MdPinDrop } from 'react-icons/md';
 import { TiUser } from 'react-icons/ti';
 
-import { PIECE_TYPES } from '../../../../../../../../shared/types';
+import {
+  PIECE_TYPES,
+  SECTION_TYPES
+} from '../../../../../../../../shared/types';
 import { PIECE_COLOR } from '../../../../../../../../shared/theme';
 
 import InfoTooltip from '../components/InfoTooltip/InfoTooltip';
@@ -117,7 +120,7 @@ class EffortSection extends Component {
 
     return (
       <Section
-        headerName={'Research and Exploration'}
+        headerName={SECTION_TYPES.section_effort}
         headerContent={''}
         footer={
           <TimelineComponent
@@ -172,6 +175,18 @@ class EffortSection extends Component {
             </React.Fragment>
           }
         />
+      </Section>
+    );
+  }
+}
+
+class CodeSection extends Component {
+  state = {};
+
+  render() {
+    return (
+      <Section headerName={SECTION_TYPES.section_code} headerContent={''}>
+        code
       </Section>
     );
   }
@@ -321,6 +336,8 @@ class CompletenessPanel extends Component {
           queries={queries}
           cells={cells}
         />
+
+        <CodeSection />
 
         {/* <div className={styles.Section}>
           <div className={styles.SectionHeader}>

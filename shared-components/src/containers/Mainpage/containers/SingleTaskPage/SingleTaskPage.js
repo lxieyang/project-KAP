@@ -39,7 +39,7 @@ class SingleTaskPage extends Component {
     cellColors: {},
 
     currentTaskView: 'default',
-    activeSection: null,
+    activeSections: [],
     honestSignalsInTable: {
       sourceDomain: true,
       sourcePage: false,
@@ -238,9 +238,9 @@ class SingleTaskPage extends Component {
             },
             currentTaskView: this.state.currentTaskView,
             setCurrentTaskView: this.setCurrentTaskView,
-            activeSection: this.state.activeSection,
-            setActiveSection: sectionName => {
-              this.setState({ activeSection: sectionName });
+            activeSections: this.state.activeSections,
+            setActiveSections: sectionNames => {
+              this.setState({ activeSections: sectionNames });
             },
             honestSignalsInTable: this.state.honestSignalsInTable
           }}
@@ -252,7 +252,7 @@ class SingleTaskPage extends Component {
                 variant={'outlined'}
                 onClick={() => {
                   this.setCurrentTaskView('default');
-                  this.setState({ activeSection: null });
+                  this.setState({ activeSections: [] });
                 }}
                 size="small"
                 className={[
@@ -268,7 +268,7 @@ class SingleTaskPage extends Component {
                 variant={'outlined'}
                 onClick={() => {
                   this.setCurrentTaskView('context');
-                  this.setState({ activeSection: null });
+                  this.setState({ activeSections: [] });
                 }}
                 size="small"
                 className={[
@@ -285,7 +285,7 @@ class SingleTaskPage extends Component {
                 variant={'outlined'}
                 onClick={() => {
                   this.setCurrentTaskView('trustworthiness');
-                  this.setState({ activeSection: null });
+                  this.setState({ activeSections: [] });
                 }}
                 size="small"
                 className={[
@@ -302,7 +302,7 @@ class SingleTaskPage extends Component {
                 variant={'outlined'}
                 onClick={() => {
                   this.setCurrentTaskView('thoroughness');
-                  this.setState({ activeSection: null });
+                  this.setState({ activeSections: [] });
                 }}
                 size="small"
                 className={[
