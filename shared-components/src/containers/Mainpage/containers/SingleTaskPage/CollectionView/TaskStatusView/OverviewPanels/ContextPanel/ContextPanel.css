@@ -241,3 +241,56 @@
   color: #fff;
   background-color: #ff1e00c7;
 }
+
+/* new stuff */
+.QuerySortByContainer {
+  width: 100%;
+  font-size: 9px;
+  color: #555;
+  line-height: 11px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.SortByOption {
+  margin: 1px 1px;
+  cursor: pointer;
+  padding: 1px 3px;
+}
+
+.SortByOption:hover {
+  color: #333;
+  background-color: #e3e3e3;
+}
+
+.SortByOption.Active {
+  color: #333;
+  background-color: #e3e3e3;
+}
+
+.SearchQueriesContainer {
+}
+
+.QueryItem {
+  display: flex;
+  align-items: center;
+
+  margin: 6px 2px;
+  padding: 1px 4px;
+  /* border-radius: 5px; */
+  /* box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.3); */
+}
+
+.QueryIcon {
+  flex-shrink: 0;
+  margin-right: 4px;
+  font-size: 14px;
+}
+
+.QueryMetadata {
+  flex-shrink: 0;
+  margin-left: 6px;
+  font-size: 9px;
+  color: #666;
+}

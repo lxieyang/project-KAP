@@ -1,9 +1,11 @@
 import React, { Component } from 'react';
 import styles from './ContextPanel.css';
 
+import ReactHoverObserver from 'react-hover-observer';
 import { sortBy, reverse } from 'lodash';
 
 import { AiOutlineSearch } from 'react-icons/ai';
+import { AiFillGoogleCircle as SearchIcon } from 'react-icons/ai';
 import { GiTargeting } from 'react-icons/gi';
 import Avatar from '@material-ui/core/Avatar';
 import {
@@ -13,12 +15,14 @@ import {
   IoMdGlobe
 } from 'react-icons/io';
 import { FaFlagCheckered, FaListUl, FaBookmark } from 'react-icons/fa';
-
+import moment from 'moment';
 import {
   PIECE_TYPES,
   SECTION_TYPES
 } from '../../../../../../../../shared/types';
 import { PIECE_COLOR } from '../../../../../../../../shared/theme';
+
+import TaskContext from '../../../../../../../../shared/task-context';
 
 import InfoTooltip from '../components/InfoTooltip/InfoTooltip';
 
@@ -30,10 +34,182 @@ import Section from '../components/Section/Section';
 import Entry from '../components/Section/Entry/Entry';
 
 class QuerySection extends Component {
+  static contextType = TaskContext;
+  state = {
+    queries: [],
+
+    sortByOption: 'number of snippets' // 'timestamp', 'duration' 'number of snippets'
+  };
+
+  componentDidMount() {
+    this.updateData();
+  }
+
+  componentDidUpdate(prevProps) {
+    if (
+      prevProps.queries !== this.props.queries &&
+      this.props.queries.length > 0
+    ) {
+      this.updateData();
+    }
+  }
+
+  updateData = () => {
+    let { queries, pieces, pages } = this.props;
+
+    pages = pages.map(page => {
+      const piecesInPage = pieces.filter(
+        item => item.references.url === page.url
+      );
+      // .map(item => item.id);
+      page.piecesInPage = piecesInPage;
+      page.piecesNumber = piecesInPage.length;
+      return page;
+    });
+
+    pages = reverse(sortBy(pages, ['piecesNumber']));
+
+    queries = sortBy(
+      queries.map((q, idx) => {
+        return {
+          ...q,
+          creationDate: new Date(q.creationDate).getTime()
+        };
+      }),
+      ['creationDate']
+    );
+
+    for (let i = 0; i < queries.length; i++) {
+      let query = queries[i];
+      let nextQuery = null;
+      if (i !== queries.length - 1) {
+        nextQuery = queries[i + 1];
+      }
+
+      if (nextQuery) {
+        query.pages = pages.filter(
+          p =>
+            p.creationDate >= query.creationDate &&
+            p.creationDate < nextQuery.creationDate
+        );
+      } else {
+        query.pages = pages.filter(p => p.creationDate >= query.creationDate);
+      }
+
+      query.pagesNumber = query.pages.length;
+
+      // TODO: remove this
+      // rectify page duration for older versions
+      query.pages = query.pages.map(p => {
+        const minDuration = p.duration / 1000 / 60;
+        const secDuration = p.duration / 1000;
+
+        if (minDuration > 10) {
+          p.duration = 10 * 60 * 1000;
+        } else if (secDuration < 5) {
+          p.duration = 2 * 60 * 1000;
+        }
+        return p;
+      });
+
+      // calculate query duration
+      query.duration = query.pages
+        .map(p => p.duration)
+        .reduce((a, b) => {
+          return a + b;
+        }, 0);
+
+      // gather pieces in the query
+      query.piecesInQuery = [];
+      query.pages.forEach(p => {
+        let pieceIds = p.piecesInPage.map(piece => piece.id);
+        query.piecesInQuery = query.piecesInQuery.concat(pieceIds);
+      });
+
+      query.piecesNumber = query.piecesInQuery.length;
+    }
+
+    this.setState({ queries });
+  };
+
   render() {
+    let { queries, sortByOption } = this.state;
+
+    if (sortByOption === 'timestamp') {
+      queries = sortBy(queries, ['creationDate']);
+    } else if (sortByOption === 'duration') {
+      queries = reverse(sortBy(queries, ['duration']));
+    } else if (sortByOption === 'number of snippets') {
+      queries = reverse(sortBy(queries, ['piecesNumber']));
+    }
+
     return (
       <Section headerName={SECTION_TYPES.section_queries} headerContent={''}>
-        queries
+        The searches that the author made:
+        <div className={styles.QuerySortByContainer}>
+          <strong>Sort by</strong>:&nbsp;
+          <div
+            className={[
+              styles.SortByOption,
+              sortByOption === 'timestamp' ? styles.Active : null
+            ].join(' ')}
+            onClick={_ => this.setState({ sortByOption: 'timestamp' })}
+          >
+            timestamp
+          </div>
+          <div
+            className={[
+              styles.SortByOption,
+              sortByOption === 'duration' ? styles.Active : null
+            ].join(' ')}
+            onClick={_ => this.setState({ sortByOption: 'duration' })}
+          >
+            duration
+          </div>
+          <div
+            className={[
+              styles.SortByOption,
+              sortByOption === 'number of snippets' ? styles.Active : null
+            ].join(' ')}
+            onClick={_ => this.setState({ sortByOption: 'number of snippets' })}
+          >
+            number of snippets
+          </div>
+        </div>
+        <div className={styles.SearchQueriesContainer}>
+          {queries.map((query, idx) => {
+            return (
+              <ReactHoverObserver
+                key={idx}
+                {...{
+                  onHoverChanged: ({ isHovering }) => {
+                    if (isHovering) {
+                      this.context.setSelectedSnippets(query.piecesInQuery);
+                    } else {
+                      this.context.clearSelectedSnippets();
+                    }
+                  }
+                }}
+              >
+                <div className={styles.QueryItem}>
+                  <SearchIcon className={styles.QueryIcon} /> {query.query}
+                  <div style={{ flex: 1 }} />
+                  <div className={styles.QueryMetadata}>
+                    {/* Timestamp */}
+                    {sortByOption === 'timestamp' &&
+                      moment(query.creationDate).format('h:mma')}
+                    {/* duration */}
+                    {sortByOption === 'duration' &&
+                      moment.duration(query.duration).humanize()}
+                    {/* number of snippets */}
+                    {sortByOption === 'number of snippets' &&
+                      `${query.piecesNumber} snippets`}
+                  </div>
+                </div>
+              </ReactHoverObserver>
+            );
+          })}
+        </div>
       </Section>
     );
   }
@@ -191,7 +367,7 @@ class ContextPanel extends Component {
   };
 
   render() {
-    let { queries, pieces } = this.props;
+    let { queries, pieces, pages } = this.props;
     queries = sortBy(queries, ['creationDate']);
     // console.log(queries);
 
@@ -241,7 +417,7 @@ class ContextPanel extends Component {
     return (
       <div className={styles.PanelContainer}>
         {/* query section */}
-        <QuerySection />
+        <QuerySection queries={queries} pieces={pieces} pages={pages} />
 
         {/* version section */}
         <VersionSection />
