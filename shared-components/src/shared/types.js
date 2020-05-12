@@ -36,13 +36,13 @@ export const TIMESTAMP_TYPES = {
 
 export const SECTION_TYPES = {
   section_sources: 'Domains',
-  section_snippets: 'Tables and Snippets',
+  section_snippets: 'Tables & Snippets',
   section_author: 'Table Author',
-  section_effort: 'Research and Exploration',
+  section_effort: 'Research & Exploration',
   section_code: 'Code examples',
   section_other_options: 'Commonly Searched for Alternatives',
   section_queries: 'Search Queries',
   section_surroundings: 'Snippet Surroundings',
-  section_versions: 'Versions and Environments',
-  section_goals: 'Goals and Constraints'
+  section_versions: 'Languages, Frameworks & Platforms',
+  section_goals: 'Goals & Constraints'
 };

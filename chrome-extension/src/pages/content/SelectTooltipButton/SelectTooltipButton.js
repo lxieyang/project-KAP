@@ -8,7 +8,14 @@ import FontAwesomeIcon from '@fortawesome/react-fontawesome';
 import fasListUl from '@fortawesome/fontawesome-free-solid/faListUl';
 import fasFlagCheckered from '@fortawesome/fontawesome-free-solid/faFlagCheckered';
 import fasBookmark from '@fortawesome/fontawesome-free-solid/faBookmark';
-import { APP_NAME_SHORT } from '../../../../../shared-components/src/shared/constants';
+import {
+  APP_NAME_SHORT,
+  supportedLanguages,
+  supportedWebFrameworks,
+  supportedOtherFrameworksLibrariesTools,
+  supportedPlatforms,
+  versionRegex
+} from '../../../../../shared-components/src/shared/constants';
 import Logo from '../../../../../shared-components/src/components/UI/Logo/Logo';
 import {
   PIECE_TYPES,
@@ -18,6 +25,66 @@ import { PIECE_COLOR } from '../../../../../shared-components/src/shared/theme';
 import { Highlight, Snippet } from 'siphon-tools';
 import { ANNOTATION_TYPES } from '../../../../../shared-components/src/shared/types';
 import styles from './SelectTooltipButton.css';
+
+const runVersionDetectors = annotation => {
+  let versionInfo = { languages: {}, frameworks: {}, platforms: {} };
+  let text = annotation.text.toLowerCase();
+
+  const runDetection = supported => {
+    let detected = [];
+    supported.forEach(item => {
+      const { detectors, versionDetectors } = item;
+      let hitDetectors = [];
+      detectors.forEach(detector => {
+        let matches = [...text.matchAll(RegExp(detector, 'g'))];
+        if (matches.length > 0) {
+          // find item hit
+          let hitVersions = [];
+          if (versionDetectors && versionDetectors.includes(detector)) {
+            // detect versions
+            matches.forEach(match => {
+              const { index } = match;
+              if (index === 0 || /\s/.test(text[index - 1])) {
+                let possibleStringWithVersionNumber = text.slice(
+                  index,
+                  index + detector.length + 8
+                );
+                let detectedVersion = possibleStringWithVersionNumber.match(
+                  versionRegex
+                );
+                if (detectedVersion) {
+                  detectedVersion = detectedVersion[0];
+                  hitVersions.push(detectedVersion);
+                }
+              }
+            });
+          }
+          hitDetectors.push({ detector, versions: hitVersions });
+        }
+      });
+      if (hitDetectors.length > 0) {
+        detected.push({ id: item.id, hitDetectors });
+      }
+    });
+    return detected;
+  };
+
+  // detect languages
+  let detectedLanguages = runDetection(supportedLanguages);
+  versionInfo.languages = detectedLanguages;
+
+  // detect frameworks
+  let detectedFrameworks = runDetection(
+    supportedOtherFrameworksLibrariesTools.concat(supportedWebFrameworks)
+  );
+  versionInfo.frameworks = detectedFrameworks;
+
+  // detect platforms
+  let detectedPlatforms = runDetection(supportedPlatforms);
+  versionInfo.platforms = detectedPlatforms;
+
+  return null;
+};
 
 const getAnswerInfoOnStackOverflow = (
   anchorNode = window.getSelection().focusNode
@@ -95,7 +162,8 @@ class SelectTooltipButton extends Component {
 
     codeSnippets: [],
 
-    answerMetaInfo: null
+    answerMetaInfo: null,
+    versionInfo: null
   };
 
   componentDidMount() {
@@ -110,16 +178,19 @@ class SelectTooltipButton extends Component {
       // extract annotation
       let annotation;
       let answerMetaInfo = null;
+      let versionInfo = null;
       if (this.props.annotationType === ANNOTATION_TYPES.Highlight) {
         annotation = new Highlight(this.props.range);
         answerMetaInfo = getAnswerInfoOnStackOverflow();
-        this.setState({ annotation, answerMetaInfo });
+        versionInfo = runVersionDetectors(annotation);
+        this.setState({ annotation, answerMetaInfo, versionInfo });
       } else if (this.props.annotationType === ANNOTATION_TYPES.Snippet) {
         annotation = new Snippet(
           this.props.captureWindow.getBoundingClientRect()
         );
 
         answerMetaInfo = getAnswerInfoOnStackOverflow(annotation.anchor);
+        versionInfo = runVersionDetectors(annotation);
 
         const nodes = annotation.nodes;
 
@@ -158,7 +229,12 @@ class SelectTooltipButton extends Component {
           }
         });
         // console.log(codeSnippets);
-        this.setState({ annotation, answerMetaInfo, codeSnippets });
+        this.setState({
+          annotation,
+          answerMetaInfo,
+          versionInfo,
+          codeSnippets
+        });
       }
     }, 5);
 
@@ -196,6 +272,7 @@ class SelectTooltipButton extends Component {
             pageTitle: document.title,
             shouldUseScreenshot: this.state.shouldUseScreenshot,
             answerMetaInfo: this.state.answerMetaInfo,
+            versionInfo: this.state.versionInfo,
             codeSnippets: this.state.codeSnippets
           },
           annotationType: this.props.annotationType,

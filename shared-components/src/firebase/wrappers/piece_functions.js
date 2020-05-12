@@ -267,6 +267,7 @@ export const createPiece = async (
     taskId,
     shouldUseScreenshot,
     answerMetaInfo,
+    versionInfo,
     codeSnippets
   },
   annotationType,
@@ -286,6 +287,7 @@ export const createPiece = async (
     pieceType: pieceType || PIECE_TYPES.snippet,
     shouldUseScreenshot: shouldUseScreenshot ? shouldUseScreenshot : false,
     answerMetaInfo: answerMetaInfo !== undefined ? answerMetaInfo : null,
+    versionInfo: versionInfo !== undefined ? versionInfo : null,
     codeSnippets: codeSnippets !== undefined ? codeSnippets : null,
     creationDate: firebase.firestore.FieldValue.serverTimestamp(),
     updateDate: firebase.firestore.FieldValue.serverTimestamp(),
