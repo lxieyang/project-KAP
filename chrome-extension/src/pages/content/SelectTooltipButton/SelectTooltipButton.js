@@ -83,7 +83,7 @@ const runVersionDetectors = annotation => {
   let detectedPlatforms = runDetection(supportedPlatforms);
   versionInfo.platforms = detectedPlatforms;
 
-  return null;
+  return versionInfo;
 };
 
 const getAnswerInfoOnStackOverflow = (
@@ -424,6 +424,7 @@ class SelectTooltipButton extends Component {
         pageTitle: document.title,
         shouldUseScreenshot: this.state.shouldUseScreenshot,
         answerMetaInfo: this.state.answerMetaInfo,
+        versionInfo: this.state.versionInfo,
         codeSnippets: this.state.codeSnippets
       },
       annotationType: this.props.annotationType,

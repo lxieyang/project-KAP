@@ -278,7 +278,7 @@ export const createPiece = async (
   let currentTaskId = (await getCurrentUserCurrentTaskId().get()).data().id;
   data.key = data.key || db.collection('pieces').doc().id;
   let ref = db.collection('pieces').doc(data.key);
-
+  console.log(versionInfo);
   // construct piece
   let piece = {
     creator: currentUserId,

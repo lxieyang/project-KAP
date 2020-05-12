@@ -229,6 +229,31 @@ class SurroundingsSection extends Component {
 }
 
 class VersionSection extends Component {
+  state = {
+    pieces: []
+  };
+
+  componentDidMount() {
+    this.updateData();
+  }
+
+  componentDidUpdate(prevProps) {
+    if (
+      prevProps.pieces !== this.props.pieces &&
+      this.props.pieces.length > 0
+    ) {
+      this.updateData();
+    }
+  }
+
+  updateData = () => {
+    let { pieces } = this.props;
+
+    pieces.forEach(piece => {
+      console.log(piece.versionInfo);
+    });
+  };
+
   render() {
     return (
       <Section headerName={SECTION_TYPES.section_versions} headerContent={''}>
@@ -436,7 +461,7 @@ class ContextPanel extends Component {
         <SurroundingsSection />
 
         {/* version section */}
-        <VersionSection />
+        <VersionSection pieces={pieces} />
 
         {/* goals section */}
         <GoalSection />

@@ -77,7 +77,7 @@ export const supportedWebFrameworks = [
   {
     id: 'angular',
     name: 'Angular',
-    detectors: ['angular', 'ng'],
+    detectors: ['angular', ' ng'],
     versionDetectors: ['angular']
   },
   {
