@@ -215,6 +215,19 @@ class QuerySection extends Component {
   }
 }
 
+class SurroundingsSection extends Component {
+  render() {
+    return (
+      <Section
+        headerName={SECTION_TYPES.section_surroundings}
+        headerContent={''}
+      >
+        Check out surroundings of snippets to better understand what they mean.
+      </Section>
+    );
+  }
+}
+
 class VersionSection extends Component {
   render() {
     return (
@@ -418,6 +431,9 @@ class ContextPanel extends Component {
       <div className={styles.PanelContainer}>
         {/* query section */}
         <QuerySection queries={queries} pieces={pieces} pages={pages} />
+
+        {/* Surroundings section */}
+        <SurroundingsSection />
 
         {/* version section */}
         <VersionSection />

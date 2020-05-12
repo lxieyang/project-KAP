@@ -42,6 +42,7 @@ export const SECTION_TYPES = {
   section_code: 'Code examples',
   section_other_options: 'Commonly Searched for Alternatives',
   section_queries: 'Search Queries',
+  section_surroundings: 'Snippet Surroundings',
   section_versions: 'Versions and Environments',
   section_goals: 'Goals and Constraints'
 };

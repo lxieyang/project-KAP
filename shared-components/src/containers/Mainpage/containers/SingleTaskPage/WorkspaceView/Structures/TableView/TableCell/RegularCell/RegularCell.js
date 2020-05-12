@@ -830,11 +830,14 @@ class RegularCell extends Component {
                           {!isInDefaultView &&
                             this.props.activeSections.length > 0 && (
                               <div style={{ flex: 1, marginLeft: 3 }}>
-                                {/* <div className={styles.PieceNameContainer}>
-                                {isInThoroughnessView || isInContextView
+                                {this.props.activeSections.length > 0 && (
+                                  <div className={styles.PieceNameContainer}>
+                                    {/* {isInThoroughnessView || isInContextView
                                   ? pieceName
-                                  : pieceNameShort}
-                              </div> */}
+                                  : pieceNameShort} */}
+                                    {pieceNameShort}
+                                  </div>
+                                )}
                                 <div className={styles.TagsContainer}>
                                   {honestSignals.sourceDomain &&
                                     (this.props.activeSections.includes(
@@ -1017,6 +1020,8 @@ class RegularCell extends Component {
                                 isRecent={isRecent}
                                 answerAccepted={answerAccepted}
                                 answerURLOnSO={answerURLOnSO}
+                                activeSections={this.props.activeSections}
+                                isInContextView={isInContextView}
                               />
                             );
                           }}

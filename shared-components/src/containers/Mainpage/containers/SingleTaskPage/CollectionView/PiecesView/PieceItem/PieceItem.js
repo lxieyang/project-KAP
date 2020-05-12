@@ -261,18 +261,28 @@ class PieceItem extends Component {
       this.setState({ expanded: true });
     }
 
+    // if (
+    //   this.props.cellType === TABLE_CELL_TYPES.columnHeader ||
+    //   this.props.cellType === TABLE_CELL_TYPES.regularCell ||
+    //   this.props.cellType === TABLE_CELL_TYPES.rowHeader
+    // ) {
+    //   if (this.props.isInContextView) {
+    //     this.setState({ expanded: true });
+    //     this.switchShouldDisplayContext(null, true);
+    //   } else {
+    //     this.setState({ expanded: false });
+    //     this.switchShouldDisplayContext(null, false);
+    //   }
+    // }
+
     if (
-      this.props.cellType === TABLE_CELL_TYPES.columnHeader ||
-      this.props.cellType === TABLE_CELL_TYPES.regularCell ||
-      this.props.cellType === TABLE_CELL_TYPES.rowHeader
+      this.props.activeSections.includes(SECTION_TYPES.section_surroundings)
     ) {
-      if (this.props.isInContextView) {
-        this.setState({ expanded: true });
-        this.switchShouldDisplayContext(null, true);
-      } else {
-        this.setState({ expanded: false });
-        this.switchShouldDisplayContext(null, false);
-      }
+      this.setState({ expanded: true });
+      this.switchShouldDisplayContext(null, true);
+    } else {
+      this.setState({ expanded: false });
+      this.switchShouldDisplayContext(null, false);
     }
 
     this.pieceNameinputCallback = debounce(event => {
@@ -315,19 +325,31 @@ class PieceItem extends Component {
       this.setState({ pieceText: this.props.piece.text });
     }
 
-    if (prevProps.isInContextView !== this.props.isInContextView) {
+    // if (prevProps.isInContextView !== this.props.isInContextView) {
+    //   if (
+    //     this.props.cellType === TABLE_CELL_TYPES.columnHeader ||
+    //     this.props.cellType === TABLE_CELL_TYPES.regularCell ||
+    //     this.props.cellType === TABLE_CELL_TYPES.rowHeader
+    //   ) {
+    //     if (this.props.isInContextView) {
+    //       this.setState({ expanded: true });
+    //       this.switchShouldDisplayContext(null, true);
+    //     } else {
+    //       this.setState({ expanded: false });
+    //       this.switchShouldDisplayContext(null, false);
+    //     }
+    //   }
+    // }
+
+    if (prevProps.activeSections !== this.props.activeSections) {
       if (
-        this.props.cellType === TABLE_CELL_TYPES.columnHeader ||
-        this.props.cellType === TABLE_CELL_TYPES.regularCell ||
-        this.props.cellType === TABLE_CELL_TYPES.rowHeader
+        this.props.activeSections.includes(SECTION_TYPES.section_surroundings)
       ) {
-        if (this.props.isInContextView) {
-          this.setState({ expanded: true });
-          this.switchShouldDisplayContext(null, true);
-        } else {
-          this.setState({ expanded: false });
-          this.switchShouldDisplayContext(null, false);
-        }
+        this.setState({ expanded: true });
+        this.switchShouldDisplayContext(null, true);
+      } else {
+        this.setState({ expanded: false });
+        this.switchShouldDisplayContext(null, false);
       }
     }
   }
@@ -1165,9 +1187,13 @@ class PieceItem extends Component {
                         >
                           <div
                             onClick={e => e.stopPropagation()}
-                            style={{ fontSize: '11px', marginLeft: '8px' }}
+                            style={{
+                              fontSize: '11px',
+                              marginLeft: '8px',
+                              color: '#666'
+                            }}
                           >
-                            Show:&nbsp;
+                            Showing:&nbsp;
                             <input
                               type="radio"
                               id={`${piece.id}-show-captured-snippet`}
