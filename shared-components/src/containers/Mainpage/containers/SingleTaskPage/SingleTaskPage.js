@@ -279,7 +279,7 @@ class SingleTaskPage extends Component {
                 className={[
                   styles.ViewControlButton,
                   this.state.currentTaskView === 'default'
-                    ? styles.CurrentViewControlButtonDefault
+                    ? styles.ViewControlButtonActive // styles.CurrentViewControlButtonDefault
                     : null
                 ].join(' ')}
               >
@@ -295,7 +295,7 @@ class SingleTaskPage extends Component {
                 className={[
                   styles.ViewControlButton,
                   this.state.currentTaskView === 'context'
-                    ? styles.CurrentViewControlButtonTaskContext
+                    ? styles.ViewControlButtonActive // styles.CurrentViewControlButtonTaskContext
                     : null
                 ].join(' ')}
               >
@@ -312,7 +312,7 @@ class SingleTaskPage extends Component {
                 className={[
                   styles.ViewControlButton,
                   this.state.currentTaskView === 'trustworthiness'
-                    ? styles.CurrentViewControlButtonTrustworthiness
+                    ? styles.ViewControlButtonActive // styles.CurrentViewControlButtonTrustworthiness
                     : null
                 ].join(' ')}
               >
@@ -329,7 +329,7 @@ class SingleTaskPage extends Component {
                 className={[
                   styles.ViewControlButton,
                   this.state.currentTaskView === 'thoroughness'
-                    ? styles.CurrentViewControlButtonThoroughness
+                    ? styles.ViewControlButtonActive // styles.CurrentViewControlButtonThoroughness
                     : null
                 ].join(' ')}
               >

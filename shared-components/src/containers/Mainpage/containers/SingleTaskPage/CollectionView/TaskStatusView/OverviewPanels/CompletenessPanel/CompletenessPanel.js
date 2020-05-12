@@ -205,12 +205,10 @@ class CodeSection extends Component {
         });
         return { ...p, codeSnippets };
       });
-    console.log(piecesWithCode);
 
     const codeSnippets = piecesWithCode
       .map(p => p.codeSnippets)
       .reduce((a, b) => a.concat(b), []);
-    console.log(codeSnippets);
 
     return (
       <Section headerName={SECTION_TYPES.section_code} headerContent={''}>

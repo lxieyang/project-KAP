@@ -8,10 +8,10 @@
 
 .TaskViewTabsContainer {
   width: 100vw;
-  height: 40px;
+  height: 36px;
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-end;
 
   font-size: 18px;
   border-bottom: 1px solid rgb(224, 224, 224);
@@ -22,6 +22,7 @@
   height: 32px !important;
   padding: 0px !important;
   font-size: 1em !important;
+  color: #4a4a4a !important;
   text-transform: capitalize !important;
   margin: 0px 10px !important;
   font-family: arial, sans-serif !important;
@@ -31,6 +32,8 @@
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
+  border-color: transparent !important;
+  border-radius: 0px !important;
 }
 
 .ViewControlButton:hover {
@@ -41,6 +44,14 @@
   flex-shrink: 0;
   font-size: 1em;
   margin-right: 6px;
+}
+
+.ViewControlButtonActive {
+  color: #333 !important;
+  opacity: 1 !important;
+  font-weight: bold !important;
+  border-bottom: 2px solid #333 !important; /* border-bottom: 2px solid #3273dc !important; */
+  /* color: #3273dc !important; */
 }
 
 .CurrentViewControlButtonDefault {

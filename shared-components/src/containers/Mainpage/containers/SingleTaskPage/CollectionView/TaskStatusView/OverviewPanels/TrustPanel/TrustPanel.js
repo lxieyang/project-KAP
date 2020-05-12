@@ -118,9 +118,9 @@ class SourcesSection extends Component {
       credibleDomains = JSON.parse(credibleDomains);
     }
 
-    this.setState({ credibleDomains });
-
-    this.updateData();
+    this.setState({ credibleDomains }, () => {
+      this.updateData();
+    });
   }
 
   componentDidUpdate(prevProps) {
