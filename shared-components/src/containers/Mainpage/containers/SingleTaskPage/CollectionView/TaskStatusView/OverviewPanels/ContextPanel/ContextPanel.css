@@ -303,6 +303,18 @@
 .LittleSectionHeader {
   font-size: 13px;
   font-weight: bold;
+
+  display: flex;
+  align-items: center;
+}
+
+.AddButton {
+  margin-right: 6px;
+  cursor: pointer;
+}
+
+.AddButton:hover {
+  text-decoration: underline;
 }
 
 .NotAvailable {
@@ -324,11 +336,25 @@
   flex-shrink: 0;
   line-height: 13px;
   display: inline;
-  margin: 6px 2px;
+  margin: 3px 2px;
   padding: 1px 4px;
   background-color: #e3e3e3;
 }
 
 .TagEntryHeader {
   background-color: #e1ecf4;
+}
+
+.AddVersionContainer {
+  display: flex;
+  align-items: center;
+}
+
+.AddVersionContainer input {
+  width: 30%;
+  margin-right: 3px;
+}
+
+.AddVersionContainer button {
+  margin: 0px 3px;
 }

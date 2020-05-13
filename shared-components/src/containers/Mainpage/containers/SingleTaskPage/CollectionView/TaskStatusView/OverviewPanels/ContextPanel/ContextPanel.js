@@ -235,10 +235,52 @@ class SurroundingsSection extends Component {
   }
 }
 
+class AddVersion extends Component {
+  state = {
+    newItem: '',
+    newVersion: ''
+  };
+
+  render() {
+    const { itemName } = this.props;
+    const { newItem, newVersion } = this.state;
+    return (
+      <div className={styles.AddVersionContainer}>
+        <input
+          placeholder={itemName}
+          value={newItem}
+          onChange={e => this.setState({ newItem: e.target.value })}
+        />{' '}
+        <input
+          placeholder={'v1.3'}
+          value={newVersion}
+          onChange={e => this.setState({ newVersion: e.target.value })}
+        />{' '}
+        <button
+          onClick={_ => {
+            this.props.add(newItem, newVersion);
+            this.setState({ newItem: '', newVersion: '' });
+          }}
+        >
+          Add
+        </button>
+        <button onClick={this.props.cancel}>Cancel</button>
+      </div>
+    );
+  }
+}
+
+const capitalize = s => {
+  if (typeof s !== 'string') return '';
+  return s.charAt(0).toUpperCase() + s.slice(1);
+};
+
 class VersionSection extends Component {
   state = {
     pieces: [],
     languages: [],
+    addedLanguages: [],
+    addingLanguage: false,
     frameworks: [],
     platforms: []
   };
@@ -255,6 +297,42 @@ class VersionSection extends Component {
       this.updateData();
     }
   }
+
+  handleAddLanguage = (language, version) => {
+    console.log(language, version);
+    if (language.length === 0) {
+      return;
+    }
+    language = language.trim();
+    version = version.trim().replace('v', '');
+
+    let addedLanguages = JSON.parse(JSON.stringify(this.state.addedLanguages));
+    if (
+      addedLanguages.filter(
+        l => l.name.toLowerCase() === language.toLowerCase()
+      ).length > 0
+    ) {
+      // existing
+      addedLanguages = addedLanguages.map(l => {
+        if (l.name.toLowerCase() === language.toLowerCase()) {
+          console.log('hit', l.name);
+          if (!l.versions[version] && version.length > 0) {
+            l.versions[version] = ['added'];
+          }
+        }
+        return l;
+      });
+    } else {
+      // new
+      addedLanguages.push({
+        id: language.toLowerCase(),
+        name: capitalize(language),
+        hitDetectors: {},
+        versions: version.length > 0 ? { [version]: ['added'] } : {}
+      });
+    }
+    this.setState({ addedLanguages });
+  };
 
   updateData = () => {
     let { pieces } = this.props;
@@ -332,18 +410,36 @@ class VersionSection extends Component {
   };
 
   render() {
-    const { pieces, languages, frameworks, platforms } = this.state;
+    let {
+      pieces,
+      languages,
+      addedLanguages,
+      frameworks,
+      platforms
+    } = this.state;
+
+    languages = languages.concat(addedLanguages);
     return (
       <Section headerName={SECTION_TYPES.section_versions} headerContent={''}>
         <div className={styles.LittleSection}>
-          <div className={styles.LittleSectionHeader}>Languages</div>
+          <div className={styles.LittleSectionHeader}>
+            Languages
+            <div style={{ flex: 1 }} />
+            <span
+              className={styles.AddButton}
+              onClick={_ => this.setState({ addingLanguage: true })}
+            >
+              Add
+            </span>
+          </div>
           {languages.length > 0 ? (
             <React.Fragment>
               <div className={styles.TagsContainer}>
                 {languages.map((language, lidx) => {
-                  let langname = supportedLanguages.filter(
-                    l => l.id === language.id
-                  )[0].name;
+                  let langname =
+                    language.name ||
+                    supportedLanguages.filter(l => l.id === language.id)[0]
+                      .name;
                   let versions = Object.keys(language.versions).map(v => {
                     return { version: v, pieces: language.versions[v] };
                   });
@@ -355,14 +451,15 @@ class VersionSection extends Component {
 
                   if (versions.length === 0) {
                     return (
-                      <div
-                        key={lidx}
-                        className={[
-                          styles.TagEntry,
-                          styles.TagEntryHeader
-                        ].join(' ')}
-                      >
-                        {langname}
+                      <div key={lidx} className={styles.Tag}>
+                        <div
+                          className={[
+                            styles.TagEntry,
+                            styles.TagEntryHeader
+                          ].join(' ')}
+                        >
+                          {langname}
+                        </div>
                       </div>
                     );
                   } else {
@@ -395,6 +492,13 @@ class VersionSection extends Component {
               Not able to detect any language information from the snippets.
             </div>
           )}
+          {this.state.addingLanguage && (
+            <AddVersion
+              itemName={'language name'}
+              add={this.handleAddLanguage}
+              cancel={_ => this.setState({ addingLanguage: false })}
+            />
+          )}
         </div>
 
         <div className={styles.LittleSection}>
@@ -419,14 +523,15 @@ class VersionSection extends Component {
 
                   if (versions.length === 0) {
                     return (
-                      <div
-                        key={lidx}
-                        className={[
-                          styles.TagEntry,
-                          styles.TagEntryHeader
-                        ].join(' ')}
-                      >
-                        {frameworkname}
+                      <div key={lidx} className={styles.Tag}>
+                        <div
+                          className={[
+                            styles.TagEntry,
+                            styles.TagEntryHeader
+                          ].join(' ')}
+                        >
+                          {frameworkname}
+                        </div>
                       </div>
                     );
                   } else {
@@ -482,14 +587,15 @@ class VersionSection extends Component {
 
                   if (versions.length === 0) {
                     return (
-                      <div
-                        key={lidx}
-                        className={[
-                          styles.TagEntry,
-                          styles.TagEntryHeader
-                        ].join(' ')}
-                      >
-                        {platformname}
+                      <div key={lidx} className={styles.Tag}>
+                        <div
+                          className={[
+                            styles.TagEntry,
+                            styles.TagEntryHeader
+                          ].join(' ')}
+                        >
+                          {platformname}
+                        </div>
                       </div>
                     );
                   } else {
