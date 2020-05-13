@@ -7,6 +7,8 @@ import Spinner from '../../../../../../../../../components/UI/Spinner/Spinner';
 import ThumbV1 from '../../../../../../../../../components/UI/Thumbs/ThumbV1/ThumbV1';
 import InfoIcon from '../../../../../../../../../components/UI/Thumbs/InfoIcon/InfoIcon';
 
+import unique from 'array-unique';
+
 import PieceItem from '../../../../../CollectionView/PiecesView/PieceItem/PieceItem';
 import RatingLayer from './RatingLayer/RatingLayer';
 import * as FirestoreManager from '../../../../../../../../../firebase/firestore_wrapper';
@@ -21,7 +23,13 @@ import {
   PIECE_COLOR
 } from '../../../../../../../../../shared/theme';
 
-import { GET_FAVICON_URL_PREFIX } from '../../../../../../../../../shared/constants';
+import {
+  GET_FAVICON_URL_PREFIX,
+  supportedLanguages,
+  supportedPlatforms,
+  supportedOtherFrameworksLibrariesTools,
+  supportedWebFrameworks
+} from '../../../../../../../../../shared/constants';
 
 import ReactTooltip from 'react-tooltip';
 import { withStyles } from '@material-ui/core/styles';
@@ -783,6 +791,66 @@ class RegularCell extends Component {
                       answerAccepted = answerMetaInfo.answerAccepted;
                     }
 
+                    let languages = [];
+                    let frameworks = [];
+                    let platforms = [];
+                    const versionInfo = piece.versionInfo;
+                    if (versionInfo) {
+                      if (versionInfo.languages.length > 0) {
+                        versionInfo.languages.forEach(language => {
+                          let languageName = supportedLanguages.filter(
+                            l => l.id === language.id
+                          )[0].name;
+                          let versions = unique(
+                            language.hitDetectors
+                              .map(d => d.versions)
+                              .reduce((a, b) => a.concat(b), [])
+                          );
+                          languages.push({
+                            id: language.id,
+                            name: languageName,
+                            versions
+                          });
+                        });
+                      }
+
+                      if (versionInfo.frameworks.length > 0) {
+                        versionInfo.frameworks.forEach(framework => {
+                          let frameworkName = supportedOtherFrameworksLibrariesTools
+                            .concat(supportedWebFrameworks)
+                            .filter(l => l.id === framework.id)[0].name;
+                          let versions = unique(
+                            framework.hitDetectors
+                              .map(d => d.versions)
+                              .reduce((a, b) => a.concat(b), [])
+                          );
+                          frameworks.push({
+                            id: framework.id,
+                            name: frameworkName,
+                            versions
+                          });
+                        });
+                      }
+
+                      if (versionInfo.platforms.length > 0) {
+                        versionInfo.platforms.forEach(platform => {
+                          let platformName = supportedPlatforms.filter(
+                            l => l.id === platform.id
+                          )[0].name;
+                          let versions = unique(
+                            platform.hitDetectors
+                              .map(d => d.versions)
+                              .reduce((a, b) => a.concat(b), [])
+                          );
+                          platforms.push({
+                            id: platform.id,
+                            name: platformName,
+                            versions
+                          });
+                        });
+                      }
+                    }
+
                     return (
                       <React.Fragment key={`${p.pieceId}-${idx}`}>
                         <div
@@ -827,128 +895,291 @@ class RegularCell extends Component {
                           >
                             {icon}
                           </div>
-                          {!isInDefaultView &&
-                            this.props.activeSections.length > 0 && (
-                              <div style={{ flex: 1, marginLeft: 3 }}>
-                                {this.props.activeSections.length > 0 && (
-                                  <div className={styles.PieceNameContainer}>
-                                    {/* {isInThoroughnessView || isInContextView
+                          {!isInDefaultView && (
+                            <div style={{ flex: 1, marginLeft: 3 }}>
+                              {this.props.activeSections.length > 0 && (
+                                <div className={styles.PieceNameContainer}>
+                                  {/* {isInThoroughnessView || isInContextView
                                   ? pieceName
                                   : pieceNameShort} */}
-                                    {pieceNameShort}
-                                  </div>
-                                )}
-                                <div className={styles.TagsContainer}>
-                                  {honestSignals.sourceDomain &&
-                                    (this.props.activeSections.includes(
-                                      SECTION_TYPES.section_effort
-                                    ) ||
-                                      this.props.activeSections.includes(
-                                        SECTION_TYPES.section_sources
-                                      )) &&
-                                    piece.references.url !== false && (
-                                      <Tooltip // title={`${
-                                        //   new URL(piece.references.url).hostname // }  ---  Click to open`} //   piece.references.pageTitle // title={`${
-                                        // }   ---  Click to open`}
-                                        title={`
+                                  {pieceNameShort}
+                                </div>
+                              )}
+                              <div className={styles.TagsContainer}>
+                                {honestSignals.sourceDomain &&
+                                  (this.props.activeSections.includes(
+                                    SECTION_TYPES.section_effort
+                                  ) ||
+                                    this.props.activeSections.includes(
+                                      SECTION_TYPES.section_sources
+                                    )) &&
+                                  piece.references.url !== false && (
+                                    <Tooltip // title={`${
+                                      //   new URL(piece.references.url).hostname // }  ---  Click to open`} //   piece.references.pageTitle // title={`${
+                                      // }   ---  Click to open`}
+                                      title={`
                                   ${
                                     piece.references.pageTitle
                                   }   --- Click to open`}
-                                        placement={'top'}
+                                      placement={'top'}
+                                    >
+                                      <a
+                                        href={
+                                          answerURLOnSO
+                                            ? answerURLOnSO
+                                            : piece.references.url
+                                        }
+                                        target="__blank"
+                                        className={styles.TagSpan}
                                       >
-                                        <a
-                                          href={
-                                            answerURLOnSO
-                                              ? answerURLOnSO
-                                              : piece.references.url
+                                        <img
+                                          src={
+                                            GET_FAVICON_URL_PREFIX +
+                                            piece.references.url
                                           }
-                                          target="__blank"
-                                          className={styles.TagSpan}
-                                        >
-                                          <img
-                                            src={
-                                              GET_FAVICON_URL_PREFIX +
-                                              piece.references.url
-                                            }
-                                            alt={''}
-                                          />
-                                          <span
-                                            style={{
-                                              fontSize: 11,
-                                              marginLeft: 4
-                                            }}
-                                          >
-                                            {
-                                              new URL(piece.references.url)
-                                                .hostname
-                                            }
-                                          </span>
-                                        </a>
-                                      </Tooltip>
-                                    )}
-                                  {honestSignals.popularity &&
-                                    this.props.activeSections.includes(
-                                      SECTION_TYPES.section_snippets
-                                    ) &&
-                                    popularityNumber !== null && (
-                                      <div>
+                                          alt={''}
+                                        />
                                         <span
-                                          className={styles.TagSpan}
-                                          title={`${popularityNumber} up votes`}
+                                          style={{
+                                            fontSize: 11,
+                                            marginLeft: 4
+                                          }}
                                         >
-                                          <FaArrowAltCircleUp
-                                            className={[
-                                              styles.Icon,
-                                              popularityNumber > 0
-                                                ? styles.VoteIcon
-                                                : styles.VoteIconNegative
-                                            ].join(' ')}
-                                          />
-                                          {popularityNumber} up votes
+                                          {
+                                            new URL(piece.references.url)
+                                              .hostname
+                                          }
                                         </span>
-                                      </div>
-                                    )}
-                                  {honestSignals.popularity &&
-                                    this.props.activeSections.includes(
-                                      SECTION_TYPES.section_snippets
-                                    ) &&
-                                    answerAccepted === true && (
-                                      <div>
-                                        <span
-                                          className={styles.TagSpan}
-                                          title={`Answer accepted by the question asker`}
-                                        >
-                                          <FaCheck
-                                            className={[
-                                              styles.Icon,
-                                              styles.AcceptedIcon
-                                            ].join(' ')}
-                                          />
-                                          accepted answer
-                                        </span>
-                                      </div>
-                                    )}
-                                  {honestSignals.updateTime &&
-                                    this.props.activeSections.includes(
-                                      SECTION_TYPES.section_snippets
-                                    ) &&
-                                    updateDate && (
-                                      <div>
-                                        <span
-                                          className={styles.TagSpan}
-                                          title={`Updated on ${updateDate.toLocaleDateString()}`}
-                                        >
-                                          <GiSandsOfTime
-                                            className={[
-                                              styles.Icon,
-                                              styles.TimeIcon
-                                            ].join(' ')}
-                                          />
-                                          updated {moment(updateDate).fromNow()}
-                                        </span>
-                                      </div>
-                                    )}
-                                  {/* {honestSignals.captureTime &&
+                                      </a>
+                                    </Tooltip>
+                                  )}
+                                {honestSignals.popularity &&
+                                  this.props.activeSections.includes(
+                                    SECTION_TYPES.section_snippets
+                                  ) &&
+                                  popularityNumber !== null && (
+                                    <div>
+                                      <span
+                                        className={styles.TagSpan}
+                                        title={`${popularityNumber} up votes`}
+                                      >
+                                        <FaArrowAltCircleUp
+                                          className={[
+                                            styles.Icon,
+                                            popularityNumber > 0
+                                              ? styles.VoteIcon
+                                              : styles.VoteIconNegative
+                                          ].join(' ')}
+                                        />
+                                        {popularityNumber} up votes
+                                      </span>
+                                    </div>
+                                  )}
+                                {honestSignals.popularity &&
+                                  this.props.activeSections.includes(
+                                    SECTION_TYPES.section_snippets
+                                  ) &&
+                                  answerAccepted === true && (
+                                    <div>
+                                      <span
+                                        className={styles.TagSpan}
+                                        title={`Answer accepted by the question asker`}
+                                      >
+                                        <FaCheck
+                                          className={[
+                                            styles.Icon,
+                                            styles.AcceptedIcon
+                                          ].join(' ')}
+                                        />
+                                        accepted answer
+                                      </span>
+                                    </div>
+                                  )}
+                                {honestSignals.updateTime &&
+                                  this.props.activeSections.includes(
+                                    SECTION_TYPES.section_snippets
+                                  ) &&
+                                  updateDate && (
+                                    <div>
+                                      <span
+                                        className={styles.TagSpan}
+                                        title={`Updated on ${updateDate.toLocaleDateString()}`}
+                                      >
+                                        <GiSandsOfTime
+                                          className={[
+                                            styles.Icon,
+                                            styles.TimeIcon
+                                          ].join(' ')}
+                                        />
+                                        updated {moment(updateDate).fromNow()}
+                                      </span>
+                                    </div>
+                                  )}
+                                {honestSignals.versions &&
+                                  this.props.activeSections.includes(
+                                    SECTION_TYPES.section_versions
+                                  ) &&
+                                  languages.length > 0 && (
+                                    <div
+                                      className={styles.VersionTagsContainer}
+                                    >
+                                      {languages.map((l, lidx) => {
+                                        if (l.versions.length === 0) {
+                                          return (
+                                            <span
+                                              key={lidx}
+                                              className={[
+                                                styles.VersionTagEntry,
+                                                styles.VersionTagEntryHeader
+                                              ].join(' ')}
+                                            >
+                                              {l.name}
+                                            </span>
+                                          );
+                                        } else {
+                                          return (
+                                            <div
+                                              key={lidx}
+                                              className={styles.VersionTag}
+                                            >
+                                              <div
+                                                key={lidx}
+                                                className={[
+                                                  styles.VersionTagEntry,
+                                                  styles.VersionTagEntryHeader
+                                                ].join(' ')}
+                                              >
+                                                {l.name}
+                                              </div>
+                                              {l.versions.map((v, vidx) => {
+                                                return (
+                                                  <div
+                                                    key={vidx}
+                                                    className={
+                                                      styles.VersionTagEntry
+                                                    }
+                                                  >
+                                                    v{v}
+                                                  </div>
+                                                );
+                                              })}
+                                            </div>
+                                          );
+                                        }
+                                      })}
+                                    </div>
+                                  )}
+
+                                {honestSignals.versions &&
+                                  this.props.activeSections.includes(
+                                    SECTION_TYPES.section_versions
+                                  ) &&
+                                  frameworks.length > 0 && (
+                                    <div
+                                      className={styles.VersionTagsContainer}
+                                    >
+                                      {frameworks.map((l, lidx) => {
+                                        if (l.versions.length === 0) {
+                                          return (
+                                            <span
+                                              key={lidx}
+                                              className={[
+                                                styles.VersionTagEntry,
+                                                styles.VersionTagEntryHeader
+                                              ].join(' ')}
+                                            >
+                                              {l.name}
+                                            </span>
+                                          );
+                                        } else {
+                                          return (
+                                            <div
+                                              key={lidx}
+                                              className={styles.VersionTag}
+                                            >
+                                              <div
+                                                key={lidx}
+                                                className={[
+                                                  styles.VersionTagEntry,
+                                                  styles.VersionTagEntryHeader
+                                                ].join(' ')}
+                                              >
+                                                {l.name}
+                                              </div>
+                                              {l.versions.map((v, vidx) => {
+                                                return (
+                                                  <div
+                                                    key={vidx}
+                                                    className={
+                                                      styles.VersionTagEntry
+                                                    }
+                                                  >
+                                                    v{v}
+                                                  </div>
+                                                );
+                                              })}
+                                            </div>
+                                          );
+                                        }
+                                      })}
+                                    </div>
+                                  )}
+
+                                {honestSignals.versions &&
+                                  this.props.activeSections.includes(
+                                    SECTION_TYPES.section_versions
+                                  ) &&
+                                  platforms.length > 0 && (
+                                    <div
+                                      className={styles.VersionTagsContainer}
+                                    >
+                                      {platforms.map((l, lidx) => {
+                                        if (l.versions.length === 0) {
+                                          return (
+                                            <span
+                                              key={lidx}
+                                              className={[
+                                                styles.VersionTagEntry,
+                                                styles.VersionTagEntryHeader
+                                              ].join(' ')}
+                                            >
+                                              {l.name}
+                                            </span>
+                                          );
+                                        } else {
+                                          return (
+                                            <div
+                                              key={lidx}
+                                              className={styles.VersionTag}
+                                            >
+                                              <div
+                                                key={lidx}
+                                                className={[
+                                                  styles.VersionTagEntry,
+                                                  styles.VersionTagEntryHeader
+                                                ].join(' ')}
+                                              >
+                                                {l.name}
+                                              </div>
+                                              {l.versions.map((v, vidx) => {
+                                                return (
+                                                  <div
+                                                    key={vidx}
+                                                    className={
+                                                      styles.VersionTagEntry
+                                                    }
+                                                  >
+                                                    v{v}
+                                                  </div>
+                                                );
+                                              })}
+                                            </div>
+                                          );
+                                        }
+                                      })}
+                                    </div>
+                                  )}
+                                {/* {honestSignals.captureTime &&
                                   piece.creationDate && (
                                     <span
                                       className={styles.TagSpan}
@@ -969,30 +1200,30 @@ class RegularCell extends Component {
                                     </span>
                                   )} */}
 
-                                  {honestSignals.code &&
-                                    codeSnippets &&
-                                    codeSnippets.length > 0 &&
-                                    this.props.activeSections.includes(
-                                      SECTION_TYPES.section_code
-                                    ) && (
-                                      <div>
-                                        <span
-                                          className={styles.TagSpan}
-                                          title={`Contains code snippets`}
-                                        >
-                                          <FaCode
-                                            className={[
-                                              styles.Icon,
-                                              styles.CodeIcon
-                                            ].join(' ')}
-                                          />{' '}
-                                          contains code examples
-                                        </span>
-                                      </div>
-                                    )}
-                                </div>
+                                {honestSignals.code &&
+                                  codeSnippets &&
+                                  codeSnippets.length > 0 &&
+                                  this.props.activeSections.includes(
+                                    SECTION_TYPES.section_code
+                                  ) && (
+                                    <div>
+                                      <span
+                                        className={styles.TagSpan}
+                                        title={`Contains code snippets`}
+                                      >
+                                        <FaCode
+                                          className={[
+                                            styles.Icon,
+                                            styles.CodeIcon
+                                          ].join(' ')}
+                                        />{' '}
+                                        contains code examples
+                                      </span>
+                                    </div>
+                                  )}
                               </div>
-                            )}
+                            </div>
+                          )}
                         </div>
                         <ReactTooltip
                           place={'left'}

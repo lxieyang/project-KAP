@@ -324,9 +324,9 @@ class VersionSection extends Component {
     let frameworks = aggregateFromAllSnippets('frameworks');
     let platforms = aggregateFromAllSnippets('platforms');
 
-    console.log(languages);
-    console.log(frameworks);
-    console.log(platforms);
+    // console.log(languages);
+    // console.log(frameworks);
+    // console.log(platforms);
 
     this.setState({ pieces, languages, frameworks, platforms });
   };
@@ -352,9 +352,6 @@ class VersionSection extends Component {
                       return { detector: d, pieces: language.hitDetectors[d] };
                     }
                   );
-                  console.log(langname);
-                  console.log(versions);
-                  console.log(hitDetectors);
 
                   if (versions.length === 0) {
                     return (
@@ -419,9 +416,6 @@ class VersionSection extends Component {
                       return { detector: d, pieces: framework.hitDetectors[d] };
                     }
                   );
-                  console.log(frameworkname);
-                  console.log(versions);
-                  console.log(hitDetectors);
 
                   if (versions.length === 0) {
                     return (
@@ -485,9 +479,6 @@ class VersionSection extends Component {
                       return { detector: d, pieces: platform.hitDetectors[d] };
                     }
                   );
-                  console.log(platformname);
-                  console.log(versions);
-                  console.log(hitDetectors);
 
                   if (versions.length === 0) {
                     return (

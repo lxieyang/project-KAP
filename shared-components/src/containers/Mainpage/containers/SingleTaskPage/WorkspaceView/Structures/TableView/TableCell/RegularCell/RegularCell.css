@@ -383,3 +383,27 @@ a.TagSpan:hover {
   opacity: 0.8;
   transform: scale(0.75);
 }
+
+.VersionTagsContainer {
+}
+
+.VersionTag {
+  display: flex;
+  align-items: center;
+  height: 20px;
+  line-height: 13px;
+}
+
+.VersionTagEntry {
+  flex-shrink: 0;
+  font-size: 11px;
+  display: inline;
+  margin: 6px 2px;
+  padding: 1px 4px;
+  background-color: #e3e3e3;
+  box-sizing: border-box;
+}
+
+.VersionTagEntryHeader {
+  background-color: #e1ecf4;
+}
