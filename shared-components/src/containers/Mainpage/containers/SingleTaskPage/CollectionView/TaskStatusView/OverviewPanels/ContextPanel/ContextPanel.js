@@ -3,6 +3,7 @@ import styles from './ContextPanel.css';
 
 import ReactHoverObserver from 'react-hover-observer';
 import { sortBy, reverse } from 'lodash';
+import unique from 'array-unique';
 
 import { AiOutlineSearch } from 'react-icons/ai';
 import { AiFillGoogleCircle as SearchIcon } from 'react-icons/ai';
@@ -21,6 +22,12 @@ import {
   SECTION_TYPES
 } from '../../../../../../../../shared/types';
 import { PIECE_COLOR } from '../../../../../../../../shared/theme';
+import {
+  supportedLanguages,
+  supportedOtherFrameworksLibrariesTools,
+  supportedPlatforms,
+  supportedWebFrameworks
+} from '../../../../../../../../shared/constants';
 
 import TaskContext from '../../../../../../../../shared/task-context';
 
@@ -230,7 +237,10 @@ class SurroundingsSection extends Component {
 
 class VersionSection extends Component {
   state = {
-    pieces: []
+    pieces: [],
+    languages: [],
+    frameworks: [],
+    platforms: []
   };
 
   componentDidMount() {
@@ -249,15 +259,279 @@ class VersionSection extends Component {
   updateData = () => {
     let { pieces } = this.props;
 
-    pieces.forEach(piece => {
-      console.log(piece.versionInfo);
-    });
+    const aggregateFromAllSnippets = item => {
+      let aggregation = [];
+      pieces.forEach(piece => {
+        if (piece.versionInfo) {
+          // console.log(piece.versionInfo);
+          let { versionInfo } = piece;
+          let pieceItems = versionInfo[item];
+          pieceItems.forEach(pieceItem => {
+            if (aggregation.map(a => a.id).includes(pieceItem.id)) {
+              // existing
+              aggregation = aggregation.map(a => {
+                if (a.id === pieceItem.id) {
+                  pieceItem.hitDetectors.forEach(d => {
+                    if (a.hitDetectors[d.detector]) {
+                      a.hitDetectors[d.detector].push(piece.id);
+                    } else {
+                      a.hitDetectors[d.detector] = [piece.id];
+                    }
+                  });
+
+                  pieceItem.hitDetectors
+                    .filter(d => d.versions.length > 0)
+                    .forEach(d => {
+                      d.versions.forEach(v => {
+                        if (a.versions[v]) {
+                          a.versions[v].push(piece.id);
+                        } else {
+                          a.versions[v] = [piece.id];
+                        }
+                      });
+                    });
+                }
+                return a;
+              });
+            } else {
+              // new
+              let hitDetectors = {};
+              let versions = {};
+              pieceItem.hitDetectors.forEach(d => {
+                hitDetectors[d.detector] = [piece.id];
+              });
+              pieceItem.hitDetectors
+                .filter(d => d.versions.length > 0)
+                .forEach(d => {
+                  d.versions.forEach(v => {
+                    versions[v] = [piece.id];
+                  });
+                });
+
+              aggregation.push({
+                id: pieceItem.id,
+                hitDetectors,
+                versions
+              });
+            }
+          });
+        }
+      });
+      return aggregation;
+    };
+
+    let languages = aggregateFromAllSnippets('languages');
+    let frameworks = aggregateFromAllSnippets('frameworks');
+    let platforms = aggregateFromAllSnippets('platforms');
+
+    console.log(languages);
+    console.log(frameworks);
+    console.log(platforms);
+
+    this.setState({ pieces, languages, frameworks, platforms });
   };
 
   render() {
+    const { pieces, languages, frameworks, platforms } = this.state;
     return (
       <Section headerName={SECTION_TYPES.section_versions} headerContent={''}>
-        versions
+        <div className={styles.LittleSection}>
+          <div className={styles.LittleSectionHeader}>Languages</div>
+          {languages.length > 0 ? (
+            <React.Fragment>
+              <div className={styles.TagsContainer}>
+                {languages.map((language, lidx) => {
+                  let langname = supportedLanguages.filter(
+                    l => l.id === language.id
+                  )[0].name;
+                  let versions = Object.keys(language.versions).map(v => {
+                    return { version: v, pieces: language.versions[v] };
+                  });
+                  let hitDetectors = Object.keys(language.hitDetectors).map(
+                    d => {
+                      return { detector: d, pieces: language.hitDetectors[d] };
+                    }
+                  );
+                  console.log(langname);
+                  console.log(versions);
+                  console.log(hitDetectors);
+
+                  if (versions.length === 0) {
+                    return (
+                      <div
+                        key={lidx}
+                        className={[
+                          styles.TagEntry,
+                          styles.TagEntryHeader
+                        ].join(' ')}
+                      >
+                        {langname}
+                      </div>
+                    );
+                  } else {
+                    return (
+                      <div key={lidx} className={styles.Tag}>
+                        <div
+                          key={lidx}
+                          className={[
+                            styles.TagEntry,
+                            styles.TagEntryHeader
+                          ].join(' ')}
+                        >
+                          {langname}
+                        </div>
+                        {versions.map((v, vidx) => {
+                          return (
+                            <div key={vidx} className={styles.TagEntry}>
+                              v{v.version}
+                            </div>
+                          );
+                        })}
+                      </div>
+                    );
+                  }
+                })}
+              </div>
+            </React.Fragment>
+          ) : (
+            <div className={styles.NotAvailable}>
+              Not able to detect any language information from the snippets.
+            </div>
+          )}
+        </div>
+
+        <div className={styles.LittleSection}>
+          <div className={styles.LittleSectionHeader}>
+            Libraries & Frameworks
+          </div>
+          {frameworks.length > 0 ? (
+            <React.Fragment>
+              <div className={styles.TagsContainer}>
+                {frameworks.map((framework, lidx) => {
+                  let frameworkname = supportedOtherFrameworksLibrariesTools
+                    .concat(supportedWebFrameworks)
+                    .filter(l => l.id === framework.id)[0].name;
+                  let versions = Object.keys(framework.versions).map(v => {
+                    return { version: v, pieces: framework.versions[v] };
+                  });
+                  let hitDetectors = Object.keys(framework.hitDetectors).map(
+                    d => {
+                      return { detector: d, pieces: framework.hitDetectors[d] };
+                    }
+                  );
+                  console.log(frameworkname);
+                  console.log(versions);
+                  console.log(hitDetectors);
+
+                  if (versions.length === 0) {
+                    return (
+                      <div
+                        key={lidx}
+                        className={[
+                          styles.TagEntry,
+                          styles.TagEntryHeader
+                        ].join(' ')}
+                      >
+                        {frameworkname}
+                      </div>
+                    );
+                  } else {
+                    return (
+                      <div key={lidx} className={styles.Tag}>
+                        <div
+                          key={lidx}
+                          className={[
+                            styles.TagEntry,
+                            styles.TagEntryHeader
+                          ].join(' ')}
+                        >
+                          {frameworkname}
+                        </div>
+                        {versions.map((v, vidx) => {
+                          return (
+                            <div key={vidx} className={styles.TagEntry}>
+                              v{v.version}
+                            </div>
+                          );
+                        })}
+                      </div>
+                    );
+                  }
+                })}
+              </div>
+            </React.Fragment>
+          ) : (
+            <div className={styles.NotAvailable}>
+              Not able to detect any framework or libraries information from the
+              snippets.
+            </div>
+          )}
+        </div>
+
+        <div className={styles.LittleSection}>
+          <div className={styles.LittleSectionHeader}>Platforms</div>
+          {platforms.length > 0 ? (
+            <React.Fragment>
+              <div className={styles.TagsContainer}>
+                {platforms.map((platform, lidx) => {
+                  let platformname = supportedPlatforms.filter(
+                    l => l.id === platform.id
+                  )[0].name;
+                  let versions = Object.keys(platform.versions).map(v => {
+                    return { version: v, pieces: platform.versions[v] };
+                  });
+                  let hitDetectors = Object.keys(platform.hitDetectors).map(
+                    d => {
+                      return { detector: d, pieces: platform.hitDetectors[d] };
+                    }
+                  );
+                  console.log(platformname);
+                  console.log(versions);
+                  console.log(hitDetectors);
+
+                  if (versions.length === 0) {
+                    return (
+                      <div
+                        key={lidx}
+                        className={[
+                          styles.TagEntry,
+                          styles.TagEntryHeader
+                        ].join(' ')}
+                      >
+                        {platformname}
+                      </div>
+                    );
+                  } else {
+                    return (
+                      <div key={lidx} className={styles.Tag}>
+                        <div
+                          key={lidx}
+                          className={[
+                            styles.TagEntry,
+                            styles.TagEntryHeader
+                          ].join(' ')}
+                        >
+                          {platformname}
+                        </div>
+                        {versions.map((v, vidx) => {
+                          return (
+                            <div key={vidx} className={styles.TagEntry}>
+                              v{v.version}
+                            </div>
+                          );
+                        })}
+                      </div>
+                    );
+                  }
+                })}
+              </div>
+            </React.Fragment>
+          ) : (
+            <div className={styles.NotAvailable}>
+              Not able to detect any platform information from the snippets.
+            </div>
+          )}
+        </div>
       </Section>
     );
   }
