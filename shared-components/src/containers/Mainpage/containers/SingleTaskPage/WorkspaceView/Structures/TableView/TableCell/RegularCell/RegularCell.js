@@ -758,8 +758,8 @@ class RegularCell extends Component {
                     const pieceName = piece.name;
                     const pieceNameLength = pieceName.split(' ').length;
                     const pieceNameShort =
-                      pieceNameLength > 6
-                        ? getFirstNWords(6, pieceName)
+                      pieceNameLength > 10
+                        ? getFirstNWords(10, pieceName)
                         : pieceName;
 
                     let context_object = context_objects.filter(
@@ -897,14 +897,14 @@ class RegularCell extends Component {
                           </div>
                           {!isInDefaultView && (
                             <div style={{ flex: 1, marginLeft: 3 }}>
-                              {this.props.activeSections.length > 0 && (
-                                <div className={styles.PieceNameContainer}>
-                                  {/* {isInThoroughnessView || isInContextView
+                              {/* {this.props.activeSections.length > 0 && ( */}
+                              <div className={styles.PieceNameContainer}>
+                                {/* {isInThoroughnessView || isInContextView
                                   ? pieceName
                                   : pieceNameShort} */}
-                                  {pieceNameShort}
-                                </div>
-                              )}
+                                {pieceNameShort}
+                              </div>
+                              {/* )} */}
                               <div className={styles.TagsContainer}>
                                 {honestSignals.sourceDomain &&
                                   (this.props.activeSections.includes(
