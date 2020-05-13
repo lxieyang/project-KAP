@@ -711,49 +711,52 @@ class PieceItem extends Component {
                               </span>
                             </Tooltip>
                           )}
-                          {this.props.popularityNumber !== null && (
-                            <div>
-                              <span className={classesInCSS.TagSpan}>
-                                <FaArrowAltCircleUp
-                                  className={[
-                                    classesInCSS.Icon,
-                                    this.props.popularityNumber > 0
-                                      ? classesInCSS.VoteIcon
-                                      : classesInCSS.VoteIconNegative
-                                  ].join(' ')}
-                                />
-                                {this.props.popularityNumber} up votes
-                              </span>
-                            </div>
-                          )}
-                          {this.props.answerAccepted === true && (
-                            <div>
-                              <span className={classesInCSS.TagSpan}>
-                                <FaCheck
-                                  className={[
-                                    classesInCSS.Icon,
-                                    classesInCSS.AcceptedIcon
-                                  ].join(' ')}
-                                />
-                                accepted answer
-                              </span>
-                            </div>
-                          )}
-                          {this.props.updateDate && (
-                            <div>
-                              <span className={classesInCSS.TagSpan}>
-                                <GiSandsOfTime
-                                  className={[
-                                    classesInCSS.Icon,
-                                    classesInCSS.TimeIcon
-                                  ].join(' ')}
-                                />
-                                updated{' '}
-                                {moment(this.props.updateDate).fromNow()}
-                                {/* {this.props.updateDate.toLocaleDateString()} */}
-                              </span>
-                            </div>
-                          )}
+                          {!this.props.isInDefaultView &&
+                            this.props.popularityNumber !== null && (
+                              <div>
+                                <span className={classesInCSS.TagSpan}>
+                                  <FaArrowAltCircleUp
+                                    className={[
+                                      classesInCSS.Icon,
+                                      this.props.popularityNumber > 0
+                                        ? classesInCSS.VoteIcon
+                                        : classesInCSS.VoteIconNegative
+                                    ].join(' ')}
+                                  />
+                                  {this.props.popularityNumber} up votes
+                                </span>
+                              </div>
+                            )}
+                          {!this.props.isInDefaultView &&
+                            this.props.answerAccepted === true && (
+                              <div>
+                                <span className={classesInCSS.TagSpan}>
+                                  <FaCheck
+                                    className={[
+                                      classesInCSS.Icon,
+                                      classesInCSS.AcceptedIcon
+                                    ].join(' ')}
+                                  />
+                                  accepted answer
+                                </span>
+                              </div>
+                            )}
+                          {!this.props.isInDefaultView &&
+                            this.props.updateDate && (
+                              <div>
+                                <span className={classesInCSS.TagSpan}>
+                                  <GiSandsOfTime
+                                    className={[
+                                      classesInCSS.Icon,
+                                      classesInCSS.TimeIcon
+                                    ].join(' ')}
+                                  />
+                                  updated{' '}
+                                  {moment(this.props.updateDate).fromNow()}
+                                  {/* {this.props.updateDate.toLocaleDateString()} */}
+                                </span>
+                              </div>
+                            )}
                         </div>
                       </React.Fragment>
                     )}
@@ -1176,6 +1179,7 @@ class PieceItem extends Component {
                       )} */}
 
                     {this.props.isDemoTask &&
+                      !this.props.isInDefaultView &&
                       (piece.annotationType === ANNOTATION_TYPES.Snippet ||
                         piece.annotationType ===
                           ANNOTATION_TYPES.Highlight) && (

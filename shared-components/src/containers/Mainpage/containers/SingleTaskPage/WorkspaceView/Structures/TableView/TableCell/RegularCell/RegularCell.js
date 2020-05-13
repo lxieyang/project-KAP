@@ -1253,6 +1253,7 @@ class RegularCell extends Component {
                                 answerURLOnSO={answerURLOnSO}
                                 activeSections={this.props.activeSections}
                                 isInContextView={isInContextView}
+                                isInDefaultView={isInDefaultView}
                               />
                             );
                           }}
