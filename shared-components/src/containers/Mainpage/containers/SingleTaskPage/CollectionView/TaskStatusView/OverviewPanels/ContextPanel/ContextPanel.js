@@ -828,16 +828,16 @@ class ContextPanel extends Component {
         {/* query section */}
         <QuerySection queries={queries} pieces={pieces} pages={pages} />
 
-        {/* Surroundings section */}
-        <SurroundingsSection />
-
         {/* version section */}
         <VersionSection pieces={pieces} />
 
-        {/* goals section */}
-        <GoalSection />
+        {/* Surroundings section */}
+        <SurroundingsSection />
 
-        <h3 style={{ color: 'red' }}>old stuff below</h3>
+        {/* goals section */}
+        {/* <GoalSection /> */}
+
+        {/* <h3 style={{ color: 'red' }}>old stuff below</h3>
 
         <div className={styles.Section}>
           <div className={styles.SectionHeader}>
@@ -854,7 +854,6 @@ class ContextPanel extends Component {
               styles.GoalTextareaContainer
             ].join(' ')}
           >
-            {/* <p>{this.state.goalText}</p> */}
             <Textarea
               minRows={1}
               maxRows={3}
@@ -874,174 +873,7 @@ class ContextPanel extends Component {
               </div>
             )}
           </div>
-        </div>
-
-        {/* <div className={styles.Section}>
-          <div className={styles.SectionHeader}>
-            <IoIosTimer className={styles.SectionHeaderIcon} />
-            Information is <span className={styles.UpToDate}>
-              up-to-date
-            </span>{' '}
-          </div>
-          <div className={styles.SectionContent}>
-            <p>The task was updated 4 days ago.</p>
-            <p>The oldest information was from 1 year ago.</p>
-          </div>
         </div> */}
-
-        <div className={styles.Section}>
-          <div className={styles.SectionHeader}>
-            <AiOutlineSearch className={styles.SectionHeaderIcon} />
-            The author searched for
-            <InfoTooltip id={'criteria'}>
-              These are the top search queries that the author used.
-            </InfoTooltip>
-          </div>
-          <div className={styles.SectionContent}>
-            {queriesToDisplay.map((item, idx) => {
-              return (
-                <div key={idx} className={styles.ListItem}>
-                  {item.query}
-                </div>
-              );
-            })}
-          </div>
-          <div className={styles.SectionFooter}>
-            <div
-              className={styles.LinkToElsewhere}
-              onClick={e => this.props.changeTab(e, 1)}
-            >
-              See the complete list of search queries
-            </div>
-            <div style={{ color: 'red' }}>
-              put the complete list of search queries here
-            </div>
-          </div>
-        </div>
-
-        <div className={styles.Section}>
-          <div className={styles.SectionHeader}>
-            <IoMdGlobe className={styles.SectionHeaderIcon} />
-            Envrionment and Versions
-            <div className={styles.HeaderButtonAlignRight}>
-              <div
-                className={styles.AddButton}
-                onClick={() => this.addNewEnvButtonClickedHandler()}
-              >
-                Add
-              </div>
-            </div>
-          </div>
-
-          <div className={styles.SectionContent}>
-            <div>
-              {envList.map((item, idx) => {
-                return (
-                  <div key={idx} className={styles.ListItem}>
-                    {item.name}
-                    {item.id && (
-                      <div
-                        className={styles.DeleteIcon}
-                        onClick={() =>
-                          this.deleteEnvClickedHandler(item.id, item.name)
-                        }
-                      >
-                        &#10005;
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-
-            <div>
-              {this.state.constraints.map((item, idx) => {
-                return (
-                  <div key={idx} className={styles.ListItem}>
-                    {item.name}
-                    <div
-                      className={styles.DeleteIcon}
-                      onClick={() =>
-                        this.deleteEnvClickedHandler(item.id, item.name)
-                      }
-                    >
-                      &#10005;
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-
-            {this.state.environments.length === 0 &&
-              this.state.constraints.length === 0 && (
-                <div style={{ fontStyle: 'italic', color: '#666' }}>
-                  nothing yet
-                </div>
-              )}
-
-            {this.state.isAddingNewEnv && (
-              <div className={styles.AddingNewEnvContainer}>
-                <div style={{ fontStyle: 'italic' }}>Adding new:</div>
-                <div>
-                  <input
-                    type="radio"
-                    name="env-type"
-                    id="environment"
-                    value="environment"
-                    checked={this.state.newEnvType === 'environment'}
-                    onChange={e => this.switchNewEnvType(e)}
-                  />
-                  <label htmlFor="environment">Environment</label> &nbsp;
-                  <input
-                    type="radio"
-                    name="env-type"
-                    id="constraint"
-                    value="constraint"
-                    checked={this.state.newEnvType === 'constraint'}
-                    onChange={e => this.switchNewEnvType(e)}
-                  />
-                  <label htmlFor="constraint">Constraint</label>
-                </div>
-                <div>
-                  <Textarea
-                    minRows={1}
-                    maxRows={3}
-                    className={[styles.Textarea, styles.NewEnv].join(' ')}
-                    placeholder={`New ${this.state.newEnvType}`}
-                    value={this.state.newEnvText}
-                    onChange={e => this.handleNewEnvTextChange(e)}
-                    inputRef={ref => (this.newEnvTextarea = ref)}
-                  />
-                </div>
-                <div
-                  style={{
-                    marginTop: 3,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'flex-end'
-                  }}
-                >
-                  <button
-                    className={[
-                      styles.AddNewEnvButton,
-                      this.state.newEnvText === '' ? styles.Disabled : null
-                    ].join(' ')}
-                    onClick={this.addNewEnvClickedHandler}
-                  >
-                    Add
-                  </button>
-                  &nbsp;&nbsp;
-                  <button
-                    className={[styles.CancelEnvButton].join(' ')}
-                    onClick={this.cancelNewEnvClickedHandler}
-                  >
-                    Cancel
-                  </button>
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
       </div>
     );
   }
