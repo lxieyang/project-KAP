@@ -712,7 +712,7 @@ class SnippetsSection extends Component {
           status={this.state.corroboratingEvidenceStatus}
           content={
             <React.Fragment>
-              <strong>Evidence strength</strong> -{' '}
+              <strong>Evidence consistency</strong> -{' '}
               {this.state.multipleEvidenceCells.length === 0 && (
                 <React.Fragment>
                   There are no cells with conflicting evidence.
