@@ -256,9 +256,9 @@ class OtherOptionsSection extends Component {
   render() {
     let { otherOptions } = this.context;
 
-    const existingOptions = otherOptions.map(o => o.original);
+    const existingOptions = otherOptions.map(o => o.original.toLowerCase());
     let alternatives = otherOptions
-      .map(o => o.alternatives)
+      .map(o => o.alternatives.map(a => a.toLowerCase()))
       .reduce((a, b) => a.concat(b), [])
       .filter(a => {
         if (existingOptions.includes(a)) {

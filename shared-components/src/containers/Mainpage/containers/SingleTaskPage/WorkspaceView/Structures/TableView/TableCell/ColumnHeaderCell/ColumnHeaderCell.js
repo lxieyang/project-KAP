@@ -38,6 +38,13 @@ import {
   THEME_COLOR,
   PIECE_COLOR
 } from '../../../../../../../../../shared/theme';
+import {
+  supportedLanguages,
+  supportedPlatforms,
+  supportedOtherFrameworksLibrariesTools,
+  supportedWebFrameworks
+} from '../../../../../../../../../shared/constants';
+import unique from 'array-unique';
 
 import CellComments from '../CellComments/CellComments';
 import { getFirstName } from '../../../../../../../../../shared/utilities';
@@ -743,6 +750,66 @@ class ColumnHeaderCell extends Component {
                 claps = piece.claps;
               }
 
+              let languages = [];
+              let frameworks = [];
+              let platforms = [];
+              const versionInfo = piece.versionInfo;
+              if (versionInfo) {
+                if (versionInfo.languages.length > 0) {
+                  versionInfo.languages.forEach(language => {
+                    let languageName = supportedLanguages.filter(
+                      l => l.id === language.id
+                    )[0].name;
+                    let versions = unique(
+                      language.hitDetectors
+                        .map(d => d.versions)
+                        .reduce((a, b) => a.concat(b), [])
+                    );
+                    languages.push({
+                      id: language.id,
+                      name: languageName,
+                      versions
+                    });
+                  });
+                }
+
+                if (versionInfo.frameworks.length > 0) {
+                  versionInfo.frameworks.forEach(framework => {
+                    let frameworkName = supportedOtherFrameworksLibrariesTools
+                      .concat(supportedWebFrameworks)
+                      .filter(l => l.id === framework.id)[0].name;
+                    let versions = unique(
+                      framework.hitDetectors
+                        .map(d => d.versions)
+                        .reduce((a, b) => a.concat(b), [])
+                    );
+                    frameworks.push({
+                      id: framework.id,
+                      name: frameworkName,
+                      versions
+                    });
+                  });
+                }
+
+                if (versionInfo.platforms.length > 0) {
+                  versionInfo.platforms.forEach(platform => {
+                    let platformName = supportedPlatforms.filter(
+                      l => l.id === platform.id
+                    )[0].name;
+                    let versions = unique(
+                      platform.hitDetectors
+                        .map(d => d.versions)
+                        .reduce((a, b) => a.concat(b), [])
+                    );
+                    platforms.push({
+                      id: platform.id,
+                      name: platformName,
+                      versions
+                    });
+                  });
+                }
+              }
+
               return (
                 <React.Fragment key={`${p.pieceId}-${idx}`}>
                   <ContextMenuTrigger
@@ -791,6 +858,9 @@ class ColumnHeaderCell extends Component {
                         isRecent={isRecent}
                         answerAccepted={answerAccepted}
                         answerURLOnSO={answerURLOnSO}
+                        languages={languages}
+                        frameworks={frameworks}
+                        platforms={platforms}
                         honestSignals={honestSignals}
                         isInDefaultView={isInDefaultView}
                         isInContextView={isInContextView}

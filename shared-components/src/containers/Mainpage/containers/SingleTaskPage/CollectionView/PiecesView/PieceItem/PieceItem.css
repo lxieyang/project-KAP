@@ -299,3 +299,27 @@
   border-radius: 5px;
   box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.2);
 }
+
+.VersionTagsContainer {
+}
+
+.VersionTag {
+  display: flex;
+  align-items: center;
+  height: 20px;
+  line-height: 13px;
+}
+
+.VersionTagEntry {
+  flex-shrink: 0;
+  font-size: 11px;
+  display: inline;
+  margin: 6px 2px;
+  padding: 1px 4px;
+  background-color: #e3e3e3;
+  box-sizing: border-box;
+}
+
+.VersionTagEntryHeader {
+  background-color: #e1ecf4;
+}

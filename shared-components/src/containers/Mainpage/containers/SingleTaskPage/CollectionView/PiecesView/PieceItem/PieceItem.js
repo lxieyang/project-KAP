@@ -360,42 +360,56 @@ class PieceItem extends Component {
   }
 
   updateGoogleSuggestedOptions = async () => {
-    const lemmatizer = p => {
-      return p
-        .toLowerCase()
-        .split(' ')
-        .map(item => lemmatize.noun(item.trim()))
-        .join(' ');
-    };
+    if (
+      this.props.piece.googleOptionVsList &&
+      this.props.piece.googleOptionVsList.length > 0
+    ) {
+      this.setState({
+        optionVsList: this.props.piece.googleOptionVsList
+      });
 
-    const pieceName = this.props.piece.name.trim();
-    let vsList = await axios.get(
-      // 'http://localhost:8800/kap-project-nsh-2504/us-central1/getGoogleAutoSuggests',
-      'https://us-central1-kap-project-nsh-2504.cloudfunctions.net/getGoogleAutoSuggests',
-      {
-        params: {
-          q: pieceName // this.context.addToOtherOptions({
-          //   original: pieceName,
-          //   alternatives: lemmatizedOptionVsList
-          // });
+      this.props.addToOtherOptions({
+        original: this.props.piece.name.trim(),
+        alternatives: this.props.piece.googleOptionVsList
+      });
+    } else {
+      const lemmatizer = p => {
+        return p
+          .toLowerCase()
+          .split(' ')
+          .map(item => lemmatize.noun(item.trim()))
+          .join(' ');
+      };
+
+      const pieceName = this.props.piece.name.trim();
+      let vsList = await axios.get(
+        // 'http://localhost:8800/kap-project-nsh-2504/us-central1/getGoogleAutoSuggests',
+        'https://us-central1-kap-project-nsh-2504.cloudfunctions.net/getGoogleAutoSuggests',
+        {
+          params: {
+            q: pieceName // this.context.addToOtherOptions({
+            //   original: pieceName,
+            //   alternatives: lemmatizedOptionVsList
+            // });
+          }
         }
-      }
-    );
-    // console.log(vsList);
-    vsList = vsList.data.list;
-    vsList = vsList.map(item => lemmatizer(item.toLowerCase()));
-    vsList = vsList.filter(item => item.substr(0, 3) !== 'mpy'); // TODO: get rid of this hack
-    vsList = vsList.slice(0, 5);
-    let lemmatizedOptionVsList = vsList;
+      );
+      // console.log(vsList);
+      vsList = vsList.data.list;
+      vsList = vsList.map(item => lemmatizer(item.toLowerCase()));
+      vsList = vsList.filter(item => item.substr(0, 3) !== 'mpy'); // TODO: get rid of this hack
+      vsList = vsList.slice(0, 5);
+      let lemmatizedOptionVsList = vsList;
 
-    this.setState({
-      optionVsList: lemmatizedOptionVsList
-    });
+      this.setState({
+        optionVsList: lemmatizedOptionVsList
+      });
 
-    this.props.addToOtherOptions({
-      original: pieceName,
-      alternatives: lemmatizedOptionVsList
-    });
+      this.props.addToOtherOptions({
+        original: pieceName,
+        alternatives: lemmatizedOptionVsList
+      });
+    }
   };
 
   findingHTMLFocus = () => {
@@ -729,6 +743,17 @@ class PieceItem extends Component {
                               </div>
                             )}
                           {!this.props.isInDefaultView &&
+                            this.props.claps !== null && (
+                              <div>
+                                <span className={classesInCSS.TagSpan}>
+                                  <IoMdHand
+                                    className={[classesInCSS.Icon].join(' ')}
+                                  />
+                                  {this.props.claps} claps
+                                </span>
+                              </div>
+                            )}
+                          {!this.props.isInDefaultView &&
                             this.props.answerAccepted === true && (
                               <div>
                                 <span className={classesInCSS.TagSpan}>
@@ -859,6 +884,171 @@ class PieceItem extends Component {
                                   />
                                   accepted answer
                                 </span>
+                              </div>
+                            )}
+
+                          {this.props.languages &&
+                            this.props.activeSections.includes(
+                              SECTION_TYPES.section_versions
+                            ) &&
+                            this.props.languages.length > 0 && (
+                              <div
+                                className={classesInCSS.VersionTagsContainer}
+                              >
+                                {this.props.languages.map((l, lidx) => {
+                                  if (l.versions.length === 0) {
+                                    return (
+                                      <span
+                                        key={lidx}
+                                        className={[
+                                          classesInCSS.VersionTagEntry,
+                                          classesInCSS.VersionTagEntryHeader
+                                        ].join(' ')}
+                                      >
+                                        {l.name}
+                                      </span>
+                                    );
+                                  } else {
+                                    return (
+                                      <div
+                                        key={lidx}
+                                        className={classesInCSS.VersionTag}
+                                      >
+                                        <div
+                                          key={lidx}
+                                          className={[
+                                            classesInCSS.VersionTagEntry,
+                                            classesInCSS.VersionTagEntryHeader
+                                          ].join(' ')}
+                                        >
+                                          {l.name}
+                                        </div>
+                                        {l.versions.map((v, vidx) => {
+                                          return (
+                                            <div
+                                              key={vidx}
+                                              className={
+                                                classesInCSS.VersionTagEntry
+                                              }
+                                            >
+                                              v{v}
+                                            </div>
+                                          );
+                                        })}
+                                      </div>
+                                    );
+                                  }
+                                })}
+                              </div>
+                            )}
+
+                          {this.props.frameworks &&
+                            this.props.activeSections.includes(
+                              SECTION_TYPES.section_versions
+                            ) &&
+                            this.props.frameworks.length > 0 && (
+                              <div
+                                className={classesInCSS.VersionTagsContainer}
+                              >
+                                {this.props.frameworks.map((l, lidx) => {
+                                  if (l.versions.length === 0) {
+                                    return (
+                                      <span
+                                        key={lidx}
+                                        className={[
+                                          classesInCSS.VersionTagEntry,
+                                          classesInCSS.VersionTagEntryHeader
+                                        ].join(' ')}
+                                      >
+                                        {l.name}
+                                      </span>
+                                    );
+                                  } else {
+                                    return (
+                                      <div
+                                        key={lidx}
+                                        className={classesInCSS.VersionTag}
+                                      >
+                                        <div
+                                          key={lidx}
+                                          className={[
+                                            classesInCSS.VersionTagEntry,
+                                            classesInCSS.VersionTagEntryHeader
+                                          ].join(' ')}
+                                        >
+                                          {l.name}
+                                        </div>
+                                        {l.versions.map((v, vidx) => {
+                                          return (
+                                            <div
+                                              key={vidx}
+                                              className={
+                                                classesInCSS.VersionTagEntry
+                                              }
+                                            >
+                                              v{v}
+                                            </div>
+                                          );
+                                        })}
+                                      </div>
+                                    );
+                                  }
+                                })}
+                              </div>
+                            )}
+
+                          {this.props.platforms &&
+                            this.props.activeSections.includes(
+                              SECTION_TYPES.section_versions
+                            ) &&
+                            this.props.platforms.length > 0 && (
+                              <div
+                                className={classesInCSS.VersionTagsContainer}
+                              >
+                                {this.props.platforms.map((l, lidx) => {
+                                  if (l.versions.length === 0) {
+                                    return (
+                                      <span
+                                        key={lidx}
+                                        className={[
+                                          classesInCSS.VersionTagEntry,
+                                          classesInCSS.VersionTagEntryHeader
+                                        ].join(' ')}
+                                      >
+                                        {l.name}
+                                      </span>
+                                    );
+                                  } else {
+                                    return (
+                                      <div
+                                        key={lidx}
+                                        className={classesInCSS.VersionTag}
+                                      >
+                                        <div
+                                          key={lidx}
+                                          className={[
+                                            classesInCSS.VersionTagEntry,
+                                            classesInCSS.VersionTagEntryHeader
+                                          ].join(' ')}
+                                        >
+                                          {l.name}
+                                        </div>
+                                        {l.versions.map((v, vidx) => {
+                                          return (
+                                            <div
+                                              key={vidx}
+                                              className={
+                                                classesInCSS.VersionTagEntry
+                                              }
+                                            >
+                                              v{v}
+                                            </div>
+                                          );
+                                        })}
+                                      </div>
+                                    );
+                                  }
+                                })}
                               </div>
                             )}
                           {this.props.updateDate &&

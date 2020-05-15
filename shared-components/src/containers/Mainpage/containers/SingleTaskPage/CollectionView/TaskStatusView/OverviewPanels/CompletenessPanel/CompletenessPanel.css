@@ -23,6 +23,7 @@
 }
 
 .ListItem {
+  text-transform: capitalize;
   display: inline-block;
   font-weight: 400;
   font-size: 12px;

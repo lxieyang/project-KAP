@@ -1035,6 +1035,7 @@ class RegularCell extends Component {
                                       </span>
                                     </div>
                                   )}
+
                                 {honestSignals.versions &&
                                   this.props.activeSections.includes(
                                     SECTION_TYPES.section_versions
