@@ -477,36 +477,37 @@ class RowHeaderCell extends Component {
       p => pieces[p.pieceId] !== undefined && pieces[p.pieceId] !== null
     );
 
-    let deleteRowActionContainer = editAccess ? (
-      <div className={styles.DeleteRowIconContainer}>
-        <ReactHoverObserver
-          {...{
-            onMouseEnter: () => {
-              this.props.setRowToDelete(this.props.rowIndex);
-            },
-            onMouseLeave: () => {
-              this.props.setRowToDelete(-1);
-            }
-          }}
-        >
-          <div>
-            <Tooltip
-              title="Delete this row"
-              placement={'top'}
-              disableFocusListener={true}
-            >
-              <IconButton
-                aria-label="Delete"
-                className={classes.iconButtons}
-                onClick={() => this.deleteTableRowByIndex()}
-              >
-                <DeleteIcon className={classes.iconInIconButtons} />
-              </IconButton>
-            </Tooltip>
-          </div>
-        </ReactHoverObserver>
-      </div>
-    ) : null;
+    let deleteRowActionContainer = null;
+    //   editAccess ? (
+    //   <div className={styles.DeleteRowIconContainer}>
+    //     <ReactHoverObserver
+    //       {...{
+    //         onMouseEnter: () => {
+    //           this.props.setRowToDelete(this.props.rowIndex);
+    //         },
+    //         onMouseLeave: () => {
+    //           this.props.setRowToDelete(-1);
+    //         }
+    //       }}
+    //     >
+    //       <div>
+    //         <Tooltip
+    //           title="Delete this row"
+    //           placement={'top'}
+    //           disableFocusListener={true}
+    //         >
+    //           <IconButton
+    //             aria-label="Delete"
+    //             className={classes.iconButtons}
+    //             onClick={() => this.deleteTableRowByIndex()}
+    //           >
+    //             <DeleteIcon className={classes.iconInIconButtons} />
+    //           </IconButton>
+    //         </Tooltip>
+    //       </div>
+    //     </ReactHoverObserver>
+    //   </div>
+    // ) : null;
 
     let reorderRowPromptContainer = (
       <div className={styles.ReorderRowPromptContainer}>

@@ -465,36 +465,37 @@ class ColumnHeaderCell extends Component {
       p => pieces[p.pieceId] !== undefined && pieces[p.pieceId] !== null
     );
 
-    let deleteColumnActionContainer = editAccess && (
-      <div className={styles.DeleteColumnIconContainer}>
-        <ReactHoverObserver
-          {...{
-            onMouseEnter: () => {
-              this.props.setColumnToDelete(this.props.columnIndex);
-            },
-            onMouseLeave: () => {
-              this.props.setColumnToDelete(-1);
-            }
-          }}
-        >
-          <div>
-            <Tooltip
-              title="Delete this column"
-              placement={'top'}
-              disableFocusListener={true}
-            >
-              <IconButton
-                aria-label="Delete"
-                className={classes.iconButtons}
-                onClick={() => this.deleteTableColumnByIndex()}
-              >
-                <DeleteIcon className={classes.iconInIconButtons} />
-              </IconButton>
-            </Tooltip>
-          </div>
-        </ReactHoverObserver>
-      </div>
-    );
+    let deleteColumnActionContainer = null;
+    //   editAccess && (
+    //   <div className={styles.DeleteColumnIconContainer}>
+    //     <ReactHoverObserver
+    //       {...{
+    //         onMouseEnter: () => {
+    //           this.props.setColumnToDelete(this.props.columnIndex);
+    //         },
+    //         onMouseLeave: () => {
+    //           this.props.setColumnToDelete(-1);
+    //         }
+    //       }}
+    //     >
+    //       <div>
+    //         <Tooltip
+    //           title="Delete this column"
+    //           placement={'top'}
+    //           disableFocusListener={true}
+    //         >
+    //           <IconButton
+    //             aria-label="Delete"
+    //             className={classes.iconButtons}
+    //             onClick={() => this.deleteTableColumnByIndex()}
+    //           >
+    //             <DeleteIcon className={classes.iconInIconButtons} />
+    //           </IconButton>
+    //         </Tooltip>
+    //       </div>
+    //     </ReactHoverObserver>
+    //   </div>
+    // );
 
     let reorderColumnPromptContainer = (
       <div className={styles.ReorderColumnPromptContainer}>

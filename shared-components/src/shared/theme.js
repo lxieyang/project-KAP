@@ -25,5 +25,6 @@ export const DOMAIN_THEME_COLOR = {
   'stackoverflow.com': '#E08024',
   'developer.mozilla.org': '#88D1D6',
   'www.w3schools.in': '#448CCB',
-  'www.geeksforgeeks.org': '#34A277'
+  'www.geeksforgeeks.org': '#34A277',
+  'www.quora.com': '#9E351C'
 };

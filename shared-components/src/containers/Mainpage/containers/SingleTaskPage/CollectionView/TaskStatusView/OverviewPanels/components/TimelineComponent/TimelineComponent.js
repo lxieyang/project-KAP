@@ -60,7 +60,7 @@ class Page extends Component {
     return (
       <div
         className={styles.PageBlockContainer}
-        onClick={() => this.props.progressCheckClicked(idx)}
+        // onClick={() => this.props.progressCheckClicked(idx)}
       >
         <div className={styles.PageNameContainer}>
           {/* progress indicator */}
@@ -430,9 +430,9 @@ class TimelineComponent extends Component {
         const minDuration = p.duration / 1000 / 60;
         const secDuration = p.duration / 1000;
 
-        if (minDuration > 10) {
-          p.duration = 10 * 60 * 1000;
-        } else if (secDuration < 5) {
+        if (minDuration > 20) {
+          p.duration = 20 * 60 * 1000;
+        } else if (secDuration < 60) {
           p.duration = 2 * 60 * 1000;
         }
         return p;

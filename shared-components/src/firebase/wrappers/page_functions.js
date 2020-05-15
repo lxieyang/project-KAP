@@ -61,7 +61,7 @@ export const updatePageUpdateTimestampViaUrl = async url => {
       if (!parentQuerySnapshot.docs[0].data().leaveDate) {
         updatePageLeaveTimestampViaUrl(url);
       }
-    }, 1000 * 60 * 10);
+    }, 1000 * 60 * 30);
   }
 };
 

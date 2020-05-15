@@ -198,7 +198,7 @@ class CodeSection extends Component {
   render() {
     const { pieces } = this.props;
     const piecesWithCode = pieces
-      .filter(p => p.codeSnippets.length > 0)
+      .filter(p => p.codeSnippets && p.codeSnippets.length > 0)
       .map(p => {
         let codeSnippets = p.codeSnippets.map(item => {
           return { content: item, pieceId: p.id };
