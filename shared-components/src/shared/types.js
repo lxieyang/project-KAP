@@ -36,9 +36,9 @@ export const TIMESTAMP_TYPES = {
 
 export const SECTION_TYPES = {
   section_sources: 'Domains',
-  section_snippets: 'Tables & Snippets',
-  section_author: 'Table Author',
-  section_effort: 'Research & Exploration',
+  section_snippets: 'Evidence Snippets',
+  section_author: 'Task Author',
+  section_effort: 'Research Process',
   section_code: 'Code examples',
   section_other_options: 'Commonly Searched for Alternatives',
   section_queries: 'Search Queries',

@@ -754,7 +754,7 @@ class RowHeaderCell extends Component {
                 context_object.length > 0 ? context_object[0] : null;
 
               let popularityNumber = null; // Math.floor(Math.random() * 100);
-              let updateDate = null; // getRandomDate(new Date(2019, 1, 1),new Date(2020, 4, 1));
+              let updateDate = piece.updateDate.toDate(); // getRandomDate(new Date(2019, 1, 1),new Date(2020, 4, 1));
               let isRecent = null;
               let answerURLOnSO = null;
               let answerAccepted = null;
@@ -773,6 +773,11 @@ class RowHeaderCell extends Component {
                 isRecent = (new Date() - updateDate) / (1000 * 86400) < 100;
                 answerURLOnSO = answerMetaInfo.answerLink;
                 answerAccepted = answerMetaInfo.answerAccepted;
+              }
+
+              let claps = null;
+              if (piece.claps) {
+                claps = piece.claps;
               }
 
               return (
@@ -818,6 +823,7 @@ class RowHeaderCell extends Component {
                         }
                         isDemoTask={this.props.isDemoTask}
                         popularityNumber={popularityNumber}
+                        claps={claps}
                         updateDate={updateDate}
                         isRecent={isRecent}
                         answerAccepted={answerAccepted}

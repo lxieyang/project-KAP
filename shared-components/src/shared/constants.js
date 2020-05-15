@@ -87,7 +87,13 @@ export const supportedWebFrameworks = [
     versionDetectors: ['react']
   },
   { id: 'asp.net', name: 'ASP.NET', detectors: ['asp', '.net'] },
-  { id: 'express', name: 'Express', detectors: ['express'] }
+  { id: 'express', name: 'Express', detectors: ['express'] },
+  {
+    id: 'vue',
+    name: 'Vue.js',
+    detectors: ['vue'],
+    versionDetectors: ['vue']
+  }
 ];
 
 // https://insights.stackoverflow.com/survey/2019#technology-_-other-frameworks-libraries-and-tools

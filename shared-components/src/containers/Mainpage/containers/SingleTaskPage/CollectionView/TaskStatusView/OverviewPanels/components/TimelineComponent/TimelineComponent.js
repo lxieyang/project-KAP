@@ -433,7 +433,7 @@ class TimelineComponent extends Component {
         if (minDuration > 20) {
           p.duration = 20 * 60 * 1000;
         } else if (secDuration < 60) {
-          p.duration = 2 * 60 * 1000;
+          p.duration = 1 * 60 * 1000;
         }
         return p;
       });

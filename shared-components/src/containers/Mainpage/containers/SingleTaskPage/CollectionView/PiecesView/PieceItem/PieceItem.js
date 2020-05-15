@@ -25,7 +25,7 @@ import Tooltip from '@material-ui/core/Tooltip';
 import Switch from '@material-ui/core/Switch';
 
 import { FaArrowAltCircleUp, FaCheck, FaCode } from 'react-icons/fa';
-import { IoMdTime } from 'react-icons/io';
+import { IoMdTime, IoMdHand } from 'react-icons/io';
 import { AiFillFire } from 'react-icons/ai';
 import { GiSandsOfTime } from 'react-icons/gi';
 
@@ -586,6 +586,7 @@ class PieceItem extends Component {
                       color: 'white'
                     }}
                     className={classesInCSS.Avatar}
+                    onClick={_ => console.log(piece.id)}
                   >
                     <FontAwesomeIcon
                       icon={icon}
@@ -828,6 +829,19 @@ class PieceItem extends Component {
                                     ].join(' ')}
                                   />
                                   {this.props.popularityNumber} up votes
+                                </span>
+                              </div>
+                            )}
+                          {this.props.claps !== null &&
+                            this.props.activeSections.includes(
+                              SECTION_TYPES.section_snippets
+                            ) && (
+                              <div>
+                                <span className={classesInCSS.TagSpan}>
+                                  <IoMdHand
+                                    className={[classesInCSS.Icon].join(' ')}
+                                  />
+                                  {this.props.claps} claps
                                 </span>
                               </div>
                             )}

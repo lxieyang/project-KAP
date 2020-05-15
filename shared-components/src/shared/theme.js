@@ -26,5 +26,6 @@ export const DOMAIN_THEME_COLOR = {
   'developer.mozilla.org': '#88D1D6',
   'www.w3schools.in': '#448CCB',
   'www.geeksforgeeks.org': '#34A277',
-  'www.quora.com': '#9E351C'
+  'www.quora.com': '#9E351C',
+  'medium.com': '#079E71'
 };

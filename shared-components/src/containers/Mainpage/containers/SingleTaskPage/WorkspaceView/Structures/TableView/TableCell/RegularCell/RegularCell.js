@@ -41,7 +41,7 @@ import Popover from '@material-ui/core/Popover';
 import Button from '@material-ui/core/Button';
 
 import { FaArrowAltCircleUp, FaCheck, FaCode } from 'react-icons/fa';
-import { IoMdTime } from 'react-icons/io';
+import { IoMdTime, IoMdHand } from 'react-icons/io';
 import { AiFillFire } from 'react-icons/ai';
 import { GiSandsOfTime } from 'react-icons/gi';
 
@@ -769,7 +769,7 @@ class RegularCell extends Component {
                       context_object.length > 0 ? context_object[0] : null;
 
                     let popularityNumber = null; // Math.floor(Math.random() * 100);
-                    let updateDate = null; // getRandomDate(new Date(2019, 1, 1),new Date(2020, 4, 1));
+                    let updateDate = piece.updateDate.toDate(); // getRandomDate(new Date(2019, 1, 1),new Date(2020, 4, 1));
                     let isRecent = null;
                     let answerURLOnSO = null;
                     let answerAccepted = null;
@@ -789,6 +789,11 @@ class RegularCell extends Component {
                         (new Date() - updateDate) / (1000 * 86400) < 100;
                       answerURLOnSO = answerMetaInfo.answerLink;
                       answerAccepted = answerMetaInfo.answerAccepted;
+                    }
+
+                    let claps = null;
+                    if (piece.claps) {
+                      claps = piece.claps;
                     }
 
                     let languages = [];
@@ -892,6 +897,7 @@ class RegularCell extends Component {
                             className={styles.AttitudeIconVariantI}
                             data-tip
                             data-for={`${cell.id}-${p.pieceId}`}
+                            onClick={_ => console.log(p.pieceId)}
                           >
                             {icon}
                           </div>
@@ -992,6 +998,20 @@ class RegularCell extends Component {
                                           ].join(' ')}
                                         />
                                         accepted answer
+                                      </span>
+                                    </div>
+                                  )}
+                                {honestSignals.popularity &&
+                                  this.props.activeSections.includes(
+                                    SECTION_TYPES.section_snippets
+                                  ) &&
+                                  claps !== null && (
+                                    <div>
+                                      <span className={styles.TagSpan}>
+                                        <IoMdHand
+                                          className={[styles.Icon].join(' ')}
+                                        />
+                                        {claps} claps
                                       </span>
                                     </div>
                                   )}
@@ -1247,6 +1267,7 @@ class RegularCell extends Component {
                                 isDemoTask={this.props.isDemoTask}
                                 attitudeIcon={icon}
                                 popularityNumber={popularityNumber}
+                                claps={claps}
                                 updateDate={updateDate}
                                 isRecent={isRecent}
                                 answerAccepted={answerAccepted}

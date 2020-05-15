@@ -451,6 +451,9 @@ class SnippetsSection extends Component {
     pieces: [],
     cells: [],
 
+    SOEvidenceSnippets: [],
+    MediumEvidenceSnippets: [],
+
     evidencePopularityStatus: 'neutral',
     highUpVotedEvidenceSnippets: [],
     // optionsPopularityStatus: 'bad',
@@ -495,12 +498,11 @@ class SnippetsSection extends Component {
         return false;
       }
     });
-    let highUpVotedEvidenceSnippets = SOEvidenceSnippets.filter(p => {
+
+    let MediumEvidenceSnippets = evidenceSnippets.filter(p => {
       if (
-        p.answerMetaInfo &&
-        p.answerMetaInfo.answerVoteCount &&
-        parseInt(p.answerMetaInfo.answerVoteCount, 10) >=
-          EVIDENCE_POPULARITY_THRESHOLD
+        p.references.hostname &&
+        p.references.hostname.includes('medium.com')
       ) {
         return true;
       } else {
@@ -508,33 +510,63 @@ class SnippetsSection extends Component {
       }
     });
 
-    if (highUpVotedEvidenceSnippets.length >= 3) {
-      this.setState({
-        evidencePopularityStatus: 'good',
-        highUpVotedEvidenceSnippets
+    this.setState({
+      SOEvidenceSnippets,
+      MediumEvidenceSnippets
+    });
+
+    if (SOEvidenceSnippets.length > 0) {
+      let highUpVotedEvidenceSnippets = SOEvidenceSnippets.filter(p => {
+        if (
+          p.answerMetaInfo &&
+          p.answerMetaInfo.answerVoteCount &&
+          parseInt(p.answerMetaInfo.answerVoteCount, 10) >=
+            EVIDENCE_POPULARITY_THRESHOLD
+        ) {
+          return true;
+        } else {
+          return false;
+        }
       });
-    } else {
+
+      if (
+        highUpVotedEvidenceSnippets.length >= 3 ||
+        SOEvidenceSnippets.length === 0
+      ) {
+        this.setState({
+          evidencePopularityStatus: 'good',
+          highUpVotedEvidenceSnippets
+        });
+      } else {
+        this.setState({
+          evidencePopularityStatus: 'bad',
+          highUpVotedEvidenceSnippets
+        });
+      }
+    } else if (MediumEvidenceSnippets.length > 0) {
       this.setState({
-        evidencePopularityStatus: 'bad',
-        highUpVotedEvidenceSnippets
+        evidencePopularityStatus: 'good'
       });
     }
 
     /* up-to-dateness */
     // TODO: only limiting to SO atm
     let SOSnippets = evidenceSnippets.filter(p => {
-      if (
-        p.references.hostname &&
-        p.references.hostname.includes('stackoverflow')
-      ) {
-        return true;
-      } else {
-        return false;
-      }
+      return true;
+      // if (
+      //   p.references.hostname &&
+      //   p.references.hostname.includes('stackoverflow')
+      // ) {
+      //   return true;
+      // } else {
+      //   return false;
+      // }
     });
     // console.log(SOSnippets);
     let withUpdateDateSnippets = SOSnippets.map(p => {
       if (
+        p.references.hostname &&
+        p.references.hostname.includes('stackoverflow') &&
         p.answerMetaInfo &&
         (p.answerMetaInfo.answerEditedTime ||
           p.answerMetaInfo.answerCreatedTime)
@@ -550,6 +582,8 @@ class SnippetsSection extends Component {
           : false;
         p.updateDate = updateDate;
         p.isRecent = isRecent;
+      } else if (p.updateDate && p.updateDate.toDate) {
+        p.updateDate = p.updateDate.toDate();
       }
 
       return p;
@@ -576,7 +610,7 @@ class SnippetsSection extends Component {
         this.setState({ upToDateNessStatus: 'good' });
       }
     } else {
-      this.setState({ upToDateNessStatus: 'neutral' });
+      this.setState({ upToDateNessStatus: 'good' });
     }
 
     /* corroborating evidence */
@@ -640,32 +674,65 @@ class SnippetsSection extends Component {
         ].reduce((a, b) => a + b)}
         // footer={<SnippetsComponent pieces={pieces} shouldOpenOnMount={true} />}
       >
-        <Entry
-          status={this.state.evidencePopularityStatus}
-          content={
-            <React.Fragment>
-              <ReactHoverObserver
-                {...{
-                  onHoverChanged: ({ isHovering }) => {
-                    if (isHovering) {
-                      this.context.setSelectedSnippets(
-                        this.state.highUpVotedEvidenceSnippets.map(p => p.id)
-                      );
-                    } else {
-                      this.context.clearSelectedSnippets();
+        {this.state.SOEvidenceSnippets.length > 0 && (
+          <Entry
+            status={this.state.evidencePopularityStatus}
+            content={
+              <React.Fragment>
+                <ReactHoverObserver
+                  {...{
+                    onHoverChanged: ({ isHovering }) => {
+                      if (isHovering) {
+                        this.context.setSelectedSnippets(
+                          this.state.highUpVotedEvidenceSnippets.map(p => p.id)
+                        );
+                      } else {
+                        this.context.clearSelectedSnippets();
+                      }
                     }
-                  }
-                }}
-              >
-                <strong> Evidence popularity </strong> -{' '}
-                <strong>{this.state.highUpVotedEvidenceSnippets.length}</strong>{' '}
-                evidence snippets received at least{' '}
-                {EVIDENCE_POPULARITY_THRESHOLD} up-votes on{' '}
-                <span>Stack Overflow</span>.
-              </ReactHoverObserver>
-            </React.Fragment>
-          }
-        />
+                  }}
+                >
+                  <strong> Evidence popularity </strong> -{' '}
+                  <strong>
+                    {this.state.highUpVotedEvidenceSnippets.length}
+                  </strong>{' '}
+                  evidence snippets received at least{' '}
+                  {EVIDENCE_POPULARITY_THRESHOLD} up-votes on{' '}
+                  <span>Stack Overflow</span>.
+                </ReactHoverObserver>
+              </React.Fragment>
+            }
+          />
+        )}
+
+        {this.state.MediumEvidenceSnippets.length > 0 &&
+          this.state.SOEvidenceSnippets.length === 0 && (
+            <Entry
+              status={this.state.evidencePopularityStatus}
+              content={
+                <React.Fragment>
+                  <ReactHoverObserver
+                    {...{
+                      onHoverChanged: ({ isHovering }) => {
+                        if (isHovering) {
+                          this.context.setSelectedSnippets(
+                            this.state.highUpVotedEvidenceSnippets.map(
+                              p => p.id
+                            )
+                          );
+                        } else {
+                          this.context.clearSelectedSnippets();
+                        }
+                      }
+                    }}
+                  >
+                    <strong> Evidence popularity </strong> - All snippets from
+                    medium.com have at least 100 claps.
+                  </ReactHoverObserver>
+                </React.Fragment>
+              }
+            />
+          )}
 
         {/* <Entry
           status={this.state.optionsPopularityStatus}
@@ -1029,7 +1096,7 @@ class TrustPanel extends Component {
                       sortedRepos[0].stargazers_count > 0 && (
                         <p
                           style={{
-                            color: '#666',
+                            color: '#333',
                             fontSize: 12
                           }}
                         >
@@ -1043,7 +1110,11 @@ class TrustPanel extends Component {
                             {sortedRepos[0].name}{' '}
                           </a>{' '}
                           has {sortedRepos[0].stargazers_count} &#x2605; and
-                          uses {sortedRepos[0].language}.
+                          uses{' '}
+                          <span style={{ backgroundColor: '#e3e3e3' }}>
+                            {sortedRepos[0].language}
+                          </span>
+                          .
                         </p>
                       )}
 
@@ -1053,7 +1124,7 @@ class TrustPanel extends Component {
                           display: 'flex',
                           alignItems: 'center',
                           flexWrap: 'wrap',
-                          color: '#666',
+                          color: '#333',
                           fontSize: 12
                         }}
                       >
@@ -1063,12 +1134,16 @@ class TrustPanel extends Component {
                           let isLast =
                             idx === this.state.authorGithubLanguages.length - 1;
                           return (
-                            <span key={idx}>
+                            <span
+                              key={idx}
+                              style={{ backgroundColor: '#e3e3e3' }}
+                            >
                               {l.value}
                               {isLast ? '' : ','}&nbsp;
                             </span>
                           );
-                        })}{' '}
+                        })}
+                        {'  '}
                         the most often.
                       </p>
                     )}
@@ -1078,7 +1153,7 @@ class TrustPanel extends Component {
                         style={{
                           display: 'flex',
                           alignItems: 'center',
-                          color: '#666',
+                          color: '#333',
                           fontSize: 12
                         }}
                       >
@@ -1092,7 +1167,7 @@ class TrustPanel extends Component {
                         style={{
                           display: 'flex',
                           alignItems: 'center',
-                          color: '#666',
+                          color: '#333',
                           fontSize: 12
                         }}
                       >
