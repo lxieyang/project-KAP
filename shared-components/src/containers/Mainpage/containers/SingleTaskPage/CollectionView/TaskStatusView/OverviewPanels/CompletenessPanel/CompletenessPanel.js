@@ -215,13 +215,19 @@ class CodeSection extends Component {
         <div className={styles.CodeContainer}>
           {codeSnippets.length > 0 && (
             <React.Fragment>
-              <div>
-                The author <strong>copied and used</strong> the following code:
+              <div className={styles.StarCodeSegment}>
+                <div>
+                  The author <strong>copied and used</strong> the following
+                  code:
+                </div>
+                <div
+                  className={styles.CodeHTML}
+                  dangerouslySetInnerHTML={getHTML(
+                    codeSnippets[0].content.html
+                  )}
+                />
               </div>
-              <div
-                className={styles.CodeHTML}
-                dangerouslySetInnerHTML={getHTML(codeSnippets[0].content.html)}
-              />
+
               {codeSnippets.length > 1 && (
                 <React.Fragment>
                   <div>Other code examples from snippets:</div>
