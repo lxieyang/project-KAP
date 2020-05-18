@@ -1,5 +1,6 @@
 .SectionWrapper {
-  margin-bottom: 12px;
+  margin-top: 6px;
+  margin-bottom: 8px;
   margin-left: 3px;
   display: flex;
   align-items: center;
@@ -29,11 +30,11 @@
 }
 
 .SectionInactive {
-  opacity: 0.4;
+  opacity: 0.8;
 }
 
 .Section.SectionOpen {
-  border-top-width: 5px;
+  border-top-width: 3px;
 }
 
 /* .Section.SectionClosed {
@@ -41,7 +42,7 @@
 } */
 
 .SectionHeader {
-  padding: 6px 6px;
+  padding: 6px 2px;
   font-size: 16px;
   color: #444;
   font-weight: 600;
@@ -54,13 +55,17 @@
   /* position: relative; */
 }
 
+.SectionActive .SectionHeader {
+  background-color: #e3e3e3;
+}
+
 .SectionHeader:hover {
   background-color: #e3e3e3;
 }
 
 .Section.SectionOpen .SectionHeader {
   /* justify-content: center; */
-  padding-left: 6px;
+  /* padding-left: 6px; */
 }
 
 .CollapseButtonContainer {
@@ -100,9 +105,12 @@
 
 .StatusIndicator {
   padding: 0 3px;
+  margin-right: 4px;
   font-size: 13px;
   line-height: 16px;
   font-weight: 300;
+  display: flex;
+  align-items: center;
   /* margin-right: 6px; */
 }
 

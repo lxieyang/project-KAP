@@ -77,12 +77,29 @@ class Section extends Component {
           ].join(' ')}
           style={{
             borderTopColor: isOpen ? gradeColor : null
+
             // [isOpen ? 'borderTopColor' : 'borderRightColor']: gradeColor
           }}
         >
           {headerName && (
             <div
               className={styles.SectionHeader}
+              style={{
+                backgroundColor:
+                  activeSections.length > 0 &&
+                  activeSections.includes(headerName)
+                    ? gradeColor
+                    : null,
+                color:
+                  activeSections.length > 0 &&
+                  activeSections.includes(headerName)
+                    ? invert(gradeColor, {
+                        black: '#3a3a3a',
+                        white: '#fafafa',
+                        threshold: 0.33
+                      })
+                    : null
+              }}
               onClick={this.handleSectionActiveClicked}
             >
               <div className={styles.CollapseButtonContainer}>
@@ -106,6 +123,17 @@ class Section extends Component {
                 style={{
                   display: statusString.length === 0 ? 'none' : null,
                   backgroundColor: gradeColor,
+                  borderRadius: 2,
+                  border:
+                    activeSections.length > 0 &&
+                    activeSections.includes(headerName)
+                      ? '0.5px solid ' +
+                        invert(gradeColor, {
+                          black: '#3a3a3a',
+                          white: '#fafafa',
+                          threshold: 0.33
+                        })
+                      : null,
                   color: invert(gradeColor, {
                     black: '#3a3a3a',
                     white: '#fafafa',
