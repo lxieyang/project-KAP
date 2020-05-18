@@ -19,6 +19,8 @@ import TableView from './Structures/TableView/TableView';
 
 import ScreenshotModal from '../ScreenshotModal/ScreenshotModal';
 
+import TaskContext from '../../../../../shared/task-context';
+
 // const fakeWorkspaces = [
 //   {
 //     id: 'test-table-001',
@@ -61,6 +63,7 @@ const StyledTab = withStyles({
 })(Tab);
 
 class WorkspaceView extends Component {
+  static contextType = TaskContext;
   state = {
     activeWorkspaceId: '0',
 
@@ -337,7 +340,26 @@ class WorkspaceView extends Component {
                 retVal = (
                   <React.Fragment key={idx}>
                     {activeWorkspaceId === workspace.id ? (
-                      <WorkspaceContentContainer className="workspace-content-container">
+                      <WorkspaceContentContainer
+                        className="workspace-content-container"
+                        style={{ position: 'relative' }}
+                      >
+                        <div
+                          style={{
+                            position: 'absolute',
+                            top: 0,
+                            left: 0,
+                            width: 50,
+                            height: 50
+                          }}
+                          onClick={_ => {
+                            if (this.context.currentTaskView === 'default') {
+                              this.context.setCurrentTaskView('context');
+                            } else {
+                              this.context.setCurrentTaskView('default');
+                            }
+                          }}
+                        />
                         <TableView
                           taskId={taskId}
                           pieces={pieces}

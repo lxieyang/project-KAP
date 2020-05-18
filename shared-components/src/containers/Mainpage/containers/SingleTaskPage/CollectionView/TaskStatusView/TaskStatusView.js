@@ -7,7 +7,6 @@ import { THEME_COLOR } from '../../../../../../shared/theme';
 import styles from './TaskStatusView.css';
 
 import { withStyles } from '@material-ui/core/styles';
-import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
 import Star from 'mdi-material-ui/Star';
 import Chat from 'mdi-material-ui/Chat';
@@ -20,6 +19,13 @@ import SwipeableViews from 'react-swipeable-views';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Typography from '@material-ui/core/Typography';
+
+import {
+  FaBoxOpen as ContextIcon,
+  FaHandshake as TrustIcon,
+  FaTasks as CompletenessIcon
+} from 'react-icons/fa';
+import Button from '@material-ui/core/Button';
 
 import { ToastContainer, toast, Flip } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -398,6 +404,79 @@ class TaskStatusView extends Component {
         </Collapse> */}
 
         {/* <Divider light /> */}
+
+        {this.context.currentTaskView !== 'default' && (
+          <div className={styles.TaskViewTabsContainer}>
+            {/* Task View Tabs */}
+            {/* <Button
+            variant={'outlined'}
+            onClick={() => {
+              this.context.setCurrentTaskView('default');
+              this.context.setActiveSections([]);
+            }}
+            size="small"
+            className={[
+              styles.ViewControlButton,
+              this.context.currentTaskView === 'default'
+                ? styles.ViewControlButtonActive // styles.CurrentViewControlButtonDefault
+                : null
+            ].join(' ')}
+          >
+            Default
+          </Button> */}
+            <Button
+              variant={'outlined'}
+              onClick={() => {
+                this.context.setCurrentTaskView('context');
+                this.context.setActiveSections([]);
+              }}
+              size="small"
+              className={[
+                styles.ViewControlButton,
+                this.context.currentTaskView === 'context'
+                  ? styles.ViewControlButtonActive // styles.CurrentViewControlButtonTaskContext
+                  : null
+              ].join(' ')}
+            >
+              <ContextIcon className={styles.ViewControlButtonIcon} />
+              Context
+            </Button>
+            <Button
+              variant={'outlined'}
+              onClick={() => {
+                this.context.setCurrentTaskView('trustworthiness');
+                this.context.setActiveSections([]);
+              }}
+              size="small"
+              className={[
+                styles.ViewControlButton,
+                this.context.currentTaskView === 'trustworthiness'
+                  ? styles.ViewControlButtonActive // styles.CurrentViewControlButtonTrustworthiness
+                  : null
+              ].join(' ')}
+            >
+              <TrustIcon className={styles.ViewControlButtonIcon} />
+              Trustworthiness
+            </Button>
+            <Button
+              variant={'outlined'}
+              onClick={() => {
+                this.context.setCurrentTaskView('thoroughness');
+                this.context.setActiveSections([]);
+              }}
+              size="small"
+              className={[
+                styles.ViewControlButton,
+                this.context.currentTaskView === 'thoroughness'
+                  ? styles.ViewControlButtonActive // styles.CurrentViewControlButtonThoroughness
+                  : null
+              ].join(' ')}
+            >
+              <CompletenessIcon className={styles.ViewControlButtonIcon} />
+              Thoroughness
+            </Button>
+          </div>
+        )}
 
         <div className={styles.TaskOverviewContainer}>
           <SwipeableViews

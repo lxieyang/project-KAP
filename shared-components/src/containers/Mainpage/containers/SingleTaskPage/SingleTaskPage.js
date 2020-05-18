@@ -268,7 +268,7 @@ class SingleTaskPage extends Component {
         >
           <div className={styles.SingleTaskPageContainer}>
             {/* Task View Tabs */}
-            <div className={styles.TaskViewTabsContainer}>
+            {/* <div className={styles.TaskViewTabsContainer}>
               <Button
                 variant={'outlined'}
                 onClick={() => {
@@ -336,7 +336,7 @@ class SingleTaskPage extends Component {
                 <CompletenessIcon className={styles.ViewControlButtonIcon} />
                 Thoroughness View
               </Button>
-            </div>
+            </div> */}
 
             {/* Split pane: overview + table */}
             <div className={styles.SplitPaneContainer}>
