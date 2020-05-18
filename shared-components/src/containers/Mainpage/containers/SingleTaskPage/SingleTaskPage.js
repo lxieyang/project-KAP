@@ -369,6 +369,8 @@ class SingleTaskPage extends Component {
                   <WorkspaceView
                     userId={this.props.userId}
                     setCurrentWorkspaceId={this.setCurrentWorkspaceId}
+                    currentTaskView={this.state.currentTaskView}
+                    setCurrentTaskView={this.setCurrentTaskView}
                   />
                 </div>
               </SplitPane>

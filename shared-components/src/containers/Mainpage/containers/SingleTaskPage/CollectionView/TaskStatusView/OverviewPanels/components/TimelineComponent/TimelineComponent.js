@@ -55,7 +55,7 @@ class Page extends Component {
   };
 
   render() {
-    const { item, idx } = this.props;
+    const { item, idx, color } = this.props;
 
     return (
       <div
@@ -64,12 +64,26 @@ class Page extends Component {
       >
         <div className={styles.PageNameContainer}>
           {/* progress indicator */}
-          {/* <div className={styles.PageProgressBackdropContainer}>
+          <div
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              // height: 2,
+              backgroundColor: 'transparent',
+              zIndex: -1
+            }}
+          >
             <div
-              className={styles.PageProgressBackdrop}
-              style={{ width: `${item.scrollPercentage * 100}%` }}
+              style={{
+                backgroundColor: color,
+                height: '100%',
+                width: `${(item.scrollPercentage * 100).toFixed(0)}%`
+              }}
             />
-          </div> */}
+          </div>
 
           {/* UI - link to the main timeline */}
           <div className={styles.PageLinkLineContainer}>
@@ -99,13 +113,14 @@ class Page extends Component {
               </a>
             </ReactHoverObserver>
           </div>
-
           <div className={styles.PageMetaData}>
             <React.Fragment>
               {/* Timestamp */}
               {/* {moment(item.creationDate).format('h:mma')} */}
-              {/* scroll percentage */}[
-              {(item.scrollPercentage * 100).toFixed(0)}%]
+              {/* scroll percentage */}
+              <span className={styles.PercentageContainer}>
+                [{(item.scrollPercentage * 100).toFixed(0)}%]
+              </span>
               {/* duration */}
               &nbsp;
               {moment.duration(item.duration).humanize()}
@@ -209,9 +224,12 @@ class Query extends Component {
     return (
       <div
         className={styles.QueryBlockContainer}
-        style={{ backgroundColor: query.color }}
+        // style={{ backgroundColor: query.color }}
       >
-        <div className={styles.QueryContainer}>
+        <div
+          className={styles.QueryContainer}
+          style={{ backgroundColor: query.color }}
+        >
           <div
             className={styles.QueryCollapseButtonContainer}
             onClick={e => this.handleCollapseButtonClicked(e)}
@@ -253,7 +271,14 @@ class Query extends Component {
               <div className={styles.PagesLeftLine} />
               <div className={styles.Pages}>
                 {pages.map((page, pidx) => {
-                  return <Page key={pidx} item={page} idx={pidx} />;
+                  return (
+                    <Page
+                      key={pidx}
+                      item={page}
+                      idx={pidx}
+                      color={query.color}
+                    />
+                  );
                 })}
               </div>
             </div>

@@ -19,8 +19,6 @@ import TableView from './Structures/TableView/TableView';
 
 import ScreenshotModal from '../ScreenshotModal/ScreenshotModal';
 
-import TaskContext from '../../../../../shared/task-context';
-
 // const fakeWorkspaces = [
 //   {
 //     id: 'test-table-001',
@@ -63,7 +61,6 @@ const StyledTab = withStyles({
 })(Tab);
 
 class WorkspaceView extends Component {
-  static contextType = TaskContext;
   state = {
     activeWorkspaceId: '0',
 
@@ -353,10 +350,10 @@ class WorkspaceView extends Component {
                             height: 50
                           }}
                           onClick={_ => {
-                            if (this.context.currentTaskView === 'default') {
-                              this.context.setCurrentTaskView('context');
+                            if (this.props.currentTaskView === 'default') {
+                              this.props.setCurrentTaskView('context');
                             } else {
-                              this.context.setCurrentTaskView('default');
+                              this.props.setCurrentTaskView('default');
                             }
                           }}
                         />
