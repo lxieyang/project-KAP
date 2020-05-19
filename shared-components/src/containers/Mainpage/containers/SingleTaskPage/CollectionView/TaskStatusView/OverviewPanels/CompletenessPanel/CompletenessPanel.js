@@ -91,7 +91,8 @@ class EffortSection extends Component {
     creationDate = creationDate.toDate();
     updateDate = updateDate ? updateDate.toDate() : new Date();
     const approxDuration = updateDate - creationDate;
-    this.setState({ taskUpdateDate: updateDate });
+    // this.setState({ taskUpdateDate: updateDate });
+    this.setState({ taskUpdateDate: creationDate });
 
     /* effort spent */
     // TODO: actually do this

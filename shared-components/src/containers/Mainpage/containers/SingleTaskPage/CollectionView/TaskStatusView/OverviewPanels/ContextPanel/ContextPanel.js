@@ -198,7 +198,10 @@ class QuerySection extends Component {
                   }
                 }}
               >
-                <div className={styles.QueryItem}>
+                <div
+                  className={styles.QueryItem}
+                  onClick={_ => console.log(query.id)}
+                >
                   <SearchIcon className={styles.QueryIcon} /> {query.query}
                   <div style={{ flex: 1 }} />
                   <div className={styles.QueryMetadata}>
