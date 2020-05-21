@@ -866,7 +866,8 @@ class RegularCell extends Component {
                             this.props.selectedSnippets.length === 0 &&
                             this.props.selectedCells.length === 0
                               ? styles.Normal
-                              : (piece.references.url &&
+                              : (this.props.selectedSnippets.length === 0 &&
+                                  piece.references.url &&
                                   (this.props.selectedUrls.indexOf(
                                     piece.references.url
                                   ) !== -1 ||

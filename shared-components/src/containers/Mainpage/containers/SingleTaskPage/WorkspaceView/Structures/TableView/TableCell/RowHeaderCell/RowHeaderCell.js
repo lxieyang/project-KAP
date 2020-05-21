@@ -861,10 +861,11 @@ class RowHeaderCell extends Component {
                         this.props.selectedSnippets.length === 0 &&
                         this.props.selectedCells.length === 0
                           ? styles.Normal
-                          : (pieces[p.pieceId].references.url &&
-                              (this.props.selectedUrls.indexOf(
+                          : (this.props.selectedSnippets.length === 0 &&
+                              pieces[p.pieceId].references.url &&
+                              (this.props.selectedUrls.includes(
                                 pieces[p.pieceId].references.url
-                              ) !== -1 ||
+                              ) ||
                                 this.props.selectedDomains.includes(
                                   new URL(pieces[p.pieceId].references.url)
                                     .hostname

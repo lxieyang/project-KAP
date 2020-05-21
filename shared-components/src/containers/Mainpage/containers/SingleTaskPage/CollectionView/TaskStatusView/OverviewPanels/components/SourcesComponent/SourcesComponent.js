@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { sortBy } from 'lodash';
 import styles from './SourcesComponent.css';
 import Switch from 'react-switch';
 
@@ -11,6 +12,8 @@ import randomColor from 'randomcolor';
 import PieChart from './PieChart';
 
 import { DOMAIN_THEME_COLOR } from '../../../../../../../../../shared/theme';
+import { PIECE_TYPES } from '../../../../../../../../../shared/types';
+import SnippetIcon from '../../../../../../../../../components/UI/SnippetIcon/SnippetIcon';
 
 import Divider from '@material-ui/core/Divider';
 
@@ -35,8 +38,24 @@ class SourcesComponent extends Component {
         color = randomColor();
       }
       const foregroundColor = invert(color, true);
+
+      let piecesInDomain = [];
+      d.pages.forEach(p => {
+        piecesInDomain = piecesInDomain.concat(p.piecesInPage);
+      });
+      piecesInDomain.forEach(p => {
+        if (p.pieceType === PIECE_TYPES.option) {
+          p.sortOrder = 1;
+        } else if (p.pieceType === PIECE_TYPES.criterion) {
+          p.sortOrder = 2;
+        } else if (p.pieceType === PIECE_TYPES.snippet) {
+          p.sortOrder = 3;
+        }
+      });
+      piecesInDomain = sortBy(piecesInDomain, ['sortOrder']);
       return {
         ...d,
+        piecesInDomain,
         color,
         foregroundColor
       };
@@ -87,40 +106,64 @@ class SourcesComponent extends Component {
                       onHoverChanged: onHoverChanged
                     }}
                   >
-                    {({ isHovering }) => (
-                      <div
-                        className={styles.DomainEntryContainer}
-                        style={{
-                          borderBottomColor: d.color,
-                          borderBottomWidth: this.context.selectedDomains.includes(
-                            d.domain
-                          )
-                            ? 1
-                            : null
-                        }}
-                        key={idx}
-                      >
-                        <div
+                    <div
+                      className={styles.DomainEntryContainer}
+                      style={{
+                        borderBottomColor: this.context.selectedDomains.includes(
+                          d.domain
+                        )
+                          ? d.color
+                          : null
+                      }}
+                      key={idx}
+                    >
+                      {/* <div
                           className={styles.DomainEntryPercentage}
                           style={{
                             width: `${percent}%`,
                             backgroundColor: d.color
                           }}
-                        />
+                        /> */}
 
-                        <img src={d.favicon} alt="" />
-                        <span
-                          className={styles.DomainName}
-                          // style={{ color: d.foregroundColor }}
-                        >
-                          {d.domain}
-                        </span>
-                        <div style={{ flex: 1 }} />
-                        <span className={styles.DomainStats}>
-                          {d.numberOfPieces} snippets
-                        </span>
+                      <img src={d.favicon} alt="" />
+                      <span
+                        className={styles.DomainName}
+                        // style={{ color: d.foregroundColor }}
+                      >
+                        {d.domain}
+                      </span>
+                      <div className={styles.PiecesInDomainContainer}>
+                        {d.piecesInDomain.map((p, pidx) => {
+                          {
+                            /* console.log(p); */
+                          }
+                          return (
+                            <React.Fragment key={pidx}>
+                              <ReactHoverObserver
+                                className={styles.InlineHoverObserver}
+                                {...{
+                                  onHoverChanged: ({ isHovering }) => {
+                                    // console.log(isHovering);
+                                    if (isHovering) {
+                                      this.context.setSelectedSnippets([p.id]);
+                                    } else {
+                                      this.context.clearSelectedSnippets();
+                                    }
+                                  }
+                                }}
+                              >
+                                <div style={{ margin: 2 }}>
+                                  <SnippetIcon type={p.pieceType} size={16} />
+                                </div>
+                              </ReactHoverObserver>
+                            </React.Fragment>
+                          );
+                        })}
                       </div>
-                    )}
+                      <span className={styles.DomainStats}>
+                        {d.numberOfPieces} snippets
+                      </span>
+                    </div>
                   </ReactHoverObserver>
                 );
               })}

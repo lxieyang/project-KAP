@@ -824,7 +824,8 @@ class ColumnHeaderCell extends Component {
                         this.props.selectedSnippets.length === 0 &&
                         this.props.selectedCells.length === 0
                           ? styles.Normal
-                          : (pieces[p.pieceId].references.url &&
+                          : (this.props.selectedSnippets.length === 0 &&
+                              pieces[p.pieceId].references.url &&
                               (this.props.selectedUrls.indexOf(
                                 pieces[p.pieceId].references.url
                               ) !== -1 ||

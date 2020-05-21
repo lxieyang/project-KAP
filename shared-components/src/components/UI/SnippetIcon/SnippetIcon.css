@@ -1,0 +1,14 @@
+.PieceIconContainer {
+  flex-shrink: 0;
+  border-radius: 50%;
+  width: 12px;
+  height: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+}
+
+.PieceIcon {
+  font-size: 6px;
+}

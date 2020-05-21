@@ -23,21 +23,23 @@
   padding: 1px 3px;
 
   border-bottom-style: solid;
-  border-bottom-width: 0px;
+  border-bottom-width: 1px;
+  border-bottom-color: transparent;
   box-sizing: border-box;
 
   position: relative;
 }
 
-.DomainEntryContainer:hover {
+/* .DomainEntryContainer:hover {
   border-bottom-width: 1px;
-}
+} */
 
 .DomainEntryContainer img {
   width: 16px;
   height: 16px;
   margin-right: 4px;
   z-index: 1001;
+  flex-shrink: 0;
 }
 
 .DomainEntryContainer .DomainName {
@@ -46,9 +48,26 @@
   margin-right: 4px;
   user-select: none;
   font-style: italic;
+  font-size: 1.1em;
+  flex-shrink: 0;
+}
+
+.DomainEntryContainer .PiecesInDomainContainer {
+  flex-grow: 1;
+  flex-wrap: wrap;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.InlineHoverObserver {
+  display: inline;
 }
 
 .DomainEntryContainer .DomainStats {
+  flex-shrink: 0;
+  width: 60px;
+  text-align: right;
   z-index: 1001;
   margin-right: 4px;
 }

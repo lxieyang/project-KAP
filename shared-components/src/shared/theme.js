@@ -30,5 +30,6 @@ export const DOMAIN_THEME_COLOR = {
   'medium.com': '#079E71',
   'academind.com': '#F98737',
   'azure.microsoft.com': '#00A4EF',
-  'cloud.google.com': '#34A853'
+  'cloud.google.com': '#34A853',
+  'www.python.org': '#FAE474'
 };
