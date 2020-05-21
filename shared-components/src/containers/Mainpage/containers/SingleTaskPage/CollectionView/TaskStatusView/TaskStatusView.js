@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 import { getTaskIdFromPath } from '../../matchPath';
 import * as FirestoreManager from '../../../../../../firebase/firestore_wrapper';
+import invert from 'invert-color';
 import { getTaskLink } from '../../../../../../shared/utilities';
 import { THEME_COLOR } from '../../../../../../shared/theme';
 import styles from './TaskStatusView.css';
@@ -114,7 +115,30 @@ class TaskStatusView extends Component {
     author: null,
 
     overviewExpanded: true,
-    overviewTabValue: 2
+    overviewTabValue: 2,
+
+    // stats
+    numWaringsInSources: 0,
+    numWarningsInSnippets: 0,
+    numWarningsInEffort: 0
+  };
+
+  setNumWaringsInSources = num => {
+    this.setState({
+      numWaringsInSources: num
+    });
+  };
+
+  setNumWarningsInSnippets = num => {
+    this.setState({
+      numWarningsInSnippets: num
+    });
+  };
+
+  setNumWarningsInEffort = num => {
+    this.setState({
+      numWarningsInEffort: num
+    });
   };
 
   handleTabChange = (event, newValue) => {
@@ -264,6 +288,25 @@ class TaskStatusView extends Component {
           </div>
         </React.Fragment>
       );
+    }
+
+    let trustworthinessIssueNumber =
+      this.state.numWaringsInSources + this.state.numWarningsInSnippets;
+    let trustworthinessIssueColor = '#4dae4c';
+    if (trustworthinessIssueNumber === 0) {
+    } else if (trustworthinessIssueNumber === 1) {
+      trustworthinessIssueColor = '#FCBB21';
+    } else if (trustworthinessIssueNumber > 1) {
+      trustworthinessIssueColor = '#E32722';
+    }
+
+    let thoroughnessIssueNumber = this.state.numWarningsInEffort;
+    let thoroughnessIssueColor = '#4dae4c';
+    if (thoroughnessIssueNumber === 0) {
+    } else if (thoroughnessIssueNumber === 1) {
+      thoroughnessIssueColor = '#FCBB21';
+    } else if (thoroughnessIssueNumber > 1) {
+      thoroughnessIssueColor = '#E32722';
     }
 
     return (
@@ -438,7 +481,7 @@ class TaskStatusView extends Component {
                   : null
               ].join(' ')}
             >
-              <ContextIcon className={styles.ViewControlButtonIcon} />
+              {/* <ContextIcon className={styles.ViewControlButtonIcon} /> */}
               Context
             </Button>
             <Button
@@ -455,7 +498,22 @@ class TaskStatusView extends Component {
                   : null
               ].join(' ')}
             >
-              <TrustIcon className={styles.ViewControlButtonIcon} />
+              {/* <TrustIcon className={styles.ViewControlButtonIcon} /> */}
+              {trustworthinessIssueNumber > 0 && (
+                <div
+                  className={styles.IssueCount}
+                  style={{
+                    backgroundColor: trustworthinessIssueColor,
+                    color: invert(trustworthinessIssueColor, {
+                      black: '#3a3a3a',
+                      white: '#fafafa',
+                      threshold: 0.33
+                    })
+                  }}
+                >
+                  {trustworthinessIssueNumber}
+                </div>
+              )}
               Trustworthiness
             </Button>
             <Button
@@ -472,7 +530,22 @@ class TaskStatusView extends Component {
                   : null
               ].join(' ')}
             >
-              <CompletenessIcon className={styles.ViewControlButtonIcon} />
+              {/* <CompletenessIcon className={styles.ViewControlButtonIcon} /> */}
+              {thoroughnessIssueNumber > 0 && (
+                <div
+                  className={styles.IssueCount}
+                  style={{
+                    backgroundColor: thoroughnessIssueColor,
+                    color: invert(thoroughnessIssueColor, {
+                      black: '#3a3a3a',
+                      white: '#fafafa',
+                      threshold: 0.33
+                    })
+                  }}
+                >
+                  {thoroughnessIssueNumber}
+                </div>
+              )}
               Thoroughness
             </Button>
           </div>
@@ -485,7 +558,7 @@ class TaskStatusView extends Component {
             onChangeIndex={this.handleTabChange}
             style={{ flex: 1 }}
             containerStyle={{ height: '100%' }}
-            disableLazyLoading
+            disableLazyLoading={true}
           >
             <TabPanel value={PanelMap[this.context.currentTaskView]} index={0}>
               <DefaultPanel
@@ -514,6 +587,8 @@ class TaskStatusView extends Component {
                 pieces={this.props.pieces}
                 cells={this.props.cells}
                 changeTab={this.props.changeTab}
+                setNumWaringsInSources={this.setNumWaringsInSources}
+                setNumWarningsInSnippets={this.setNumWarningsInSnippets}
               />
             </TabPanel>
             <TabPanel value={PanelMap[this.context.currentTaskView]} index={3}>
@@ -524,6 +599,8 @@ class TaskStatusView extends Component {
                 pieces={this.props.pieces}
                 cells={this.props.cells}
                 changeTab={this.props.changeTab}
+                numWarningsInEffort={this.state.numWarningsInEffort}
+                setNumWarningsInEffort={this.setNumWarningsInEffort}
               />
             </TabPanel>
           </SwipeableViews>

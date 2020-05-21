@@ -149,10 +149,28 @@
   justify-content: center !important;
   border-color: transparent !important;
   border-radius: 0px !important;
+
+  position: relative;
 }
 
 .ViewControlButton:hover {
   opacity: 1 !important;
+}
+
+.IssueCount {
+  position: absolute;
+  top: -3px;
+  right: -3px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background-color: red;
+  color: white;
+  font-weight: 400;
+  font-size: 13px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .ViewControlButtonIcon {

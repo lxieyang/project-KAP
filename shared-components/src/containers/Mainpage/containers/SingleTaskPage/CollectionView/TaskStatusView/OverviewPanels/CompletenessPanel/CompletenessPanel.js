@@ -92,11 +92,11 @@ class EffortSection extends Component {
     updateDate = updateDate ? updateDate.toDate() : new Date();
     const approxDuration = updateDate - creationDate;
     // this.setState({ taskUpdateDate: updateDate });
-    this.setState({ taskUpdateDate: creationDate });
+    // this.setState({ taskUpdateDate: creationDate });
 
     /* effort spent */
     // TODO: actually do this
-    this.setState({ effortSpentStatus: 'good' });
+    let effortSpentStatus;
     if (task) {
       let taskId = task.id;
       let gen = RandGen.create(taskId);
@@ -104,10 +104,25 @@ class EffortSection extends Component {
         taskId === '4T48qT8vvkbVV6HXK3cx'
           ? 60 * 1000 * 12
           : (gen.range(120) + 45) * 60 * 1000;
-      this.setState({ taskDuration: duration });
+      if (duration < 15 * 60 * 1000) {
+        effortSpentStatus = 'bad';
+        this.setState({
+          taskUpdateDate: creationDate,
+          taskDuration: duration,
+          effortSpentStatus
+        });
+      } else {
+        effortSpentStatus = 'good';
+        this.setState({
+          taskUpdateDate: creationDate,
+          taskDuration: duration,
+          effortSpentStatus
+        });
+      }
     }
 
     /* stuff collected */
+    let infoCollectedStatus;
     if (
       pages.length <= 3 ||
       pieces.length < 6 ||
@@ -115,9 +130,20 @@ class EffortSection extends Component {
       pieces.filter(p => p.pieceType === PIECE_TYPES.criterion).length < 2 ||
       pieces.filter(p => p.pieceType === PIECE_TYPES.snippet).length < 2
     ) {
-      this.setState({ infoCollectedStatus: 'bad' });
+      infoCollectedStatus = 'bad';
+      this.setState({ infoCollectedStatus });
     } else {
-      this.setState({ infoCollectedStatus: 'good' });
+      infoCollectedStatus = 'good';
+      this.setState({ infoCollectedStatus });
+    }
+
+    let numOfWarnings = [
+      effortSpentStatus === 'bad' ? 1 : 0,
+      infoCollectedStatus === 'bad' ? 1 : 0
+    ].reduce((a, b) => a + b);
+
+    if (numOfWarnings > 0 && numOfWarnings !== this.props.numWarningsInEffort) {
+      this.props.setNumWarningsInEffort(numOfWarnings);
     }
   };
 
@@ -408,7 +434,14 @@ class CompletenessPanel extends Component {
   };
 
   render() {
-    let { queries, pieces, pages, task, cells } = this.props;
+    let {
+      queries,
+      pieces,
+      pages,
+      task,
+      cells,
+      numWarningsInEffort
+    } = this.props;
 
     const displayPieces = pieces.filter(
       p => p.pieceType === PIECE_TYPES.option
@@ -448,6 +481,8 @@ class CompletenessPanel extends Component {
           task={task}
           queries={queries}
           cells={cells}
+          numWarningsInEffort={numWarningsInEffort}
+          setNumWarningsInEffort={this.props.setNumWarningsInEffort}
         />
 
         <CodeSection pieces={pieces} cells={cells} />

@@ -201,10 +201,13 @@ class SourcesSection extends Component {
     domains = domains.filter(d => d.numberOfPieces > 0);
     this.setState({ domains, pieces, pages });
 
+    let sourceDiversityStatus;
     if (domains.length > 1) {
-      this.setState({ sourceDiversityStatus: 'good' });
+      sourceDiversityStatus = 'good';
+      this.setState({ sourceDiversityStatus });
     } else {
-      this.setState({ sourceDiversityStatus: 'bad' });
+      sourceDiversityStatus = 'bad';
+      this.setState({ sourceDiversityStatus });
     }
 
     // TODO: source credibility status checker
@@ -222,11 +225,20 @@ class SourcesSection extends Component {
       return d;
     });
     let notCredibleDomains = domains.filter(d => !d.credible);
+    let sourceCredibilityStatus;
     if (notCredibleDomains.length === 0) {
-      this.setState({ notCredibleDomains, sourceCredibilityStatus: 'good' });
+      sourceCredibilityStatus = 'good';
+      this.setState({ notCredibleDomains, sourceCredibilityStatus });
     } else {
-      this.setState({ notCredibleDomains, sourceCredibilityStatus: 'bad' });
+      sourceCredibilityStatus = 'bad';
+      this.setState({ notCredibleDomains, sourceCredibilityStatus });
     }
+
+    let numOfWarnings = [
+      sourceDiversityStatus === 'bad' ? 1 : 0,
+      sourceCredibilityStatus === 'bad' ? 1 : 0
+    ].reduce((a, b) => a + b);
+    this.props.setNumWaringsInSources(numOfWarnings);
   }
 
   render() {
@@ -515,6 +527,7 @@ class SnippetsSection extends Component {
       MediumEvidenceSnippets
     });
 
+    let evidencePopularityStatus;
     if (SOEvidenceSnippets.length > 0) {
       let highUpVotedEvidenceSnippets = SOEvidenceSnippets.filter(p => {
         if (
@@ -533,19 +546,22 @@ class SnippetsSection extends Component {
         highUpVotedEvidenceSnippets.length >= 3 ||
         SOEvidenceSnippets.length === 0
       ) {
+        evidencePopularityStatus = 'good';
         this.setState({
-          evidencePopularityStatus: 'good',
+          evidencePopularityStatus,
           highUpVotedEvidenceSnippets
         });
       } else {
+        evidencePopularityStatus = 'bad';
         this.setState({
-          evidencePopularityStatus: 'bad',
+          evidencePopularityStatus,
           highUpVotedEvidenceSnippets
         });
       }
     } else if (MediumEvidenceSnippets.length > 0) {
+      evidencePopularityStatus = 'good';
       this.setState({
-        evidencePopularityStatus: 'good'
+        evidencePopularityStatus
       });
     }
 
@@ -599,21 +615,26 @@ class SnippetsSection extends Component {
     // console.log(withUpdateDateSnippets);
 
     this.setState({ withUpdateDateSnippets });
+    let upToDateNessStatus;
     if (withUpdateDateSnippets.length > 0) {
       if (
         (new Date() - withUpdateDateSnippets[0].updateDate.getTime()) /
           (1000 * 86400) >
         365 * 2 // 2 years
       ) {
-        this.setState({ upToDateNessStatus: 'bad' });
+        upToDateNessStatus = 'bad';
+        this.setState({ upToDateNessStatus });
       } else {
-        this.setState({ upToDateNessStatus: 'good' });
+        upToDateNessStatus = 'good';
+        this.setState({ upToDateNessStatus });
       }
     } else {
-      this.setState({ upToDateNessStatus: 'good' });
+      upToDateNessStatus = 'good';
+      this.setState({ upToDateNessStatus });
     }
 
     /* corroborating evidence */
+    let corroboratingEvidenceStatus;
     if (cells && cells.length > 0) {
       let multipleEvidenceCells = cells.filter(c => {
         let tempPieces = c.pieces.filter(
@@ -647,16 +668,27 @@ class SnippetsSection extends Component {
           conflictingCells
         });
         if (conflictingCells.length > 0) {
-          this.setState({ corroboratingEvidenceStatus: 'bad' });
+          corroboratingEvidenceStatus = 'bad';
+          this.setState({ corroboratingEvidenceStatus });
         } else {
-          this.setState({ corroboratingEvidenceStatus: 'good' });
+          corroboratingEvidenceStatus = 'good';
+          this.setState({ corroboratingEvidenceStatus });
         }
       } else {
-        this.setState({ corroboratingEvidenceStatus: 'neutral' });
+        corroboratingEvidenceStatus = 'neutral';
+        this.setState({ corroboratingEvidenceStatus });
       }
     } else {
-      this.setState({ corroboratingEvidenceStatus: 'neutral' });
+      corroboratingEvidenceStatus = 'neutral';
+      this.setState({ corroboratingEvidenceStatus });
     }
+
+    let numOfWarnings = [
+      evidencePopularityStatus === 'bad' ? 1 : 0,
+      upToDateNessStatus === 'bad' ? 1 : 0,
+      corroboratingEvidenceStatus === 'bad' ? 1 : 0
+    ].reduce((a, b) => a + b);
+    this.props.setNumWarningsInSnippets(numOfWarnings);
   };
 
   render() {
@@ -972,10 +1004,18 @@ class TrustPanel extends Component {
     return (
       <div className={styles.PanelContainer}>
         {/* Sources trustworthiness */}
-        <SourcesSection pieces={pieces} pages={pages} />
+        <SourcesSection
+          pieces={pieces}
+          pages={pages}
+          setNumWaringsInSources={this.props.setNumWaringsInSources}
+        />
 
         {/* Table & Snippets trustworthiness */}
-        <SnippetsSection pieces={pieces} cells={cells} />
+        <SnippetsSection
+          pieces={pieces}
+          cells={cells}
+          setNumWarningsInSnippets={this.props.setNumWarningsInSnippets}
+        />
 
         {/* Author section */}
         <AuthorSection authorObj={this.state.authorGithubUserObject}>

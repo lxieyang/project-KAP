@@ -53,13 +53,14 @@ class Section extends Component {
 
     if (numOfWarnings === 0) {
       gradeColor = '#4dae4c';
-      statusString = 'good';
+      // statusString = 'good';
+      statusString = '0 issue';
     } else if (numOfWarnings === 1) {
       gradeColor = '#FCBB21';
-      statusString = 'fair';
+      statusString = '1 issue';
     } else if (numOfWarnings > 1) {
       gradeColor = '#E32722';
-      statusString = 'poor';
+      statusString = numOfWarnings + ' issues';
     }
 
     return (
