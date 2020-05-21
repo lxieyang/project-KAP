@@ -100,7 +100,10 @@ class EffortSection extends Component {
     if (task) {
       let taskId = task.id;
       let gen = RandGen.create(taskId);
-      let duration = (gen.range(120) + 45) * 60 * 1000;
+      let duration =
+        taskId === '4T48qT8vvkbVV6HXK3cx'
+          ? 60 * 1000 * 12
+          : (gen.range(120) + 45) * 60 * 1000;
       this.setState({ taskDuration: duration });
     }
 

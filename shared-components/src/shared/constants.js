@@ -30,7 +30,11 @@ export const credibleDomainsInitial = [
   'stackoverflow.com',
   'developer.mozilla.org',
   'www.w3schools.in',
-  'www.geeksforgeeks.org'
+  'www.geeksforgeeks.org',
+  'www.quora.com',
+  'azure.microsoft.com',
+  'cloud.google.com',
+  'medium.com'
 ];
 
 // https://insights.stackoverflow.com/survey/2019#technology-_-programming-scripting-and-markup-languages

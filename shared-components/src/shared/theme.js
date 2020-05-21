@@ -28,5 +28,7 @@ export const DOMAIN_THEME_COLOR = {
   'www.geeksforgeeks.org': '#34A277',
   'www.quora.com': '#9E351C',
   'medium.com': '#079E71',
-  'academind.com': '#F98737'
+  'academind.com': '#F98737',
+  'azure.microsoft.com': '#00A4EF',
+  'cloud.google.com': '#34A853'
 };

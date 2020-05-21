@@ -603,7 +603,7 @@ class SnippetsSection extends Component {
       if (
         (new Date() - withUpdateDateSnippets[0].updateDate.getTime()) /
           (1000 * 86400) >
-        365 * 3 // 3 years
+        365 * 2 // 2 years
       ) {
         this.setState({ upToDateNessStatus: 'bad' });
       } else {
