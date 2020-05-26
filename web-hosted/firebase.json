@@ -9,7 +9,7 @@
     }
   },
   "hosting": {
-    "target": "unakite-v2",
+    "target": "unakite-plus-v1",
     "public": "build",
     "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
     "rewrites": [

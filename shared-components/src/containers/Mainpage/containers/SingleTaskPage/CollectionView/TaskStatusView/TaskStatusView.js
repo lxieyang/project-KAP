@@ -268,27 +268,27 @@ class TaskStatusView extends Component {
       return null;
     }
 
-    if (!editAccess) {
-      return (
-        <React.Fragment>
-          <div
-            className={styles.ReviewingTaskContainer}
-            style={{
-              backgroundColor: THEME_COLOR.reviewingTaskBackgroundColor
-            }}
-          >
-            <div className={styles.ReviewingTaskNameContainer}>{task.name}</div>
-            {author ? (
-              <div className={styles.ReviewingTaskAuthorContainer}>
-                <div style={{ display: 'flex', alignItems: 'center' }}>
-                  Created by {author.displayName} ({author.email})
-                </div>
-              </div>
-            ) : null}
-          </div>
-        </React.Fragment>
-      );
-    }
+    // if (!editAccess) {
+    //   return (
+    //     <React.Fragment>
+    //       <div
+    //         className={styles.ReviewingTaskContainer}
+    //         style={{
+    //           backgroundColor: THEME_COLOR.reviewingTaskBackgroundColor
+    //         }}
+    //       >
+    //         <div className={styles.ReviewingTaskNameContainer}>{task.name}</div>
+    //         {author ? (
+    //           <div className={styles.ReviewingTaskAuthorContainer}>
+    //             <div style={{ display: 'flex', alignItems: 'center' }}>
+    //               Created by {author.displayName} ({author.email})
+    //             </div>
+    //           </div>
+    //         ) : null}
+    //       </div>
+    //     </React.Fragment>
+    //   );
+    // }
 
     let trustworthinessIssueNumber =
       this.state.numWaringsInSources + this.state.numWarningsInSnippets;

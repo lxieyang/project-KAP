@@ -7,6 +7,9 @@
       "hosting": {
         "unakite-v2": [
           "unakite-v2"
+        ],
+        "unakite-plus-v1": [
+          "unakite-plus-v1"
         ]
       }
     }
