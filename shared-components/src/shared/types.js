@@ -39,7 +39,7 @@ export const SECTION_TYPES = {
   section_snippets: 'Evidence Snippets',
   section_author: 'Task Author',
   section_effort: 'Research Process',
-  section_code: 'Code examples',
+  section_code: 'Code Examples',
   section_other_options: 'Commonly Searched for Alternatives',
   section_queries: 'Search Queries',
   section_surroundings: 'Snippet Surroundings',
