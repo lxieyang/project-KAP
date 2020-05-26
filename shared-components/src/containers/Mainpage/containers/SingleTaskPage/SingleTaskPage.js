@@ -54,6 +54,14 @@ class SingleTaskPage extends Component {
     }
   };
 
+  updateInitView = isDefault => {
+    if (isDefault) {
+      this.setCurrentTaskView('default');
+    } else {
+      this.setCurrentTaskView('context');
+    }
+  };
+
   componentDidMount() {
     let taskId = getTaskIdFromPath(this.props.history.location.pathname);
     this.setState({
@@ -89,7 +97,14 @@ class SingleTaskPage extends Component {
         : 400
     });
 
-    this.setCurrentTaskView('context');
+    // this.setCurrentTaskView('context');
+    this.updateInitView(this.props.isDefault);
+  }
+
+  componentDidUpdate(prevProps) {
+    if (prevProps.isDefault !== this.props.isDefault) {
+      this.updateInitView(this.props.isDefault);
+    }
   }
 
   setCurrentWorkspaceId = workspaceId => {

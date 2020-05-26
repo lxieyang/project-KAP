@@ -485,9 +485,9 @@ class CompletenessPanel extends Component {
           setNumWarningsInEffort={this.props.setNumWarningsInEffort}
         />
 
-        <CodeSection pieces={pieces} cells={cells} />
-
         <OtherOptionsSection />
+
+        <CodeSection pieces={pieces} cells={cells} />
       </div>
     );
   }

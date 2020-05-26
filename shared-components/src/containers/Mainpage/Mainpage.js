@@ -30,7 +30,9 @@ class Mainpage extends Component {
     displayingTaskId: null,
     displayingTaskName: null,
 
-    user: null
+    user: null,
+
+    isDefault: true
   };
 
   componentDidMount() {
@@ -68,6 +70,11 @@ class Mainpage extends Component {
     // log in if accessToken is provided by the link
     let accessToken = queryString.parse(window.location.search).accessToken;
     this.signInUserWithCredential(accessToken);
+
+    // get view choice
+    let isDefault =
+      queryString.parse(window.location.search).default === 'true';
+    this.setState({ isDefault });
   }
 
   signInUserWithCredential = accessToken => {
@@ -128,6 +135,7 @@ class Mainpage extends Component {
               {...routeProps}
               userId={this.state.user ? this.state.user.uid : null}
               setDisplayingTaskIdAndName={this.setDisplayingTaskIdAndName}
+              isDefault={this.state.isDefault}
             />
           )}
         />
@@ -153,6 +161,7 @@ class Mainpage extends Component {
                 {...routeProps}
                 userId={this.state.user ? this.state.user.uid : null}
                 setDisplayingTaskIdAndName={this.setDisplayingTaskIdAndName}
+                isDefault={this.state.isDefault}
               />
             )}
           />
