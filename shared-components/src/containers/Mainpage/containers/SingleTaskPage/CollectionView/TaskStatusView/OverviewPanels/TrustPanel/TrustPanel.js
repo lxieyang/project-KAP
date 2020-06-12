@@ -370,6 +370,16 @@ class SourcesSection extends Component {
                         </div>
                       );
                     })}
+                    <span
+                      style={{
+                        marginLeft: 16,
+                        fontSize: 9,
+                        marginBottom: 4,
+                        color: '#666'
+                      }}
+                    >
+                      More...
+                    </span>
                     <Divider light />
                     <input
                       value={this.state.newCredibleDomainInput}
@@ -389,7 +399,7 @@ class SourcesSection extends Component {
                     style={{ textDecoration: 'underline', cursor: 'pointer' }}
                     onClick={this.openCredibleSourcesPopover}
                   >
-                    [whitelist of popular credible domains]
+                    [whitelist of trusted domains]
                   </a>
                 </div>
               </Popover>
@@ -1076,13 +1086,14 @@ class TrustPanel extends Component {
             <div className={styles.SectionContent}>
               {!this.state.authorGithubUserObject && (
                 <p style={{ fontStyle: 'italic', color: '#666' }}>
-                  Author information not available for the moment. Please{' '}
+                  Author information not available at the moment.
+                  {/* Please{' '}
                   <span
                     className={styles.AuthorInfoEditButton}
                     onClick={() => this.editAuthorButtonClickedHandler()}
                   >
                     add here
-                  </span>
+                  </span> */}
                 </p>
               )}
 

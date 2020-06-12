@@ -71,7 +71,7 @@ class SourcesComponent extends Component {
           shouldOpenOnMount={shouldOpenOnMount}
           headerName={'List of source domains'}
         >
-          <div className={styles.SwitchContainer}>
+          {/* <div className={styles.SwitchContainer}>
             Default View
             <Switch
               onChange={this.handleViewChange}
@@ -83,7 +83,7 @@ class SourcesComponent extends Component {
               width={20}
             />
             Pie chart View
-          </div>
+          </div> */}
 
           <div className={styles.SourcesComponentContainer}>
             {!pieChartView &&

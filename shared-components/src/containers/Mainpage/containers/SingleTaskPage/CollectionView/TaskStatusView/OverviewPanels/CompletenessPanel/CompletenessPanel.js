@@ -172,7 +172,7 @@ class EffortSection extends Component {
           status={this.state.effortSpentStatus}
           content={
             <React.Fragment>
-              <strong>Time spent </strong> - The author spent a total of{' '}
+              <strong>Time spent </strong> - The author spent a total of about{' '}
               <strong>
                 {moment.duration(this.state.taskDuration).humanize()}
               </strong>{' '}
